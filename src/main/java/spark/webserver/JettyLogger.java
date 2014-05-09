@@ -61,9 +61,9 @@ public class JettyLogger implements Logger {
         logger.debug(log.toString());
     }
 
-//    @Override public void debug (String msg, long value) {
-//        // TODO
-//    }
+    @Override public void debug (String msg, long value) {
+        logger.debug(msg, value);
+    }
 
     @Override
     public String getName() {

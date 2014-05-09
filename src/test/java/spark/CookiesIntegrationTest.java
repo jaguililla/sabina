@@ -143,7 +143,7 @@ public class CookiesIntegrationTest {
 
     private void httpPost (String aPath) {
         try {
-            testUtil.doMethod ("GET", "http://localhost:4567" + aPath);
+            testUtil.doMethod ("POST", aPath, "");
         }
         catch (Exception e) {
             throw new RuntimeException (e);

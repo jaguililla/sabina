@@ -1,5 +1,8 @@
 package spark.util;
 
+import static org.apache.http.conn.socket.PlainConnectionSocketFactory.INSTANCE;
+import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
@@ -11,8 +14,8 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -22,43 +25,64 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.SchemePortResolver;
+import org.apache.http.conn.UnsupportedSchemeException;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.BasicClientConnectionManager;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.apache.http.impl.conn.ManagedHttpClientConnectionFactory;
+import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 
 public class SparkTestUtil {
-
     private int port;
 
-    private HttpClient httpClient;
+    private CloseableHttpClient httpClient;
 
     public SparkTestUtil (int port) {
         this.port = port;
-        Scheme http = new Scheme ("http", port, PlainSocketFactory.getSocketFactory ());
-        Scheme https = new Scheme ("https", port,
-            new org.apache.http.conn.ssl.SSLSocketFactory (getSslFactory (), null));
-        SchemeRegistry sr = new SchemeRegistry ();
-        sr.register (http);
-        sr.register (https);
-        ClientConnectionManager connMrg = new BasicClientConnectionManager (sr);
-        this.httpClient = new DefaultHttpClient (connMrg);
-
-//        this.port = port;
-//        SchemePortResolver http = new SchemePortResolver ("http", port, PlainSocketFactory.getSocketFactory());
-//        Scheme https = new Scheme("https", port, new org.apache.http.conn.ssl.SSLSocketFactory(getSslFactory(), null));
-//        SchemeRegistry sr = new SchemeRegistry();
-//        sr.register(http);
-//        sr.register(https);
-//        this.httpClient = HttpClientBuilder
-//            .create ()
-//            .setConnectionManager (new BasicHttpClientConnectionManager (new Registry<> ()))
-//            .build ();
+        this.httpClient = createHttpClient (port);
     }
+
+    private CloseableHttpClient createHttpClient (int aPort) {
+        SSLConnectionSocketFactory ssl =
+            new SSLConnectionSocketFactory (getSslFactory (), ALLOW_ALL_HOSTNAME_VERIFIER);
+        Registry<ConnectionSocketFactory> socketFactoryRegistry =
+            RegistryBuilder.<ConnectionSocketFactory>create()
+                .register ("http", INSTANCE)
+                .register ("https", ssl)
+                .build ();
+
+        BasicHttpClientConnectionManager connManager =
+            new BasicHttpClientConnectionManager(socketFactoryRegistry,
+                new ManagedHttpClientConnectionFactory ());
+
+        return HttpClients.custom ()
+            .setSchemePortResolver (new SchemePortResolver () {
+                @Override public int resolve (HttpHost h) throws UnsupportedSchemeException {
+                    Args.notNull (h, "HTTP host");
+                    final int port = h.getPort();
+                    if (port > 0)
+                        return port;
+
+                    final String name = h.getSchemeName();
+                    if (name.equalsIgnoreCase("http"))
+                        return aPort;
+                    else if (name.equalsIgnoreCase("https"))
+                        return aPort;
+                    else
+                        throw new UnsupportedSchemeException(name + " protocol not supported");
+                }
+            })
+            .setConnectionManager (connManager)
+            .build ();
+    }
+
 
     public UrlResponse doMethodSecure (String requestMethod, String path)
         {
@@ -108,7 +132,7 @@ public class SparkTestUtil {
             else {
                 urlResponse.body = "";
             }
-            Map<String, String> headers = new HashMap<String, String> ();
+            Map<String, String> headers = new HashMap<> ();
             Header[] allHeaders = httpResponse.getAllHeaders ();
             for (Header header : allHeaders) {
                 headers.put (header.getName (), header.getValue ());
@@ -265,7 +289,6 @@ public class SparkTestUtil {
     }
 
     public static class UrlResponse {
-
         public Map<String, String> headers;
         public String body;
         public int status;
@@ -276,6 +299,7 @@ public class SparkTestUtil {
             Thread.sleep (time);
         }
         catch (Exception e) {
+            e.printStackTrace ();
         }
     }
 }

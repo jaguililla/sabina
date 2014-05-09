@@ -1,6 +1,5 @@
 package spark.servlet;
 
-import static spark.Spark.stop;
 import static spark.util.SparkTestUtil.sleep;
 
 import org.eclipse.jetty.server.Connector;
@@ -23,15 +22,15 @@ public class ServletTest {
     static SparkTestUtil testUtil;
 
     @AfterClass
-    public static void tearDown() {
-        stop ();
+    public static void tearDown() throws Exception {
+        server.stop ();
+        sleep(2000);
     }
 
     @BeforeClass
     public static void setup() {
         testUtil = new SparkTestUtil (PORT);
 
-        final Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
 
         // Set some timeout options to make debugging easier.
@@ -51,12 +50,11 @@ public class ServletTest {
             @Override
             public void run() {
                 try {
-                    System.out.println(">>> STARTING EMBEDDED JETTY SERVER for jUnit testing of SparkFilter");
-                    server.start();
-                    System.in.read();
-                    System.out.println(">>> STOPPING EMBEDDED JETTY SERVER");
-                    server.stop();
-                    server.join();
+                    System.out.println (
+                        ">>> STARTING EMBEDDED JETTY SERVER for jUnit testing of SparkFilter");
+                    server.start ();
+                    server.join ();
+                    System.out.println (">>> STOPPING EMBEDDED JETTY SERVER");
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.exit(100);
@@ -64,7 +62,7 @@ public class ServletTest {
             }
         }).start();
 
-        sleep(1000);
+        sleep(2000);
     }
 
     @Test
