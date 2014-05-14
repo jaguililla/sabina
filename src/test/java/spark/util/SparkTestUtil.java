@@ -40,57 +40,63 @@ import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 
 public class SparkTestUtil {
+
+    public static class UrlResponse {
+        public Map<String, String> headers;
+        public String body;
+        public int status;
+    }
+
     private int port;
 
     private CloseableHttpClient httpClient;
 
-    public SparkTestUtil (int port) {
-        this.port = port;
-        this.httpClient = createHttpClient (port);
-    }
+    public SparkTestUtil (int aPort) {
+        this.port = aPort;
 
-    private CloseableHttpClient createHttpClient (int aPort) {
-        SSLConnectionSocketFactory ssl =
+        SSLConnectionSocketFactory sslConnectionSocketFactory =
             new SSLConnectionSocketFactory (getSslFactory (), ALLOW_ALL_HOSTNAME_VERIFIER);
+
         Registry<ConnectionSocketFactory> socketFactoryRegistry =
-            RegistryBuilder.<ConnectionSocketFactory>create()
+            RegistryBuilder.<ConnectionSocketFactory>create ()
                 .register ("http", INSTANCE)
-                .register ("https", ssl)
+                .register ("https", sslConnectionSocketFactory)
                 .build ();
 
         BasicHttpClientConnectionManager connManager =
-            new BasicHttpClientConnectionManager(socketFactoryRegistry,
+            new BasicHttpClientConnectionManager (socketFactoryRegistry,
                 new ManagedHttpClientConnectionFactory ());
 
-        return HttpClients.custom ()
+        this.httpClient = HttpClients.custom ()
             .setSchemePortResolver (new SchemePortResolver () {
                 @Override public int resolve (HttpHost h) throws UnsupportedSchemeException {
                     Args.notNull (h, "HTTP host");
-                    final int port = h.getPort();
-                    if (port > 0)
+                    final int port = h.getPort ();
+                    if (port > 0) {
                         return port;
+                    }
 
-                    final String name = h.getSchemeName();
-                    if (name.equalsIgnoreCase("http"))
-                        return aPort;
-                    else if (name.equalsIgnoreCase("https"))
-                        return aPort;
-                    else
-                        throw new UnsupportedSchemeException(name + " protocol not supported");
+                    final String name = h.getSchemeName ();
+                    if (name.equalsIgnoreCase ("http")) {
+                        return port;
+                    }
+                    else if (name.equalsIgnoreCase ("https")) {
+                        return port;
+                    }
+                    else {
+                        throw new UnsupportedSchemeException ("unsupported protocol: " + name);
+                    }
                 }
             })
             .setConnectionManager (connManager)
             .build ();
     }
 
-
-    public UrlResponse doMethodSecure (String requestMethod, String path)
-        {
+    public UrlResponse doMethodSecure (String requestMethod, String path) {
         return doMethod (requestMethod, path, null, true, "text/html");
     }
 
-    public UrlResponse doMethodSecure (String requestMethod, String path, String body)
-        {
+    public UrlResponse doMethodSecure (String requestMethod, String path, String body) {
         return doMethod (requestMethod, path, body, true, "text/html");
     }
 
@@ -98,14 +104,12 @@ public class SparkTestUtil {
         return doMethod (requestMethod, path, null, false, "text/html");
     }
 
-    public UrlResponse doMethod (String requestMethod, String path, String body)
-        {
+    public UrlResponse doMethod (String requestMethod, String path, String body) {
         return doMethod (requestMethod, path, body, false, "text/html");
     }
 
     public UrlResponse doMethodSecure (
-        String requestMethod, String path, String body, String acceptType)
-        {
+        String requestMethod, String path, String body, String acceptType) {
         return doMethod (requestMethod, path, body, true, acceptType);
     }
 
@@ -115,7 +119,10 @@ public class SparkTestUtil {
     }
 
     private UrlResponse doMethod (
-        String requestMethod, String path, String body, boolean secureConnection,
+        String requestMethod,
+        String path,
+        String body,
+        boolean secureConnection,
         String acceptType) {
 
         try {
@@ -125,18 +132,18 @@ public class SparkTestUtil {
 
             UrlResponse urlResponse = new UrlResponse ();
             urlResponse.status = httpResponse.getStatusLine ().getStatusCode ();
+
             HttpEntity entity = httpResponse.getEntity ();
-            if (entity != null) {
+            if (entity != null)
                 urlResponse.body = EntityUtils.toString (entity);
-            }
-            else {
+            else
                 urlResponse.body = "";
-            }
+
             Map<String, String> headers = new HashMap<> ();
             Header[] allHeaders = httpResponse.getAllHeaders ();
-            for (Header header : allHeaders) {
+            for (Header header : allHeaders)
                 headers.put (header.getName (), header.getValue ());
-            }
+
             urlResponse.headers = headers;
             return urlResponse;
         }
@@ -146,8 +153,12 @@ public class SparkTestUtil {
     }
 
     private HttpUriRequest getHttpRequest (
-        String requestMethod, String path, String body, boolean secureConnection,
+        String requestMethod,
+        String path,
+        String body,
+        boolean secureConnection,
         String acceptType) {
+
         try {
             String protocol = secureConnection? "https" : "http";
             String uri = protocol + "://localhost:" + port + path;
@@ -187,17 +198,14 @@ public class SparkTestUtil {
                 return httpPut;
             }
 
-            if (requestMethod.equals ("HEAD")) {
+            if (requestMethod.equals ("HEAD"))
                 return new HttpHead (uri);
-            }
 
-            if (requestMethod.equals ("TRACE")) {
+            if (requestMethod.equals ("TRACE"))
                 return new HttpTrace (uri);
-            }
 
-            if (requestMethod.equals ("OPTIONS")) {
+            if (requestMethod.equals ("OPTIONS"))
                 return new HttpOptions (uri);
-            }
 
             throw new IllegalArgumentException ("Unknown method " + requestMethod);
         }
@@ -226,6 +234,7 @@ public class SparkTestUtil {
      */
     private SSLSocketFactory getSslFactory () {
         KeyStore keyStore = null;
+
         try {
             keyStore = KeyStore.getInstance (KeyStore.getDefaultType ());
             FileInputStream fis = new FileInputStream (getTrustStoreLocation ());
@@ -241,9 +250,8 @@ public class SparkTestUtil {
         }
         catch (Exception e) {
             e.printStackTrace ();
+            return null;
         }
-
-        return null;
     }
 
     /**
@@ -286,12 +294,6 @@ public class SparkTestUtil {
     public static String getTrustStorePassword () {
         String password = System.getProperty ("javax.net.ssl.trustStorePassword");
         return password == null? getKeystorePassword () : password;
-    }
-
-    public static class UrlResponse {
-        public Map<String, String> headers;
-        public String body;
-        public int status;
     }
 
     public static void sleep (long time) {
