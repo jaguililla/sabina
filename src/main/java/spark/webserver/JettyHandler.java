@@ -4,7 +4,7 @@
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.webserver;
 
 import java.io.IOException;
-
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,34 +29,34 @@ import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
 /**
- * Simple Jetty Handler
+ * Simple Jetty Handler.
  *
  * @author Per Wendel
  */
-class JettyHandler extends SessionHandler  {
-    
-	private static final Logger LOG = Log.getLogger(JettyHandler.class);
-	
+class JettyHandler extends SessionHandler {
+    private static final Logger LOG = Log.getLogger (JettyHandler.class);
+
     private Filter filter;
-    
-    public JettyHandler(Filter filter) {
+
+    public JettyHandler (Filter filter) {
         this.filter = filter;
     }
 
-    @Override
-    public void doHandle(
-            String target, 
-            Request baseRequest, 
-            HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException {
-        LOG.debug("jettyhandler, handle();");
+    @Override public void doHandle (
+        String target,
+        Request baseRequest,
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws IOException, ServletException {
+
+        LOG.debug ("jettyhandler, handle();");
         try {
-            filter.doFilter(request, response, null);
-            baseRequest.setHandled(true);
-        } catch (NotConsumedException ignore){
-            // TODO : Not use an exception in order to be faster.
-            baseRequest.setHandled(false);
+            filter.doFilter (request, response, null);
+            baseRequest.setHandled (true);
+        }
+        catch (NotConsumedException ignore) {
+            // TODO Not use an exception in order to be faster
+            baseRequest.setHandled (false);
         }
     }
-
 }

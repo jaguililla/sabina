@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.webserver;
 
 import java.io.File;
@@ -41,78 +42,83 @@ class SparkServerImpl implements SparkServer {
     private Handler handler;
     private Server server;
 
-    public SparkServerImpl(Handler handler) {
+    public SparkServerImpl (Handler handler) {
         this.handler = handler;
-        System.setProperty("org.mortbay.log.class", "spark.webserver.JettyLogger");
+        System.setProperty ("org.mortbay.log.class", "spark.webserver.JettyLogger");
     }
 
     @Override
-    public void ignite(String host, int port, String keystoreFile,
-            String keystorePassword, String truststoreFile,
-            String truststorePassword, String staticFilesFolder,
-            String externalFilesFolder) {
+    public void ignite (
+        String host, int port, String keystoreFile,
+        String keystorePassword, String truststoreFile,
+        String truststorePassword, String staticFilesFolder,
+        String externalFilesFolder) {
 
         ServerConnector connector;
 
         if (keystoreFile == null) {
-            connector = createSocketConnector();
-        } else {
-            connector = createSecureSocketConnector(keystoreFile,
-                    keystorePassword, truststoreFile, truststorePassword);
+            connector = createSocketConnector ();
+        }
+        else {
+            connector = createSecureSocketConnector (keystoreFile,
+                keystorePassword, truststoreFile, truststorePassword);
         }
 
         // Set some timeout options to make debugging easier.
-        connector.setIdleTimeout(TimeUnit.HOURS.toMillis(1));
-        connector.setSoLingerTime(-1);
-        connector.setHost(host);
-        connector.setPort(port);
+        connector.setIdleTimeout (TimeUnit.HOURS.toMillis (1));
+        connector.setSoLingerTime (-1);
+        connector.setHost (host);
+        connector.setPort (port);
 
-        server = connector.getServer();
-        server.setConnectors(new Connector[] { connector });
+        server = connector.getServer ();
+        server.setConnectors (new Connector[] { connector });
 
         // Handle static file routes
         if (staticFilesFolder == null && externalFilesFolder == null) {
-            server.setHandler(handler);
-        } else {
-            List<Handler> handlersInList = new ArrayList<Handler>();
-            handlersInList.add(handler);
+            server.setHandler (handler);
+        }
+        else {
+            List<Handler> handlersInList = new ArrayList<Handler> ();
+            handlersInList.add (handler);
 
             // Set static file location
-            setStaticFileLocationIfPresent(staticFilesFolder, handlersInList);
+            setStaticFileLocationIfPresent (staticFilesFolder, handlersInList);
 
             // Set external static file location
-            setExternalStaticFileLocationIfPresent(externalFilesFolder, handlersInList);
+            setExternalStaticFileLocationIfPresent (externalFilesFolder, handlersInList);
 
-            HandlerList handlers = new HandlerList();
-            handlers.setHandlers(handlersInList.toArray(new Handler[handlersInList.size()]));
-            server.setHandler(handlers);
+            HandlerList handlers = new HandlerList ();
+            handlers
+                .setHandlers (handlersInList.toArray (new Handler[handlersInList.size ()]));
+            server.setHandler (handlers);
         }
 
-
         try {
-            System.out.println("=== " + NAME + " has ignited ..."); // NOSONAR
-            System.out.println(">>> Listening on " + host + ":" + port); // NOSONAR
+            System.out.println ("=== " + NAME + " has ignited ..."); // NOSONAR
+            System.out.println (">>> Listening on " + host + ":" + port); // NOSONAR
 
-            server.start();
-            server.join();
-        } catch (Exception e) {
-            e.printStackTrace(); // NOSONAR
-            System.exit(100); // NOSONAR
+            server.start ();
+            server.join ();
+        }
+        catch (Exception e) {
+            e.printStackTrace (); // NOSONAR
+            System.exit (100); // NOSONAR
         }
     }
 
     @Override
-    public void stop() {
-        System.out.print(">>> " + NAME + " shutting down..."); // NOSONAR
+    public void stop () {
+        System.out.print (">>> " + NAME + " shutting down..."); // NOSONAR
         try {
             if (server != null) {
-                server.stop();
+                server.stop ();
             }
-        } catch (Exception e) {
-            e.printStackTrace(); // NOSONAR
-            System.exit(100); // NOSONAR
         }
-        System.out.println("done"); // NOSONAR
+        catch (Exception e) {
+            e.printStackTrace (); // NOSONAR
+            System.exit (100); // NOSONAR
+        }
+        System.out.println ("done"); // NOSONAR
     }
 
     /**
@@ -121,28 +127,30 @@ class SparkServerImpl implements SparkServer {
      *
      * @param keystoreFile The keystore file location as string
      * @param keystorePassword the password for the keystore
-     * @param truststoreFile the truststore file location as string, leave null to reuse keystore
+     * @param truststoreFile the truststore file location as string, leave null to reuse
+     * keystore
      * @param truststorePassword the trust store password
      *
      * @return a secure socket connector
      */
-    private static ServerConnector createSecureSocketConnector(String keystoreFile,
-            String keystorePassword, String truststoreFile,
-            String truststorePassword) {
+    private static ServerConnector createSecureSocketConnector (
+        String keystoreFile,
+        String keystorePassword, String truststoreFile,
+        String truststorePassword) {
 
-        SslContextFactory sslContextFactory = new SslContextFactory(
-                keystoreFile);
+        SslContextFactory sslContextFactory = new SslContextFactory (
+            keystoreFile);
 
         if (keystorePassword != null) {
-            sslContextFactory.setKeyStorePassword(keystorePassword);
+            sslContextFactory.setKeyStorePassword (keystorePassword);
         }
         if (truststoreFile != null) {
-            sslContextFactory.setTrustStorePath(truststoreFile);
+            sslContextFactory.setTrustStorePath (truststoreFile);
         }
         if (truststorePassword != null) {
-            sslContextFactory.setTrustStorePassword(truststorePassword);
+            sslContextFactory.setTrustStorePassword (truststorePassword);
         }
-        return new ServerConnector(new Server(), sslContextFactory);
+        return new ServerConnector (new Server (), sslContextFactory);
     }
 
     /**
@@ -150,34 +158,36 @@ class SparkServerImpl implements SparkServer {
      *
      * @return - a server connector
      */
-    private static ServerConnector createSocketConnector() {
-        return new ServerConnector(new Server());
+    private static ServerConnector createSocketConnector () {
+        return new ServerConnector (new Server ());
     }
 
     /**
      * Sets static file location if present
      */
-    private static void setStaticFileLocationIfPresent(String staticFilesRoute, List<Handler> handlersInList) {
+    private static void setStaticFileLocationIfPresent (
+        String staticFilesRoute, List<Handler> handlersInList) {
         if (staticFilesRoute != null) {
-            ResourceHandler resourceHandler = new ResourceHandler();
-            Resource staticResources = Resource.newClassPathResource(staticFilesRoute);
-            resourceHandler.setBaseResource(staticResources);
-            resourceHandler.setWelcomeFiles(new String[] { "index.html" });
-            handlersInList.add(resourceHandler);
+            ResourceHandler resourceHandler = new ResourceHandler ();
+            Resource staticResources = Resource.newClassPathResource (staticFilesRoute);
+            resourceHandler.setBaseResource (staticResources);
+            resourceHandler.setWelcomeFiles (new String[] { "index.html" });
+            handlersInList.add (resourceHandler);
         }
     }
 
     /**
      * Sets external static file location if present
      */
-    private static void setExternalStaticFileLocationIfPresent(String externalFilesRoute, List<Handler> handlersInList) {
+    private static void setExternalStaticFileLocationIfPresent (
+        String externalFilesRoute, List<Handler> handlersInList) {
         if (externalFilesRoute != null) {
-            ResourceHandler externalResourceHandler = new ResourceHandler();
-            Resource externalStaticResources = Resource.newResource(new File(externalFilesRoute));
-            externalResourceHandler.setBaseResource(externalStaticResources);
-            externalResourceHandler.setWelcomeFiles(new String[] { "index.html" });
-            handlersInList.add(externalResourceHandler);
+            ResourceHandler externalResourceHandler = new ResourceHandler ();
+            Resource externalStaticResources =
+                Resource.newResource (new File (externalFilesRoute));
+            externalResourceHandler.setBaseResource (externalStaticResources);
+            externalResourceHandler.setWelcomeFiles (new String[] { "index.html" });
+            handlersInList.add (externalResourceHandler);
         }
     }
-
 }
