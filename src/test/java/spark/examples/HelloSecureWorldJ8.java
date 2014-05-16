@@ -1,7 +1,7 @@
 package spark.examples;
 
-import static spark.SparkJ8.get;
-import static spark.SparkJ8.setSecure;
+import static spark.Spark.get;
+import static spark.Spark.setSecure;
 
 /**
  * You'll need to provide a JKS keystore as arg 0 and its password as arg 1.

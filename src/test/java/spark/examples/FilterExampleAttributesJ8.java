@@ -16,8 +16,8 @@
  */
 package spark.examples;
 
-import static spark.SparkJ8.after;
-import static spark.SparkJ8.get;
+import static spark.Spark.after;
+import static spark.Spark.get;
 
 /**
  * Example showing the use of attributes

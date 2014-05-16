@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,19 +30,19 @@ public class HaltException extends RuntimeException {
     private int statusCode = HttpServletResponse.SC_OK;
     private String body = null;
 
-    HaltException() {
-        super();
+    HaltException () {
+        super ();
     }
 
-    HaltException(int statusCode) {
+    HaltException (int statusCode) {
         this.statusCode = statusCode;
     }
 
-    HaltException(String body) {
+    HaltException (String body) {
         this.body = body;
     }
 
-    HaltException(int statusCode, String body) {
+    HaltException (int statusCode, String body) {
         this.statusCode = statusCode;
         this.body = body;
     }
@@ -49,16 +50,14 @@ public class HaltException extends RuntimeException {
     /**
      * @return the statusCode
      */
-    public int getStatusCode() {
+    public int getStatusCode () {
         return statusCode;
     }
-
 
     /**
      * @return the body
      */
-    public String getBody() {
+    public String getBody () {
         return body;
     }
-
 }

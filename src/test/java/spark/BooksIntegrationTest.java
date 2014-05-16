@@ -4,9 +4,9 @@ import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static spark.SparkJ8.after;
-import static spark.SparkJ8.before;
-import static spark.SparkJ8.stop;
+import static spark.Spark.after;
+import static spark.Spark.before;
+import static spark.Spark.stop;
 
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;

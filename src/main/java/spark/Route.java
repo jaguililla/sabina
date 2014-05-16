@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark;
 
-
 /**
- * A Route is built up by a path (for url-matching) and the implementation of the 'handle' method.
- * When a request is made, if present, the matching routes 'handle' method is invoked. The object
+ * A Route is built up by a path (for url-matching) and the implementation of the 'handle'
+ * method.
+ * When a request is made, if present, the matching routes 'handle' method is invoked. The
+ * object
  * that is returned from 'handle' will be set to the response body (toString()).
  *
  * @author Per Wendel
  */
-public abstract class Route extends AbstractRoute {
+public abstract class Route extends Action {
 
     protected static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
@@ -33,8 +35,8 @@ public abstract class Route extends AbstractRoute {
      *
      * @param path The route path which is used for matching. (e.g. /hello, users/:name)
      */
-    protected Route(String path) {
-        this(path, DEFAULT_ACCEPT_TYPE);
+    protected Route (String path) {
+        this (path, DEFAULT_ACCEPT_TYPE);
     }
 
     /**
@@ -43,7 +45,7 @@ public abstract class Route extends AbstractRoute {
      * @param path The route path which is used for matching. (e.g. /hello, users/:name)
      * @param acceptType The accept type which is used for matching.
      */
-    protected Route(String path, String acceptType) {
+    protected Route (String path, String acceptType) {
         super (path, acceptType);
     }
 
@@ -55,21 +57,20 @@ public abstract class Route extends AbstractRoute {
      *
      * @return The content to be set in the response
      */
-    public abstract Object handle(Request request, Response response);
+    public abstract Object handle (Request request, Response response);
 
     /**
-     * This method should render the given element into something that can be send through Response element.
-     * By default this method returns the result of calling toString method in given element, but can be overridden.
+     * This method should render the given element into something that can be send through
+     * Response element.
+     * By default this method returns the result of calling toString method in given element,
+     * but can be overridden.
      *
      * @param element to be rendered.
+     *
      * @return body content.
      */
     //TODO change String return type to Stream. It should be done in another issue.
-    public String render(Object element) {
-    	if(element != null) {
-    		return element.toString();
-    	} else {
-    		return null;
-    	}
+    public String render (Object element) {
+        return element != null? element.toString () : null;
     }
 }

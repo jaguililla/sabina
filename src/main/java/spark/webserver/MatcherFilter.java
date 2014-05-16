@@ -33,10 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Access;
 import spark.HaltException;
 import spark.Request;
-import spark.RequestResponseFactory;
 import spark.Response;
 import spark.Route;
 import spark.route.HttpMethod;
@@ -57,8 +55,8 @@ public class MatcherFilter implements Filter {
         INTERNAL_ERROR = "<html><body><h2>500 Internal Error</h2></body></html>",
         NOT_FOUND =
             "<html><body>" +
-            "<h2>404 Not found</h2>The requested route [%s] has not been mapped in Spark" +
-            "</body></html>";
+                "<h2>404 Not found</h2>The requested route [%s] has not been mapped in Spark" +
+                "</body></html>";
 
     private final RouteMatcher routeMatcher;
     private final boolean isServletContext, hasOtherHandlers;
@@ -69,7 +67,8 @@ public class MatcherFilter implements Filter {
      * @param routeMatcher The route matcher
      * @param isServletContext If true, chain.doFilter will be invoked if request is not
      * consumed by Spark.
-     * @param hasOtherHandlers If true, do nothing if request is not consumed by Spark in order
+     * @param hasOtherHandlers If true, do nothing if request is not consumed by Spark in
+     * order
      * to let others handlers process the request.
      */
     public MatcherFilter (
@@ -138,8 +137,9 @@ public class MatcherFilter implements Filter {
 
         boolean consumed = bodyContent != null;
 
-        if (!consumed && hasOtherHandlers)
+        if (!consumed && hasOtherHandlers) {
             throw new NotConsumedException ();
+        }
 
         if (!consumed && !isServletContext) {
             httpRes.setStatus (HttpServletResponse.SC_NOT_FOUND);
@@ -171,8 +171,8 @@ public class MatcherFilter implements Filter {
             String result = null;
             if (aTarget instanceof Route) {
                 Route route = ((Route)aTarget);
-                Request request = RequestResponseFactory.create (aMatch, aHttpReq);
-                Response response = RequestResponseFactory.create (aHttpRes);
+                Request request = Request.create (aMatch, aHttpReq);
+                Response response = Response.create (aHttpRes);
 
                 aReq.setDelegate (request);
                 aRes.setDelegate (response);
@@ -209,8 +209,8 @@ public class MatcherFilter implements Filter {
         for (RouteMatch filterMatch : matchSet) {
             Object filterTarget = filterMatch.getTarget ();
             if (filterTarget instanceof spark.Filter) {
-                Request request = RequestResponseFactory.create (filterMatch, aHttpRequest);
-                Response response = RequestResponseFactory.create (aHttpResponse);
+                Request request = Request.create (filterMatch, aHttpRequest);
+                Response response = Response.create (aHttpResponse);
 
                 aReq.setDelegate (request);
                 aRes.setDelegate (response);
@@ -218,9 +218,10 @@ public class MatcherFilter implements Filter {
                 spark.Filter filter = (spark.Filter)filterTarget;
                 filter.handle (aReq, aRes);
 
-                String bodyAfterFilter = Access.getBody (response);
-                if (bodyAfterFilter != null)
+                String bodyAfterFilter = response.body ();
+                if (bodyAfterFilter != null) {
                     aBodyContent = bodyAfterFilter;
+                }
             }
         }
         return aBodyContent;
@@ -236,8 +237,8 @@ public class MatcherFilter implements Filter {
         for (RouteMatch filterMatch : matchSet) {
             Object filterTarget = filterMatch.getTarget ();
             if (filterTarget instanceof spark.Filter) {
-                Request request = RequestResponseFactory.create (filterMatch, aHttpRequest);
-                Response response = RequestResponseFactory.create (aHttpResponse);
+                Request request = Request.create (filterMatch, aHttpRequest);
+                Response response = Response.create (aHttpResponse);
 
                 aReq.setDelegate (request);
                 aRes.setDelegate (response);
@@ -245,9 +246,10 @@ public class MatcherFilter implements Filter {
                 spark.Filter filter = (spark.Filter)filterTarget;
                 filter.handle (aReq, aRes);
 
-                String bodyAfterFilter = Access.getBody (response);
-                if (bodyAfterFilter != null)
+                String bodyAfterFilter = response.body ();
+                if (bodyAfterFilter != null) {
                     aBodyContent = bodyAfterFilter;
+                }
             }
         }
 

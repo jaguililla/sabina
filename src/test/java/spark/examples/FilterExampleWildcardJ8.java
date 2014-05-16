@@ -16,7 +16,7 @@
  */
 package spark.examples;
 
-import static spark.SparkJ8.before;
+import static spark.Spark.before;
 
 public class FilterExampleWildcardJ8 {
     public static void main(String[] args) {

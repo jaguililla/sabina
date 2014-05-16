@@ -1,7 +1,7 @@
 package spark;
 
 import static java.lang.Thread.sleep;
-import static spark.SparkJ8.*;
+import static spark.Spark.*;
 import static spark.util.SparkTestUtil.getKeyStoreLocation;
 import static spark.util.SparkTestUtil.getKeystorePassword;
 

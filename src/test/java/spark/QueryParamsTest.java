@@ -10,23 +10,23 @@ import java.util.Map;
 
 import org.junit.Test;
 
-public class QueryParamsMapTest {
+public class QueryParamsTest {
 
-    QueryParamsMap queryMap = new QueryParamsMap ();
+    QueryParams queryMap = new QueryParams ();
 
     @Test public void constructorWithParametersMap () {
         Map<String, String[]> params = new HashMap<String, String[]> ();
 
         params.put ("user[info][name]", new String[] { "fede" });
 
-        QueryParamsMap queryMap = new QueryParamsMap (params);
+        QueryParams queryMap = new QueryParams (params);
 
         assertEquals ("fede", queryMap.get ("user").get ("info").get ("name").value ());
         assertEquals ("fede", queryMap.get ("user", "info", "name").value ());
     }
 
     @Test public void keyToMap () {
-        QueryParamsMap queryMap = new QueryParamsMap ();
+        QueryParams queryMap = new QueryParams ();
 
         queryMap.loadKeys ("user[info][first_name]", new String[] { "federico" });
         queryMap.loadKeys ("user[info][last_name]", new String[] { "dayan" });
@@ -51,7 +51,7 @@ public class QueryParamsMapTest {
     }
 
     @Test public void testDifferentTypesForValue () {
-        QueryParamsMap queryMap = new QueryParamsMap ();
+        QueryParams queryMap = new QueryParams ();
 
         queryMap.loadKeys ("user[age]", new String[] { "10" });
         queryMap.loadKeys ("user[agrees]", new String[] { "true" });
@@ -88,16 +88,16 @@ public class QueryParamsMapTest {
 
     @Test
     public void itShouldbeNullSafe () {
-        QueryParamsMap queryParamsMap = new QueryParamsMap ();
+        QueryParams queryParams = new QueryParams ();
 
-        String ret = queryParamsMap.get ("x").get ("z").get ("y").value ("w");
+        String ret = queryParams.get ("x").get ("z").get ("y").value ("w");
 
         assertNull (ret);
     }
 
     @Test
     public void testConstructor () {
-        QueryParamsMap queryMap = new QueryParamsMap ("user[name][more]", "fede");
+        QueryParams queryMap = new QueryParams ("user[name][more]", "fede");
 
         assertFalse (queryMap.getQueryMap ().isEmpty ());
         assertFalse (queryMap.getQueryMap ().get ("user").getQueryMap ().isEmpty ());
@@ -116,7 +116,7 @@ public class QueryParamsMapTest {
         params.put ("user[info][name]", new String[] { "fede" });
         params.put ("user[info][last]", new String[] { "dayan" });
 
-        QueryParamsMap queryMap = new QueryParamsMap (params);
+        QueryParams queryMap = new QueryParams (params);
 
         Map<String, String[]> map = queryMap.get ("user", "info").toMap ();
 

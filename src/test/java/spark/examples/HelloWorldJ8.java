@@ -16,7 +16,7 @@
  */
 package spark.examples;
 
-import static spark.SparkJ8.get;
+import static spark.Spark.get;
 
 public class HelloWorldJ8 {
    public static void main(String[] args) {

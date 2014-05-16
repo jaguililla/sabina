@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
-import spark.QueryParamsMap;
+import spark.QueryParams;
 import spark.Request;
 import spark.Session;
 
@@ -153,11 +153,11 @@ final class RequestWrapper extends Request {
         return delegate.session (create);
     }
 
-    @Override public QueryParamsMap queryMap () {
+    @Override public QueryParams queryMap () {
         return delegate.queryMap ();
     }
 
-    @Override public QueryParamsMap queryMap (String key) {
+    @Override public QueryParams queryMap (String key) {
         return delegate.queryMap (key);
     }
 

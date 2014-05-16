@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Access;
+import spark.Spark;
 import spark.webserver.MatcherFilter;
 
 /**
@@ -49,17 +49,21 @@ public class SparkFilter implements Filter {
         String path = request.getRequestURI ();
         path = path.substring (request.getContextPath ().length ());
 
-        if (path.length () > 0)
+        if (path.length () > 0) {
             path = path.substring (1);
+        }
 
-        if (!path.startsWith (filterPath) && filterPath.equals (path + SLASH))
+        if (!path.startsWith (filterPath) && filterPath.equals (path + SLASH)) {
             path += SLASH;
+        }
 
-        if (path.startsWith (filterPath))
+        if (path.startsWith (filterPath)) {
             path = path.substring (filterPath.length ());
+        }
 
-        if (!path.startsWith (SLASH))
+        if (!path.startsWith (SLASH)) {
             path = SLASH + path;
+        }
 
         return path;
     }
@@ -85,7 +89,7 @@ public class SparkFilter implements Filter {
     private MatcherFilter matcherFilter;
 
     @Override public void init (FilterConfig filterConfig) throws ServletException {
-        Access.runFromServlet ();
+        Spark.runFromServlet ();
 
         final SparkApplication application = getApplication (filterConfig);
         application.init ();

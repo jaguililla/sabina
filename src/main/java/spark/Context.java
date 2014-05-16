@@ -4,17 +4,13 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * Created by jam on 6/04/14.
- */
 abstract class Context {
-    public final AbstractRoute abstractRoute;
+    protected final Action mAction;
     public final Request request;
     public final Response response;
 
-    public Context (
-        final AbstractRoute aAbstractRoute, final Request aRequest, final Response aResponse) {
-        abstractRoute = aAbstractRoute;
+    protected Context (Action aAction, Request aRequest, Response aResponse) {
+        mAction = aAction;
         request = aRequest;
         response = aResponse;
     }
@@ -47,7 +43,7 @@ abstract class Context {
         return request.userAgent ();
     }
 
-    public QueryParamsMap queryMap () {
+    public QueryParams queryMap () {
         return request.queryMap ();
     }
 
@@ -123,7 +119,7 @@ abstract class Context {
         return request.queryParams (queryParam);
     }
 
-    public QueryParamsMap queryMap (String key) {
+    public QueryParams queryMap (String key) {
         return request.queryMap (key);
     }
 
@@ -196,18 +192,18 @@ abstract class Context {
     }
 
     public void halt () {
-        abstractRoute.halt ();
+        mAction.halt ();
     }
 
     public void halt (int status) {
-        abstractRoute.halt (status);
+        mAction.halt (status);
     }
 
     public void halt (String body) {
-        abstractRoute.halt (body);
+        mAction.halt (body);
     }
 
     public void halt (int status, String body) {
-        abstractRoute.halt (status, body);
+        mAction.halt (status, body);
     }
 }

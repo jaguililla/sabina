@@ -4,7 +4,7 @@
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -16,7 +16,6 @@
  */
 package spark.route;
 
-
 /**
  * RouteMatcherFactory
  *
@@ -24,18 +23,18 @@ package spark.route;
  */
 public final class RouteMatcherFactory {
     /** The logger. */
-    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(RouteMatcherFactory.class);
+    private static final org.slf4j.Logger LOG =
+        org.slf4j.LoggerFactory.getLogger (RouteMatcherFactory.class);
 
     private static RouteMatcher routeMatcher = null;
 
-    private RouteMatcherFactory() {}
-    
-    public static synchronized RouteMatcher get() {
+    private RouteMatcherFactory () {}
+
+    public static synchronized RouteMatcher get () {
         if (routeMatcher == null) {
-            LOG.debug("creates RouteMatcher");
-            routeMatcher = new SimpleRouteMatcher();
+            LOG.debug ("creates RouteMatcher");
+            routeMatcher = new SimpleRouteMatcher ();
         }
         return routeMatcher;
     }
-
 }

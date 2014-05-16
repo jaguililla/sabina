@@ -16,6 +16,9 @@
  */
 package spark;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import spark.route.HttpMethod;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
@@ -25,15 +28,15 @@ import spark.webserver.SparkServerFactory;
 /**
  * The main building block of a Spark application is a set of routes. A route is
  * made up of three simple pieces:
- * <p/>
+ * <p>
  * <ul>
  * <li>A verb (get, post, put, delete, head, trace, connect, options)</li>
  * <li>A path (/hello, /users/:name)</li>
  * <li>A callback ( handle(Request request, Response response) )</li>
  * </ul>
- * <p/>
+ * <p>
  * Example:
- * <p/>
+ * <p>
  * <pre>
  * {@code
  * Spark.get(new Route("/hello") {
@@ -42,14 +45,58 @@ import spark.webserver.SparkServerFactory;
  *    }
  * });
  * </pre>
- * <p/>
+ * <p>
  * <code>
- * <p/>
+ * <p>
  * </code>
  *
  * @author Per Wendel
  */
 public class Spark {
+    private static class HandlerRoute extends Route {
+        final Function<RouteContext, Object> mHandler;
+
+        protected HandlerRoute (String path, Function<RouteContext, Object> aHandler) {
+            super (path, DEFAULT_ACCEPT_TYPE);
+            mHandler = aHandler;
+        }
+
+        protected HandlerRoute (
+            String path, String acceptType, Function<RouteContext, Object> aHandler) {
+
+            super (path, acceptType);
+            mHandler = aHandler;
+        }
+
+        @Override public Object handle (Request request, Response response) {
+            return mHandler.apply (new RouteContext (this, request, response));
+        }
+    }
+
+    private static class HandlerFilter extends Filter {
+        final Consumer<FilterContext> mHandler;
+
+        protected HandlerFilter (Consumer<FilterContext> aHandler) {
+            super (DEFAUT_CONTENT_TYPE);
+            mHandler = aHandler;
+        }
+
+        protected HandlerFilter (String path, Consumer<FilterContext> aHandler) {
+            super (path, DEFAUT_CONTENT_TYPE);
+            mHandler = aHandler;
+        }
+
+        protected HandlerFilter (
+            String path, String acceptType, Consumer<FilterContext> aHandler) {
+
+            super (path, acceptType);
+            mHandler = aHandler;
+        }
+
+        @Override public void handle (Request request, Response response) {
+            mHandler.accept (new FilterContext (this, request, response));
+        }
+    }
 
     private static final int SPARK_DEFAULT_PORT = 4567;
 
@@ -69,7 +116,7 @@ public class Spark {
     private static String externalStaticFileFolder = null;
 
     // Hide constructor
-    protected Spark() {
+    protected Spark () {
         throw new IllegalStateException ();
     }
 
@@ -80,9 +127,9 @@ public class Spark {
      *
      * @param ipAddress The ipAddress
      */
-    public static synchronized void setIpAddress(String ipAddress) {
+    public static synchronized void setIpAddress (String ipAddress) {
         if (initialized) {
-            throwBeforeRouteMappingException();
+            throwBeforeRouteMappingException ();
         }
         Spark.ipAddress = ipAddress;
     }
@@ -93,9 +140,9 @@ public class Spark {
      *
      * @param port The port number
      */
-    public static synchronized void setPort(int port) {
+    public static synchronized void setPort (int port) {
         if (initialized) {
-            throwBeforeRouteMappingException();
+            throwBeforeRouteMappingException ();
         }
         Spark.port = port;
     }
@@ -105,27 +152,28 @@ public class Spark {
      * truststore. This has to be called before any route mapping is done. You
      * have to supply a keystore file, truststore file is optional (keystore
      * will be reused).
-     * <p/>
+     * <p>
      * This method is only relevant when using embedded Jetty servers. It should
      * not be used if you are using Servlets, where you will need to secure the
      * connection in the servlet container
      *
-     * @param keystoreFile       The keystore file location as string
-     * @param keystorePassword   the password for the keystore
-     * @param truststoreFile     the truststore file location as string, leave null to reuse
-     *                           keystore
+     * @param keystoreFile The keystore file location as string
+     * @param keystorePassword the password for the keystore
+     * @param truststoreFile the truststore file location as string, leave null to reuse
+     * keystore
      * @param truststorePassword the trust store password
      */
-    public static synchronized void setSecure(String keystoreFile,
-                                              String keystorePassword, String truststoreFile,
-                                              String truststorePassword) {
+    public static synchronized void setSecure (
+        String keystoreFile,
+        String keystorePassword, String truststoreFile,
+        String truststorePassword) {
         if (initialized) {
-            throwBeforeRouteMappingException();
+            throwBeforeRouteMappingException ();
         }
 
         if (keystoreFile == null) {
-            throw new IllegalArgumentException(
-                    "Must provide a keystore file to run secured");
+            throw new IllegalArgumentException (
+                "Must provide a keystore file to run secured");
         }
 
         Spark.keystoreFile = keystoreFile;
@@ -140,9 +188,9 @@ public class Spark {
      *
      * @param folder the folder in classpath.
      */
-    public static synchronized void staticFileLocation(String folder) {
+    public static synchronized void staticFileLocation (String folder) {
         if (initialized) {
-            throwBeforeRouteMappingException();
+            throwBeforeRouteMappingException ();
         }
         staticFileFolder = folder;
     }
@@ -153,9 +201,9 @@ public class Spark {
      *
      * @param externalFolder the external folder serving static files.
      */
-    public static synchronized void externalStaticFileLocation(String externalFolder) {
+    public static synchronized void externalStaticFileLocation (String externalFolder) {
         if (initialized) {
-            throwBeforeRouteMappingException();
+            throwBeforeRouteMappingException ();
         }
         externalStaticFileFolder = externalFolder;
     }
@@ -165,8 +213,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void get(Route route) {
-        addRoute(HttpMethod.get.name(), route);
+    public static synchronized void get (Route route) {
+        addRoute (HttpMethod.get.name (), route);
     }
 
     /**
@@ -174,8 +222,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void post(Route route) {
-        addRoute(HttpMethod.post.name(), route);
+    public static synchronized void post (Route route) {
+        addRoute (HttpMethod.post.name (), route);
     }
 
     /**
@@ -183,8 +231,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void put(Route route) {
-        addRoute(HttpMethod.put.name(), route);
+    public static synchronized void put (Route route) {
+        addRoute (HttpMethod.put.name (), route);
     }
 
     /**
@@ -192,8 +240,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void patch(Route route) {
-        addRoute(HttpMethod.patch.name(), route);
+    public static synchronized void patch (Route route) {
+        addRoute (HttpMethod.patch.name (), route);
     }
 
     /**
@@ -201,8 +249,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void delete(Route route) {
-        addRoute(HttpMethod.delete.name(), route);
+    public static synchronized void delete (Route route) {
+        addRoute (HttpMethod.delete.name (), route);
     }
 
     /**
@@ -210,8 +258,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void head(Route route) {
-        addRoute(HttpMethod.head.name(), route);
+    public static synchronized void head (Route route) {
+        addRoute (HttpMethod.head.name (), route);
     }
 
     /**
@@ -219,8 +267,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void trace(Route route) {
-        addRoute(HttpMethod.trace.name(), route);
+    public static synchronized void trace (Route route) {
+        addRoute (HttpMethod.trace.name (), route);
     }
 
     /**
@@ -228,8 +276,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void connect(Route route) {
-        addRoute(HttpMethod.connect.name(), route);
+    public static synchronized void connect (Route route) {
+        addRoute (HttpMethod.connect.name (), route);
     }
 
     /**
@@ -237,8 +285,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void options(Route route) {
-        addRoute(HttpMethod.options.name(), route);
+    public static synchronized void options (Route route) {
+        addRoute (HttpMethod.options.name (), route);
     }
 
     /**
@@ -246,8 +294,8 @@ public class Spark {
      *
      * @param filter The filter
      */
-    public static synchronized void before(Filter filter) {
-        addFilter(HttpMethod.before.name(), filter);
+    public static synchronized void before (Filter filter) {
+        addFilter (HttpMethod.before.name (), filter);
     }
 
     /**
@@ -255,69 +303,149 @@ public class Spark {
      *
      * @param filter The filter
      */
-    public static synchronized void after(Filter filter) {
-        addFilter(HttpMethod.after.name(), filter);
+    public static synchronized void after (Filter filter) {
+        addFilter (HttpMethod.after.name (), filter);
+    }
+
+    public static synchronized void get (
+        String aPath, Function<RouteContext, Object> aHandler) {
+        addRoute (HttpMethod.get.name (), new HandlerRoute (aPath, aHandler));
+    }
+
+    public static synchronized void get (
+        String aPath, String aAcceptType, Function<RouteContext, Object> aHandler) {
+
+        addRoute (HttpMethod.get.name (), new HandlerRoute (aPath, aAcceptType, aHandler));
+    }
+
+    public static synchronized void post (
+        String aPath, Function<RouteContext, Object> aHandler) {
+        addRoute (HttpMethod.post.name (), new HandlerRoute (aPath, aHandler));
+    }
+
+    public static synchronized void put (
+        String aPath, Function<RouteContext, Object> aHandler) {
+        addRoute (HttpMethod.put.name (), new HandlerRoute (aPath, aHandler));
+    }
+
+    public static synchronized void patch (
+        String aPath, Function<RouteContext, Object> aHandler) {
+        addRoute (HttpMethod.patch.name (), new HandlerRoute (aPath, aHandler));
+    }
+
+    public static synchronized void delete (
+        String aPath, Function<RouteContext, Object> aHandler) {
+        addRoute (HttpMethod.delete.name (), new HandlerRoute (aPath, aHandler));
+    }
+
+    public static synchronized void head (
+        String aPath, Function<RouteContext, Object> aHandler) {
+        addRoute (HttpMethod.head.name (), new HandlerRoute (aPath, aHandler));
+    }
+
+    public static synchronized void trace (
+        String aPath, Function<RouteContext, Object> aHandler) {
+        addRoute (HttpMethod.trace.name (), new HandlerRoute (aPath, aHandler));
+    }
+
+    public static synchronized void connect (
+        String aPath, Function<RouteContext, Object> aHandler) {
+        addRoute (HttpMethod.connect.name (), new HandlerRoute (aPath, aHandler));
+    }
+
+    public static synchronized void options (
+        String aPath, Function<RouteContext, Object> aHandler) {
+        addRoute (HttpMethod.options.name (), new HandlerRoute (aPath, aHandler));
+    }
+
+    public static synchronized void before (Consumer<FilterContext> aHandler) {
+        addFilter (HttpMethod.before.name (), new HandlerFilter (aHandler));
+    }
+
+    public static synchronized void before (String aPath, Consumer<FilterContext> aHandler) {
+        addFilter (HttpMethod.before.name (), new HandlerFilter (aPath, aHandler));
+    }
+
+    public static synchronized void before (
+        String aPath, String aAcceptType, Consumer<FilterContext> aHandler) {
+
+        addFilter (HttpMethod.before.name (),
+            new HandlerFilter (aPath, aAcceptType, aHandler));
+    }
+
+    public static synchronized void after (Consumer<FilterContext> aHandler) {
+        addFilter (HttpMethod.after.name (), new HandlerFilter (aHandler));
+    }
+
+    public static synchronized void after (String aPath, Consumer<FilterContext> aHandler) {
+        addFilter (HttpMethod.after.name (), new HandlerFilter (aPath, aHandler));
+    }
+
+    public static synchronized void after (
+        String aPath, String aAcceptType, Consumer<FilterContext> aHandler) {
+
+        addFilter (HttpMethod.after.name (), new HandlerFilter (aPath, aAcceptType, aHandler));
     }
 
     /**
      * Stops the Spark server and clears all routes
      */
-    public static synchronized void stop() {
+    public static synchronized void stop () {
         if (server != null) {
-            routeMatcher.clearRoutes();
-            server.stop();
+            routeMatcher.clearRoutes ();
+            server.stop ();
         }
         initialized = false;
     }
 
-    static synchronized void runFromServlet() {
+    public static synchronized void runFromServlet () {
         if (!initialized) {
-            routeMatcher = RouteMatcherFactory.get();
+            routeMatcher = RouteMatcherFactory.get ();
             initialized = true;
         }
     }
 
-    protected static void addRoute(String httpMethod, Route route) {
-        init();
-        routeMatcher.parseValidateAddRoute(httpMethod + " '" + route.getPath()
-                + "'", route.getAcceptType(), route);
+    protected static void addRoute (String httpMethod, Route route) {
+        init ();
+        routeMatcher.parseValidateAddRoute (httpMethod + " '" + route.getPath ()
+            + "'", route.getAcceptType (), route);
     }
 
-    protected static void addFilter(String httpMethod, Filter filter) {
-        init();
-        routeMatcher.parseValidateAddRoute(httpMethod + " '" + filter.getPath()
-                + "'", filter.getAcceptType(), filter);
+    protected static void addFilter (String httpMethod, Filter filter) {
+        init ();
+        routeMatcher.parseValidateAddRoute (httpMethod + " '" + filter.getPath ()
+            + "'", filter.getAcceptType (), filter);
     }
 
-    private static boolean hasMultipleHandlers() {
+    private static boolean hasMultipleHandlers () {
         return staticFileFolder != null || externalStaticFileFolder != null;
     }
 
-    private static synchronized void init() {
+    private static synchronized void init () {
         if (!initialized) {
-            routeMatcher = RouteMatcherFactory.get();
-            new Thread(new Runnable() {
+            routeMatcher = RouteMatcherFactory.get ();
+            new Thread (new Runnable () {
                 @Override
-                public void run() {
-                    server = SparkServerFactory.create(hasMultipleHandlers());
-                    server.ignite(
-                            ipAddress,
-                            port,
-                            keystoreFile,
-                            keystorePassword,
-                            truststoreFile,
-                            truststorePassword,
-                            staticFileFolder,
-                            externalStaticFileFolder);
+                public void run () {
+                    server = SparkServerFactory.create (hasMultipleHandlers ());
+                    server.ignite (
+                        ipAddress,
+                        port,
+                        keystoreFile,
+                        keystorePassword,
+                        truststoreFile,
+                        truststorePassword,
+                        staticFileFolder,
+                        externalStaticFileFolder);
                 }
-            }).start();
+            }).start ();
             initialized = true;
         }
     }
 
-    private static void throwBeforeRouteMappingException() {
-        throw new IllegalStateException(
-                "This must be done before route mapping has begun");
+    private static void throwBeforeRouteMappingException () {
+        throw new IllegalStateException (
+            "This must be done before route mapping has begun");
     }
 
     /*
@@ -326,7 +454,8 @@ public class Spark {
      *
      * TODO: Make available as maven dependency, upload on repo etc...
      * TODO: Add *, splat possibility
-     * TODO: Add validation of routes, invalid characters and stuff, also validate parameters, check static, ONGOING
+     * TODO: Add validation of routes, invalid characters and stuff,
+     * also validate parameters, check static, ONGOING
      *
      * TODO: Javadoc
      *
@@ -339,10 +468,12 @@ public class Spark {
      * Ongoing
      *
      * Done
-     * TODO: Routes are matched in the order they are defined. The rirst route that matches the request is invoked. ???
+     * TODO: Routes are matched in the order they are defined. The rirst route that matches
+     * the request is invoked. ???
      * TODO: Before method for filters...check sinatra page
      * TODO: Setting Headers
-     * TODO: Do we want get-prefixes for all *getters* or do we want a more ruby like approach???
+     * TODO: Do we want get-prefixes for all *getters* or do we want a more ruby like
+     * approach???
      * (Maybe have two choices?)
      * TODO: Setting Body, Status Code
      * TODO: Add possibility to set content type on return, DONE

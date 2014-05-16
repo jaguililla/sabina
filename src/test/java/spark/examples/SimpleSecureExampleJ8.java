@@ -16,9 +16,9 @@
  */
 package spark.examples;
 
-import static spark.SparkJ8.get;
-import static spark.SparkJ8.post;
-import static spark.SparkJ8.setSecure;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.setSecure;
 
 /**
  * A simple example just showing some basic functionality You'll need to provide

@@ -1,12 +1,11 @@
 package spark;
 
 import static java.lang.Thread.sleep;
-import static spark.SparkJ8.post;
-import static spark.SparkJ8.stop;
+import static spark.Spark.post;
+import static spark.Spark.stop;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import spark.util.SparkTestUtil;
 
@@ -15,7 +14,6 @@ import spark.util.SparkTestUtil;
  *
  * @author dreambrother
  */
-@Ignore
 public class CookiesIntegrationTest {
 
     static SparkTestUtil testUtil;

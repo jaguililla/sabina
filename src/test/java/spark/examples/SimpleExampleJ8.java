@@ -16,8 +16,8 @@
  */
 package spark.examples;
 
-import static spark.SparkJ8.get;
-import static spark.SparkJ8.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 /**
  * A simple example just showing some basic functionality

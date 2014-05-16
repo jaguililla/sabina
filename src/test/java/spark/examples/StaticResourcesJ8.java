@@ -16,8 +16,8 @@
  */
 package spark.examples;
 
-import static spark.SparkJ8.get;
-import static spark.SparkJ8.staticFileLocation;
+import static spark.Spark.get;
+import static spark.Spark.staticFileLocation;
 
 /**
  * Example showing how serve static resources.

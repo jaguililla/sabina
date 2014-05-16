@@ -16,9 +16,9 @@
  */
 package spark.examples;
 
-import static spark.SparkJ8.after;
-import static spark.SparkJ8.before;
-import static spark.SparkJ8.get;
+import static spark.Spark.after;
+import static spark.Spark.before;
+import static spark.Spark.get;
 
 import java.util.HashMap;
 import java.util.Map;

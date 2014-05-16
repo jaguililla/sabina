@@ -4,7 +4,7 @@
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -27,26 +27,25 @@ import java.util.List;
 public final class SparkUtils {
 
     public static final String ALL_PATHS = "+/*paths";
-    
-    private SparkUtils() {}
-    
-    public static List<String> convertRouteToList(String route) {
-        String[] pathArray = route.split("/");
-        List<String> path = new ArrayList<String>();
+
+    private SparkUtils () {}
+
+    public static List<String> convertRouteToList (String route) {
+        String[] pathArray = route.split ("/");
+        List<String> path = new ArrayList<String> ();
         for (String p : pathArray) {
-            if (p.length() > 0) {
-                path.add(p);
+            if (p.length () > 0) {
+                path.add (p);
             }
         }
         return path;
     }
-    
-    public static boolean isParam(String routePart) {
-        return routePart.startsWith(":");
+
+    public static boolean isParam (String routePart) {
+        return routePart.startsWith (":");
     }
 
-    public static boolean isSplat(String routePart) {
-        return routePart.equals("*");
+    public static boolean isSplat (String routePart) {
+        return routePart.equals ("*");
     }
-    
 }

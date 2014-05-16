@@ -16,10 +16,10 @@
  */
 package spark.examples;
 
-import static spark.SparkJ8.delete;
-import static spark.SparkJ8.get;
-import static spark.SparkJ8.post;
-import static spark.SparkJ8.put;
+import static spark.Spark.delete;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.put;
 
 import java.util.HashMap;
 import java.util.Map;

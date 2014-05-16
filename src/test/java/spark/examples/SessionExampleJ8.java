@@ -1,7 +1,7 @@
 package spark.examples;
 
-import static spark.SparkJ8.get;
-import static spark.SparkJ8.post;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 public class SessionExampleJ8 {
     private static final String SESSION_NAME = "username";

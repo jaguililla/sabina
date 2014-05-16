@@ -1,7 +1,7 @@
 package spark;
 
 import static java.lang.Thread.sleep;
-import static spark.SparkJ8.*;
+import static spark.Spark.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,12 +10,10 @@ import java.io.IOException;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import spark.util.SparkTestUtil;
 import spark.util.SparkTestUtil.UrlResponse;
 
-@Ignore
 public class GenericIntegrationTest {
 
     static SparkTestUtil testUtil;
@@ -88,16 +86,6 @@ public class GenericIntegrationTest {
         get (new Route ("/paramwithmaj/:paramWithMaj") {
             @Override public Object handle (Request request, Response response) {
                 return "echo: " + request.params (":paramWithMaj");
-            }
-        });
-
-        get (new TemplateViewRoute ("/templateView") {
-            @Override public String render (ModelAndView modelAndView) {
-                return modelAndView.getModel () + " from " + modelAndView.getViewName ();
-            }
-
-            @Override public ModelAndView handle (Request request, Response response) {
-                return new ModelAndView ("Hello", "my view");
             }
         });
 
@@ -178,14 +166,6 @@ public class GenericIntegrationTest {
         UrlResponse response = testUtil.doMethod ("GET", "/hi", null, "application/json");
         Assert.assertEquals (200, response.status);
         Assert.assertEquals ("{\"message\": \"Hello World\"}", response.body);
-    }
-
-    @Test
-    public void template_view_should_be_rendered_with_given_model_view_object ()
-        throws Exception {
-        UrlResponse response = testUtil.doMethod ("GET", "/templateView", null);
-        Assert.assertEquals (200, response.status);
-        Assert.assertEquals ("Hello from my view", response.body);
     }
 
     @Test
