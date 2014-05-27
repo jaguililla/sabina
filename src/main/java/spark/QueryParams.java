@@ -42,7 +42,7 @@ public class QueryParams {
     private static final QueryParams NULL = new NullQueryParams ();
 
     /** Holds the nested keys */
-    private Map<String, QueryParams> queryMap = new HashMap<String, QueryParams> ();
+    private Map<String, QueryParams> queryMap = new HashMap<> ();
 
     /** Value(s) for this key */
     private String[] values;
@@ -64,7 +64,7 @@ public class QueryParams {
     }
 
     // Just for testing
-    protected QueryParams () {
+    QueryParams () {
     }
 
     /**
@@ -77,11 +77,11 @@ public class QueryParams {
      * user[info][name]).
      * @param values
      */
-    protected QueryParams (String key, String... values) {
+    QueryParams (String key, String... values) {
         loadKeys (key, values);
     }
 
-    protected QueryParams (Map<String, String[]> params) {
+    QueryParams (Map<String, String[]> params) {
         loadQueryString (params);
     }
 
@@ -120,7 +120,7 @@ public class QueryParams {
         }
     }
 
-    protected static final String cleanKey (String group) {
+    protected final String cleanKey (String group) {
         if (group.startsWith ("[")) {
             return group.substring (1, group.length () - 1);
         }
@@ -248,7 +248,7 @@ public class QueryParams {
     }
 
     public Map<String, String[]> toMap () {
-        Map<String, String[]> map = new HashMap<String, String[]> ();
+        Map<String, String[]> map = new HashMap<> ();
 
         for (Entry<String, QueryParams> key : this.queryMap.entrySet ()) {
             map.put (key.getKey (), key.getValue ().values);

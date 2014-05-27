@@ -138,13 +138,13 @@ public class SimpleRouteMatcher implements RouteMatcher {
     }
 
     public SimpleRouteMatcher () {
-        routes = new ArrayList<RouteEntry> ();
+        routes = new ArrayList<> ();
     }
 
     @Override
     public List<RouteMatch> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path, String acceptType) {
-        List<RouteMatch> matchSet = new ArrayList<RouteMatch> ();
+        List<RouteMatch> matchSet = new ArrayList<> ();
 
         List<RouteEntry> routeEntries = this.findTargetsForRequestedRoute (httpMethod, path);
 
@@ -210,7 +210,7 @@ public class SimpleRouteMatcher implements RouteMatcher {
 
     private List<RouteEntry> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path) {
-        List<RouteEntry> matchSet = new ArrayList<RouteEntry> ();
+        List<RouteEntry> matchSet = new ArrayList<> ();
         for (RouteEntry entry : routes) {
             if (entry.matches (httpMethod, path)) {
                 matchSet.add (entry);
