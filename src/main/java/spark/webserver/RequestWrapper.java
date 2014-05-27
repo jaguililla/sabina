@@ -133,8 +133,19 @@ final class RequestWrapper extends Request {
         return delegate.url ();
     }
 
-    @Override public void attribute (String attribute, Object value) {
-        delegate.attribute (attribute, value);
+    @Override
+    public String uri() {
+        return delegate.uri();
+    }
+
+    @Override
+    public String protocol() {
+        return delegate.protocol();
+    }
+
+    @Override
+    public void attribute(String attribute, Object value) {
+        delegate.attribute(attribute, value);
     }
 
     @Override public Object attribute (String attribute) {
@@ -148,9 +159,9 @@ final class RequestWrapper extends Request {
     @Override public Session session () {
         return delegate.session ();
     }
-
-    @Override public Session session (boolean create) {
-        return delegate.session (create);
+    @Override
+    public Session session(boolean create) {
+        return delegate.session(create);
     }
 
     @Override public QueryParams queryMap () {

@@ -36,7 +36,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  *
  * @author Per Wendel
  */
-class SparkServerImpl implements SparkServer {
+public class SparkServerImpl {
 
     private static final String NAME = "Spark";
     private Handler handler;
@@ -47,7 +47,6 @@ class SparkServerImpl implements SparkServer {
         System.setProperty ("org.mortbay.log.class", "spark.webserver.JettyLogger");
     }
 
-    @Override
     public void ignite (
         String host, int port, String keystoreFile,
         String keystorePassword, String truststoreFile,
@@ -106,7 +105,6 @@ class SparkServerImpl implements SparkServer {
         }
     }
 
-    @Override
     public void stop () {
         System.out.print (">>> " + NAME + " shutting down..."); // NOSONAR
         try {
