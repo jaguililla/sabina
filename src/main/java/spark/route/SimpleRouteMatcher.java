@@ -4,7 +4,7 @@
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -29,7 +29,7 @@ import spark.utils.MimeParse;
  *
  * @author Per Wendel
  */
-public class SimpleRouteMatcher {
+public class SimpleRouteMatcher implements RouteMatcher {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(SimpleRouteMatcher.class);
     private static final char SINGLE_QUOTE = '\'';

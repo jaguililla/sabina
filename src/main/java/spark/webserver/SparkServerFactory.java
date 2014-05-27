@@ -25,7 +25,7 @@ public final class SparkServerFactory {
         throw new IllegalStateException ();
     }
 
-    public static SparkServer create (boolean hasMultipleHandler) {
+    public static SparkServerImpl create (boolean hasMultipleHandler) {
         MatcherFilter matcherFilter = new MatcherFilter (false, hasMultipleHandler);
         matcherFilter.init (null); // init is empty (left here in case is implemented)
         return new SparkServerImpl (new JettyHandler (matcherFilter));

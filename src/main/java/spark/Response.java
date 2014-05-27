@@ -16,8 +16,9 @@
  */
 package spark;
 
-import java.io.IOException;
+import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 
+import java.io.IOException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,6 +35,10 @@ public class Response {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(Response.class);
 
+    public static Response create (HttpServletResponse response) {
+        return new Response (response);
+    }
+
     private HttpServletResponse response;
     private String body;
 
@@ -44,7 +49,6 @@ public class Response {
     Response(HttpServletResponse response) {
         this.response = response;
     }
-
 
     /**
      * Sets the status code for the response
@@ -85,7 +89,8 @@ public class Response {
      */
     public void redirect(String location) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Redirecting ({} {} to {}", "Found", HttpServletResponse.SC_FOUND, location);
+            LOG.debug (
+                "Redirecting ({} {} to {}", new Object[] { "Found", SC_FOUND, location });
         }
         try {
             response.sendRedirect(location);
@@ -133,7 +138,8 @@ public class Response {
     }
 
     /**
-     * Adds cookie to the response. Can be invoked multiple times to insert more than one cookie.
+     * Adds cookie to the response. Can be invoked multiple times to insert more than one
+     * cookie.
      *
      * @param name name of the cookie
      * @param value value of the cookie
@@ -145,11 +151,13 @@ public class Response {
     }
 
     /**
-     * Adds cookie to the response. Can be invoked multiple times to insert more than one cookie.
+     * Adds cookie to the response. Can be invoked multiple times to insert more than one
+     * cookie.
      *
      * @param name name of the cookie
      * @param value value of the cookie
-     * @param maxAge max age of the cookie in seconds (negative for the not persistent cookie, zero - deletes the cookie)
+     * @param maxAge max age of the cookie in seconds (negative for the not persistent cookie,
+     * zero - deletes the cookie)
      * @param secured if true : cookie will be secured
      * zero - deletes the cookie)
      */
@@ -158,12 +166,14 @@ public class Response {
     }
 
     /**
-     * Adds cookie to the response. Can be invoked multiple times to insert more than one cookie.
+     * Adds cookie to the response. Can be invoked multiple times to insert more than one
+     * cookie.
      *
      * @param path path of the cookie
      * @param name name of the cookie
      * @param value value of the cookie
-     * @param maxAge max age of the cookie in seconds (negative for the not persistent cookie, zero - deletes the cookie)
+     * @param maxAge max age of the cookie in seconds (negative for the not persistent cookie,
+     * zero - deletes the cookie)
      * @param secured if true : cookie will be secured
      * zero - deletes the cookie)
      */

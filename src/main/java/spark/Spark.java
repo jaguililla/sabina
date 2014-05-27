@@ -22,7 +22,7 @@ import java.util.function.Function;
 import spark.route.HttpMethod;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
-import spark.webserver.SparkServer;
+import spark.webserver.SparkServerImpl;
 import spark.webserver.SparkServerFactory;
 
 /**
@@ -102,7 +102,7 @@ public class Spark {
 
     private static boolean initialized = false;
 
-    private static SparkServer server;
+    private static SparkServerImpl server;
     private static RouteMatcher routeMatcher;
     private static String ipAddress = "0.0.0.0";
     private static int port = SPARK_DEFAULT_PORT;
