@@ -1,9 +1,6 @@
 package spark.servlet;
 
-import static spark.Spark.after;
-import static spark.Spark.before;
-import static spark.Spark.get;
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 import spark.Filter;
 import spark.Request;
@@ -21,7 +18,7 @@ public class MyApp implements SparkApplication {
             }
         });
 
-        get ( new Route ("/hi") {
+        get (new Route ("/hi") {
             @Override public Object handle (Request request, Response response) {
                 return "Hello World!";
             }

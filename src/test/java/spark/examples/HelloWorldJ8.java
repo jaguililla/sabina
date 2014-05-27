@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
 
 import static spark.Spark.get;
 
-public class HelloWorldJ8 {
-   public static void main(String[] args) {
-      get("/hello",  it -> "Hello World!");
-   }
+class HelloWorldJ8 {
+    public static void main (String[] args) {
+        get ("/hello", it -> "Hello World!");
+    }
 }

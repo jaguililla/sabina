@@ -1,5 +1,6 @@
-target
 bin
+target
+reports
 .settings
 .externalToolBuilders
 .project
@@ -9,4 +10,3 @@ bin
 *.iml
 *.ipr
 *.iws
-reports

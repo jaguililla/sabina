@@ -39,8 +39,8 @@ public class SimpleRouteMatcher implements RouteMatcher {
     /**
      * Constructor
      */
-    public SimpleRouteMatcher() {
-        routes = new ArrayList<RouteEntry>();
+    public SimpleRouteMatcher () {
+        routes = new ArrayList<> ();
     }
 
     /**
@@ -154,8 +154,9 @@ public class SimpleRouteMatcher implements RouteMatcher {
         return !MimeParse.NO_MIME_TYPE.equals(bestMatch);
     }
 
-    private List<RouteEntry> findTargetsForRequestedRoute(HttpMethod httpMethod, String path) {
-        List<RouteEntry> matchSet = new ArrayList<RouteEntry>();
+    private List<RouteEntry> findTargetsForRequestedRoute (
+        HttpMethod httpMethod, String path) {
+        List<RouteEntry> matchSet = new ArrayList<> ();
         for (RouteEntry entry : routes) {
             if (entry.matches(httpMethod, path)) {
                 matchSet.add(entry);

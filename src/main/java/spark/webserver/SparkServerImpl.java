@@ -36,7 +36,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  *
  * @author Per Wendel
  */
-public class SparkServerImpl {
+public class SparkServerImpl implements SparkServer {
 
     private static final String NAME = "Spark";
     private Handler handler;
@@ -77,7 +77,7 @@ public class SparkServerImpl {
             server.setHandler (handler);
         }
         else {
-            List<Handler> handlersInList = new ArrayList<Handler> ();
+            List<Handler> handlersInList = new ArrayList<> ();
             handlersInList.add (handler);
 
             // Set static file location

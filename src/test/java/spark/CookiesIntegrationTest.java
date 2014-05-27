@@ -16,9 +16,9 @@ import spark.util.SparkTestUtil;
  */
 public class CookiesIntegrationTest {
 
-    static SparkTestUtil testUtil;
+    private static SparkTestUtil testUtil;
 
-    public static void initRoutesJ7 () throws InterruptedException {
+    private static void initRoutesJ7 () {
         post (new Route ("/assertNoCookies") {
             @Override public Object handle (Request request, Response response) {
                 if (!request.cookies ().isEmpty ())
@@ -57,7 +57,7 @@ public class CookiesIntegrationTest {
         });
     }
 
-    public static void initRoutesJ8 () throws InterruptedException {
+    private static void initRoutesJ8 () {
         post ("/j8/assertNoCookies", it -> {
             if (!it.cookies ().isEmpty ()) {
                 it.halt (500);

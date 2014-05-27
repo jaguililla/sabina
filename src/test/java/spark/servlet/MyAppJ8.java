@@ -1,9 +1,6 @@
 package spark.servlet;
 
-import static spark.Spark.after;
-import static spark.Spark.before;
-import static spark.Spark.get;
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 public class MyAppJ8 implements SparkApplication {
 

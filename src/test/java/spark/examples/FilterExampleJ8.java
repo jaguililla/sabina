@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
 
-import static spark.Spark.after;
-import static spark.Spark.before;
-import static spark.Spark.get;
+import static spark.Spark.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Example showing a very simple (and stupid) autentication filter that is executed before all other
- * resources.
+ * Example showing a very simple (and stupid) autentication filter that is executed before all
+ * other resources.
  * <p>
- * When requesting the resource with e.g. http://localhost:4567/hello?user=some&password=guy the
- * filter will stop the execution and the client will get a 401 UNAUTHORIZED with the content 'You
- * are not welcome here'
+ * When requesting the resource with e.g. http://localhost:4567/hello?user=some&password=guy
+ * the filter will stop the execution and the client will get a 401 UNAUTHORIZED with the
+ * content 'You are not welcome here'
  * <p>
  * When requesting the resource with e.g. http://localhost:4567/hello?user=foo&password=bar the
  * filter will accept the request and the request will continue to the /hello route.
@@ -38,7 +37,7 @@ import java.util.Map;
  *
  * @author Per Wendel
  */
-public class FilterExampleJ8 {
+class FilterExampleJ8 {
 
     private static Map<String, String> usernamePasswords = new HashMap<> ();
 

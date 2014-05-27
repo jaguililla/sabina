@@ -7,12 +7,12 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class TransformerExample {
-	public static void main(String args[]) {
-		get(new Route ("/hello", "application/json") {
-			@Override public Object handle(Request request, Response response) {
-				return toJson (new MyMessage("Hello World"));
-			}
-		});
-	}
+class TransformerExample {
+    public static void main (String args[]) {
+        get (new Route ("/hello", "application/json") {
+            @Override public Object handle (Request request, Response response) {
+                return toJson (new MyMessage ("Hello World"));
+            }
+        });
+    }
 }

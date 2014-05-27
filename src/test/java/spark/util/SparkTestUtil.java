@@ -14,7 +14,6 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -27,7 +26,6 @@ import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.SchemePortResolver;
 import org.apache.http.conn.UnsupportedSchemeException;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -68,24 +66,22 @@ public class SparkTestUtil {
                 new ManagedHttpClientConnectionFactory ());
 
         this.httpClient = HttpClients.custom ()
-            .setSchemePortResolver (new SchemePortResolver () {
-                @Override public int resolve (HttpHost h) throws UnsupportedSchemeException {
-                    Args.notNull (h, "HTTP host");
-                    final int port = h.getPort ();
-                    if (port > 0) {
-                        return port;
-                    }
+            .setSchemePortResolver (h -> {
+                Args.notNull (h, "HTTP host");
+                final int port1 = h.getPort ();
+                if (port1 > 0) {
+                    return port1;
+                }
 
-                    final String name = h.getSchemeName ();
-                    if (name.equalsIgnoreCase ("http")) {
-                        return port;
-                    }
-                    else if (name.equalsIgnoreCase ("https")) {
-                        return port;
-                    }
-                    else {
-                        throw new UnsupportedSchemeException ("unsupported protocol: " + name);
-                    }
+                final String name = h.getSchemeName ();
+                if (name.equalsIgnoreCase ("http")) {
+                    return port1;
+                }
+                else if (name.equalsIgnoreCase ("https")) {
+                    return port1;
+                }
+                else {
+                    throw new UnsupportedSchemeException ("unsupported protocol: " + name);
                 }
             })
             .setConnectionManager (connManager)

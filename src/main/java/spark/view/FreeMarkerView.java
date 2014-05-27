@@ -25,10 +25,7 @@ public class FreeMarkerView {
 
             return stringWriter.toString ();
         }
-        catch (IOException e) {
-            throw new IllegalArgumentException (e);
-        }
-        catch (TemplateException e) {
+        catch (IOException | TemplateException e) {
             throw new IllegalArgumentException (e);
         }
     }

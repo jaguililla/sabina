@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
 
 import static spark.Spark.get;
@@ -24,38 +25,39 @@ import static spark.Spark.post;
  *
  * @author Per Wendel
  */
-public class SimpleExampleJ8 {
+class SimpleExampleJ8 {
 
-    public static void main(String[] args) {
+    public static void main (String[] args) {
 
         //  setPort(5678); <- Uncomment if you wan't spark to listen on a port different than 4567.
 
-        get("/hello", it -> "Hello World!");
+        get ("/hello", it -> "Hello World!");
 
-        post("/hello", it -> "Hello World: " + it.requestBody());
+        post ("/hello", it -> "Hello World: " + it.requestBody ());
 
-        get("/private", it -> {
-            it.status(401);
+        get ("/private", it -> {
+            it.status (401);
             return "Go Away!!!";
         });
 
-        get("/users/:name", it -> "Selected user: " + it.params(":name"));
+        get ("/users/:name", it -> "Selected user: " + it.params (":name"));
 
-        get("/news/:section", it -> {
-            it.type("text/xml");
-            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>" + it.params("section") + "</news>";
+        get ("/news/:section", it -> {
+            it.type ("text/xml");
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
+                + it.params ("section") + "</news>";
         });
 
-        get("/protected", it -> {
-            it.halt(403, "I don't think so!!!");
+        get ("/protected", it -> {
+            it.halt (403, "I don't think so!!!");
             return null;
         });
 
-        get("/redirect", it -> {
-            it.redirect("/news/world");
+        get ("/redirect", it -> {
+            it.redirect ("/news/world");
             return null;
         });
 
-        get("/", it -> "root");
+        get ("/", it -> "root");
     }
 }

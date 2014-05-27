@@ -22,7 +22,7 @@ import java.util.function.Function;
 import spark.route.HttpMethod;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
-import spark.webserver.SparkServerImpl;
+import spark.webserver.SparkServer;
 import spark.webserver.SparkServerFactory;
 
 /**
@@ -102,7 +102,7 @@ public class Spark {
 
     private static boolean initialized = false;
 
-    private static SparkServerImpl server;
+    private static SparkServer server;
     private static RouteMatcher routeMatcher;
     private static String ipAddress = "0.0.0.0";
     private static int port = SPARK_DEFAULT_PORT;
@@ -424,20 +424,17 @@ public class Spark {
     private static synchronized void init () {
         if (!initialized) {
             routeMatcher = RouteMatcherFactory.get ();
-            new Thread (new Runnable () {
-                @Override
-                public void run () {
-                    server = SparkServerFactory.create (hasMultipleHandlers ());
-                    server.ignite (
-                        ipAddress,
-                        port,
-                        keystoreFile,
-                        keystorePassword,
-                        truststoreFile,
-                        truststorePassword,
-                        staticFileFolder,
-                        externalStaticFileFolder);
-                }
+            new Thread (() -> {
+                server = SparkServerFactory.create (hasMultipleHandlers ());
+                server.ignite (
+                    ipAddress,
+                    port,
+                    keystoreFile,
+                    keystorePassword,
+                    truststoreFile,
+                    truststorePassword,
+                    staticFileFolder,
+                    externalStaticFileFolder);
             }).start ();
             initialized = true;
         }
