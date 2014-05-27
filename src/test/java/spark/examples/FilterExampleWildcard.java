@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
 
 import static spark.Spark.before;
@@ -22,16 +23,13 @@ import spark.Filter;
 import spark.Request;
 import spark.Response;
 
-public class FilterExampleWildcard {
-
-    public static void main(String[] args) {
-        before(new Filter("/protected/*") {
-            @Override
-            public void handle(Request request, Response response) {
+class FilterExampleWildcard {
+    public static void main (String[] args) {
+        before (new Filter ("/protected/*") {
+            @Override public void handle (Request request, Response response) {
                 // ... check if authenticated
-                halt(401, "Go Away!");
+                halt (401, "Go Away!");
             }
         });
     }
-
 }

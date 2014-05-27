@@ -424,20 +424,17 @@ public class Spark {
     private static synchronized void init () {
         if (!initialized) {
             routeMatcher = RouteMatcherFactory.get ();
-            new Thread (new Runnable () {
-                @Override
-                public void run () {
-                    server = SparkServerFactory.create (hasMultipleHandlers ());
-                    server.ignite (
-                        ipAddress,
-                        port,
-                        keystoreFile,
-                        keystorePassword,
-                        truststoreFile,
-                        truststorePassword,
-                        staticFileFolder,
-                        externalStaticFileFolder);
-                }
+            new Thread (() -> {
+                server = SparkServerFactory.create (hasMultipleHandlers ());
+                server.ignite (
+                    ipAddress,
+                    port,
+                    keystoreFile,
+                    keystorePassword,
+                    truststoreFile,
+                    truststorePassword,
+                    staticFileFolder,
+                    externalStaticFileFolder);
             }).start ();
             initialized = true;
         }

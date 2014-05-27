@@ -32,7 +32,7 @@ public final class SparkUtils {
 
     public static List<String> convertRouteToList (String route) {
         String[] pathArray = route.split ("/");
-        List<String> path = new ArrayList<String> ();
+        List<String> path = new ArrayList<> ();
         for (String p : pathArray) {
             if (p.length () > 0) {
                 path.add (p);

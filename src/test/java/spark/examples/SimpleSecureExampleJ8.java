@@ -14,54 +14,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.setSecure;
+import static spark.Spark.*;
 
 /**
- * A simple example just showing some basic functionality You'll need to provide
- * a JKS keystore as arg 0 and its password as arg 1.
+ * A simple example just showing some basic functionality You'll need to provide a JKS keystore
+ * as arg 0 and its password as arg 1.
  *
- * @author Peter Nicholls, based on (practically identical to in fact)
- *         {@link sparkj8.spark.examples.simple.SimpleExample} by Per Wendel
+ * @author Peter Nicholls, based on (practically identical to in fact) {@link
+ *         spark.examples.SimpleExample} by Per Wendel
  */
-public class SimpleSecureExampleJ8 {
+class SimpleSecureExampleJ8 {
 
-    public static void main(String[] args) {
+    public static void main (String[] args) {
 
         // setPort(5678); <- Uncomment if you want spark to listen on a port different than 4567.
 
-        setSecure(args[0], args[1], null, null);
+        setSecure (args[0], args[1], null, null);
 
-        get("/hello", it -> "Hello Secure World!");
+        get ("/hello", it -> "Hello Secure World!");
 
-        post("/hello", it -> "Hello Secure World: " + it.requestBody());
+        post ("/hello", it -> "Hello Secure World: " + it.requestBody ());
 
-        get("/private", it -> {
-            it.status(401);
+        get ("/private", it -> {
+            it.status (401);
             return "Go Away!!!";
         });
 
-        get("/users/:name", it -> "Selected user: " + it.params(":name"));
+        get ("/users/:name", it -> "Selected user: " + it.params (":name"));
 
-        get("/news/:section", it -> {
-            it.type("text/xml");
+        get ("/news/:section", it -> {
+            it.type ("text/xml");
             return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
-                + it.params("section") + "</news>";
+                + it.params ("section") + "</news>";
         });
 
-        get("/protected", it -> {
-            it.halt(403, "I don't think so!!!");
+        get ("/protected", it -> {
+            it.halt (403, "I don't think so!!!");
             return null;
         });
 
-        get("/redirect", it -> {
-            it.redirect("/news/world");
+        get ("/redirect", it -> {
+            it.redirect ("/news/world");
             return null;
         });
 
-        get("/", it -> "root");
+        get ("/", it -> "root");
     }
 }

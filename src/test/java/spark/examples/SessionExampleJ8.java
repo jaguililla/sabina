@@ -3,7 +3,7 @@ package spark.examples;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class SessionExampleJ8 {
+class SessionExampleJ8 {
     private static final String SESSION_NAME = "username";
 
     public static void main (String[] args) {
@@ -12,14 +12,14 @@ public class SessionExampleJ8 {
             if (name == null) {
                 return
                     "<html>" +
-                    "    <body>" +
-                    "        What's your name?:" +
-                    "        <form action=\"/entry\" method=\"POST\">" +
-                    "            <input type=\"text\" name=\"name\"/>" +
-                    "            <input type=\"submit\" value=\"go\"/>" +
-                    "        </form>" +
-                    "    </body>" +
-                    "</html>";
+                        "    <body>" +
+                        "        What's your name?:" +
+                        "        <form action=\"/entry\" method=\"POST\">" +
+                        "            <input type=\"text\" name=\"name\"/>" +
+                        "            <input type=\"submit\" value=\"go\"/>" +
+                        "        </form>" +
+                        "    </body>" +
+                        "</html>";
             }
             else {
                 return String.format ("<html><body>Hello, %s!</body></html>", name);

@@ -87,11 +87,9 @@ public class Response {
      *
      * @param location Where to redirect
      */
-    public void redirect(String location) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug (
-                "Redirecting ({} {} to {}", new Object[] { "Found", SC_FOUND, location });
-        }
+    public void redirect (String location) {
+        LOG.debug ("Redirecting ({} {} to {}", "Found", SC_FOUND, location);
+
         try {
             response.sendRedirect(location);
         } catch (IOException ioException) {

@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
 
-import static spark.Spark.delete;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.put;
+import static spark.Spark.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import spark.Request;
+import spark.Response;
+import spark.Route;
 
 /**
  * A simple RESTful example showing howto create, get, update and delete book resources.
@@ -34,7 +36,7 @@ public class Books {
     /**
      * Map holding the books
      */
-    private static Map<String, Book> books = new HashMap<String, Book> ();
+    private static Map<String, Book> books = new HashMap<> ();
 
     private static int id = 1;
 
@@ -46,8 +48,8 @@ public class Books {
 
         // Creates a new book resource, will return the ID to the created resource
         // author and title are sent as query parameters e.g. /books?author=Foo&title=Bar
-        post (new spark.Route ("/books") {
-            @Override public Object handle (spark.Request request, spark.Response response) {
+        post (new Route ("/books") {
+            @Override public Object handle (Request request, Response response) {
                 String author = request.queryParams ("author");
                 String title = request.queryParams ("title");
                 Book book = new Book (author, title);
@@ -60,8 +62,8 @@ public class Books {
         });
 
         // Gets the book resource for the provided id
-        get (new spark.Route ("/books/:id") {
-            @Override public Object handle (spark.Request request, spark.Response response) {
+        get (new Route ("/books/:id") {
+            @Override public Object handle (Request request, Response response) {
                 Book book = books.get (request.params (":id"));
                 if (book != null) {
                     return "Title: " + book.getTitle () + ", Author: " + book.getAuthor ();
@@ -75,17 +77,19 @@ public class Books {
 
         // Updates the book resource for the provided id with new information
         // author and title are sent as query parameters e.g. /books/<id>?author=Foo&title=Bar
-        put (new spark.Route ("/books/:id") {
-            @Override public Object handle (spark.Request request, spark.Response response) {
+        put (new Route ("/books/:id") {
+            @Override public Object handle (Request request, Response response) {
                 String id = request.params (":id");
                 Book book = books.get (id);
                 if (book != null) {
                     String newAuthor = request.queryParams ("author");
                     String newTitle = request.queryParams ("title");
-                    if (newAuthor != null)
+                    if (newAuthor != null) {
                         book.setAuthor (newAuthor);
-                    if (newTitle != null)
+                    }
+                    if (newTitle != null) {
                         book.setTitle (newTitle);
+                    }
                     return "Book with id '" + id + "' updated";
                 }
                 else {
@@ -96,8 +100,8 @@ public class Books {
         });
 
         // Deletes the book resource for the provided id
-        delete (new spark.Route ("/books/:id") {
-            @Override public Object handle (spark.Request request, spark.Response response) {
+        delete (new Route ("/books/:id") {
+            @Override public Object handle (Request request, Response response) {
                 String id = request.params (":id");
                 Book book = books.remove (id);
                 if (book != null) {
@@ -111,11 +115,12 @@ public class Books {
         });
 
         // Gets all available book resources (id's)
-        get (new spark.Route ("/books") {
-            @Override public Object handle (spark.Request request, spark.Response response) {
+        get (new Route ("/books") {
+            @Override public Object handle (Request request, Response response) {
                 String ids = "";
-                for (String id : books.keySet ())
+                for (String id : books.keySet ()) {
                     ids += id + " ";
+                }
                 return ids;
             }
         });

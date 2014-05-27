@@ -77,7 +77,7 @@ public class SparkServerImpl {
             server.setHandler (handler);
         }
         else {
-            List<Handler> handlersInList = new ArrayList<Handler> ();
+            List<Handler> handlersInList = new ArrayList<> ();
             handlersInList.add (handler);
 
             // Set static file location
