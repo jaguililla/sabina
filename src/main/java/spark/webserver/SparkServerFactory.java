@@ -21,13 +21,30 @@ package spark.webserver;
  * @author Per Wendel
  */
 public final class SparkServerFactory {
+    private static final int IMPL = 1;
+
     private SparkServerFactory () {
         throw new IllegalStateException ();
     }
 
-    public static SparkServer create (boolean hasMultipleHandler) {
+    private static SparkServer createJetty (boolean hasMultipleHandler) {
         MatcherFilter matcherFilter = new MatcherFilter (false, hasMultipleHandler);
         matcherFilter.init (null); // init is empty (left here in case is implemented)
         return new SparkServerImpl (new JettyHandler (matcherFilter));
+    }
+
+    private static SparkServer createUndertow (boolean hasMultipleHandler) {
+        return null;
+    }
+
+    public static SparkServer create (boolean hasMultipleHandler) {
+        switch (IMPL) {
+            case 0:
+                return createJetty (hasMultipleHandler);
+            case 1:
+                return createUndertow (hasMultipleHandler);
+            default:
+                throw new IllegalStateException ();
+        }
     }
 }
