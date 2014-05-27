@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
 
-import static spark.Spark.delete;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.put;
+import static spark.Spark.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +32,7 @@ public class BooksJ8 {
     /**
      * Map holding the books
      */
-    private static Map<String, Book> books = new HashMap<String, Book> ();
+    private static Map<String, Book> books = new HashMap<> ();
 
     private static int id = 1;
 
@@ -46,7 +44,7 @@ public class BooksJ8 {
 
         // Creates a new book resource, will return the ID to the created resource
         // author and title are sent as query parameters e.g. /books?author=Foo&title=Bar
-        post("/j8/books", it -> {
+        post ("/j8/books", it -> {
             String author = it.queryParams ("author");
             String title = it.queryParams ("title");
             Book book = new Book (author, title);
@@ -58,7 +56,7 @@ public class BooksJ8 {
         });
 
         // Gets the book resource for the provided id
-        get("/j8/books/:id", it -> {
+        get ("/j8/books/:id", it -> {
             Book book = books.get (it.params (":id"));
             if (book != null) {
                 return "Title: " + book.getTitle () + ", Author: " + book.getAuthor ();
@@ -71,16 +69,18 @@ public class BooksJ8 {
 
         // Updates the book resource for the provided id with new information
         // author and title are sent as query parameters e.g. /books/<id>?author=Foo&title=Bar
-        put("/j8/books/:id", it -> {
+        put ("/j8/books/:id", it -> {
             String id = it.params (":id");
             Book book = books.get (id);
             if (book != null) {
                 String newAuthor = it.queryParams ("author");
                 String newTitle = it.queryParams ("title");
-                if (newAuthor != null)
+                if (newAuthor != null) {
                     book.setAuthor (newAuthor);
-                if (newTitle != null)
+                }
+                if (newTitle != null) {
                     book.setTitle (newTitle);
+                }
                 return "Book with id '" + id + "' updated";
             }
             else {
@@ -90,7 +90,7 @@ public class BooksJ8 {
         });
 
         // Deletes the book resource for the provided id
-        delete("/j8/books/:id", it -> {
+        delete ("/j8/books/:id", it -> {
             String id = it.params (":id");
             Book book = books.remove (id);
             if (book != null) {
@@ -103,10 +103,11 @@ public class BooksJ8 {
         });
 
         // Gets all available book resources (id's)
-        get("/j8/books", it -> {
+        get ("/j8/books", it -> {
             String ids = "";
-            for (String id : books.keySet ())
+            for (String id : books.keySet ()) {
                 ids += id + " ";
+            }
             return ids;
         });
     }

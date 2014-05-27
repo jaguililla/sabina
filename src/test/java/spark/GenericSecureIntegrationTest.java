@@ -14,7 +14,7 @@ import spark.util.SparkTestUtil.UrlResponse;
 
 public class GenericSecureIntegrationTest {
 
-    static SparkTestUtil testUtil;
+    private static SparkTestUtil testUtil;
 
     @AfterClass public static void tearDown () {
         stop ();

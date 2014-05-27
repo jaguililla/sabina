@@ -14,25 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
+
+import static spark.Spark.get;
 
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import static spark.Spark.get;
-
-public class HelloWorld {
-
-   public static void main(String[] args) {
-
-      get(new Route("/hello") {
-         @Override
-         public Object handle(Request request, Response response) {
-            return "Hello World!";
-         }
-      });
-
-   }
-
+class HelloWorld {
+    public static void main (String[] args) {
+        get (new Route ("/hello") {
+            @Override public Object handle (Request request, Response response) {
+                return "Hello World!";
+            }
+        });
+    }
 }

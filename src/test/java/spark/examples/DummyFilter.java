@@ -14,31 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
+
+import static java.lang.System.out;
+import static spark.Spark.after;
+import static spark.Spark.before;
 
 import spark.Filter;
 import spark.Request;
 import spark.Response;
 
-import static spark.Spark.after;
-import static spark.Spark.before;
-
-public class DummyFilter {
-
-    public static void main(String[] args) {
-        before(new Filter() {
-            @Override
-            public void handle(Request request, Response response) {
-                System.out.println("Before");
+class DummyFilter {
+    public static void main (String[] args) {
+        before (new Filter () {
+            @Override public void handle (Request request, Response response) {
+                out.println ("Before");
             }
         });
 
-        after(new Filter() {
-            @Override
-            public void handle(Request request, Response response) {
-                System.out.println("After");
+        after (new Filter () {
+            @Override public void handle (Request request, Response response) {
+                out.println ("After");
             }
         });
     }
-
 }

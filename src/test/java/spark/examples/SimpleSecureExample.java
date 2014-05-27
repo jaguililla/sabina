@@ -14,90 +14,82 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
+
+import static spark.Spark.*;
 
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import static spark.Spark.*;
-
 /**
- * A simple example just showing some basic functionality You'll need to provide
- * a JKS keystore as arg 0 and its password as arg 1.
+ * A simple example just showing some basic functionality You'll need to provide a JKS keystore
+ * as arg 0 and its password as arg 1.
  *
- * @author Peter Nicholls, based on (practically identical to in fact)
- *         {@link sparkj8.spark.examples.simple.SimpleExample} by Per Wendel
+ * @author Peter Nicholls, based on (practically identical to in fact) {@link
+ *         spark.examples.SimpleExample} by Per Wendel
  */
-public class SimpleSecureExample {
+class SimpleSecureExample {
 
-    public static void main(String[] args) {
+    public static void main (String[] args) {
 
         // setPort(5678); <- Uncomment this if you want spark to listen on a
         // port different than 4567.
 
-        setSecure(args[0], args[1], null, null);
+        setSecure (args[0], args[1], null, null);
 
-        get(new Route("/hello") {
-            @Override
-            public Object handle(Request request, Response response) {
+        get (new Route ("/hello") {
+            @Override public Object handle (Request request, Response response) {
                 return "Hello Secure World!";
             }
         });
 
-        post(new Route("/hello") {
-            @Override
-            public Object handle(Request request, Response response) {
-                return "Hello Secure World: " + request.body();
+        post (new Route ("/hello") {
+            @Override public Object handle (Request request, Response response) {
+                return "Hello Secure World: " + request.body ();
             }
         });
 
-        get(new Route("/private") {
-            @Override
-            public Object handle(Request request, Response response) {
-                response.status(401);
+        get (new Route ("/private") {
+            @Override public Object handle (Request request, Response response) {
+                response.status (401);
                 return "Go Away!!!";
             }
         });
 
-        get(new Route("/users/:name") {
-            @Override
-            public Object handle(Request request, Response response) {
-                return "Selected user: " + request.params(":name");
+        get (new Route ("/users/:name") {
+            @Override public Object handle (Request request, Response response) {
+                return "Selected user: " + request.params (":name");
             }
         });
 
-        get(new Route("/news/:section") {
-            @Override
-            public Object handle(Request request, Response response) {
-                response.type("text/xml");
+        get (new Route ("/news/:section") {
+            @Override public Object handle (Request request, Response response) {
+                response.type ("text/xml");
                 return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
-                        + request.params("section") + "</news>";
+                    + request.params ("section") + "</news>";
             }
         });
 
-        get(new Route("/protected") {
-            @Override
-            public Object handle(Request request, Response response) {
-                halt(403, "I don't think so!!!");
+        get (new Route ("/protected") {
+            @Override public Object handle (Request request, Response response) {
+                halt (403, "I don't think so!!!");
                 return null;
             }
         });
 
-        get(new Route("/redirect") {
-            @Override
-            public Object handle(Request request, Response response) {
-                response.redirect("/news/world");
+        get (new Route ("/redirect") {
+            @Override public Object handle (Request request, Response response) {
+                response.redirect ("/news/world");
                 return null;
             }
         });
 
-        get(new Route("/") {
-            @Override
-            public Object handle(Request request, Response response) {
+        get (new Route ("/") {
+            @Override public Object handle (Request request, Response response) {
                 return "root";
             }
         });
-
     }
 }

@@ -1,6 +1,7 @@
 package spark.servlet;
 
 import java.util.Enumeration;
+
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 
@@ -14,7 +15,6 @@ public class FilterConfigWrapper implements FilterConfig {
 
     /**
      * @return
-     *
      * @see javax.servlet.FilterConfig#getFilterName()
      */
     public String getFilterName () {
@@ -23,20 +23,18 @@ public class FilterConfigWrapper implements FilterConfig {
 
     /**
      * @param name
-     *
      * @return
-     *
      * @see javax.servlet.FilterConfig#getInitParameter(String)
      */
     public String getInitParameter (String name) {
-        if (name.equals ("applicationClass"))
+        if (name.equals ("applicationClass")) {
             return "spark.servlet.MyAppJ8";
+        }
         return delegate.getInitParameter (name);
     }
 
     /**
      * @return
-     *
      * @see javax.servlet.FilterConfig#getInitParameterNames()
      */
     public Enumeration<String> getInitParameterNames () {
@@ -45,7 +43,6 @@ public class FilterConfigWrapper implements FilterConfig {
 
     /**
      * @return
-     *
      * @see javax.servlet.FilterConfig#getServletContext()
      */
     public ServletContext getServletContext () {

@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
 
+import static java.lang.System.out;
 import static spark.Spark.after;
 import static spark.Spark.get;
 
@@ -24,27 +26,26 @@ import static spark.Spark.get;
  *
  * @author Per Wendel
  */
-public class FilterExampleAttributesJ8 {
-
-    public static void main(String[] args) {
-        get("/hi", it -> {
-            it.attribute("foo", "bar");
+class FilterExampleAttributesJ8 {
+    public static void main (String[] args) {
+        get ("/hi", it -> {
+            it.attribute ("foo", "bar");
             return null;
         });
 
-        after("/hi", it -> {
-            for (String attr : it.attributes()) {
-                System.out.println("attr: " + attr);
-            }
+        after ("/hi", it -> {
+            for (String attr : it.attributes ())
+                out.println ("attr: " + attr);
         });
 
-        after("/hi", it -> {
-            Object foo = it.attribute("foo");
-            it.body(asXml("foo", foo));
+        after ("/hi", it -> {
+            Object foo = it.attribute ("foo");
+            it.body (asXml ("foo", foo));
         });
     }
 
-    private static String asXml(String name, Object value) {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><" + name +">" + value + "</"+ name + ">";
+    private static String asXml (String name, Object value) {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><"
+            + name + ">" + value + "</" + name + ">";
     }
 }

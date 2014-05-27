@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package spark.examples;
 
 import static spark.Spark.before;
 
-public class FilterExampleWildcardJ8 {
-    public static void main(String[] args) {
-        before("/protected/*", it ->
-            // ... check if authenticated
-            it.halt(401, "Go Away!")
-        );
+class FilterExampleWildcardJ8 {
+    public static void main (String[] args) {
+        // ... check if authenticated
+        before ("/protected/*", it -> it.halt (401, "Go Away!"));
     }
 }

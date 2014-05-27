@@ -16,8 +16,8 @@ import spark.util.SparkTestUtil.UrlResponse;
 
 public class GenericIntegrationTest {
 
-    static SparkTestUtil testUtil;
-    static File tmpExternalFile;
+    private static SparkTestUtil testUtil;
+    private static File tmpExternalFile;
 
     @AfterClass public static void tearDown () {
         Spark.stop ();
@@ -280,7 +280,7 @@ public class GenericIntegrationTest {
         });
     }
 
-    private static void assertEchoRoute (String routePart) throws Exception {
+    private static void assertEchoRoute (String routePart) {
         final String expected = "expected";
         UrlResponse response =
             testUtil.doMethod ("GET", "/tworoutes/" + routePart + "/" + expected, null);
@@ -479,7 +479,7 @@ public class GenericIntegrationTest {
         );
     }
 
-    private static void assertEchoRouteJ8 (String routePart) throws Exception {
+    private static void assertEchoRouteJ8 (String routePart) {
         final String expected = "expected";
         UrlResponse response =
             testUtil.doMethod ("GET", "/j8/tworoutes/" + routePart + "/" + expected, null);

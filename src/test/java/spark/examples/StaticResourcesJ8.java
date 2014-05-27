@@ -22,14 +22,14 @@ import static spark.Spark.staticFileLocation;
 /**
  * Example showing how serve static resources.
  */
-public class StaticResourcesJ8 {
+class StaticResourcesJ8 {
 
-    public static void main(String[] args) {
+    public static void main (String[] args) {
         /*
          * Will serve all static file are under "/public" in classpath if the route isn't consumed
          * by others routes.
          */
-        staticFileLocation("/public");
-        get("/hello", it -> "Hello World!");
+        staticFileLocation ("/public");
+        get ("/hello", it -> "Hello World!");
     }
 }
