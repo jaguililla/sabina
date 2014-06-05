@@ -24,6 +24,15 @@ import spark.Response;
 class ResponseWrapper extends Response {
     private Response delegate;
 
+    private boolean redirected = false;
+
+    /**
+     * @return true if redirected has been done
+     */
+    boolean isRedirected() {
+        return redirected;
+    }
+
     public void setDelegate (Response delegate) {
         this.delegate = delegate;
     }
@@ -49,10 +58,12 @@ class ResponseWrapper extends Response {
     }
 
     @Override public void redirect (String location) {
+        redirected = true;
         delegate.redirect (location);
     }
 
     @Override public void redirect (String location, int httpStatusCode) {
+        redirected = true;
         delegate.redirect (location, httpStatusCode);
     }
 

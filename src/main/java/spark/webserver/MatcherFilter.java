@@ -135,6 +135,10 @@ public class MatcherFilter implements Filter {
             bodyContent = (haltBody != null)? haltBody : "";
         }
 
+        // If redirected and content is null set to empty string to not throw NotConsumedException
+        if (bodyContent == null && res.isRedirected()) {
+            bodyContent = "";
+        }
         boolean consumed = bodyContent != null;
 
         if (!consumed && hasOtherHandlers) {
