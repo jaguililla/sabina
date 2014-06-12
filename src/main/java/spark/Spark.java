@@ -77,7 +77,7 @@ public class Spark {
         final Consumer<FilterContext> mHandler;
 
         protected HandlerFilter (Consumer<FilterContext> aHandler) {
-            super (DEFAUT_CONTENT_TYPE);
+            super ();
             mHandler = aHandler;
         }
 

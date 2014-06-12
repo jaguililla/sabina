@@ -17,13 +17,9 @@
 
 package spark.examples;
 
+import static java.lang.System.out;
 import static spark.Spark.after;
 import static spark.Spark.get;
-
-import spark.Filter;
-import spark.Request;
-import spark.Response;
-import spark.Route;
 
 /**
  * Example showing the use of attributes
@@ -32,26 +28,19 @@ import spark.Route;
  */
 class FilterExampleAttributes {
     public static void main (String[] args) {
-        get (new Route ("/hi") {
-            @Override public Object handle (Request request, Response response) {
-                request.attribute ("foo", "bar");
-                return null;
-            }
+        get ("/hi", it -> {
+            it.attribute ("foo", "bar");
+            return null;
         });
 
-        after (new Filter ("/hi") {
-            @Override public void handle (Request request, Response response) {
-                for (String attr : request.attributes ()) {
-                    System.out.println ("attr: " + attr);
-                }
-            }
+        after ("/hi", it -> {
+            for (String attr : it.attributes ())
+                out.println ("attr: " + attr);
         });
 
-        after (new Filter ("/hi") {
-            @Override public void handle (Request request, Response response) {
-                Object foo = request.attribute ("foo");
-                response.body (asXml ("foo", foo));
-            }
+        after ("/hi", it -> {
+            Object foo = it.attribute ("foo");
+            it.body (asXml ("foo", foo));
         });
     }
 

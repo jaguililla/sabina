@@ -21,22 +21,9 @@ import static java.lang.System.out;
 import static spark.Spark.after;
 import static spark.Spark.before;
 
-import spark.Filter;
-import spark.Request;
-import spark.Response;
-
 class DummyFilter {
     public static void main (String[] args) {
-        before (new Filter () {
-            @Override public void handle (Request request, Response response) {
-                out.println ("Before");
-            }
-        });
-
-        after (new Filter () {
-            @Override public void handle (Request request, Response response) {
-                out.println ("After");
-            }
-        });
+        before (it -> out.println ("Before"));
+        after (it -> out.println ("After"));
     }
 }

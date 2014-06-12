@@ -97,10 +97,10 @@ public class MatcherFilter implements Filter {
         String acceptType = httpReq.getHeader (ACCEPT_TYPE_REQUEST_MIME_HEADER);
         String bodyContent = null;
 
-        try {
-            RequestWrapper req = new RequestWrapper ();
-            ResponseWrapper res = new ResponseWrapper ();
+        RequestWrapper req = new RequestWrapper ();
+        ResponseWrapper res = new ResponseWrapper ();
 
+        try {
             bodyContent =
                 beforeFilters (httpReq, httpRes, uri, acceptType, bodyContent, req, res);
 
@@ -136,9 +136,9 @@ public class MatcherFilter implements Filter {
         }
 
         // If redirected and content is null set to empty string to not throw NotConsumedException
-        if (bodyContent == null && res.isRedirected()) {
+        if (bodyContent == null && res.isRedirected())
             bodyContent = "";
-        }
+
         boolean consumed = bodyContent != null;
 
         if (!consumed && hasOtherHandlers) {

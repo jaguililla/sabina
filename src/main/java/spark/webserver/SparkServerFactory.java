@@ -30,11 +30,11 @@ public final class SparkServerFactory {
     private static SparkServer createJetty (boolean hasMultipleHandler) {
         MatcherFilter matcherFilter = new MatcherFilter (false, hasMultipleHandler);
         matcherFilter.init (null); // init is empty (left here in case is implemented)
-        return new SparkServerImpl (new JettyHandler (matcherFilter));
+        return new JettyServer (new JettyHandler (matcherFilter));
     }
 
     private static SparkServer createUndertow (boolean hasMultipleHandler) {
-        return null;
+        return new UndertowServer ();
     }
 
     public static SparkServer create (boolean hasMultipleHandler) {

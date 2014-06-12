@@ -14,15 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package spark.examples;
 
 import static spark.Spark.get;
 import static spark.Spark.staticFileLocation;
-
-import spark.Request;
-import spark.Response;
-import spark.Route;
 
 /**
  * Example showing how serve static resources.
@@ -30,14 +25,11 @@ import spark.Route;
 class StaticResources {
 
     public static void main (String[] args) {
-
-        // Will serve all static file are under "/public" in classpath if the route isn't consumed by others routes.
+        /*
+         * Will serve all static file are under "/public" in classpath if the route isn't consumed
+         * by others routes.
+         */
         staticFileLocation ("/public");
-
-        get (new Route ("/hello") {
-            @Override public Object handle (Request request, Response response) {
-                return "Hello World!";
-            }
-        });
+        get ("/hello", it -> "Hello World!");
     }
 }

@@ -156,6 +156,7 @@ public class SimpleRouteMatcher implements RouteMatcher {
 
     private List<RouteEntry> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path) {
+
         List<RouteEntry> matchSet = new ArrayList<> ();
         for (RouteEntry entry : routes) {
             if (entry.matches(httpMethod, path)) {

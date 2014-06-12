@@ -155,6 +155,9 @@ public class SparkTestUtil {
         boolean secureConnection,
         String acceptType) {
 
+        if (body == null)
+            body = "";
+
         try {
             String protocol = secureConnection? "https" : "http";
             String uri = protocol + "://localhost:" + port + path;

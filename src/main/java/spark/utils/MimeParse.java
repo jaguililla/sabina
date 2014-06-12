@@ -27,6 +27,9 @@ import java.util.Map;
  */
 public class MimeParse {
 
+    /**
+     * Constant for no mime type
+     */
     public static final String NO_MIME_TYPE = "";
 
     /**
@@ -148,6 +151,7 @@ public class MimeParse {
      */
     protected static FitnessAndQuality fitnessAndQualityParsed (
         String mimeType, Collection<ParseResults> parsedRanges) {
+
         int bestFitness = -1;
         float bestFitQ = 0;
         ParseResults target = parseMediaRange(mimeType);

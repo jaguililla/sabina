@@ -19,16 +19,8 @@ package spark.examples;
 
 import static spark.Spark.get;
 
-import spark.Request;
-import spark.Response;
-import spark.Route;
-
 class HelloWorld {
     public static void main (String[] args) {
-        get (new Route ("/hello") {
-            @Override public Object handle (Request request, Response response) {
-                return "Hello World!";
-            }
-        });
+        get ("/hello", it -> "Hello World!");
     }
 }

@@ -22,11 +22,6 @@ import static spark.Spark.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import spark.Filter;
-import spark.Request;
-import spark.Response;
-import spark.Route;
-
 /**
  * Example showing a very simple (and stupid) autentication filter that is executed before all
  * other resources.
@@ -51,34 +46,20 @@ class FilterExample {
         usernamePasswords.put ("foo", "bar");
         usernamePasswords.put ("admin", "admin");
 
-        before (new Filter () {
-            @Override public void handle (Request request, Response response) {
-                String user = request.queryParams ("user");
-                String password = request.queryParams ("password");
+        before (it -> {
+            String user = it.queryParams ("user");
+            String password = it.queryParams ("password");
 
-                String dbPassword = usernamePasswords.get (user);
-                if (!(password != null && password.equals (dbPassword))) {
-                    halt (401, "You are not welcome here!!!");
-                }
+            String dbPassword = usernamePasswords.get (user);
+            if (!(password != null && password.equals (dbPassword))) {
+                it.halt (401, "You are not welcome here!!!");
             }
         });
 
-        before (new Filter ("/hello") {
-            @Override public void handle (Request request, Response response) {
-                response.header ("Foo", "Set by second before filter");
-            }
-        });
+        before ("/hello", it -> it.header ("Foo", "Set by second before filter"));
 
-        get (new Route ("/hello") {
-            @Override public Object handle (Request request, Response response) {
-                return "Hello World!";
-            }
-        });
+        get ("/hello", it -> "Hello World!");
 
-        after (new Filter ("/hello") {
-            @Override public void handle (Request request, Response response) {
-                response.header ("spark", "added by after-filter");
-            }
-        });
+        after ("/hello", it -> it.header ("spark", "added by after-filter"));
     }
 }
