@@ -17,6 +17,8 @@
 
 package spark.webserver;
 
+import static java.lang.System.exit;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,8 +86,8 @@ class JettyServer implements SparkServer {
     private Handler handler;
     private Server server;
 
-    public JettyServer (Handler handler) {
-        this.handler = handler;
+    public JettyServer (MatcherFilter handler) {
+        this.handler = new JettyHandler (handler);
     }
 
     public void ignite (
@@ -142,20 +144,19 @@ class JettyServer implements SparkServer {
         }
         catch (Exception e) {
             e.printStackTrace (); // NOSONAR
-            System.exit (100); // NOSONAR
+            exit (100); // NOSONAR
         }
     }
 
     public void stop () {
         System.out.print (">>> " + NAME + " shutting down..."); // NOSONAR
         try {
-            if (server != null) {
+            if (server != null)
                 server.stop ();
-            }
         }
         catch (Exception e) {
             e.printStackTrace (); // NOSONAR
-            System.exit (100); // NOSONAR
+            exit (100); // NOSONAR
         }
         System.out.println ("done"); // NOSONAR
     }

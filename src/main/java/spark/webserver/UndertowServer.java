@@ -1,46 +1,36 @@
 package spark.webserver;
 
+import static io.undertow.servlet.Servlets.defaultContainer;
+import static io.undertow.servlet.Servlets.deployment;
+import static java.lang.System.exit;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import io.undertow.Handlers;
+import javax.servlet.*;
+
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.handlers.PathHandler;
 import io.undertow.servlet.Servlets;
-import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
-import io.undertow.util.Headers;
+import io.undertow.servlet.api.FilterInfo;
 
-class MessageServlet extends HttpServlet {
-    public static final String MESSAGE = "message";
-
-    private String message;
-
-    @Override public void init (final ServletConfig config) throws ServletException {
-        super.init (config);
-        message = config.getInitParameter (MESSAGE);
+class HiFilter implements Filter {
+    @Override public void init (FilterConfig filterConfig) throws ServletException {
+        // Empty
     }
 
-    @Override
-    protected void doGet (final HttpServletRequest req, final HttpServletResponse resp)
-        throws ServletException, IOException {
+    @Override public void doFilter (
+        ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
 
-        PrintWriter writer = resp.getWriter ();
-        writer.write (message);
+        PrintWriter writer = response.getWriter ();
+        writer.write ("Hi!");
         writer.close ();
     }
 
-    @Override
-    protected void doPost (final HttpServletRequest req, final HttpServletResponse resp)
-        throws ServletException, IOException {
-
-        doGet (req, resp);
+    @Override public void destroy () {
+        // Empty
     }
 }
 
@@ -50,54 +40,52 @@ class UndertowServer implements SparkServer {
         new UndertowServer ().t1 ();
     }
 
+    private final MatcherFilter filter;
+    private Undertow server;
+
+    public UndertowServer () { filter = null; }
+
+    public UndertowServer (MatcherFilter aFilter) {
+        filter = aFilter;
+    }
+
     @Override public void ignite (
         String host, int port,
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword,
         String staticFilesRoute, String externalFilesLocation) {
 
+        server = server (port, host, null);
     }
 
     @Override public void stop () {
-
+        try {
+            if (server != null)
+                server.stop ();
+        }
+        catch (Exception e) {
+            e.printStackTrace ();
+            exit (100);
+        }
     }
 
-    void server (int aPort, String aHost, HttpHandler aHandler) {
-        Undertow.builder ()
+    Undertow server (int aPort, String aHost, HttpHandler aHandler) {
+        return Undertow.builder ()
             .addHttpListener (aPort, aHost)
             .setHandler (aHandler)
-            .build ()
-            .start ();
-    }
-
-    void t0 () {
-        server (8080, "localhost", it -> {
-            it.getResponseHeaders ().put (Headers.CONTENT_TYPE, "text/plain");
-            it.getResponseSender ().send ("Hello World");
-        });
+            .build ();
     }
 
     void t1 () throws ServletException {
-        DeploymentInfo servletBuilder = Servlets.deployment ()
-            .setClassLoader (UndertowServer.class.getClassLoader ())
-            .addServlets (
-                Servlets.servlet ("MessageServlet", MessageServlet.class)
-                    .addInitParam ("message", "Hello World")
-                    .addMapping ("/*"),
-                Servlets.servlet ("MyServlet", MessageServlet.class)
-                    .addInitParam ("message", "MyServlet")
-                    .addMapping ("/myservlet"));
-
         DeploymentManager manager =
-            Servlets.defaultContainer ().addDeployment (servletBuilder);
-        manager.deploy ();
-        PathHandler path = Handlers.path (Handlers.redirect ("/myapp"))
-            .addPrefixPath ("/myapp", manager.start ());
+            defaultContainer ().addDeployment (
+                deployment ()
+                    .setClassLoader (UndertowServer.class.getClassLoader ())
+                    .setDeploymentName ("")
+                    .setContextPath ("")
+                    .addFilter (new FilterInfo ("f", HiFilter.class)));
 
-        Undertow server = Undertow.builder ()
-            .addHttpListener (8080, "localhost")
-            .setHandler (path)
-            .build ();
-        server.start ();
+        manager.deploy ();
+        server (8080, "localhost", manager.start ()).start ();
     }
 }

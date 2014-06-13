@@ -28,13 +28,17 @@ public final class SparkServerFactory {
     }
 
     private static SparkServer createJetty (boolean hasMultipleHandler) {
+        return new JettyServer (createFilter (hasMultipleHandler));
+    }
+
+    private static MatcherFilter createFilter (boolean hasMultipleHandler) {
         MatcherFilter matcherFilter = new MatcherFilter (false, hasMultipleHandler);
         matcherFilter.init (null); // init is empty (left here in case is implemented)
-        return new JettyServer (new JettyHandler (matcherFilter));
+        return matcherFilter;
     }
 
     private static SparkServer createUndertow (boolean hasMultipleHandler) {
-        return new UndertowServer ();
+        return new UndertowServer (createFilter (hasMultipleHandler));
     }
 
     public static SparkServer create (boolean hasMultipleHandler) {

@@ -16,12 +16,18 @@
  */
 package spark;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import spark.exception.ExceptionHandlerImpl;
+import spark.exception.ExceptionMapper;
 import spark.route.HttpMethod;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
+import spark.servlet.SparkFilter;
 import spark.webserver.SparkServer;
 import spark.webserver.SparkServerFactory;
 
@@ -98,14 +104,11 @@ public class Spark {
         }
     }
 
+    private static final Logger LOG = getLogger (Spark.class);
     private static final int SPARK_DEFAULT_PORT = 4567;
-
-    private static boolean initialized = false;
-
-    private static SparkServer server;
-    private static RouteMatcher routeMatcher;
-    private static String ipAddress = "0.0.0.0";
     private static int port = SPARK_DEFAULT_PORT;
+    private static boolean initialized = false;
+    private static String ipAddress = "0.0.0.0";
 
     private static String keystoreFile;
     private static String keystorePassword;
@@ -115,10 +118,12 @@ public class Spark {
     private static String staticFileFolder = null;
     private static String externalStaticFileFolder = null;
 
-    // Hide constructor
-    protected Spark () {
-        throw new IllegalStateException ();
-    }
+    private static SparkServer server;
+    private static RouteMatcher routeMatcher;
+
+    private static boolean runFromServlet;
+    private static boolean servletStaticLocationSet;
+    private static boolean servletExternalStaticLocationSet;
 
     /**
      * Set the IP address that Spark should listen on. If not called the default
@@ -134,9 +139,15 @@ public class Spark {
         Spark.ipAddress = ipAddress;
     }
 
+    private static void throwBeforeRouteMappingException () {
+        throw new IllegalStateException (
+            "This must be done before route mapping has begun");
+    }
+
     /**
      * Set the port that Spark should listen on. If not called the default port
      * is 4567. This has to be called before any route mapping is done.
+     * If provided port = 0 then the an arbitrary available port will be used.
      *
      * @param port The port number
      */
@@ -189,10 +200,19 @@ public class Spark {
      * @param folder the folder in classpath.
      */
     public static synchronized void staticFileLocation (String folder) {
-        if (initialized) {
+        if (initialized && !runFromServlet) {
             throwBeforeRouteMappingException ();
         }
         staticFileFolder = folder;
+        if (!servletStaticLocationSet) {
+            if (runFromServlet) {
+                SparkFilter.configureStaticResources (staticFileFolder);
+                servletStaticLocationSet = true;
+            }
+        }
+        else {
+            LOG.warn ("Static file location has already been set");
+        }
     }
 
     /**
@@ -202,10 +222,19 @@ public class Spark {
      * @param externalFolder the external folder serving static files.
      */
     public static synchronized void externalStaticFileLocation (String externalFolder) {
-        if (initialized) {
+        if (initialized && !runFromServlet) {
             throwBeforeRouteMappingException ();
         }
         externalStaticFileFolder = externalFolder;
+        if (!servletExternalStaticLocationSet) {
+            if (runFromServlet) {
+                SparkFilter.configureExternalStaticResources (externalStaticFileFolder);
+                servletExternalStaticLocationSet = true;
+            }
+        }
+        else {
+            LOG.warn ("External static file location has already been set");
+        }
     }
 
     /**
@@ -215,6 +244,35 @@ public class Spark {
      */
     public static synchronized void get (Route route) {
         addRoute (HttpMethod.get.name (), route);
+    }
+
+    protected static void addRoute (String httpMethod, Route route) {
+        init ();
+        routeMatcher.parseValidateAddRoute (httpMethod + " '" + route.getPath ()
+            + "'", route.getAcceptType (), route);
+    }
+
+    private static synchronized void init () {
+        if (!initialized) {
+            routeMatcher = RouteMatcherFactory.get ();
+            new Thread (() -> {
+                server = SparkServerFactory.create (hasMultipleHandlers ());
+                server.ignite (
+                    ipAddress,
+                    port,
+                    keystoreFile,
+                    keystorePassword,
+                    truststoreFile,
+                    truststorePassword,
+                    staticFileFolder,
+                    externalStaticFileFolder);
+            }).start ();
+            initialized = true;
+        }
+    }
+
+    private static boolean hasMultipleHandlers () {
+        return staticFileFolder != null || externalStaticFileFolder != null;
     }
 
     /**
@@ -296,6 +354,12 @@ public class Spark {
      */
     public static synchronized void before (Filter filter) {
         addFilter (HttpMethod.before.name (), filter);
+    }
+
+    protected static void addFilter (String httpMethod, Filter filter) {
+        init ();
+        routeMatcher.parseValidateAddRoute (httpMethod + " '" + filter.getPath ()
+            + "'", filter.getAcceptType (), filter);
     }
 
     /**
@@ -399,89 +463,33 @@ public class Spark {
     }
 
     public static synchronized void runFromServlet () {
+        runFromServlet = true;
         if (!initialized) {
             routeMatcher = RouteMatcherFactory.get ();
             initialized = true;
         }
     }
 
-    protected static void addRoute (String httpMethod, Route route) {
-        init ();
-        routeMatcher.parseValidateAddRoute (httpMethod + " '" + route.getPath ()
-            + "'", route.getAcceptType (), route);
-    }
-
-    protected static void addFilter (String httpMethod, Filter filter) {
-        init ();
-        routeMatcher.parseValidateAddRoute (httpMethod + " '" + filter.getPath ()
-            + "'", filter.getAcceptType (), filter);
-    }
-
-    private static boolean hasMultipleHandlers () {
-        return staticFileFolder != null || externalStaticFileFolder != null;
-    }
-
-    private static synchronized void init () {
-        if (!initialized) {
-            routeMatcher = RouteMatcherFactory.get ();
-            new Thread (() -> {
-                server = SparkServerFactory.create (hasMultipleHandlers ());
-                server.ignite (
-                    ipAddress,
-                    port,
-                    keystoreFile,
-                    keystorePassword,
-                    truststoreFile,
-                    truststorePassword,
-                    staticFileFolder,
-                    externalStaticFileFolder);
-            }).start ();
-            initialized = true;
-        }
-    }
-
-    private static void throwBeforeRouteMappingException () {
-        throw new IllegalStateException (
-            "This must be done before route mapping has begun");
-    }
-
-    /*
-     * TODO: discover new TODOs.
+    /**
+     * Maps an exception handler to be executed when an exception occurs during routing
      *
-     *
-     * TODO: Make available as maven dependency, upload on repo etc...
-     * TODO: Add *, splat possibility
-     * TODO: Add validation of routes, invalid characters and stuff,
-     * also validate parameters, check static, ONGOING
-     *
-     * TODO: Javadoc
-     *
-     * TODO: Create maven archetype, "ONGOING"
-     * TODO: Add cache-control helpers
-     *
-     * advanced TODO list:
-     * TODO: Add regexp URIs
-     *
-     * Ongoing
-     *
-     * Done
-     * TODO: Routes are matched in the order they are defined. The rirst route that matches
-     * the request is invoked. ???
-     * TODO: Before method for filters...check sinatra page
-     * TODO: Setting Headers
-     * TODO: Do we want get-prefixes for all *getters* or do we want a more ruby like
-     * approach???
-     * (Maybe have two choices?)
-     * TODO: Setting Body, Status Code
-     * TODO: Add possibility to set content type on return, DONE
-     * TODO: Add possibility to access HttpServletContext in method impl, DONE
-     * TODO: Redirect func in web context, DONE
-     * TODO: Refactor, extract interfaces, DONE
-     * TODO: Figure out a nice name, DONE - SPARK
-     * TODO: Add /uri/{param} possibility, DONE
-     * TODO: Tweak log4j config, DONE
-     * TODO: Query string in web context, DONE
-     * TODO: Add URI-param fetching from webcontext ie. ?param=value&param2=...etc, AND headers, DONE
-     * TODO: sessions? (use session servlet context?) DONE
+     * @param exceptionClass the exception class
+     * @param handler        The handler
      */
+    public static synchronized void exception(Class<? extends Exception> exceptionClass, ExceptionHandler handler) {
+        // wrap
+        ExceptionHandlerImpl wrapper = new ExceptionHandlerImpl(exceptionClass) {
+            @Override
+            public void handle(Exception exception, Request request, Response response) {
+                handler.handle(exception, request, response);
+            }
+        };
+
+        ExceptionMapper.getInstance ().map(exceptionClass, wrapper);
+    }
+
+    // Hide constructor
+    protected Spark () {
+        throw new IllegalStateException ();
+    }
 }
