@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -12,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
  * Parses parameters keys like in Sinatra. <br>
  * <br>
  * For a querystring like: <br>
- * <code>
- * user[name]=federico&user[lastname]=dayan
+ * user[name]=federico&#38;user[lastname]=dayan
  * </code> <br>
+ * <br>
  * <br>
  * We get would get a structure like: <br>
  * <code>
@@ -30,10 +31,8 @@ import javax.servlet.http.HttpServletRequest;
  * <code>
  * <p>
  * <br><br>
- * <p>
- * It is null safe, meaning that if a key does not exist, it does not throw
- * <code>NullPointerExcetpion</code>
- * , it just returns <code>null</code>.
+ * It is null safe, meaning that if a key does not exist, it does not throw NullPointerException
+ * , it just returns null.
  *
  * @author fddayan
  */
@@ -54,7 +53,7 @@ public class QueryParams {
      * Parses the parameters from request.getParameterMap() <br>
      * No need to decode, since HttpServletRequest does it for us.
      *
-     * @param request
+     * @param request the servlet request
      */
     public QueryParams (HttpServletRequest request) {
         if (request == null) {
@@ -75,7 +74,7 @@ public class QueryParams {
      *
      * @param key The key in the formar fo key1[key2][key3] (for example:
      * user[info][name]).
-     * @param values
+     * @param values the values
      */
     QueryParams (String key, String... values) {
         loadKeys (key, values);
@@ -85,12 +84,23 @@ public class QueryParams {
         loadQueryString (params);
     }
 
+    /**
+     * loads query string
+     *
+     * @param params the parameters
+     */
     protected final void loadQueryString (Map<String, String[]> params) {
         for (Map.Entry<String, String[]> param : params.entrySet ()) {
             loadKeys (param.getKey (), param.getValue ());
         }
     }
 
+    /**
+     * loads keys
+     *
+     * @param key   the key
+     * @param value the values
+     */
     protected final void loadKeys (String key, String[] value) {
         String[] parsed = parseKey (key);
 
@@ -145,9 +155,8 @@ public class QueryParams {
      * <p>
      * </code>
      *
-     * @param key The paramater nested key
-     *
-     * @return
+     * @param keys The parameter nested key(s)
+     * @return the query params map
      */
     public QueryParams get (String... keys) {
         QueryParams ret = this;
@@ -166,7 +175,7 @@ public class QueryParams {
      * Returns the value for this key. <br>
      * If this key has nested elements and does not have a value returns null.
      *
-     * @return
+     * @return the value
      */
     public String value () {
         if (hasValue ()) {
@@ -187,42 +196,65 @@ public class QueryParams {
      * get("user").value("name")
      * </code>
      *
-     * @param key
-     *
-     * @return
+     * @param keys the key(s)
+     * @return the value
      */
     public String value (String... keys) {
         return get (keys).value ();
     }
 
+    /**
+     * @return has keys
+     */
     public boolean hasKeys () {
         return !this.queryMap.isEmpty ();
     }
 
+    /**
+     * @return has values
+     */
     public boolean hasValue () {
         return this.values != null && this.values.length > 0;
     }
 
+    /**
+     * @return the boolean value
+     */
     public Boolean booleanValue () {
         return hasValue ()? Boolean.valueOf (value ()) : null;
     }
 
+    /**
+     * @return the integer value
+     */
     public Integer integerValue () {
         return hasValue ()? Integer.valueOf (value ()) : null;
     }
 
+    /**
+     * @return the long value
+     */
     public Long longValue () {
         return hasValue ()? Long.valueOf (value ()) : null;
     }
 
+    /**
+     * @return the float value
+     */
     public Float floatValue () {
         return hasValue ()? Float.valueOf (value ()) : null;
     }
 
+    /**
+     * @return the double value
+     */
     public Double doubleValue () {
         return hasValue ()? Double.valueOf (value ()) : null;
     }
 
+    /**
+     * @return the values
+     */
     public String[] values () {
         return this.values.clone ();
     }
@@ -247,6 +279,9 @@ public class QueryParams {
         }
     }
 
+    /**
+     * @return Map representation
+     */
     public Map<String, String[]> toMap () {
         Map<String, String[]> map = new HashMap<> ();
 

@@ -51,7 +51,9 @@ public class Response {
     }
 
     /**
-     * Sets the status code for the response
+     * Sets the status code for the
+     *
+     * @param statusCode the status code
      */
     public void status(int statusCode) {
         response.setStatus(statusCode);
@@ -59,6 +61,8 @@ public class Response {
 
     /**
      * Sets the content type for the response
+     *
+     * @param contentType the content type
      */
     public void type(String contentType) {
         response.setContentType(contentType);
@@ -66,17 +70,24 @@ public class Response {
 
     /**
      * Sets the body
+     *
+     * @param body the body
      */
     public void body(String body) {
        this.body = body;
     }
 
+    /**
+     * returns the body
+     *
+     * @return the body
+     */
     public String body() {
        return this.body;
     }
 
     /**
-     * Gets the raw response object handed in by Jetty
+     * @return the raw response object handed in by Jetty
      */
     public HttpServletResponse raw() {
         return response;
@@ -119,6 +130,9 @@ public class Response {
 
     /**
      * Adds/Sets a response header
+     *
+     * @param header the header
+     * @param value  the value
      */
     public void header(String header, String value) {
         response.addHeader(header, value);
