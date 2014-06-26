@@ -17,6 +17,8 @@
 
 package spark.webserver;
 
+import javax.servlet.ServletException;
+
 /**
  * @author Per Wendel
  */
@@ -38,7 +40,7 @@ public interface SparkServer {
         String host, int port,
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword,
-        String staticFilesRoute, String externalFilesLocation);
+        String staticFilesRoute, String externalFilesLocation) throws ServletException;
 
     /**
      * Stops the spark server.

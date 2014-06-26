@@ -3,47 +3,20 @@ package spark.webserver;
 import static io.undertow.servlet.Servlets.defaultContainer;
 import static io.undertow.servlet.Servlets.deployment;
 import static java.lang.System.exit;
+import static javax.servlet.DispatcherType.REQUEST;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.*;
+import javax.net.ssl.SSLContext;
+import javax.servlet.ServletException;
 
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentManager;
-import io.undertow.servlet.api.FilterInfo;
-
-class HiFilter implements Filter {
-    @Override public void init (FilterConfig filterConfig) throws ServletException {
-        // Empty
-    }
-
-    @Override public void doFilter (
-        ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
-
-        PrintWriter writer = response.getWriter ();
-        writer.write ("Hi!");
-        writer.close ();
-    }
-
-    @Override public void destroy () {
-        // Empty
-    }
-}
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 class UndertowServer implements SparkServer {
-
-    public static void main (String[] aArgs) throws ServletException {
-        new UndertowServer ().t1 ();
-    }
-
     private final MatcherFilter filter;
     private Undertow server;
-
-    public UndertowServer () { filter = null; }
 
     public UndertowServer (MatcherFilter aFilter) {
         filter = aFilter;
@@ -53,9 +26,18 @@ class UndertowServer implements SparkServer {
         String host, int port,
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword,
-        String staticFilesRoute, String externalFilesLocation) {
+        String staticFilesRoute, String externalFilesLocation) throws ServletException {
 
-        server = server (port, host, null);
+        DeploymentManager deploymentManager = createDeploymentManager ();
+        deploymentManager.deploy ();
+
+        server = (keystoreFile == null)?
+            server (8080, "localhost", deploymentManager.start ()) :
+            server (8080, "localhost", deploymentManager.start (),
+                createSecureSocketContext (
+                    keystoreFile, keystorePassword, truststoreFile, truststorePassword));
+
+        server.start ();
     }
 
     @Override public void stop () {
@@ -69,6 +51,13 @@ class UndertowServer implements SparkServer {
         }
     }
 
+    Undertow server (int aPort, String aHost, HttpHandler aHandler, SSLContext aSSLContext) {
+        return Undertow.builder ()
+            .addHttpsListener (aPort, aHost, aSSLContext)
+            .setHandler (aHandler)
+            .build ();
+    }
+
     Undertow server (int aPort, String aHost, HttpHandler aHandler) {
         return Undertow.builder ()
             .addHttpListener (aPort, aHost)
@@ -76,16 +65,31 @@ class UndertowServer implements SparkServer {
             .build ();
     }
 
-    void t1 () throws ServletException {
-        DeploymentManager manager =
-            defaultContainer ().addDeployment (
-                deployment ()
-                    .setClassLoader (UndertowServer.class.getClassLoader ())
-                    .setDeploymentName ("")
-                    .setContextPath ("")
-                    .addFilter (new FilterInfo ("f", HiFilter.class)));
+    private static SSLContext createSecureSocketContext (
+        String keystoreFile, String keystorePassword,
+        String truststoreFile, String truststorePassword) {
 
-        manager.deploy ();
-        server (8080, "localhost", manager.start ()).start ();
+        SslContextFactory sslContextFactory = new SslContextFactory (keystoreFile);
+
+        if (keystorePassword != null)
+            sslContextFactory.setKeyStorePassword (keystorePassword);
+
+        if (truststoreFile != null)
+            sslContextFactory.setTrustStorePath (truststoreFile);
+
+        if (truststorePassword != null)
+            sslContextFactory.setTrustStorePassword (truststorePassword);
+
+        return sslContextFactory.getSslContext ();
+    }
+
+    DeploymentManager createDeploymentManager () throws ServletException {
+        return defaultContainer ().addDeployment (
+            deployment ()
+                .setClassLoader (UndertowServer.class.getClassLoader ())
+                .setDeploymentName ("")
+                .setContextPath ("")
+                .addFilter (Servlets.filter ("f", filter.getClass ())) // TODO This WON'T work
+                .addFilterUrlMapping ("f", "/*", REQUEST));
     }
 }

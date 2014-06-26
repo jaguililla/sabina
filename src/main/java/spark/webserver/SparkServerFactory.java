@@ -21,7 +21,7 @@ package spark.webserver;
  * @author Per Wendel
  */
 public final class SparkServerFactory {
-    private static final int IMPL = 0;
+    private static final int IMPL = 1;
 
     private SparkServerFactory () {
         throw new IllegalStateException ();
