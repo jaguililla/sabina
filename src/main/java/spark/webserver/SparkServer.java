@@ -17,6 +17,8 @@
 
 package spark.webserver;
 
+import javax.servlet.ServletException;
+
 /**
  * @author Per Wendel
  */

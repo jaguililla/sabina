@@ -58,8 +58,18 @@ public class MatcherFilter implements Filter {
                 "<h2>404 Not found</h2>The requested route [%s] has not been mapped in Spark" +
                 "</body></html>";
 
-    private final RouteMatcher routeMatcher;
-    private final boolean isServletContext, hasOtherHandlers;
+    public final RouteMatcher routeMatcher;
+    public final boolean isServletContext, hasOtherHandlers;
+
+    /**
+     * TODO Needed by Undertow to instantiate the filter
+     */
+    public MatcherFilter () {
+        super ();
+        routeMatcher = null;
+        isServletContext = false;
+        hasOtherHandlers = false;
+    }
 
     /**
      * Constructor.

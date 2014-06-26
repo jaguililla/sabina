@@ -122,6 +122,7 @@
       <groupId>io.undertow</groupId>
       <artifactId>undertow-servlet</artifactId>
       <version>1.0.14.Final</version>
+      <optional>true</optional>
     </dependency>
 
     <!-- TESTING DEPENDENCIES -->
