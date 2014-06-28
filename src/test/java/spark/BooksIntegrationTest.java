@@ -1,6 +1,5 @@
 package spark;
 
-import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -21,7 +20,7 @@ public class BooksIntegrationTest {
     private static final int PORT = 4567;
     private static final String AUTHOR = "FOO", TITLE = "BAR", NEW_TITLE = "SPARK";
 
-    private static SparkTestUtil testUtil;
+    private static SparkTestUtil testUtil = new SparkTestUtil (4567);
 
     private static String id = "1";
 
@@ -32,16 +31,16 @@ public class BooksIntegrationTest {
     }
 
     @AfterClass public static void tearDown () throws InterruptedException {
+//        sleep (5); // Avoid stopping before processing last test
         stop ();
-        sleep (100);
+        testUtil.waitForShutdown ();
     }
 
     @BeforeClass public static void setup () throws InterruptedException {
-        testUtil = new SparkTestUtil (4567);
         before (it -> it.header ("FOZ", "BAZ"));
         Books.books ();
         after (it -> it.header ("FOO", "BAR"));
-        sleep (100);
+        testUtil.waitForStartup ();
     }
 
     @Test public void createBook () throws FileNotFoundException {

@@ -1,7 +1,6 @@
 package spark;
 
 import static java.lang.System.out;
-import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static spark.Spark.*;
@@ -18,17 +17,17 @@ import spark.util.SparkTestUtil.UrlResponse;
 
 public class GenericIntegrationTest {
 
-    private static SparkTestUtil testUtil;
+    private static SparkTestUtil testUtil = new SparkTestUtil (4567);
     private static File tmpExternalFile;
 
     @AfterClass public static void tearDown () {
         Spark.stop ();
+        testUtil.waitForShutdown ();
         if (tmpExternalFile != null)
             tmpExternalFile.delete ();
     }
 
     @BeforeClass public static void setup () throws IOException, InterruptedException {
-        testUtil = new SparkTestUtil (4567);
         tmpExternalFile =
             new File (System.getProperty ("java.io.tmpdir"), "externalFile.html");
 
@@ -74,7 +73,7 @@ public class GenericIntegrationTest {
 
         after ("/hi", it -> it.header ("after", "foobar"));
 
-        sleep (100);
+        testUtil.waitForStartup ();
     }
 
     @Test public void filters_should_be_accept_type_aware () throws Exception {

@@ -1,10 +1,13 @@
 package spark.util;
 
+import static java.lang.System.out;
 import static org.apache.http.conn.socket.PlainConnectionSocketFactory.INSTANCE;
 import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
@@ -302,5 +305,49 @@ public class SparkTestUtil {
         catch (Exception e) {
             e.printStackTrace ();
         }
+    }
+
+    public void waitForStartup () {
+        waitForStartup ("localhost", getPort ());
+    }
+
+    public static void waitForStartup (String aHost, int aPort) {
+        waitForStartup (aHost, aPort, 5, 100);
+    }
+
+    public static void waitForStartup (
+        String aHost, int aPort, long aInterval, int aAttempts) {
+
+        for (int ii = 0; ii < aAttempts; ii++)
+            try {
+                new Socket (aHost, aPort);
+                out.println (">>> Waiting " + (ii * aInterval) + " ms to STARTUP");
+                return;
+            }
+            catch (IOException e) {
+                sleep (aInterval);
+            }
+    }
+
+    public void waitForShutdown () {
+        waitForShutdown ("localhost", getPort ());
+    }
+
+    public static void waitForShutdown (String aHost, int aPort) {
+        waitForShutdown (aHost, aPort, 5, 100);
+    }
+
+    public static void waitForShutdown (
+        String aHost, int aPort, long aInterval, int aAttempts) {
+
+        for (int ii = 0; ii < aAttempts; ii++)
+            try {
+                new Socket (aHost, aPort);
+                sleep (aInterval);
+            }
+            catch (IOException e) {
+                out.println (">>> Waiting " + (ii * aInterval) + " ms to SHUTDOWN");
+                return;
+            }
     }
 }

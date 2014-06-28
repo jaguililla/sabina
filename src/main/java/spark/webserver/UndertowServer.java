@@ -7,18 +7,21 @@ import static java.lang.System.exit;
 import static java.lang.System.setProperty;
 import static javax.servlet.DispatcherType.REQUEST;
 
-import java.io.IOException;
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
-
 import javax.net.ssl.SSLContext;
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
 
-import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.handlers.resource.*;
-import io.undertow.servlet.api.*;
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.resource.FileResourceManager;
+import io.undertow.servlet.api.DeploymentInfo;
+import io.undertow.servlet.api.DeploymentManager;
+import io.undertow.servlet.api.FilterInfo;
+import io.undertow.servlet.api.InstanceFactory;
+import io.undertow.servlet.api.InstanceHandle;
 
 class MatcherFilterInfo extends FilterInfo implements Cloneable {
     private final MatcherFilter matcherFilter;
@@ -48,6 +51,21 @@ class MatcherFilterInfo extends FilterInfo implements Cloneable {
     }
 }
 
+class ChainHttpHandler implements HttpHandler {
+    private final HttpHandler wrapper, wrapped;
+
+    ChainHttpHandler (HttpHandler aWrapper, HttpHandler aWrapped) {
+        wrapper = aWrapper;
+        wrapped = aWrapped;
+
+    }
+    @Override public void handleRequest (HttpServerExchange exchange) throws Exception {
+        wrapper.handleRequest (exchange);
+//        if (!exchange.isComplete ())
+            wrapped.handleRequest (exchange);
+    }
+}
+
 class UndertowServer implements SparkServer {
     private final MatcherFilter filter;
     private Undertow server;
@@ -60,11 +78,11 @@ class UndertowServer implements SparkServer {
         String host, int port,
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword,
-        String staticFilesRoute, String externalFilesLocation) {
+        String staticFilesFolder, String externalFilesFolder) {
 
         try {
             DeploymentManager deploymentManager =
-                createDeploymentManager (staticFilesRoute, externalFilesLocation);
+                createDeploymentManager (staticFilesFolder, externalFilesFolder);
             deploymentManager.deploy ();
 
             server = (keystoreFile == null)?
@@ -103,11 +121,28 @@ class UndertowServer implements SparkServer {
             .addFilter (new MatcherFilterInfo ("router", filter))
             .addFilterUrlMapping ("router", "/*", REQUEST);
 
-        return (aStaticFilesRoute != null)?
-//            defaultContainer ().addDeployment (deployment.addOuterHandlerChainWrapper (
-//                resource (new FileResourceManager (null, 0L))) :
-            defaultContainer ().addDeployment (deployment) :
-            defaultContainer ().addDeployment (deployment);
+//        if (aStaticFilesRoute != null)
+//            deployment.addInitialHandlerChainWrapper (
+//                handler -> new ChainHttpHandler (
+//                    handler,
+//                    resource (
+//                        new ClassPathResourceManager (
+//                            getSystemClassLoader (), aStaticFilesRoute)
+//                    )
+//                )
+//            );
+
+        if (aExternalFilesLocation != null)
+            deployment.addInitialHandlerChainWrapper (
+                handler -> new ChainHttpHandler (
+                    resource (
+                        new FileResourceManager (new File (aExternalFilesLocation), 0L)
+                    ),
+                    handler
+                )
+            );
+
+        return defaultContainer ().addDeployment (deployment);
     }
 
     Undertow server (int aPort, String aHost, HttpHandler aHandler) {

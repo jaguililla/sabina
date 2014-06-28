@@ -1,7 +1,6 @@
 package spark;
 
 import static java.lang.System.out;
-import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static spark.Spark.*;
@@ -16,14 +15,14 @@ import spark.util.SparkTestUtil.UrlResponse;
 
 public class GenericSecureIntegrationTest {
 
-    private static SparkTestUtil testUtil;
+    private static SparkTestUtil testUtil = new SparkTestUtil (4567);
 
     @AfterClass public static void tearDown () {
         stop ();
+        testUtil.waitForShutdown ();
     }
 
     @BeforeClass public static void setup () throws InterruptedException {
-        testUtil = new SparkTestUtil (4567);
 
         // note that the keystore stuff is retrieved from SparkTestUtil which
         // respects JVM params for keystore, password
@@ -54,7 +53,7 @@ public class GenericSecureIntegrationTest {
 
         after ("/hi", it -> it.header ("after", "foobar"));
 
-        sleep (100);
+        testUtil.waitForStartup ();
     }
 
     @Test public void testGetHi () {

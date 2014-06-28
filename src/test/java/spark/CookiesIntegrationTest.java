@@ -1,6 +1,5 @@
 package spark;
 
-import static java.lang.Thread.sleep;
 import static spark.Spark.post;
 import static spark.Spark.stop;
 
@@ -16,10 +15,9 @@ import spark.util.SparkTestUtil;
  */
 public class CookiesIntegrationTest {
 
-    private static SparkTestUtil testUtil;
+    private static SparkTestUtil testUtil = new SparkTestUtil (4567);
 
     @BeforeClass public static void initRoutes () throws InterruptedException {
-        testUtil = new SparkTestUtil (4567);
 
         post ("/assertNoCookies", it -> {
             if (!it.cookies ().isEmpty ()) {
@@ -49,11 +47,12 @@ public class CookiesIntegrationTest {
             return "";
         });
 
-        sleep (100);
+        testUtil.waitForStartup ();
     }
 
     @AfterClass public static void stopServer () {
         stop ();
+        testUtil.waitForShutdown ();
     }
 
     @Test public void emptyCookies () {

@@ -4,7 +4,8 @@ import static java.lang.System.exit;
 import static java.lang.System.out;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static spark.util.SparkTestUtil.sleep;
+import static spark.util.SparkTestUtil.waitForShutdown;
+import static spark.util.SparkTestUtil.waitForStartup;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -26,7 +27,7 @@ public class ServletTest {
 
     @AfterClass public static void tearDown () throws Exception {
         server.stop ();
-        sleep (500);
+        waitForShutdown ("localhost", PORT);
     }
 
     @BeforeClass public static void setup () {
@@ -60,7 +61,7 @@ public class ServletTest {
             }
         }).start ();
 
-        sleep (500);
+        waitForStartup ("localhost", PORT);
     }
 
     @Test public void testGetHi () {
