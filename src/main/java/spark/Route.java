@@ -21,8 +21,7 @@ package spark;
  * A Route is built up by a path (for url-matching) and the implementation of the 'handle'
  * method.
  * When a request is made, if present, the matching routes 'handle' method is invoked. The
- * object
- * that is returned from 'handle' will be set to the response body (toString()).
+ * object that is returned from 'handle' will be set to the response body (toString()).
  *
  * @author Per Wendel
  */
@@ -31,18 +30,18 @@ public abstract class Route extends Action {
     protected static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param path The route path which is used for matching. (e.g. /hello, users/:name)
+     * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      */
     protected Route (String path) {
         this (path, DEFAULT_ACCEPT_TYPE);
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param path The route path which is used for matching. (e.g. /hello, users/:name)
+     * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      * @param acceptType The accept type which is used for matching.
      */
     protected Route (String path, String acceptType) {
@@ -50,13 +49,13 @@ public abstract class Route extends Action {
     }
 
     /**
-     * Invoked when a request is made on this route's corresponding path e.g. '/hello'
+     * Invoked when a request is made on this route's corresponding path e.g. '/hello'.
      *
-     * @param request The request object providing information about the HTTP request
-     * @param response The response object providing functionality for modifying the response
+     * @param request The request object providing information about the HTTP request.
+     * @param response The response object providing functionality for modifying the response.
      *
-     * @return The content to be set in the response
-     * @throws java.lang.Exception when handle fails
+     * @return The content to be set in the response.
+     * @throws java.lang.Exception when handle fails.
      */
     public abstract Object handle (Request request, Response response);
 
@@ -69,7 +68,7 @@ public abstract class Route extends Action {
      * @param element to be rendered.
      *
      * @return body content.
-     * @throws java.lang.Exception when render fails
+     * @throws java.lang.Exception when render fails.
      */
     //TODO change String return type to Stream. It should be done in another issue.
     public String render (Object element) {

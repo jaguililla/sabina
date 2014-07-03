@@ -1,22 +1,29 @@
 package spark.webserver;
 
+import static io.undertow.Handlers.predicate;
 import static io.undertow.Handlers.resource;
+import static io.undertow.predicate.Predicates.suffixes;
 import static io.undertow.servlet.Servlets.defaultContainer;
 import static io.undertow.servlet.Servlets.deployment;
+import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.System.exit;
 import static java.lang.System.setProperty;
 import static javax.servlet.DispatcherType.REQUEST;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.net.ssl.SSLContext;
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
 
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.resource.FileResourceManager;
+import io.undertow.server.handlers.resource.*;
+import io.undertow.server.handlers.resource.Resource;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.servlet.api.FilterInfo;
@@ -51,18 +58,55 @@ class MatcherFilterInfo extends FilterInfo implements Cloneable {
     }
 }
 
-class ChainHttpHandler implements HttpHandler {
-    private final HttpHandler wrapper, wrapped;
+/**
+ * TODO Change by version with two resourceManagers (better performance ?)
+ */
+class ChainResourceManager implements ResourceManager {
 
-    ChainHttpHandler (HttpHandler aWrapper, HttpHandler aWrapped) {
-        wrapper = aWrapper;
-        wrapped = aWrapped;
+    List<ResourceManager> managers = new ArrayList<> ();
 
+    ChainResourceManager (String aStaticPath, String aFilesPath) {
+        if (aStaticPath != null)
+            managers.add (new ClassPathResourceManager (
+                ClassLoader.getSystemClassLoader (), aStaticPath));
+
+        if (aFilesPath != null)
+            managers.add (new FileResourceManager (new File (aFilesPath), 0L));
     }
-    @Override public void handleRequest (HttpServerExchange exchange) throws Exception {
-        wrapper.handleRequest (exchange);
-//        if (!exchange.isComplete ())
-            wrapped.handleRequest (exchange);
+
+    @Override public Resource getResource (String path) throws IOException {
+        for (ResourceManager rm : managers) {
+            Resource res = rm.getResource (path);
+            if (res != null)
+                return res;
+        }
+
+        return null;
+    }
+
+    @Override public boolean isResourceChangeListenerSupported () {
+        for (ResourceManager rm : managers)
+            if (!rm.isResourceChangeListenerSupported ())
+                return false;
+
+        return true;
+    }
+
+    @Override public void registerResourceChangeListener (
+        ResourceChangeListener listener) {
+
+        managers.forEach (manager -> manager.registerResourceChangeListener (listener));
+    }
+
+    @Override public void removeResourceChangeListener (
+        ResourceChangeListener listener) {
+
+        managers.forEach (manager -> manager.removeResourceChangeListener (listener));
+    }
+
+    @Override public void close () throws IOException {
+        for (ResourceManager rm : managers)
+            rm.close ();
     }
 }
 
@@ -115,29 +159,17 @@ class UndertowServer implements SparkServer {
         String aStaticFilesRoute, String aExternalFilesLocation) throws ServletException {
 
         final DeploymentInfo deployment = deployment ()
-            .setClassLoader (UndertowServer.class.getClassLoader ())
+            .setClassLoader (getSystemClassLoader ())
             .setDeploymentName ("")
             .setContextPath ("")
             .addFilter (new MatcherFilterInfo ("router", filter))
             .addFilterUrlMapping ("router", "/*", REQUEST);
 
-//        if (aStaticFilesRoute != null)
-//            deployment.addInitialHandlerChainWrapper (
-//                handler -> new ChainHttpHandler (
-//                    handler,
-//                    resource (
-//                        new ClassPathResourceManager (
-//                            getSystemClassLoader (), aStaticFilesRoute)
-//                    )
-//                )
-//            );
-
-        if (aExternalFilesLocation != null)
-            deployment.addInitialHandlerChainWrapper (
-                handler -> new ChainHttpHandler (
+        if (aStaticFilesRoute != null || aExternalFilesLocation != null)
+            deployment.addInnerHandlerChainWrapper (
+                handler -> predicate (suffixes (".png", ".css", ".html"),
                     resource (
-                        new FileResourceManager (new File (aExternalFilesLocation), 0L)
-                    ),
+                        new ChainResourceManager (aStaticFilesRoute, aExternalFilesLocation)),
                     handler
                 )
             );

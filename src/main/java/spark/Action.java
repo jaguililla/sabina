@@ -20,7 +20,7 @@ package spark;
 import java.util.regex.Pattern;
 
 /**
- * Functionality used in both Route and Filter
+ * Functionality used in both Route and Filter.
  *
  * @author Per Wendel
  */
@@ -47,8 +47,7 @@ abstract class Action {
     /**
      * Immediately stops a request within a filter or route
      * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
-     * re-throw otherwise
-     * halt will not work
+     * re-throw otherwise halt will not work.
      */
     public final void halt () {
         throw new HaltException ();
@@ -57,10 +56,9 @@ abstract class Action {
     /**
      * Immediately stops a request within a filter or route with specified status code
      * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
-     * re-throw otherwise
-     * halt will not work
+     * re-throw otherwise halt will not work.
      *
-     * @param status the status code
+     * @param status the status code.
      */
     public final void halt (int status) {
         throw new HaltException (status);
@@ -69,10 +67,9 @@ abstract class Action {
     /**
      * Immediately stops a request within a filter or route with specified body content
      * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
-     * re-throw otherwise
-     * halt will not work
+     * re-throw otherwise halt will not work.
      *
-     * @param body The body content
+     * @param body The body content.
      */
     public final void halt (String body) {
         throw new HaltException (body);
@@ -80,13 +77,12 @@ abstract class Action {
 
     /**
      * Immediately stops a request within a filter or route with specified status code and body
-     * content
+     * content.
      * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
-     * re-throw otherwise
-     * halt will not work
+     * re-throw otherwise halt will not work.
      *
-     * @param status The status code
-     * @param body The body content
+     * @param status The status code.
+     * @param body The body content.
      */
     public final void halt (int status, String body) {
         throw new HaltException (status, body);
@@ -97,7 +93,7 @@ abstract class Action {
     }
 
     /**
-     * Returns this route's path
+     * Returns this route's path.
      */
     protected String getPath () {
         return this.path;

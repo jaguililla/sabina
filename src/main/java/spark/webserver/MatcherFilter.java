@@ -61,6 +61,8 @@ public class MatcherFilter implements Filter {
     public final RouteMatcher routeMatcher;
     public final boolean isServletContext, hasOtherHandlers;
 
+    boolean handled;
+
     /**
      * TODO Needed by Undertow to instantiate the filter
      */
@@ -152,7 +154,9 @@ public class MatcherFilter implements Filter {
         boolean consumed = bodyContent != null;
 
         if (!consumed && hasOtherHandlers) {
-            throw new NotConsumedException ();
+//            throw new NotConsumedException ();
+            handled = false;
+            return;
         }
 
         if (!consumed && !isServletContext) {
@@ -171,6 +175,8 @@ public class MatcherFilter implements Filter {
         else if (chain != null) {
             chain.doFilter (httpReq, httpRes);
         }
+
+        handled = true;
 
         // TODO Merge logs and take care of method flow to log always
         LOG.debug ("httpMethod:" + httpMethodStr + ", uri: " + uri);

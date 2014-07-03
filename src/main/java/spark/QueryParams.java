@@ -64,6 +64,7 @@ public class QueryParams {
 
     // Just for testing
     QueryParams () {
+        super ();
     }
 
     /**

@@ -31,16 +31,16 @@ public abstract class Filter extends Action {
     protected static final String DEFAUT_CONTENT_TYPE = "text/html";
 
     /**
-     * Constructs a filter that matches on everything
+     * Constructs a filter that matches on everything.
      */
     protected Filter () {
         this (ALL_PATHS);
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param path The filter path which is used for matching. (e.g. /hello, users/:name)
+     * @param path The filter path which is used for matching. (e.g. /hello, users/:name).
      */
     protected Filter (String path) {
         super (path, DEFAUT_CONTENT_TYPE);
@@ -51,10 +51,10 @@ public abstract class Filter extends Action {
     }
 
     /**
-     * Invoked when a request is made on this filter's corresponding path e.g. '/hello'
+     * Invoked when a request is made on this filter's corresponding path e.g. '/hello'.
      *
-     * @param request The request object providing information about the HTTP request
-     * @param response The response object providing functionality for modifying the response
+     * @param request The request object providing information about the HTTP request.
+     * @param response The response object providing functionality for modifying the response.
      */
     public abstract void handle (Request request, Response response);
 }

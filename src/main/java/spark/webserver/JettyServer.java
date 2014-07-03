@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import javax.servlet.Filter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,9 +49,9 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 class JettyHandler extends SessionHandler {
     private static final Logger LOG = Log.getLogger (JettyHandler.class);
 
-    private Filter filter;
+    private MatcherFilter filter;
 
-    public JettyHandler (Filter filter) {
+    public JettyHandler (MatcherFilter filter) {
         this.filter = filter;
     }
 
@@ -64,14 +63,8 @@ class JettyHandler extends SessionHandler {
         throws IOException, ServletException {
 
         LOG.debug ("jettyhandler, handle();");
-        try {
-            filter.doFilter (request, response, null);
-            baseRequest.setHandled (true);
-        }
-        catch (NotConsumedException ignore) {
-            // TODO Not use an exception in order to be faster
-            baseRequest.setHandled (false);
-        }
+        filter.doFilter (request, response, null);
+        baseRequest.setHandled (filter.handled);
     }
 }
 

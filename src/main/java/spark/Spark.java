@@ -18,16 +18,15 @@ package spark;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
-import spark.exception.ExceptionHandlerImpl;
-import spark.exception.ExceptionMapper;
 import spark.route.HttpMethod;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
-import spark.servlet.SparkFilter;
+import spark.webserver.SparkFilter;
 import spark.webserver.SparkServer;
 import spark.webserver.SparkServerFactory;
 
@@ -101,6 +100,25 @@ public class Spark {
 
         @Override public void handle (Request request, Response response) {
             mHandler.accept (new FilterContext (this, request, response));
+        }
+    }
+
+    private static class HandlerException<T extends Exception>
+        extends ExceptionHandler<T> {
+
+        final BiConsumer<T, FilterContext> mHandler;
+
+        protected HandlerException (
+            Class<T> aException, BiConsumer<T, FilterContext> aHandler) {
+            super (aException);
+            mHandler = aHandler;
+        }
+
+        @Override public void handle (
+            T exception, Request request, Response response) {
+
+            mHandler.accept (exception, new FilterContext (null, request, response));
+
         }
     }
 
@@ -203,7 +221,7 @@ public class Spark {
         if (initialized && !runFromServlet) {
             throwBeforeRouteMappingException ();
         }
-        staticFileFolder = folder;
+        staticFileFolder = folder.startsWith ("/")? folder.substring (1) : folder;
         if (!servletStaticLocationSet) {
             if (runFromServlet) {
                 SparkFilter.configureStaticResources (staticFileFolder);
@@ -476,12 +494,14 @@ public class Spark {
      * @param exceptionClass the exception class
      * @param handler        The handler
      */
-    public static synchronized void exception(Class<? extends Exception> exceptionClass, ExceptionHandler handler) {
+    public static synchronized <T extends Exception> void exception(
+        Class<T> exceptionClass, BiConsumer<T, FilterContext> aHandler) {
+
         // wrap
-        ExceptionHandlerImpl wrapper = new ExceptionHandlerImpl(exceptionClass) {
-            @Override
-            public void handle(Exception exception, Request request, Response response) {
-                handler.handle(exception, request, response);
+        ExceptionHandler wrapper = new ExceptionHandler<T> (exceptionClass) {
+            @Override public void handle(T exception, Request request, Response response) {
+                // TODO Change FilterContext (null...) this WILL fail calling 'halt'
+                aHandler.accept (exception, new FilterContext (null, request, response));
             }
         };
 

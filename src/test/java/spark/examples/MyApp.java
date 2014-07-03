@@ -6,11 +6,13 @@ import static spark.Spark.before;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-import spark.servlet.SparkApplication;
+import javax.servlet.FilterConfig;
 
-public class MyApp implements SparkApplication {
+import spark.webserver.SparkFilter;
 
-    @Override public void init () {
+public class MyApp extends SparkFilter {
+
+    @Override public void setup (FilterConfig aFilterConfig) {
         out.println ("HELLO J8!!!");
 
         before ("/protected/*", it -> it.halt (401, "Go Away!"));

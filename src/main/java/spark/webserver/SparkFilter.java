@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package spark.servlet;
+
+package spark.webserver;
+
+import static spark.Spark.runFromServlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +33,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Spark;
 import spark.resource.AbstractFileResolvingResource;
 import spark.resource.AbstractResourceHandler;
 import spark.resource.ClassPathResource;
@@ -39,7 +41,6 @@ import spark.resource.ExternalResource;
 import spark.resource.ExternalResourceHandler;
 import spark.route.RouteMatcherFactory;
 import spark.utils.IOUtils;
-import spark.webserver.MatcherFilter;
 
 /**
  * Filter that can be configured to be used in a web.xml file.
@@ -48,8 +49,8 @@ import spark.webserver.MatcherFilter;
  *
  * @author Per Wendel
  */
-public class SparkFilter implements Filter {
-    private static final Logger LOG = LoggerFactory.getLogger(SparkFilter.class);
+public abstract class SparkFilter implements Filter {
+    private static final Logger LOG = LoggerFactory.getLogger (SparkFilter.class);
 
     private static final String SLASH_WILDCARD = "/*";
     private static final String SLASH = "/";
@@ -101,66 +102,51 @@ public class SparkFilter implements Filter {
     private MatcherFilter matcherFilter;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        Spark.runFromServlet ();
+    public void init (FilterConfig filterConfig) throws ServletException {
+        runFromServlet ();
 
-        final SparkApplication application = getApplication(filterConfig);
-        application.init();
+        setup (filterConfig);
 
-        filterPath = getFilterPath(filterConfig);
-        matcherFilter = new MatcherFilter(RouteMatcherFactory.get(), true, false);
+        filterPath = getFilterPath (filterConfig);
+        matcherFilter = new MatcherFilter (RouteMatcherFactory.get (), true, false);
     }
 
-    /**
-     * Returns an instance of {@link SparkApplication} which on which {@link SparkApplication#init() init()} will be called.
-     * Default implementation looks up the class name in the filterConfig using the key {@link #APPLICATION_CLASS_PARAM}.
-     * Subclasses can override this method to use different techniques to obtain an instance (i.e. dependency injection).
-     *
-     * @param filterConfig the filter configuration for retrieving parameters passed to this filter.
-     * @return the spark application containing the configuration.
-     * @throws ServletException if anything went wrong.
-     */
-    protected SparkApplication getApplication(FilterConfig filterConfig) throws ServletException {
-        try {
-            String applicationClassName = filterConfig.getInitParameter(APPLICATION_CLASS_PARAM);
-            Class<?> applicationClass = Class.forName(applicationClassName);
-            return (SparkApplication) applicationClass.newInstance();
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-    }
+    public abstract void setup (FilterConfig aFilterConfig);
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
-                                                                                              IOException,
-                                                                                              ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request; // NOSONAR
+    public void doFilter (ServletRequest request, ServletResponse response, FilterChain chain)
+        throws
+        IOException,
+        ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest)request; // NOSONAR
 
-        final String relativePath = getRelativePath(httpRequest, filterPath);
+        final String relativePath = getRelativePath (httpRequest, filterPath);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(relativePath);
+        if (LOG.isDebugEnabled ()) {
+            LOG.debug (relativePath);
         }
 
-        HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(httpRequest) {
-            @Override
-            public String getRequestURI() {
-                return relativePath;
-            }
-        };
+        HttpServletRequestWrapper requestWrapper =
+            new HttpServletRequestWrapper (httpRequest) {
+                @Override
+                public String getRequestURI () {
+                    return relativePath;
+                }
+            };
 
         // handle static resources
         if (staticResourceHandlers != null) {
             for (AbstractResourceHandler staticResourceHandler : staticResourceHandlers) {
-                AbstractFileResolvingResource resource = staticResourceHandler.getResource(httpRequest);
-                if (resource != null && resource.isReadable()) {
-                    IOUtils.copy(resource.getInputStream(), response.getWriter());
+                AbstractFileResolvingResource resource =
+                    staticResourceHandler.getResource (httpRequest);
+                if (resource != null && resource.isReadable ()) {
+                    IOUtils.copy (resource.getInputStream (), response.getWriter ());
                     return;
                 }
             }
         }
 
-        matcherFilter.doFilter(requestWrapper, response, chain);
+        matcherFilter.doFilter (requestWrapper, response, chain);
     }
 
     /**
@@ -168,22 +154,25 @@ public class SparkFilter implements Filter {
      *
      * @param folder the location
      */
-    public static void configureStaticResources(String folder) {
+    public static void configureStaticResources (String folder) {
         if (!staticResourcesSet) {
             if (folder != null) {
                 try {
-                    ClassPathResource resource = new ClassPathResource(folder);
-                    if (resource.getFile().isDirectory()) {
+                    ClassPathResource resource = new ClassPathResource (folder);
+                    if (resource.getFile ().isDirectory ()) {
                         if (staticResourceHandlers == null) {
-                            staticResourceHandlers = new ArrayList<>();
+                            staticResourceHandlers = new ArrayList<> ();
                         }
-                        staticResourceHandlers.add(new ClassPathResourceHandler(folder, "index.html"));
-                        LOG.info("StaticResourceHandler configured with folder = " + folder);
-                    } else {
-                        LOG.error("Static resource location must be a folder");
+                        staticResourceHandlers
+                            .add (new ClassPathResourceHandler (folder, "index.html"));
+                        LOG.info ("StaticResourceHandler configured with folder = " + folder);
                     }
-                } catch (IOException e) {
-                    LOG.error("Error when creating StaticResourceHandler", e);
+                    else {
+                        LOG.error ("Static resource location must be a folder");
+                    }
+                }
+                catch (IOException e) {
+                    LOG.error ("Error when creating StaticResourceHandler", e);
                 }
             }
             staticResourcesSet = true;
@@ -195,22 +184,26 @@ public class SparkFilter implements Filter {
      *
      * @param folder the location
      */
-    public static void configureExternalStaticResources(String folder) {
+    public static void configureExternalStaticResources (String folder) {
         if (!externalStaticResourcesSet) {
             if (folder != null) {
                 try {
-                    ExternalResource resource = new ExternalResource(folder);
-                    if (resource.getFile().isDirectory()) {
+                    ExternalResource resource = new ExternalResource (folder);
+                    if (resource.getFile ().isDirectory ()) {
                         if (staticResourceHandlers == null) {
-                            staticResourceHandlers = new ArrayList<>();
+                            staticResourceHandlers = new ArrayList<> ();
                         }
-                        staticResourceHandlers.add(new ExternalResourceHandler(folder, "index.html"));
-                        LOG.info("External StaticResourceHandler configured with folder = " + folder);
-                    } else {
-                        LOG.error("External Static resource location must be a folder");
+                        staticResourceHandlers
+                            .add (new ExternalResourceHandler (folder, "index.html"));
+                        LOG.info ("External StaticResourceHandler configured with folder = "
+                            + folder);
                     }
-                } catch (IOException e) {
-                    LOG.error("Error when creating external StaticResourceHandler", e);
+                    else {
+                        LOG.error ("External Static resource location must be a folder");
+                    }
+                }
+                catch (IOException e) {
+                    LOG.error ("Error when creating external StaticResourceHandler", e);
                 }
             }
             externalStaticResourcesSet = true;
@@ -218,8 +211,7 @@ public class SparkFilter implements Filter {
     }
 
     @Override
-    public void destroy() {
+    public void destroy () {
         // ignore
     }
-
 }

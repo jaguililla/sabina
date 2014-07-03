@@ -20,7 +20,7 @@ package spark;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Exception used for stopping the execution
+ * Exception used for stopping the execution.
  *
  * @author Per Wendel
  */
@@ -48,14 +48,14 @@ public class HaltException extends RuntimeException {
     }
 
     /**
-     * @return the statusCode
+     * @return the statusCode.
      */
     public int getStatusCode () {
         return statusCode;
     }
 
     /**
-     * @return the body
+     * @return the body.
      */
     public String getBody () {
         return body;
