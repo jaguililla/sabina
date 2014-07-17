@@ -14,6 +14,7 @@
 
 package spark;
 
+import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +46,7 @@ public class BooksIntegrationTest {
     }
 
     @AfterClass public static void tearDown () throws InterruptedException {
-//        sleep (5); // Avoid stopping before processing last test
+        sleep (5); // Avoid stopping before processing last test
         stop ();
         testUtil.waitForShutdown ();
     }
