@@ -194,6 +194,11 @@ public class GenericIntegrationTest {
         assertTrue (response.status == 404);
     }
 
+	@Test public void testFileNotFound () throws Exception {
+		UrlResponse response = testUtil.doMethod ("GET", "/resource.html", null);
+		assertTrue (response.status == 404);
+	}
+
     @Test public void testPost () {
         UrlResponse response = testUtil.doMethod ("POST", "/poster", "Fo shizzy");
         out.println (response.body);
