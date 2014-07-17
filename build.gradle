@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-import static org.apache.commons.lang3.JavaVersion.VERSION_1_8
+import static JavaVersion.VERSION_1_8
 
 apply plugin: 'idea'
 apply plugin: 'eclipse'
@@ -49,12 +49,12 @@ dependencies {
 
     // SERVER DEPENDENCIES
     compile 'org.eclipse.jetty:jetty-webapp:9.2.0.v20140526'
-    compile 'io.undertow:undertow-servlet:1.0.14.Final'
+    compile 'io.undertow:undertow-servlet:1.0.15.Final'
 
     // TESTING DEPENDENCIES
     testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
 
-    testCompile "junit:junit:4.11"
+    testCompile 'junit:junit:4.11'
 }
 
 task wrapper (type: Wrapper) {

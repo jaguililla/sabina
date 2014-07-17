@@ -1,3 +1,6 @@
+#
+# Ignored files
+#
 bin
 target
 reports
@@ -10,3 +13,8 @@ reports
 *.iml
 *.ipr
 *.iws
+
+#
+# Default overrides
+#
+!gradle-wrapper.jar
