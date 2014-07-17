@@ -570,3 +570,8 @@ TODO
 * Update documentation with Java 8 usage
 * Refactor code
 * Add reports to Maven builds
+* Add Wiki (site)
+* Port to Gradle
+* Add Techempower benchmark
+* Add stress tests
+* Launch test browser

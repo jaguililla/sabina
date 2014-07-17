@@ -167,7 +167,7 @@ class UndertowServer implements SparkServer {
 
         if (aStaticFilesRoute != null || aExternalFilesLocation != null)
             deployment.addInnerHandlerChainWrapper (
-                handler -> predicate (suffixes (".png", ".css", ".html"),
+                handler -> predicate (suffixes (".jpg", ".png", ".css", ".html", ".js"),
                     resource (
                         new ChainResourceManager (aStaticFilesRoute, aExternalFilesLocation)),
                     handler

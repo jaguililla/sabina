@@ -19,6 +19,7 @@ package spark.webserver;
 
 import static java.lang.System.currentTimeMillis;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 import java.io.IOException;
 import java.util.List;
@@ -156,6 +157,8 @@ public class MatcherFilter implements Filter {
         if (!consumed && hasOtherHandlers) {
 //            throw new NotConsumedException ();
             handled = false;
+			if (SparkServerFactory.IMPL == 1)
+				httpRes.setStatus (SC_NOT_FOUND); // TODO Only for Undertow
             return;
         }
 
