@@ -14,6 +14,9 @@ reports
 *.ipr
 *.iws
 
+/build/
+/.gradle/
+
 #
 # Default overrides
 #
