@@ -19,6 +19,7 @@ import static spark.Spark.stop;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import spark.util.SparkTestUtil;
 
@@ -27,6 +28,7 @@ import spark.util.SparkTestUtil;
  *
  * @author dreambrother
  */
+@Ignore
 public class CookiesIntegrationTest {
 
     private static SparkTestUtil testUtil = new SparkTestUtil (4567);

@@ -18,6 +18,9 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'java'
 
+apply plugin: 'me.champeau.jbake'
+apply plugin: 'github-pages'
+
 group = 'spark'
 version = '2.0.1-SNAPSHOT'
 description = 'A Sinatra inspired java web framework'
@@ -59,4 +62,36 @@ dependencies {
 
 task wrapper (type: Wrapper) {
     gradleVersion = '2.0'
+}
+
+jbake {
+    input = file("$project.projectDir/src/site")
+    output = file("$buildDir/site")
+}
+
+githubPages {
+    repoUri = 'https://github.com/jamming/spark.git'
+    pages {
+        from (file ("$buildDir/site")) {
+            into '.'
+        }
+    }
+}
+
+/*
+ * Check 'http://melix.github.io/blog//2014/02/hosting-jbake-github.html' if any problem arises
+ * In the article uses TWO gradle files are used
+ */
+buildscript {
+    repositories {
+        mavenLocal ()
+        jcenter ()
+    }
+
+    dependencies {
+        classpath 'org.ajoberstar:gradle-git:0.9.0'
+        classpath 'me.champeau.gradle:jbake-gradle-plugin:0.2'
+        classpath 'org.freemarker:freemarker:2.3.19'
+        classpath 'org.pegdown:pegdown:1.4.2'
+    }
 }
