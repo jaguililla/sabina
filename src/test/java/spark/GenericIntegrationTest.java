@@ -25,12 +25,10 @@ import java.io.IOException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import spark.util.SparkTestUtil;
 import spark.util.SparkTestUtil.UrlResponse;
 
-@Ignore
 public class GenericIntegrationTest {
 
     private static SparkTestUtil testUtil = new SparkTestUtil (4567);

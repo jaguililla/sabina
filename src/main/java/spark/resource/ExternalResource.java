@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import spark.utils.StringUtils;
+import org.springframework.core.io.AbstractFileResolvingResource;
+import org.springframework.util.StringUtils;
 
 /**
  * Created by Per Wendel on 2014-05-18.
@@ -35,7 +36,7 @@ public class ExternalResource extends AbstractFileResolvingResource {
      * @param path the path to the external resource
      */
     public ExternalResource(String path) {
-        file = new File(StringUtils.cleanPath(path));
+        file = new File(StringUtils.cleanPath (path));
     }
 
     /**

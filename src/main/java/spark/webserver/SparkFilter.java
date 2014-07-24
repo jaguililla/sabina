@@ -30,9 +30,9 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.resource.AbstractFileResolvingResource;
+import org.springframework.core.io.AbstractFileResolvingResource;
+import org.springframework.core.io.ClassPathResource;
 import spark.resource.AbstractResourceHandler;
-import spark.resource.ClassPathResource;
 import spark.resource.ClassPathResourceHandler;
 import spark.resource.ExternalResource;
 import spark.resource.ExternalResourceHandler;

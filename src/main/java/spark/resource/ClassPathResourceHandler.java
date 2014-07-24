@@ -21,8 +21,9 @@ import java.net.MalformedURLException;
 import org.eclipse.jetty.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import spark.utils.Assert;
+import org.springframework.core.io.AbstractFileResolvingResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.Assert;
 
 /**
  * Locates resources in classpath
@@ -50,7 +51,7 @@ public class ClassPathResourceHandler extends AbstractResourceHandler {
      * @param welcomeFile  the welcomeFile
      */
     public ClassPathResourceHandler(String baseResource, String welcomeFile) {
-        Assert.notNull(baseResource);
+        Assert.notNull (baseResource);
         this.baseResource = baseResource;
         this.welcomeFile = welcomeFile;
     }

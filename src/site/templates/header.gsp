@@ -1,10 +1,10 @@
 <% root = content.rootpath ?: '' %>
+<% title = content.title ?: 'Spark - A small web framework for Java' %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <!--title><% if (content.title) { %>${content.title}<% } else { %>JBake<% } %></title-->
-  <title>Spark - A small web framework for Java</title>
+  <title>${title}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
@@ -17,7 +17,6 @@
     rel="stylesheet">
   <link href="${root}css/base.css" rel="stylesheet">
   <link href="${config.cloudflare}/prettify/r298/prettify.min.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="css/style.css" />
 
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>

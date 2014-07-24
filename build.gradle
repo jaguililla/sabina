@@ -33,6 +33,8 @@ repositories {
 }
 
 dependencies {
+    compile 'org.springframework:spring-core:4.0.6.RELEASE'
+    compile 'com.google.guava:guava:17.0'
     compile 'net.sf.jopt-simple:jopt-simple:4.6'
 
     // LOGGING DEPENDENCIES
