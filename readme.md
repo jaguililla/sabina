@@ -47,27 +47,27 @@ Examples
 ---------
 
 Simple example showing some basic functionality
-[SimpleExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/SimpleExample.java)
+([SimpleExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/SimpleExample.java))
 
 A simple CRUD example showing howto create, get, update and delete book resources
-[Books.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/Books.java)
+([Books.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/Books.java))
 
 Example showing a very simple (and stupid) authentication filter that is executed before all
 other resources
-[FilterExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/FilterExample.java)
+([FilterExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/FilterExample.java))
 
 Example showing how to use attributes
-[FilterExampleAttributes.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/FilterExampleAttributes.java)
+([FilterExampleAttributes.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/FilterExampleAttributes.java))
 
 Example showing how to serve static resources
-[StaticResources.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/StaticResources.java)
+([StaticResources.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/StaticResources.java))
 
 Example showing how to define content depending on accept type
-[JsonAcceptTypeExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/JsonAcceptTypeExample.java)
+([JsonAcceptTypeExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/JsonAcceptTypeExample.java))
 
 Example showing how to render a view from a template
-[FreeMarkerExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/FreeMarkerExample.java)
+([FreeMarkerExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/FreeMarkerExample.java))
 
 Example of using Transformer.
-[FreeMarkerExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/FreeMarkerExample.java)
+([TransformerExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/TransformerExample.java))
 
