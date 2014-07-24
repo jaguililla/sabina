@@ -1,10 +1,10 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <!--title>About</title-->
-  <title>Spark - A small web framework for Java</title>
+  <title>About</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
@@ -17,7 +17,6 @@
     rel="stylesheet">
   <link href="css/base.css" rel="stylesheet">
   <link href="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="css/style.css" />
 
   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
   <!--[if lt IE 9]>
@@ -72,59 +71,15 @@
 </div>
 <div class="container">
 
-
-	<div id="mainPicture">
-		<center>
-			<div class="picture"></div>
-		</center>
-	</div>
-
-	<div class="contentBox">
-		<div class="innerBox">
-			<div class="contentTitle">A Sinatra inspired micro web
-				framework for quickly creating web applications in Java with minimal effort</div>
-			<div class="contentText">
-				<div class="getting_started">
-				<h1 class="getting_started_head">News:</h1>
-				<div class="normal_text">Spark 2.0.0 re-written for Java 8 and Lambdas available on Maven central!</div>
-				<h1 class="getting_started_head">Quick start</h1>
-				<div class="normal_text">Add the Spark maven dependency and you're ready to go:</div>
-				<pre>
-            <code>
-import static spark.Spark.*;
+<p><img src="//raw.githubusercontent.com/jamming/spark/gh-pages/assets/sabina-logo.png" alt="Project Logo""/> A Sinatra inspired micro web framework for quickly creating web applications in Java easily</p><h2>News</h2><p>Spark 2.0.0 re-written for Java 8 and Lambdas available on Maven central!</p><h2>Quick start</h2><p>Add the Spark maven dependency and you're ready to go:</p>
+<pre><code class="java">import static spark.Spark.*;
 
 public class HelloWorld {
-   public static void main(String[] args) {
-
-      get("/hello", (req, res) -> "Hello World");
-
-   }
+    public static void main(String[] args) {
+        get(&quot;/hello&quot;, it -&gt; &quot;Hello World&quot;);
+    }
 }
-</code>
-</pre>
-
-<h1 class="getting_started_head">Ignite and view at:</h1>
-<pre><code>http://localhost:4567/hello</code></pre>
-
-				</div>
-				<br />
-			</div>
-		</div>
-	</div>
-	<div id="footer">
-		<a
-			href="https://www.linkedin.com/in/perwendel">
-			| Founded</a> by <a
-			href="https://www.linkedin.com/in/perwendel">Per
-			Wendel</a> |
-		<a
-            href="http://hwgrafik.se/">
-            | Logo design</a> by <a
-            href="http://hwgrafik.se/">HW Grafik</a> |
-	</div>
-</body>
-</html>
-
+</code></pre><h2>Ignite and view at</h2><p><code>http://localhost:4567/hello</code></p><p>| Founded by <a href="//www.linkedin.com/in/perwendel">Per Wendel</a><br/>| Logo design by <a href="//hwgrafik.se">HW Grafik</a> |</p>
       </div>
       <div id="push"></div>
     </div>
