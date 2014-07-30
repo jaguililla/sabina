@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package spark.utils;
+package spark.route;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -39,7 +39,7 @@ import java.util.Map;
  * Modified by Alex Soto <asotobu@gmail.com> to coform naming conventions and removing
  * unnecessary dependencies.
  */
-public class MimeParse {
+class MimeParse {
 
     /**
      * Constant for no mime type

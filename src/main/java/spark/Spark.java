@@ -14,18 +14,98 @@
 package spark;
 
 import static org.slf4j.LoggerFactory.getLogger;
+import static spark.route.HttpMethod.*;
+import static spark.servlet.SparkFilter.configureExternalStaticResources;
+import static spark.servlet.SparkFilter.configureStaticResources;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
-import spark.route.HttpMethod;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
-import spark.webserver.SparkFilter;
 import spark.webserver.SparkServer;
 import spark.webserver.SparkServerFactory;
+
+class ExceptionMapper {
+    /** Holds a default instance for the exception mapper. */
+    private static ExceptionMapper defaultInstance;
+
+    /**
+     * Returns the default instance for the exception mapper
+     *
+     * @return Default instance
+     */
+    public static ExceptionMapper getInstance() {
+        if (defaultInstance == null) {
+            defaultInstance = new ExceptionMapper();
+        }
+        return defaultInstance;
+    }
+
+    /** Holds a map of Exception classes and associated handlers. */
+    private Map<Class<? extends Exception>, ExceptionHandler> exceptionMap = new HashMap<>();
+
+    /**
+     * Maps the given handler to the provided exception type. If a handler was already registered to the same type, the
+     * handler is overwritten.
+     *
+     * @param exceptionClass Type of exception
+     * @param handler        Handler to map to exception
+     */
+    public void map(Class<? extends Exception> exceptionClass, ExceptionHandler handler) {
+        this.exceptionMap.put(exceptionClass, handler);
+    }
+
+    /**
+     * Returns the handler associated with the provided exception class
+     *
+     * @param exceptionClass Type of exception
+     * @return Associated handler
+     */
+    public ExceptionHandler getHandler(Class<? extends Exception> exceptionClass) {
+        // If the exception map does not contain the provided exception class, it might
+        // still be that a superclass of the exception class is.
+        if (!this.exceptionMap.containsKey(exceptionClass)) {
+
+            Class<?> superclass = exceptionClass.getSuperclass();
+            do {
+                // Is the superclass mapped?
+                if (this.exceptionMap.containsKey(superclass)) {
+                    // Use the handler for the mapped superclass, and cache handler
+                    // for this exception class
+                    ExceptionHandler handler = this.exceptionMap.get(superclass);
+                    this.exceptionMap.put(exceptionClass, handler);
+                    return handler;
+                }
+
+                // Iteratively walk through the exception class's superclasses
+                superclass = superclass.getSuperclass();
+            } while (superclass != null);
+
+            // No handler found either for the superclasses of the exception class
+            // We cache the null value to prevent future
+            this.exceptionMap.put(exceptionClass, null);
+            return null;
+        }
+
+        // Direct map
+        return this.exceptionMap.get(exceptionClass);
+    }
+
+    /**
+     * Returns the handler associated with the provided exception class
+     *
+     * @param exception Exception that occurred
+     * @return Associated handler
+     */
+    public ExceptionHandler getHandler(Exception exception) {
+        return this.getHandler(exception.getClass());
+    }
+}
 
 /**
  * The main building block of a Spark application is a set of routes. A route is
@@ -55,72 +135,11 @@ import spark.webserver.SparkServerFactory;
  * @author Per Wendel
  */
 public class Spark {
-    private static class HandlerRoute extends Route {
-        final Function<RouteContext, Object> mHandler;
-
-        protected HandlerRoute (String path, Function<RouteContext, Object> aHandler) {
-            super (path, DEFAULT_ACCEPT_TYPE);
-            mHandler = aHandler;
-        }
-
-        protected HandlerRoute (
-            String path, String acceptType, Function<RouteContext, Object> aHandler) {
-
-            super (path, acceptType);
-            mHandler = aHandler;
-        }
-
-        @Override public Object handle (Request request, Response response) {
-            return mHandler.apply (new RouteContext (this, request, response));
-        }
-    }
-
-    private static class HandlerFilter extends Filter {
-        final Consumer<FilterContext> mHandler;
-
-        protected HandlerFilter (Consumer<FilterContext> aHandler) {
-            super ();
-            mHandler = aHandler;
-        }
-
-        protected HandlerFilter (String path, Consumer<FilterContext> aHandler) {
-            super (path, DEFAUT_CONTENT_TYPE);
-            mHandler = aHandler;
-        }
-
-        protected HandlerFilter (
-            String path, String acceptType, Consumer<FilterContext> aHandler) {
-
-            super (path, acceptType);
-            mHandler = aHandler;
-        }
-
-        @Override public void handle (Request request, Response response) {
-            mHandler.accept (new FilterContext (this, request, response));
-        }
-    }
-
-    private static class HandlerException<T extends Exception>
-        extends ExceptionHandler<T> {
-
-        final BiConsumer<T, FilterContext> mHandler;
-
-        protected HandlerException (
-            Class<T> aException, BiConsumer<T, FilterContext> aHandler) {
-            super (aException);
-            mHandler = aHandler;
-        }
-
-        @Override public void handle (
-            T exception, Request request, Response response) {
-
-            mHandler.accept (exception, new FilterContext (null, request, response));
-
-        }
-    }
-
     private static final Logger LOG = getLogger (Spark.class);
     private static final int SPARK_DEFAULT_PORT = 4567;
+    private static final String INIT_ERROR =
+        "This must be done before route mapping has begun";
+
     private static int port = SPARK_DEFAULT_PORT;
     private static boolean initialized = false;
     private static String ipAddress = "0.0.0.0";
@@ -130,8 +149,8 @@ public class Spark {
     private static String truststoreFile;
     private static String truststorePassword;
 
-    private static String staticFileFolder = null;
-    private static String externalStaticFileFolder = null;
+    private static String staticFileFolder;
+    private static String externalStaticFileFolder;
 
     private static SparkServer server;
     private static RouteMatcher routeMatcher;
@@ -142,21 +161,15 @@ public class Spark {
 
     /**
      * Set the IP address that Spark should listen on. If not called the default
-     * address is '0.0.0.0'. This has to be called before any route mapping is
-     * done.
+     * address is '0.0.0.0'. This has to be called before any route mapping is done.
      *
      * @param ipAddress The ipAddress
      */
     public static synchronized void setIpAddress (String ipAddress) {
-        if (initialized) {
-            throwBeforeRouteMappingException ();
-        }
-        Spark.ipAddress = ipAddress;
-    }
+        if (initialized)
+            throw new IllegalStateException (INIT_ERROR);
 
-    private static void throwBeforeRouteMappingException () {
-        throw new IllegalStateException (
-            "This must be done before route mapping has begun");
+        Spark.ipAddress = ipAddress;
     }
 
     /**
@@ -167,9 +180,9 @@ public class Spark {
      * @param port The port number
      */
     public static synchronized void setPort (int port) {
-        if (initialized) {
-            throwBeforeRouteMappingException ();
-        }
+        if (initialized)
+            throw new IllegalStateException (INIT_ERROR);
+
         Spark.port = port;
     }
 
@@ -190,17 +203,14 @@ public class Spark {
      * @param truststorePassword the trust store password
      */
     public static synchronized void setSecure (
-        String keystoreFile,
-        String keystorePassword, String truststoreFile,
-        String truststorePassword) {
-        if (initialized) {
-            throwBeforeRouteMappingException ();
-        }
+        String keystoreFile, String keystorePassword,
+        String truststoreFile, String truststorePassword) {
 
-        if (keystoreFile == null) {
-            throw new IllegalArgumentException (
-                "Must provide a keystore file to run secured");
-        }
+        if (initialized)
+            throw new IllegalStateException (INIT_ERROR);
+
+        if (keystoreFile == null)
+            throw new IllegalArgumentException ("Must provide a keystore to run secured");
 
         Spark.keystoreFile = keystoreFile;
         Spark.keystorePassword = keystorePassword;
@@ -215,13 +225,13 @@ public class Spark {
      * @param folder the folder in classpath.
      */
     public static synchronized void staticFileLocation (String folder) {
-        if (initialized && !runFromServlet) {
-            throwBeforeRouteMappingException ();
-        }
+        if (initialized && !runFromServlet)
+            throw new IllegalStateException (INIT_ERROR);
+
         staticFileFolder = folder.startsWith ("/")? folder.substring (1) : folder;
         if (!servletStaticLocationSet) {
             if (runFromServlet) {
-                SparkFilter.configureStaticResources (staticFileFolder);
+                configureStaticResources (staticFileFolder);
                 servletStaticLocationSet = true;
             }
         }
@@ -237,13 +247,13 @@ public class Spark {
      * @param externalFolder the external folder serving static files.
      */
     public static synchronized void externalStaticFileLocation (String externalFolder) {
-        if (initialized && !runFromServlet) {
-            throwBeforeRouteMappingException ();
-        }
+        if (initialized && !runFromServlet)
+            throw new IllegalStateException (INIT_ERROR);
+
         externalStaticFileFolder = externalFolder;
         if (!servletExternalStaticLocationSet) {
             if (runFromServlet) {
-                SparkFilter.configureExternalStaticResources (externalStaticFileFolder);
+                configureExternalStaticResources (externalStaticFileFolder);
                 servletExternalStaticLocationSet = true;
             }
         }
@@ -252,19 +262,10 @@ public class Spark {
         }
     }
 
-    /**
-     * Map the route for HTTP GET requests
-     *
-     * @param route The route
-     */
-    public static synchronized void get (Route route) {
-        addRoute (HttpMethod.get.name (), route);
-    }
-
     protected static void addRoute (String httpMethod, Route route) {
         init ();
-        routeMatcher.parseValidateAddRoute (httpMethod + " '" + route.getPath ()
-            + "'", route.getAcceptType (), route);
+        routeMatcher.parseValidateAddRoute (
+            httpMethod + " '" + route.getPath () + "'", route.getAcceptType (), route);
     }
 
     private static synchronized void init () {
@@ -290,13 +291,34 @@ public class Spark {
         return staticFileFolder != null || externalStaticFileFolder != null;
     }
 
+    protected static void addFilter (String httpMethod, Filter filter) {
+        init ();
+        routeMatcher.parseValidateAddRoute (
+            httpMethod + " '" + filter.getPath () + "'", filter.getAcceptType (), filter);
+    }
+
+    /**
+     * Map the route for HTTP GET requests
+     *
+     * @param route The route
+     */
+    public static synchronized void get (String aPath, Function<Context, Object> aHandler) {
+        addRoute (get.name (), new Route (aPath, aHandler));
+    }
+
+    public static synchronized void get (
+        String aPath, String aAcceptType, Function<Context, Object> aHandler) {
+
+        addRoute (get.name (), new Route (aPath, aAcceptType, aHandler));
+    }
+
     /**
      * Map the route for HTTP POST requests
      *
      * @param route The route
      */
-    public static synchronized void post (Route route) {
-        addRoute (HttpMethod.post.name (), route);
+    public static synchronized void post (String aPath, Function<Context, Object> aHandler) {
+        addRoute (post.name (), new Route (aPath, aHandler));
     }
 
     /**
@@ -304,8 +326,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void put (Route route) {
-        addRoute (HttpMethod.put.name (), route);
+    public static synchronized void put (String aPath, Function<Context, Object> aHandler) {
+        addRoute (put.name (), new Route (aPath, aHandler));
     }
 
     /**
@@ -313,8 +335,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void patch (Route route) {
-        addRoute (HttpMethod.patch.name (), route);
+    public static synchronized void patch (String aPath, Function<Context, Object> aHandler) {
+        addRoute (patch.name (), new Route (aPath, aHandler));
     }
 
     /**
@@ -322,8 +344,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void delete (Route route) {
-        addRoute (HttpMethod.delete.name (), route);
+    public static synchronized void delete (String aPath, Function<Context, Object> aHandler) {
+        addRoute (delete.name (), new Route (aPath, aHandler));
     }
 
     /**
@@ -331,8 +353,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void head (Route route) {
-        addRoute (HttpMethod.head.name (), route);
+    public static synchronized void head (String aPath, Function<Context, Object> aHandler) {
+        addRoute (head.name (), new Route (aPath, aHandler));
     }
 
     /**
@@ -340,8 +362,8 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void trace (Route route) {
-        addRoute (HttpMethod.trace.name (), route);
+    public static synchronized void trace (String aPath, Function<Context, Object> aHandler) {
+        addRoute (trace.name (), new Route (aPath, aHandler));
     }
 
     /**
@@ -349,8 +371,10 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void connect (Route route) {
-        addRoute (HttpMethod.connect.name (), route);
+    public static synchronized void connect (
+        String aPath, Function<Context, Object> aHandler) {
+
+        addRoute (connect.name (), new Route (aPath, aHandler));
     }
 
     /**
@@ -358,8 +382,10 @@ public class Spark {
      *
      * @param route The route
      */
-    public static synchronized void options (Route route) {
-        addRoute (HttpMethod.options.name (), route);
+    public static synchronized void options (
+        String aPath, Function<Context, Object> aHandler) {
+
+        addRoute (options.name (), new Route (aPath, aHandler));
     }
 
     /**
@@ -367,14 +393,18 @@ public class Spark {
      *
      * @param filter The filter
      */
-    public static synchronized void before (Filter filter) {
-        addFilter (HttpMethod.before.name (), filter);
+    public static synchronized void before (Consumer<Context> aHandler) {
+        addFilter (before.name (), new Filter (aHandler));
     }
 
-    protected static void addFilter (String httpMethod, Filter filter) {
-        init ();
-        routeMatcher.parseValidateAddRoute (httpMethod + " '" + filter.getPath ()
-            + "'", filter.getAcceptType (), filter);
+    public static synchronized void before (String aPath, Consumer<Context> aHandler) {
+        addFilter (before.name (), new Filter (aPath, aHandler));
+    }
+
+    public static synchronized void before (
+        String aPath, String aAcceptType, Consumer<Context> aHandler) {
+
+        addFilter (before.name (), new Filter (aPath, aAcceptType, aHandler));
     }
 
     /**
@@ -382,88 +412,18 @@ public class Spark {
      *
      * @param filter The filter
      */
-    public static synchronized void after (Filter filter) {
-        addFilter (HttpMethod.after.name (), filter);
+    public static synchronized void after (Consumer<Context> aHandler) {
+        addFilter (after.name (), new Filter (aHandler));
     }
 
-    public static synchronized void get (
-        String aPath, Function<RouteContext, Object> aHandler) {
-        addRoute (HttpMethod.get.name (), new HandlerRoute (aPath, aHandler));
-    }
-
-    public static synchronized void get (
-        String aPath, String aAcceptType, Function<RouteContext, Object> aHandler) {
-
-        addRoute (HttpMethod.get.name (), new HandlerRoute (aPath, aAcceptType, aHandler));
-    }
-
-    public static synchronized void post (
-        String aPath, Function<RouteContext, Object> aHandler) {
-        addRoute (HttpMethod.post.name (), new HandlerRoute (aPath, aHandler));
-    }
-
-    public static synchronized void put (
-        String aPath, Function<RouteContext, Object> aHandler) {
-        addRoute (HttpMethod.put.name (), new HandlerRoute (aPath, aHandler));
-    }
-
-    public static synchronized void patch (
-        String aPath, Function<RouteContext, Object> aHandler) {
-        addRoute (HttpMethod.patch.name (), new HandlerRoute (aPath, aHandler));
-    }
-
-    public static synchronized void delete (
-        String aPath, Function<RouteContext, Object> aHandler) {
-        addRoute (HttpMethod.delete.name (), new HandlerRoute (aPath, aHandler));
-    }
-
-    public static synchronized void head (
-        String aPath, Function<RouteContext, Object> aHandler) {
-        addRoute (HttpMethod.head.name (), new HandlerRoute (aPath, aHandler));
-    }
-
-    public static synchronized void trace (
-        String aPath, Function<RouteContext, Object> aHandler) {
-        addRoute (HttpMethod.trace.name (), new HandlerRoute (aPath, aHandler));
-    }
-
-    public static synchronized void connect (
-        String aPath, Function<RouteContext, Object> aHandler) {
-        addRoute (HttpMethod.connect.name (), new HandlerRoute (aPath, aHandler));
-    }
-
-    public static synchronized void options (
-        String aPath, Function<RouteContext, Object> aHandler) {
-        addRoute (HttpMethod.options.name (), new HandlerRoute (aPath, aHandler));
-    }
-
-    public static synchronized void before (Consumer<FilterContext> aHandler) {
-        addFilter (HttpMethod.before.name (), new HandlerFilter (aHandler));
-    }
-
-    public static synchronized void before (String aPath, Consumer<FilterContext> aHandler) {
-        addFilter (HttpMethod.before.name (), new HandlerFilter (aPath, aHandler));
-    }
-
-    public static synchronized void before (
-        String aPath, String aAcceptType, Consumer<FilterContext> aHandler) {
-
-        addFilter (HttpMethod.before.name (),
-            new HandlerFilter (aPath, aAcceptType, aHandler));
-    }
-
-    public static synchronized void after (Consumer<FilterContext> aHandler) {
-        addFilter (HttpMethod.after.name (), new HandlerFilter (aHandler));
-    }
-
-    public static synchronized void after (String aPath, Consumer<FilterContext> aHandler) {
-        addFilter (HttpMethod.after.name (), new HandlerFilter (aPath, aHandler));
+    public static synchronized void after (String aPath, Consumer<Context> aHandler) {
+        addFilter (after.name (), new Filter (aPath, aHandler));
     }
 
     public static synchronized void after (
-        String aPath, String aAcceptType, Consumer<FilterContext> aHandler) {
+        String aPath, String aAcceptType, Consumer<Context> aHandler) {
 
-        addFilter (HttpMethod.after.name (), new HandlerFilter (aPath, aAcceptType, aHandler));
+        addFilter (after.name (), new Filter (aPath, aAcceptType, aHandler));
     }
 
     /**
@@ -492,16 +452,9 @@ public class Spark {
      * @param handler        The handler
      */
     public static synchronized <T extends Exception> void exception(
-        Class<T> exceptionClass, BiConsumer<T, FilterContext> aHandler) {
+        Class<T> exceptionClass, BiConsumer<T, Context> aHandler) {
 
-        // wrap
-        ExceptionHandler wrapper = new ExceptionHandler<T> (exceptionClass) {
-            @Override public void handle(T exception, Request request, Response response) {
-                // TODO Change FilterContext (null...) this WILL fail calling 'halt'
-                aHandler.accept (exception, new FilterContext (null, request, response));
-            }
-        };
-
+        ExceptionHandler wrapper = new ExceptionHandler<T> (exceptionClass, aHandler);
         ExceptionMapper.getInstance ().map(exceptionClass, wrapper);
     }
 

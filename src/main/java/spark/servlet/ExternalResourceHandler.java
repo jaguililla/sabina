@@ -14,7 +14,7 @@
  * You may elect to redistribute this code under either of these licenses.
  */
 
-package spark.resource;
+package spark.servlet;
 
 import java.net.MalformedURLException;
 
@@ -22,15 +22,14 @@ import org.eclipse.jetty.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractFileResolvingResource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
 
 /**
- * Locates resources in classpath
+ * Locates resources from external folder
  * Code snippets copied from Eclipse Jetty source. Modifications made by Per Wendel.
  */
-public class ClassPathResourceHandler extends AbstractResourceHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(ClassPathResourceHandler.class);
+class ExternalResourceHandler extends AbstractResourceHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(ExternalResourceHandler.class);
 
     private final String baseResource;
     private String welcomeFile;
@@ -40,7 +39,7 @@ public class ClassPathResourceHandler extends AbstractResourceHandler {
      *
      * @param baseResource the base resource path
      */
-    public ClassPathResourceHandler(String baseResource) {
+    public ExternalResourceHandler(String baseResource) {
         this(baseResource, null);
     }
 
@@ -50,7 +49,7 @@ public class ClassPathResourceHandler extends AbstractResourceHandler {
      * @param baseResource the base resource path
      * @param welcomeFile  the welcomeFile
      */
-    public ClassPathResourceHandler(String baseResource, String welcomeFile) {
+    public ExternalResourceHandler(String baseResource, String welcomeFile) {
         Assert.notNull (baseResource);
         this.baseResource = baseResource;
         this.welcomeFile = welcomeFile;
@@ -67,11 +66,11 @@ public class ClassPathResourceHandler extends AbstractResourceHandler {
 
             final String addedPath = addPaths(baseResource, path);
 
-            ClassPathResource resource = new ClassPathResource(addedPath);
+            ExternalResource resource = new ExternalResource(addedPath);
 
-            if (resource.exists() && resource.getFile().isDirectory()) {
+            if (resource.exists() && resource.isDirectory()) {
                 if (welcomeFile != null) {
-                    resource = new ClassPathResource(addPaths(resource.getPath(), welcomeFile));
+                    resource = new ExternalResource(addPaths(resource.getPath(), welcomeFile));
                 } else {
                     //  No welcome file configured, serve nothing since it's a directory
                     resource = null;

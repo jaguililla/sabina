@@ -16,6 +16,8 @@ package spark;
 
 import static spark.utils.SparkUtils.ALL_PATHS;
 
+import java.util.function.Consumer;
+
 /**
  * A Filter is built up by a path (for url-matching) and the implementation of the 'handle'
  * method.
@@ -23,15 +25,18 @@ import static spark.utils.SparkUtils.ALL_PATHS;
  *
  * @author Per Wendel
  */
-public abstract class Filter extends Action {
+public class Filter extends Action {
 
     protected static final String DEFAUT_CONTENT_TYPE = "text/html";
+
+    final Consumer<Context> mHandler;
 
     /**
      * Constructs a filter that matches on everything.
      */
-    protected Filter () {
-        this (ALL_PATHS);
+    protected Filter (Consumer<Context> aHandler) {
+        super (ALL_PATHS, DEFAUT_CONTENT_TYPE);
+        mHandler = aHandler;
     }
 
     /**
@@ -39,12 +44,15 @@ public abstract class Filter extends Action {
      *
      * @param path The filter path which is used for matching. (e.g. /hello, users/:name).
      */
-    protected Filter (String path) {
+    protected Filter (String path, Consumer<Context> aHandler) {
         super (path, DEFAUT_CONTENT_TYPE);
+        mHandler = aHandler;
     }
 
-    protected Filter (String path, String acceptType) {
+    protected Filter (String path, String acceptType, Consumer<Context> aHandler) {
+
         super (path, acceptType);
+        mHandler = aHandler;
     }
 
     /**
@@ -53,5 +61,7 @@ public abstract class Filter extends Action {
      * @param request The request object providing information about the HTTP request.
      * @param response The response object providing functionality for modifying the response.
      */
-    public abstract void handle (Request request, Response response);
+    public void handle (Request request, Response response) {
+        mHandler.accept (new Context (request, response));
+    }
 }

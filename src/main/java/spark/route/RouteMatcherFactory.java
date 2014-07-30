@@ -11,7 +11,12 @@
  * either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package spark.route;
+
+import static org.slf4j.LoggerFactory.getLogger;
+
+import org.slf4j.Logger;
 
 /**
  * RouteMatcherFactory
@@ -19,13 +24,13 @@ package spark.route;
  * @author Per Wendel
  */
 public final class RouteMatcherFactory {
-    /** The logger. */
-    private static final org.slf4j.Logger LOG =
-        org.slf4j.LoggerFactory.getLogger (RouteMatcherFactory.class);
+    private static final Logger LOG = getLogger (RouteMatcherFactory.class);
 
-    private static RouteMatcher routeMatcher = null;
+    private static RouteMatcher routeMatcher;
 
-    private RouteMatcherFactory () {}
+    private RouteMatcherFactory () {
+        super ();
+    }
 
     public static synchronized RouteMatcher get () {
         if (routeMatcher == null) {

@@ -4,9 +4,6 @@ type=page
 status=published
 ~~~~~~
 
-![Project Logo] A Sinatra inspired micro web framework for quickly creating web applications in Java easily
-
-[Project Logo]: //raw.githubusercontent.com/jamming/spark/gh-pages/assets/sabina-logo.png
 
 News
 ----
@@ -34,6 +31,3 @@ Ignite and view at
 
 `http://localhost:4567/hello`
 
-
-| Founded by [Per Wendel](//www.linkedin.com/in/perwendel)
-| Logo design by [HW Grafik](//hwgrafik.se) |

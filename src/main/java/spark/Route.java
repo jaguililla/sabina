@@ -14,6 +14,8 @@
 
 package spark;
 
+import java.util.function.Function;
+
 /**
  * A Route is built up by a path (for url-matching) and the implementation of the 'handle'
  * method.
@@ -22,17 +24,20 @@ package spark;
  *
  * @author Per Wendel
  */
-public abstract class Route extends Action {
+public class Route extends Action {
 
     protected static final String DEFAULT_ACCEPT_TYPE = "*/*";
+
+    final Function<Context, Object> mHandler;
 
     /**
      * Constructor.
      *
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      */
-    protected Route (String path) {
-        this (path, DEFAULT_ACCEPT_TYPE);
+    protected Route (String path, Function<Context, Object> aHandler) {
+        super (path, DEFAULT_ACCEPT_TYPE);
+        mHandler = aHandler;
     }
 
     /**
@@ -41,8 +46,9 @@ public abstract class Route extends Action {
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      * @param acceptType The accept type which is used for matching.
      */
-    protected Route (String path, String acceptType) {
+    protected Route (String path, String acceptType, Function<Context, Object> aHandler) {
         super (path, acceptType);
+        mHandler = aHandler;
     }
 
     /**
@@ -54,7 +60,9 @@ public abstract class Route extends Action {
      * @return The content to be set in the response.
      * @throws java.lang.Exception when handle fails.
      */
-    public abstract Object handle (Request request, Response response);
+    public Object handle (Request request, Response response) {
+        return mHandler.apply (new Context (request, response));
+    }
 
     /**
      * This method should render the given element into something that can be send through

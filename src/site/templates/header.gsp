@@ -32,4 +32,12 @@
 
 <body onload="prettyPrint()">
   <div id="wrap">
-
+    <p id="header">
+      <img
+        src="http://raw.githubusercontent.com/jamming/spark/gh-pages/sabina-logo.png"
+        alt="Project Logo"/>
+      <h1>
+        A Sinatra inspired micro web framework for quickly creating web applications in Java
+        with minimal effort
+      </h1>
+    </p>

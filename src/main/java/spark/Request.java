@@ -11,8 +11,12 @@
  * either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package spark;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -26,8 +30,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.io.CharStreams;
+import org.slf4j.Logger;
 import spark.route.RouteMatch;
-import spark.utils.IOUtils;
 import spark.utils.SparkUtils;
 
 /**
@@ -36,11 +41,16 @@ import spark.utils.SparkUtils;
  * @author Per Wendel
  */
 public class Request {
-
-    private static final org.slf4j.Logger LOG =
-        org.slf4j.LoggerFactory.getLogger(Request.class);
-
+    private static final Logger LOG = getLogger(Request.class);
     private static final String USER_AGENT = "user-agent";
+
+    private static boolean isParam (String routePart) {
+        return routePart.startsWith (":");
+    }
+
+    private static boolean isSplat (String routePart) {
+        return routePart.equals ("*");
+    }
 
     public static Request create (RouteMatch match, HttpServletRequest request) {
         return new Request (match, request);
@@ -119,16 +129,12 @@ public class Request {
      * @return null if the given param is null or not found
      */
     public String params (String param) {
-        if (param == null) {
+        if (param == null)
             return null;
-        }
 
-        if (param.startsWith (":")) {
-            return params.get (param.toLowerCase ()); // NOSONAR
-        }
-        else {
-            return params.get (":" + param.toLowerCase ()); // NOSONAR
-        }
+        return param.startsWith (":")?
+            params.get (param.toLowerCase ()) :
+            params.get (":" + param.toLowerCase ());
     }
 
     /**
@@ -221,8 +227,10 @@ public class Request {
      */
     public String body () {
         if (body == null) {
-            try {
-                body = IOUtils.toString (servletRequest.getInputStream ());
+            try (InputStreamReader input =
+                new InputStreamReader (servletRequest.getInputStream ())) {
+
+                body = CharStreams.toString (input);
             }
             catch (Exception e) {
                 LOG.warn ("Exception when reading body", e);
@@ -273,9 +281,8 @@ public class Request {
         if (headers == null) {
             headers = new TreeSet<> ();
             Enumeration<String> enumeration = servletRequest.getHeaderNames ();
-            while (enumeration.hasMoreElements ()) {
+            while (enumeration.hasMoreElements ())
                 headers.add (enumeration.nextElement ());
-            }
         }
         return headers;
     }
@@ -313,9 +320,8 @@ public class Request {
     public Set<String> attributes () {
         Set<String> attrList = new HashSet<> ();
         Enumeration<String> attributes = servletRequest.getAttributeNames ();
-        while (attributes.hasMoreElements ()) {
+        while (attributes.hasMoreElements ())
             attrList.add (attributes.nextElement ());
-        }
         return attrList;
     }
 
@@ -337,9 +343,8 @@ public class Request {
     }
 
     private void initQueryMap () {
-        if (queryMap == null) {
+        if (queryMap == null)
             queryMap = new QueryParams (raw ());
-        }
     }
 
     /**
@@ -349,9 +354,9 @@ public class Request {
      * @return the session associated with this request
      */
     public Session session () {
-        if (session == null) {
+        if (session == null)
             session = new Session (servletRequest.getSession ());
-        }
+
         return session;
     }
 
@@ -368,9 +373,8 @@ public class Request {
     public Session session (boolean create) {
         if (session == null) {
             HttpSession httpSession = servletRequest.getSession (create);
-            if (httpSession != null) {
+            if (httpSession != null)
                 session = new Session (httpSession);
-            }
         }
         return session;
     }
@@ -381,11 +385,10 @@ public class Request {
     public Map<String, String> cookies () {
         Map<String, String> result = new HashMap<> ();
         Cookie[] cookies = servletRequest.getCookies ();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
+        if (cookies != null)
+            for (Cookie cookie : cookies)
                 result.put (cookie.getName (), cookie.getValue ());
-            }
-        }
+
         return result;
     }
 
@@ -398,13 +401,11 @@ public class Request {
      */
     public String cookie (String name) {
         Cookie[] cookies = servletRequest.getCookies ();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName ().equals (name)) {
+        if (cookies != null)
+            for (Cookie cookie : cookies)
+                if (cookie.getName ().equals (name))
                     return cookie.getValue ();
-                }
-            }
-        }
+
         return null;
     }
 
@@ -429,7 +430,7 @@ public class Request {
 
         for (int i = 0; (i < request.size ()) && (i < matched.size ()); i++) {
             String matchedPart = matched.get (i);
-            if (SparkUtils.isParam (matchedPart)) {
+            if (isParam (matchedPart)) {
                 LOG.debug ("matchedPart: "
                     + matchedPart
                     + " = "
@@ -453,7 +454,7 @@ public class Request {
         for (int i = 0; (i < nbrOfRequestParts) && (i < nbrOfMatchedParts); i++) {
             String matchedPart = matched.get(i);
 
-            if (SparkUtils.isSplat(matchedPart)) {
+            if (isSplat(matchedPart)) {
 
                 StringBuilder splatParam = new StringBuilder(request.get(i));
                 if (!sameLength && (i == (nbrOfMatchedParts - 1))) {

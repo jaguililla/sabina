@@ -14,7 +14,7 @@
  * You may elect to redistribute this code under either of these licenses.
  */
 
-package spark.resource;
+package spark.servlet;
 
 import java.net.MalformedURLException;
 
@@ -22,14 +22,15 @@ import org.eclipse.jetty.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractFileResolvingResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.Assert;
 
 /**
- * Locates resources from external folder
+ * Locates resources in classpath
  * Code snippets copied from Eclipse Jetty source. Modifications made by Per Wendel.
  */
-public class ExternalResourceHandler extends AbstractResourceHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(ExternalResourceHandler.class);
+class ClassPathResourceHandler extends AbstractResourceHandler {
+    private static final Logger LOG = LoggerFactory.getLogger (ClassPathResourceHandler.class);
 
     private final String baseResource;
     private String welcomeFile;
@@ -39,51 +40,56 @@ public class ExternalResourceHandler extends AbstractResourceHandler {
      *
      * @param baseResource the base resource path
      */
-    public ExternalResourceHandler(String baseResource) {
-        this(baseResource, null);
+    public ClassPathResourceHandler (String baseResource) {
+        this (baseResource, null);
     }
 
     /**
      * Constructor
      *
      * @param baseResource the base resource path
-     * @param welcomeFile  the welcomeFile
+     * @param welcomeFile the welcomeFile
      */
-    public ExternalResourceHandler(String baseResource, String welcomeFile) {
+    public ClassPathResourceHandler (String baseResource, String welcomeFile) {
         Assert.notNull (baseResource);
         this.baseResource = baseResource;
         this.welcomeFile = welcomeFile;
     }
 
     @Override
-    protected AbstractFileResolvingResource getResource(String path) throws MalformedURLException {
-        if (path == null || !path.startsWith("/")) {
-            throw new MalformedURLException(path);
+    protected AbstractFileResolvingResource getResource (String path)
+        throws MalformedURLException {
+        if (path == null || !path.startsWith ("/")) {
+            throw new MalformedURLException (path);
         }
 
         try {
-            path = URIUtil.canonicalPath(path);
+            path = URIUtil.canonicalPath (path);
 
-            final String addedPath = addPaths(baseResource, path);
+            final String addedPath = addPaths (baseResource, path);
 
-            ExternalResource resource = new ExternalResource(addedPath);
+            ClassPathResource resource = new ClassPathResource (addedPath);
 
-            if (resource.exists() && resource.isDirectory()) {
+            if (resource.exists () && resource.getFile ().isDirectory ()) {
                 if (welcomeFile != null) {
-                    resource = new ExternalResource(addPaths(resource.getPath(), welcomeFile));
-                } else {
+                    resource =
+                        new ClassPathResource (addPaths (resource.getPath (), welcomeFile));
+                }
+                else {
                     //  No welcome file configured, serve nothing since it's a directory
                     resource = null;
                 }
             }
 
-            return (resource != null && resource.exists()) ? resource : null;
-        } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(e.getClass().getSimpleName() + " when trying to get resource. " + e.getMessage());
+            return (resource != null && resource.exists ())? resource : null;
+        }
+        catch (Exception e) {
+            if (LOG.isDebugEnabled ()) {
+                LOG.debug (
+                    e.getClass ().getSimpleName () + " when trying to get resource. " + e
+                        .getMessage ());
             }
         }
         return null;
     }
-
 }

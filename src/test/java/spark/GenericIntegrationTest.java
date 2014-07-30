@@ -31,7 +31,7 @@ import spark.util.SparkTestUtil.UrlResponse;
 
 public class GenericIntegrationTest {
 
-    private static SparkTestUtil testUtil = new SparkTestUtil (4567);
+    private static SparkTestUtil testUtil = new SparkTestUtil (4569);
     private static File tmpExternalFile;
 
     @AfterClass public static void tearDown () {
@@ -50,6 +50,7 @@ public class GenericIntegrationTest {
         writer.flush ();
         writer.close ();
 
+        setPort (testUtil.getPort ());
         staticFileLocation ("/public");
         externalStaticFileLocation (System.getProperty ("java.io.tmpdir"));
 
@@ -163,11 +164,9 @@ public class GenericIntegrationTest {
     }
 
     private static void registerEchoRoute (final String routePart) {
-        get (new Route ("/tworoutes/" + routePart + "/:param") {
-            @Override public Object handle (Request request, Response response) {
-                return routePart + " route: " + request.params (":param");
-            }
-        });
+        get ("/tworoutes/" + routePart + "/:param", it ->
+            routePart + " route: " + it.request.params (":param")
+        );
     }
 
     private static void assertEchoRoute (String routePart) {

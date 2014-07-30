@@ -41,50 +41,6 @@ abstract class Action {
         this.acceptType = acceptType;
     }
 
-    /**
-     * Immediately stops a request within a filter or route
-     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
-     * re-throw otherwise halt will not work.
-     */
-    public final void halt () {
-        throw new HaltException ();
-    }
-
-    /**
-     * Immediately stops a request within a filter or route with specified status code
-     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
-     * re-throw otherwise halt will not work.
-     *
-     * @param status the status code.
-     */
-    public final void halt (int status) {
-        throw new HaltException (status);
-    }
-
-    /**
-     * Immediately stops a request within a filter or route with specified body content
-     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
-     * re-throw otherwise halt will not work.
-     *
-     * @param body The body content.
-     */
-    public final void halt (String body) {
-        throw new HaltException (body);
-    }
-
-    /**
-     * Immediately stops a request within a filter or route with specified status code and body
-     * content.
-     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
-     * re-throw otherwise halt will not work.
-     *
-     * @param status The status code.
-     * @param body The body content.
-     */
-    public final void halt (int status, String body) {
-        throw new HaltException (status, body);
-    }
-
     public String getAcceptType () {
         return acceptType;
     }
@@ -99,12 +55,4 @@ abstract class Action {
     protected Pattern getPathPattern () {
         return pathPattern;
     }
-
-    public void pass () {}
-
-    public void redirect () {}
-
-    public void template (String aTemplate, Object aParams) {}
-
-    public void template (String aTemplate, String aLayout, Object aParams) {}
 }

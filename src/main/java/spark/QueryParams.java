@@ -51,16 +51,15 @@ import javax.servlet.http.HttpServletRequest;
  * @author fddayan
  */
 public class QueryParams {
-
     private static final QueryParams NULL = new NullQueryParams ();
 
     /** Holds the nested keys */
-    private Map<String, QueryParams> queryMap = new HashMap<> ();
+    private final Map<String, QueryParams> queryMap = new HashMap<> ();
 
     /** Value(s) for this key */
     private String[] values;
 
-    private Pattern p = Pattern.compile ("\\A[\\[\\]]*([^\\[\\]]+)\\]*");
+    private final Pattern p = Pattern.compile ("\\A[\\[\\]]*([^\\[\\]]+)\\]*");
 
     /**
      * Creates a new QueryParamsMap from and HttpServletRequest. <br>
@@ -70,9 +69,9 @@ public class QueryParams {
      * @param request the servlet request
      */
     public QueryParams (HttpServletRequest request) {
-        if (request == null) {
+        if (request == null)
             throw new IllegalArgumentException ("HttpServletRequest cannot be null.");
-        }
+
         loadQueryString (request.getParameterMap ());
     }
 
@@ -105,9 +104,8 @@ public class QueryParams {
      * @param params the parameters
      */
     protected final void loadQueryString (Map<String, String[]> params) {
-        for (Map.Entry<String, String[]> param : params.entrySet ()) {
+        for (Map.Entry<String, String[]> param : params.entrySet ())
             loadKeys (param.getKey (), param.getValue ());
-        }
     }
 
     /**
@@ -119,39 +117,29 @@ public class QueryParams {
     protected final void loadKeys (String key, String[] value) {
         String[] parsed = parseKey (key);
 
-        if (parsed == null) {
+        if (parsed == null)
             return;
-        }
 
-        if (!queryMap.containsKey (parsed[0])) {
+        if (!queryMap.containsKey (parsed[0]))
             queryMap.put (parsed[0], new QueryParams ());
-        }
-        if (!parsed[1].isEmpty ()) {
+        if (!parsed[1].isEmpty ())
             queryMap.get (parsed[0]).loadKeys (parsed[1], value);
-        }
-        else {
+        else
             queryMap.get (parsed[0]).values = value.clone ();
-        }
     }
 
     protected final String[] parseKey (String key) {
         Matcher m = p.matcher (key);
 
-        if (m.find ()) {
-            return new String[] { cleanKey (m.group ()), key.substring (m.end ()) };
-        }
-        else {
-            return null; // NOSONAR
-        }
+        return m.find ()?
+            new String[] { cleanKey (m.group ()), key.substring (m.end ()) } :
+            null;
     }
 
     protected final String cleanKey (String group) {
-        if (group.startsWith ("[")) {
-            return group.substring (1, group.length () - 1);
-        }
-        else {
-            return group;
-        }
+        return group.startsWith ("[")?
+            group.substring (1, group.length () - 1) :
+            group;
     }
 
     /**
@@ -175,14 +163,10 @@ public class QueryParams {
      */
     public QueryParams get (String... keys) {
         QueryParams ret = this;
-        for (String key : keys) {
-            if (ret.queryMap.containsKey (key)) {
-                ret = ret.queryMap.get (key);
-            }
-            else {
-                ret = NULL;
-            }
-        }
+
+        for (String key : keys)
+            ret = ret.queryMap.containsKey (key)? ret.queryMap.get (key) : NULL;
+
         return ret;
     }
 
@@ -193,12 +177,7 @@ public class QueryParams {
      * @return the value
      */
     public String value () {
-        if (hasValue ()) {
-            return values[0];
-        }
-        else {
-            return null;
-        }
+        return hasValue ()? values[0] : null;
     }
 
     /**
@@ -300,9 +279,8 @@ public class QueryParams {
     public Map<String, String[]> toMap () {
         Map<String, String[]> map = new HashMap<> ();
 
-        for (Entry<String, QueryParams> key : this.queryMap.entrySet ()) {
+        for (Entry<String, QueryParams> key : this.queryMap.entrySet ())
             map.put (key.getKey (), key.getValue ().values);
-        }
 
         return map;
     }

@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package spark.resource;
+package spark.servlet;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
 /**
  * Created by Per Wendel on 2014-05-18.
  */
-public class ExternalResource extends AbstractFileResolvingResource {
+class ExternalResource extends AbstractFileResolvingResource {
 
     private final File file;
 
@@ -35,8 +35,8 @@ public class ExternalResource extends AbstractFileResolvingResource {
      *
      * @param path the path to the external resource
      */
-    public ExternalResource(String path) {
-        file = new File(StringUtils.cleanPath (path));
+    public ExternalResource (String path) {
+        file = new File (StringUtils.cleanPath (path));
     }
 
     /**
@@ -47,23 +47,23 @@ public class ExternalResource extends AbstractFileResolvingResource {
      * abstract pathname exists and is a directory;
      * false otherwise
      */
-    public boolean isDirectory() {
-        return file.isDirectory();
+    public boolean isDirectory () {
+        return file.isDirectory ();
     }
 
     @Override
-    public boolean exists() {
-        return file.exists();
+    public boolean exists () {
+        return file.exists ();
     }
 
     @Override
-    public String getDescription() {
-        return "external resource [" + file.getAbsolutePath() + "]";
+    public String getDescription () {
+        return "external resource [" + file.getAbsolutePath () + "]";
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
-        return new FileInputStream(file);
+    public InputStream getInputStream () throws IOException {
+        return new FileInputStream (file);
     }
 
     /**
@@ -73,8 +73,8 @@ public class ExternalResource extends AbstractFileResolvingResource {
      * @see java.lang.Class#getResource(String)
      */
     @Override
-    public URL getURL() throws IOException {
-        return file.toURI().toURL();
+    public URL getURL () throws IOException {
+        return file.toURI ().toURL ();
     }
 
     /**
@@ -82,7 +82,7 @@ public class ExternalResource extends AbstractFileResolvingResource {
      *
      * @return the path
      */
-    public String getPath() {
-        return file.getPath();
+    public String getPath () {
+        return file.getPath ();
     }
 }

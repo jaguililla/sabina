@@ -11,23 +11,26 @@
  * either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  */
+
 package spark.route;
 
 /**
  * @author Per Wendel
  */
 public class RouteMatch {
-
-    private HttpMethod httpMethod;
-    private Object target;
-    private String matchUri;
-    private String requestURI;
-    private String acceptType;
+    private final HttpMethod httpMethod;
+    private final Object target;
+    private final String matchUri;
+    private final String requestURI;
+    private final String acceptType;
 
     public RouteMatch (
-        HttpMethod httpMethod, Object target, String matchUri, String requestUri,
+        HttpMethod httpMethod,
+        Object target,
+        String matchUri,
+        String requestUri,
         String acceptType) {
-        super ();
+
         this.httpMethod = httpMethod;
         this.target = target;
         this.matchUri = matchUri;

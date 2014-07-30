@@ -92,27 +92,6 @@ public final class IOUtils {
     //-----------------------------------------------------------------------
 
     /**
-     * Get the contents of an <code>InputStream</code> as a String
-     * using the default character encoding of the platform.
-     * <p>
-     * This method buffers the input internally, so there is no need to use a
-     * <code>BufferedInputStream</code>.
-     *
-     * @param input the <code>InputStream</code> to read from
-     * @param input the <code>InputStream</code> to read from
-     *
-     * @return the requested String
-     *
-     * @throws NullPointerException if the input is null
-     * @throws IOException if an I/O error occurs
-     */
-    public static String toString (InputStream input) throws IOException {
-        StringWriter sw = new StringWriter ();
-        copy (input, sw);
-        return sw.toString ();
-    }
-
-    /**
      * Copy bytes from an <code>InputStream</code> to chars on a
      * <code>Writer</code> using the default character encoding of the platform.
      * <p>

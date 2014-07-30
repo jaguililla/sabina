@@ -18,13 +18,14 @@
 
 <web-app>
   <display-name>Test Web Application</display-name>
+
   <filter>
-    <filter-name>SparkFilter</filter-name>
-    <filter-class>spark.examples.MyApp</filter-class>
+    <filter-name>TestAppFilter</filter-name>
+    <filter-class>spark.examples.TestApp</filter-class>
   </filter>
 
   <filter-mapping>
-    <filter-name>SparkFilter</filter-name>
+    <filter-name>TestAppFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 </web-app>

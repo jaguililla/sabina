@@ -100,7 +100,8 @@ public class Response {
 
         try {
             response.sendRedirect(location);
-        } catch (IOException ioException) {
+        }
+        catch (IOException ioException) {
             LOG.warn("Redirect failure", ioException);
         }
     }
@@ -120,7 +121,8 @@ public class Response {
         response.setHeader("Connection", "close");
         try {
             response.sendError(httpStatusCode);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             LOG.warn("Exception when trying to redirect permanently", e);
         }
     }

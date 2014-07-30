@@ -14,7 +14,7 @@
 
 package spark;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 /**
  * Exception used for stopping the execution.
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class HaltException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    private int statusCode = HttpServletResponse.SC_OK;
+    private int statusCode = SC_OK;
     private String body = null;
 
     HaltException () {

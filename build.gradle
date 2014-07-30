@@ -33,8 +33,8 @@ repositories {
 }
 
 dependencies {
-    compile 'org.springframework:spring-core:4.0.6.RELEASE'
-    compile 'com.google.guava:guava:17.0'
+    compile 'org.springframework:spring-core:4.0.6.RELEASE' // Only for Jetty
+    compile 'com.google.guava:guava:17.0' // To replace Apache commons
     compile 'net.sf.jopt-simple:jopt-simple:4.6'
 
     // LOGGING DEPENDENCIES
@@ -58,7 +58,6 @@ dependencies {
 
     // TESTING DEPENDENCIES
     testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
-
     testCompile 'junit:junit:4.11'
 }
 

@@ -15,6 +15,7 @@
 package spark;
 
 import static spark.Spark.post;
+import static spark.Spark.setPort;
 import static spark.Spark.stop;
 
 import org.junit.AfterClass;
@@ -29,9 +30,10 @@ import spark.util.SparkTestUtil;
  */
 public class CookiesIntegrationTest {
 
-    private static SparkTestUtil testUtil = new SparkTestUtil (4567);
+    private static SparkTestUtil testUtil = new SparkTestUtil (4568);
 
     @BeforeClass public static void initRoutes () throws InterruptedException {
+        setPort (testUtil.getPort ());
 
         post ("/assertNoCookies", it -> {
             if (!it.cookies ().isEmpty ()) {

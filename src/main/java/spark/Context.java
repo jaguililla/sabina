@@ -18,13 +18,11 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
-abstract class Context {
-    protected final Action mAction;
+public class Context {
     public final Request request;
     public final Response response;
 
-    protected Context (Action aAction, Request aRequest, Response aResponse) {
-        mAction = aAction;
+    protected Context (Request aRequest, Response aResponse) {
         request = aRequest;
         response = aResponse;
     }
@@ -205,19 +203,57 @@ abstract class Context {
         return request.body ();
     }
 
-    public void halt () {
-        mAction.halt ();
+    /**
+     * Immediately stops a request within a filter or route
+     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * re-throw otherwise halt will not work.
+     */
+    public final void halt () {
+        throw new HaltException ();
     }
 
-    public void halt (int status) {
-        mAction.halt (status);
+    /**
+     * Immediately stops a request within a filter or route with specified status code
+     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * re-throw otherwise halt will not work.
+     *
+     * @param status the status code.
+     */
+    public final void halt (int status) {
+        throw new HaltException (status);
     }
 
-    public void halt (String body) {
-        mAction.halt (body);
+    /**
+     * Immediately stops a request within a filter or route with specified body content
+     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * re-throw otherwise halt will not work.
+     *
+     * @param body The body content.
+     */
+    public final void halt (String body) {
+        throw new HaltException (body);
     }
 
-    public void halt (int status, String body) {
-        mAction.halt (status, body);
+    /**
+     * Immediately stops a request within a filter or route with specified status code and body
+     * content.
+     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * re-throw otherwise halt will not work.
+     *
+     * @param status The status code.
+     * @param body The body content.
+     */
+    public final void halt (int status, String body) {
+        throw new HaltException (status, body);
     }
+
+    // TODO Implement these methods!
+
+    public void pass () {}
+
+    public void redirect () {}
+
+    public void template (String aTemplate, Object aParams) {}
+
+    public void template (String aTemplate, String aLayout, Object aParams) {}
 }

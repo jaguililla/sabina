@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static spark.Spark.after;
 import static spark.Spark.before;
+import static spark.Spark.setPort;
 import static spark.Spark.stop;
 
 import java.io.FileNotFoundException;
@@ -52,9 +53,12 @@ public class BooksIntegrationTest {
     }
 
     @BeforeClass public static void setup () throws InterruptedException {
+        setPort (testUtil.getPort ());
+
         before (it -> it.header ("FOZ", "BAZ"));
         Books.books ();
         after (it -> it.header ("FOO", "BAR"));
+
         testUtil.waitForStartup ();
     }
 

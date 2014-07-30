@@ -71,3 +71,10 @@ Example showing how to render a view from a template
 Example of using Transformer.
 ([TransformerExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/TransformerExample.java))
 
+TODO
+----
+
+* Add license to this readme (and to the site)
+* Add source url in the site (scm:git:git@github.com:perwendel/spark.git)
+* Add optimize 'profile'
+

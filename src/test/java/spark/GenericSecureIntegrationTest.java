@@ -29,7 +29,7 @@ import spark.util.SparkTestUtil.UrlResponse;
 
 public class GenericSecureIntegrationTest {
 
-    private static SparkTestUtil testUtil = new SparkTestUtil (4567);
+    private static SparkTestUtil testUtil = new SparkTestUtil (4560);
 
     @AfterClass public static void tearDown () {
         stop ();
@@ -37,6 +37,7 @@ public class GenericSecureIntegrationTest {
     }
 
     @BeforeClass public static void setup () throws InterruptedException {
+        setPort (testUtil.getPort ());
 
         // note that the keystore stuff is retrieved from SparkTestUtil which
         // respects JVM params for keystore, password

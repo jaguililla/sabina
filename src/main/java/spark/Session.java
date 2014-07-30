@@ -35,9 +35,9 @@ public class Session {
      * @throws IllegalArgumentException If the session is null.
      */
     Session (HttpSession session) {
-        if (session == null) {
+        if (session == null)
             throw new IllegalArgumentException ("session cannot be null");
-        }
+
         this.session = session;
     }
 
@@ -77,9 +77,9 @@ public class Session {
     public Set<String> attributes () {
         TreeSet<String> attributes = new TreeSet<> ();
         Enumeration<String> enumeration = session.getAttributeNames ();
-        while (enumeration.hasMoreElements ()) {
+        while (enumeration.hasMoreElements ())
             attributes.add (enumeration.nextElement ());
-        }
+
         return attributes;
     }
 

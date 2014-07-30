@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package spark.webserver;
+package spark.servlet;
 
 import static spark.Spark.runFromServlet;
 
@@ -32,12 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractFileResolvingResource;
 import org.springframework.core.io.ClassPathResource;
-import spark.resource.AbstractResourceHandler;
-import spark.resource.ClassPathResourceHandler;
-import spark.resource.ExternalResource;
-import spark.resource.ExternalResourceHandler;
 import spark.route.RouteMatcherFactory;
 import spark.utils.IOUtils;
+import spark.webserver.MatcherFilter;
 
 /**
  * Filter that can be configured to be used in a web.xml file.

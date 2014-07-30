@@ -38,12 +38,4 @@ public final class SparkUtils {
         }
         return path;
     }
-
-    public static boolean isParam (String routePart) {
-        return routePart.startsWith (":");
-    }
-
-    public static boolean isSplat (String routePart) {
-        return routePart.equals ("*");
-    }
 }
