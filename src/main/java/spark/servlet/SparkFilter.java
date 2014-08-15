@@ -14,9 +14,12 @@
 
 package spark.servlet;
 
+import static com.google.common.io.CharStreams.copy;
 import static spark.Spark.runFromServlet;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.Filter;
@@ -33,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractFileResolvingResource;
 import org.springframework.core.io.ClassPathResource;
 import spark.route.RouteMatcherFactory;
-import spark.utils.IOUtils;
 import spark.webserver.MatcherFilter;
 
 /**
@@ -134,7 +136,8 @@ public abstract class SparkFilter implements Filter {
                 AbstractFileResolvingResource resource =
                     staticResourceHandler.getResource (httpRequest);
                 if (resource != null && resource.isReadable ()) {
-                    IOUtils.copy (resource.getInputStream (), response.getWriter ());
+                    InputStream input = resource.getInputStream ();
+                    copy (new InputStreamReader (input), response.getWriter ());
                     return;
                 }
             }
