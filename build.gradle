@@ -59,13 +59,12 @@ dependencies {
     // TESTING DEPENDENCIES
     testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
     testCompile 'org.testng:testng:6.8.8'
-//    testCompile 'junit:junit:4.11'
+    testCompile 'junit:junit:4.11'
 }
 
 test {
     useTestNG ()
-
-    include "spark/**"
+    include 'spark/**'
 }
 
 task wrapper (type: Wrapper) {
