@@ -15,19 +15,14 @@
 package spark;
 
 import static java.lang.Thread.sleep;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static spark.Spark.after;
-import static spark.Spark.before;
-import static spark.Spark.setPort;
-import static spark.Spark.stop;
+import static spark.Spark.*;
+import static org.testng.Assert.*;
 
 import java.io.FileNotFoundException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 import spark.examples.Books;
 import spark.util.SparkTestUtil;
 import spark.util.SparkTestUtil.UrlResponse;

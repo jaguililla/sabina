@@ -14,15 +14,12 @@
 
 package spark;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class QueryParamsTest {
 

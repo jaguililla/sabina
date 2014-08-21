@@ -14,13 +14,11 @@
 
 package spark;
 
-import static spark.Spark.post;
-import static spark.Spark.setPort;
-import static spark.Spark.stop;
+import static spark.Spark.*;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 import spark.util.SparkTestUtil;
 
 /**
