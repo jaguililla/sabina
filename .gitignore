@@ -1,15 +1,21 @@
 #
 # Ignored files
 #
-bin
-target
-reports
-.settings
-.externalToolBuilders
+
+# Maven & Ant
+bin/
+target/
+reports/
+
+# Eclipse
+.settings/
+.externalToolBuilders/
 .project
 .classpath
-.pdm
-.idea
+.pmd
+
+# Idea
+.idea/
 *.iml
 *.ipr
 *.iws

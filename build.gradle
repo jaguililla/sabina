@@ -28,6 +28,11 @@ description = 'A Sinatra inspired java web framework'
 sourceCompatibility = VERSION_1_8
 targetCompatibility = VERSION_1_8
 
+test {
+    useTestNG ()
+    include 'spark/**'
+}
+
 repositories {
     mavenCentral ()
 }
@@ -60,11 +65,6 @@ dependencies {
     testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
     testCompile 'org.testng:testng:6.8.8'
     testCompile 'junit:junit:4.11'
-}
-
-test {
-    useTestNG ()
-    include 'spark/**'
 }
 
 task wrapper (type: Wrapper) {

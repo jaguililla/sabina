@@ -7,5 +7,5 @@ status=published
 Contact
 -------
 
-* [sparkjava google group](https://groups.google.com/forum/?hl=en#!forum/sparkjava)
-* [per.i.wendel@gmail.com](mailto:per.i.wendel@gmail.com)
+* Sabina: [juanjoaguililla@gmail.com](mailto:juanjoaguililla@gmail.com)
+* Spark: [per.i.wendel@gmail.com](mailto:per.i.wendel@gmail.com)

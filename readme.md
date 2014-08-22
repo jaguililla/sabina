@@ -1,26 +1,28 @@
-Spark - a Sinatra inspired web framework
+[![Build Status](https://travis-ci.org/jamming/spark.svg?branch=master)][status]
+[status]: https://travis-ci.org/jamming/spark)
+
+
+Sabina - a Sinatra inspired web framework
 ==============================================
 
-NEWS: Spark 2.0.0 with Lambda support is now available on Maven central!!! :
+Sabina 1.0.0 is now available on Bintray!!!
 
 ```xml
     <dependency>
-        <groupId>com.sparkjava</groupId>
-        <artifactId>spark-core</artifactId>
-        <version>2.0.0</version>
+        <groupId>com.sabina</groupId>
+        <artifactId>sabina</artifactId>
+        <version>1.0.0</version>
     </dependency>
 ```
 
-NEWS: Spark google group created:
-https://groups.google.com/d/forum/sparkjava
-
 API Docs: http://there4.co/spark
+
 
 Getting started
 ---------------
 
 ```java
-import static spark.Spark.*;
+import static sabina.Sabina.*;
 
 import spark.*;
 
@@ -41,7 +43,7 @@ github run:
 
     mvn javadoc:javadoc
 
-The result is put in /target/site/apidocs
+The result is put in /build/site/apidocs
 
 Examples
 ---------
