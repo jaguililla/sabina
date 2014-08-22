@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/jamming/spark.svg?branch=master)][status]
-[status]: https://travis-ci.org/jamming/spark)
+[status]: https://travis-ci.org/jamming/spark
 
 
 Sabina - a Sinatra inspired web framework
