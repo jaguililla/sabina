@@ -58,7 +58,6 @@ public class Route extends Action {
      * @param response The response object providing functionality for modifying the response.
      *
      * @return The content to be set in the response.
-     * @throws java.lang.Exception when handle fails.
      */
     public Object handle (Request request, Response response) {
         return mHandler.apply (new Context (request, response));
@@ -73,7 +72,6 @@ public class Route extends Action {
      * @param element to be rendered.
      *
      * @return body content.
-     * @throws java.lang.Exception when render fails.
      */
     //TODO change String return type to Stream. It should be done in another issue.
     public String render (Object element) {

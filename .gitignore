@@ -7,6 +7,10 @@ bin/
 target/
 reports/
 
+# Gradle
+/build/
+/.gradle/
+
 # Eclipse
 .settings/
 .externalToolBuilders/
@@ -19,9 +23,6 @@ reports/
 *.iml
 *.ipr
 *.iws
-
-/build/
-/.gradle/
 
 #
 # Default overrides

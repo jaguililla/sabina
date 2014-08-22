@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  * <br>
  * For a querystring like: <br>
  * user[name]=federico&#38;user[lastname]=dayan
- * </code> <br>
+ * <p>
  * <br>
  * <br>
  * We get would get a structure like: <br>
@@ -42,9 +42,10 @@ import javax.servlet.http.HttpServletRequest;
  * <code>
  * queryParamsMapInstance.get("user).get("name").value(); <br>
  * queryParamsMapInstance.get("user).get("lastname").value();
- * <code>
+ * </code>
  * <p>
- * <br><br>
+ * <br>
+ * <br>
  * It is null safe, meaning that if a key does not exist, it does not throw NullPointerException
  * , it just returns null.
  *
@@ -148,14 +149,9 @@ public class QueryParams {
      * <br>
      * <code>
      * user[name]=fede
-     * <br>
-     * <br>
      * get("user").get("name").value() #  fede
-     * <br>
      * or
-     * <br>
      * get("user","name").value() #  fede
-     * <p>
      * </code>
      *
      * @param keys The parameter nested key(s)

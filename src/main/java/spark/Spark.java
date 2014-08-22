@@ -120,7 +120,6 @@ class ExceptionMapper {
  * Example:
  * <p>
  * <pre>
- * {@code
  * Spark.get(new Route("/hello") {
  *    public Object handle(Request request, Response response) {
  *       return "Hello World!";
@@ -128,9 +127,6 @@ class ExceptionMapper {
  * });
  * </pre>
  * <p>
- * <code>
- * <p>
- * </code>
  *
  * @author Per Wendel
  */
@@ -300,7 +296,7 @@ public class Spark {
     /**
      * Map the route for HTTP GET requests
      *
-     * @param route The route
+     * @param aPath The route
      */
     public static synchronized void get (String aPath, Function<Context, Object> aHandler) {
         addRoute (get.name (), new Route (aPath, aHandler));
@@ -315,7 +311,7 @@ public class Spark {
     /**
      * Map the route for HTTP POST requests
      *
-     * @param route The route
+     * @param aPath The route
      */
     public static synchronized void post (String aPath, Function<Context, Object> aHandler) {
         addRoute (post.name (), new Route (aPath, aHandler));
@@ -324,7 +320,7 @@ public class Spark {
     /**
      * Map the route for HTTP PUT requests
      *
-     * @param route The route
+     * @param aPath The route
      */
     public static synchronized void put (String aPath, Function<Context, Object> aHandler) {
         addRoute (put.name (), new Route (aPath, aHandler));
@@ -333,7 +329,7 @@ public class Spark {
     /**
      * Map the route for HTTP PATCH requests
      *
-     * @param route The route
+     * @param aPath The route
      */
     public static synchronized void patch (String aPath, Function<Context, Object> aHandler) {
         addRoute (patch.name (), new Route (aPath, aHandler));
@@ -342,7 +338,7 @@ public class Spark {
     /**
      * Map the route for HTTP DELETE requests
      *
-     * @param route The route
+     * @param aPath The route
      */
     public static synchronized void delete (String aPath, Function<Context, Object> aHandler) {
         addRoute (delete.name (), new Route (aPath, aHandler));
@@ -351,7 +347,7 @@ public class Spark {
     /**
      * Map the route for HTTP HEAD requests
      *
-     * @param route The route
+     * @param aPath The route
      */
     public static synchronized void head (String aPath, Function<Context, Object> aHandler) {
         addRoute (head.name (), new Route (aPath, aHandler));
@@ -360,7 +356,7 @@ public class Spark {
     /**
      * Map the route for HTTP TRACE requests
      *
-     * @param route The route
+     * @param aPath The route
      */
     public static synchronized void trace (String aPath, Function<Context, Object> aHandler) {
         addRoute (trace.name (), new Route (aPath, aHandler));
@@ -369,7 +365,7 @@ public class Spark {
     /**
      * Map the route for HTTP CONNECT requests
      *
-     * @param route The route
+     * @param aPath The route
      */
     public static synchronized void connect (
         String aPath, Function<Context, Object> aHandler) {
@@ -380,7 +376,7 @@ public class Spark {
     /**
      * Map the route for HTTP OPTIONS requests
      *
-     * @param route The route
+     * @param aPath The route
      */
     public static synchronized void options (
         String aPath, Function<Context, Object> aHandler) {
@@ -391,7 +387,7 @@ public class Spark {
     /**
      * Maps a filter to be executed before any matching routes
      *
-     * @param filter The filter
+     * @param aHandler The filter
      */
     public static synchronized void before (Consumer<Context> aHandler) {
         addFilter (before.name (), new Filter (aHandler));
@@ -410,7 +406,7 @@ public class Spark {
     /**
      * Maps a filter to be executed after any matching routes
      *
-     * @param filter The filter
+     * @param aHandler The filter
      */
     public static synchronized void after (Consumer<Context> aHandler) {
         addFilter (after.name (), new Filter (aHandler));
@@ -449,7 +445,7 @@ public class Spark {
      * Maps an exception handler to be executed when an exception occurs during routing
      *
      * @param exceptionClass the exception class
-     * @param handler        The handler
+     * @param aHandler        The handler
      */
     public static synchronized <T extends Exception> void exception(
         Class<T> exceptionClass, BiConsumer<T, Context> aHandler) {

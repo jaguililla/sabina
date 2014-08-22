@@ -3,19 +3,19 @@
 
 
 Sabina - a Sinatra inspired web framework
-==============================================
+=========================================
 
 Sabina 1.0.0 is now available on Bintray!!!
 
 ```xml
-    <dependency>
-        <groupId>com.sabina</groupId>
-        <artifactId>sabina</artifactId>
-        <version>1.0.0</version>
-    </dependency>
+<dependency>
+  <groupId>com.sabina</groupId>
+  <artifactId>sabina</artifactId>
+  <version>1.0.0</version>
+</dependency>
 ```
 
-API Docs: http://there4.co/spark
+API Docs: [http://there4.co/spark]
 
 
 Getting started
@@ -24,31 +24,31 @@ Getting started
 ```java
 import static sabina.Sabina.*;
 
-import spark.*;
-
 public class HelloWorld {
-   public static void main(String[] args) {
-      get("/hello", it -> "Hello World!");
+   public static void main (String[] args) {
+      get ("/hello", it -> "Hello World!");
    }
 }
 ```
 
-View at: http://localhost:4567/hello
+View at: [http://localhost:4567/hello]
 
 More documentation is on the way!
 
-Check out and try the examples in the source code.
-You can also check out the javadoc. After getting the source from
-github run: 
+You can also check out the javadoc. After getting the source from github run: 
 
-    mvn javadoc:javadoc
+    ./gradlew javadoc
 
-The result is put in /build/site/apidocs
+The result is put in `/build/docs/javadoc`
+
 
 Examples
 ---------
 
+Check out and try the examples in the source code.
+
 Simple example showing some basic functionality
+([SimpleExample.java](tree/master/src/test/java/spark/examples/SimpleExample.java))
 ([SimpleExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/SimpleExample.java))
 
 A simple CRUD example showing howto create, get, update and delete book resources
@@ -72,6 +72,7 @@ Example showing how to render a view from a template
 
 Example of using Transformer.
 ([TransformerExample.java](//github.com/jamming/spark/tree/master/src/test/java/spark/examples/TransformerExample.java))
+
 
 TODO
 ----
