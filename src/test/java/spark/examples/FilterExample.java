@@ -35,7 +35,6 @@ import java.util.Map;
  * @author Per Wendel
  */
 class FilterExample {
-
     private static Map<String, String> usernamePasswords = new HashMap<> ();
 
     public static void main (String[] args) {
@@ -48,9 +47,8 @@ class FilterExample {
             String password = it.queryParams ("password");
 
             String dbPassword = usernamePasswords.get (user);
-            if (!(password != null && password.equals (dbPassword))) {
+            if (!(password != null && password.equals (dbPassword)))
                 it.halt (401, "You are not welcome here!!!");
-            }
         });
 
         before ("/hello", it -> it.header ("Foo", "Set by second before filter"));

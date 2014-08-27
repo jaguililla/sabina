@@ -65,8 +65,7 @@ public class RequestTest {
             "Should have delegated getting the servlet path");
     }
 
-    @Test
-    public void shouldBeAbleToGetTheContextPath () {
+    @Test public void shouldBeAbleToGetTheContextPath () {
         HttpServletRequest servletRequest = new MockedHttpServletRequest (new HashMap<> ()) {
             @Override public String getContextPath () {
                 return THE_CONTEXT_PATH;

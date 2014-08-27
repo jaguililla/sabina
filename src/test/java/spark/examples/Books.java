@@ -86,12 +86,12 @@ public class Books {
             if (book != null) {
                 String newAuthor = it.queryParams ("author");
                 String newTitle = it.queryParams ("title");
-                if (newAuthor != null) {
+                if (newAuthor != null)
                     book.setAuthor (newAuthor);
-                }
-                if (newTitle != null) {
+
+                if (newTitle != null)
                     book.setTitle (newTitle);
-                }
+
                 return "Book with id '" + id + "' updated";
             }
             else {
@@ -116,9 +116,10 @@ public class Books {
         // Gets all available book resources (id's)
         get ("/books", it -> {
             String ids = "";
-            for (String id : books.keySet ()) {
+
+            for (String id : books.keySet ())
                 ids += id + " ";
-            }
+
             return ids;
         });
     }

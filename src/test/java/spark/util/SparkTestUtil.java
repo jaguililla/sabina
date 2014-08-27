@@ -123,6 +123,7 @@ public class SparkTestUtil {
 
     public UrlResponse doMethodSecure (
         String requestMethod, String path, String body, String acceptType) {
+
         return doMethod (requestMethod, path, body, true, acceptType);
     }
 
@@ -163,6 +164,10 @@ public class SparkTestUtil {
         catch (Exception e) {
             throw new RuntimeException (e);
         }
+    }
+
+    public void doPost (String aPath) {
+        doMethod ("POST", aPath, "");
     }
 
     private HttpUriRequest getHttpRequest (

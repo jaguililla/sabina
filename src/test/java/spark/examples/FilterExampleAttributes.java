@@ -42,7 +42,7 @@ class FilterExampleAttributes {
     }
 
     private static String asXml (String name, Object value) {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><"
+        return"<?xml version=\"1.0\" encoding=\"UTF-8\"?><"
             + name + ">" + value + "</" + name + ">";
     }
 }

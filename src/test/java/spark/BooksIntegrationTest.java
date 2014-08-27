@@ -14,9 +14,8 @@
 
 package spark;
 
-import static java.lang.Thread.sleep;
-import static spark.Spark.*;
 import static org.testng.Assert.*;
+import static spark.Spark.*;
 
 import java.io.FileNotFoundException;
 
@@ -41,13 +40,13 @@ public class BooksIntegrationTest {
         return testUtil.doMethod (requestMethod, path);
     }
 
-    @AfterClass public static void tearDown () throws InterruptedException {
-        sleep (5); // Avoid stopping before processing last test
+    @AfterClass public static void shutDown () throws InterruptedException {
+//        sleep (5); // Avoid stopping before processing last test
         stop ();
         testUtil.waitForShutdown ();
     }
 
-    @BeforeClass public static void setup () throws InterruptedException {
+    @BeforeClass public static void startUp () throws InterruptedException {
         setPort (testUtil.getPort ());
 
         before (it -> it.header ("FOZ", "BAZ"));

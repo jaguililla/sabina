@@ -23,7 +23,6 @@ import static spark.Spark.post;
  * @author Per Wendel
  */
 class SimpleExample {
-
     public static void main (String[] args) {
 
         //  setPort(5678); <- Uncomment if you wan't spark to listen on a port different than 4567.

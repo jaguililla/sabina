@@ -8,7 +8,7 @@ status=published
 News
 ----
 
-Sabina 2.0.0 re-written for Java 8 and Lambdas available on Maven central!
+Sabina 2.0.0 re-written for Java 8 and Lambdas available on Bintray and Maven central!
 
 
 Quick start

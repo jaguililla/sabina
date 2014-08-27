@@ -80,4 +80,6 @@ TODO
 * Add license to this readme (and to the site)
 * Add source url in the site (scm:git:git@github.com:perwendel/spark.git)
 * Add optimize 'profile'
-
+* Remove duplicated tests. Ie: postOk (JUnit test method)
+* Move tests to integration tests
+* Create unit tests

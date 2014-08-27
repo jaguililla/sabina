@@ -14,6 +14,7 @@
 
 package spark.examples;
 
+import static java.lang.String.format;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
@@ -22,29 +23,27 @@ class SessionExample {
 
     public static void main (String[] args) {
         get ("/", it -> {
-            String name = it.session ().attribute (SESSION_NAME);
-            if (name == null) {
-                return
-                    "<html>" +
-                        "    <body>" +
-                        "        What's your name?:" +
-                        "        <form action=\"/entry\" method=\"POST\">" +
-                        "            <input type=\"text\" name=\"name\"/>" +
-                        "            <input type=\"submit\" value=\"go\"/>" +
-                        "        </form>" +
-                        "    </body>" +
-                        "</html>";
-            }
-            else {
-                return String.format ("<html><body>Hello, %s!</body></html>", name);
-            }
+            return it.session ().<String>attribute (SESSION_NAME) == null?
+                "<html>" +
+                "    <body>" +
+                "        What's your name?:" +
+                "        <form action=\"/entry\" method=\"POST\">" +
+                "            <input type=\"text\" name=\"name\"/>" +
+                "            <input type=\"submit\" value=\"go\"/>" +
+                "        </form>" +
+                "    </body>" +
+                "</html>"
+                :
+                format (
+                    "<html><body>Hello, %s!</body></html>",
+                    it.session ().attribute (SESSION_NAME));
         });
 
         post ("/entry", it -> {
             String name = it.queryParams ("name");
-            if (name != null) {
+            if (name != null)
                 it.session ().attribute (SESSION_NAME, name);
-            }
+
             it.redirect ("/");
             return null;
         });

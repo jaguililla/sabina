@@ -14,6 +14,7 @@
 
 package spark;
 
+import static java.lang.Boolean.TRUE;
 import static org.testng.Assert.*;
 
 import java.util.HashMap;
@@ -44,21 +45,13 @@ public class QueryParamsTest {
 
         assertFalse (queryMap.getQueryMap ().isEmpty ());
         assertFalse (queryMap.getQueryMap ().get ("user").getQueryMap ().isEmpty ());
-        assertFalse (
-            queryMap.getQueryMap ().get ("user").getQueryMap ().get ("info").getQueryMap ()
-                .isEmpty ());
-        assertEquals ("federico",
-            queryMap.getQueryMap ().get ("user").getQueryMap ().get ("info").getQueryMap ()
-                .get ("first_name").getValues ()[0]);
-        assertEquals ("dayan",
-            queryMap.getQueryMap ().get ("user").getQueryMap ().get ("info").getQueryMap ()
-                .get ("last_name").getValues ()[0]);
+        assertFalse (queryMap.get ("user", "info").getQueryMap ().isEmpty ());
+        assertEquals ("federico", queryMap.get ("user", "info", "first_name").getValues ()[0]);
+        assertEquals ("dayan", queryMap.get ("user", "info", "last_name").getValues ()[0]);
 
         assertTrue (queryMap.hasKeys ());
         assertFalse (queryMap.hasValue ());
-        assertTrue (
-            queryMap.getQueryMap ().get ("user").getQueryMap ().get ("info").getQueryMap ()
-                .get ("last_name").hasValue ());
+        assertTrue (queryMap.get ("user", "info", "last_name").hasValue ());
     }
 
     @Test public void testDifferentTypesForValue () {
@@ -67,23 +60,21 @@ public class QueryParamsTest {
         queryMap.loadKeys ("user[age]", new String[] { "10" });
         queryMap.loadKeys ("user[agrees]", new String[] { "true" });
 
-        assertEquals (new Integer (10), queryMap.get ("user").get ("age").integerValue ());
-        assertEquals (new Float (10), queryMap.get ("user").get ("age").floatValue ());
-        assertEquals (new Double (10), queryMap.get ("user").get ("age").doubleValue ());
-        assertEquals (new Long (10), queryMap.get ("user").get ("age").longValue ());
-        assertEquals (Boolean.TRUE, queryMap.get ("user").get ("agrees").booleanValue ());
+        assertEquals (Integer.valueOf (10), queryMap.get ("user").get ("age").integerValue ());
+        assertEquals ((float)10, queryMap.get ("user").get ("age").floatValue ());
+        assertEquals ((double)10, queryMap.get ("user").get ("age").doubleValue ());
+        assertEquals (Long.valueOf (10), queryMap.get ("user").get ("age").longValue ());
+        assertEquals (TRUE, queryMap.get ("user").get ("agrees").booleanValue ());
     }
 
-    @Test
-    public void parseKeyShouldParseRootKey () {
+    @Test public void parseKeyShouldParseRootKey () {
         String[] parsed = queryMap.parseKey ("user[name][more]");
 
         assertEquals ("user", parsed[0]);
         assertEquals ("[name][more]", parsed[1]);
     }
 
-    @Test
-    public void parseKeyShouldParseSubkeys () {
+    @Test public void parseKeyShouldParseSubkeys () {
         String[] parsed = null;
 
         parsed = queryMap.parseKey ("[name][more]");
@@ -97,8 +88,7 @@ public class QueryParamsTest {
         assertEquals ("", parsed[1]);
     }
 
-    @Test
-    public void itShouldbeNullSafe () {
+    @Test public void itShouldbeNullSafe () {
         QueryParams queryParams = new QueryParams ();
 
         String ret = queryParams.get ("x").get ("z").get ("y").value ("w");
@@ -106,22 +96,16 @@ public class QueryParamsTest {
         assertNull (ret);
     }
 
-    @Test
-    public void testConstructor () {
+    @Test public void constructor () {
         QueryParams queryMap = new QueryParams ("user[name][more]", "fede");
 
         assertFalse (queryMap.getQueryMap ().isEmpty ());
         assertFalse (queryMap.getQueryMap ().get ("user").getQueryMap ().isEmpty ());
-        assertFalse (
-            queryMap.getQueryMap ().get ("user").getQueryMap ().get ("name").getQueryMap ()
-                .isEmpty ());
-        assertEquals ("fede",
-            queryMap.getQueryMap ().get ("user").getQueryMap ().get ("name").getQueryMap ()
-                .get ("more").getValues ()[0]);
+        assertFalse (queryMap.get ("user", "name").getQueryMap ().isEmpty ());
+        assertEquals ("fede", queryMap.get ("user", "name", "more").getValues ()[0]);
     }
 
-    @Test
-    public void testToMap () {
+    @Test public void toMap () {
         Map<String, String[]> params = new HashMap<> ();
 
         params.put ("user[info][name]", new String[] { "fede" });

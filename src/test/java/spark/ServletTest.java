@@ -38,12 +38,12 @@ public class ServletTest {
 
     private static SparkTestUtil testUtil;
 
-    @AfterClass public static void tearDown () throws Exception {
+    @AfterClass public static void shutDown () throws Exception {
         server.stop ();
         waitForShutdown ("localhost", PORT);
     }
 
-    @BeforeClass public static void setup () {
+    @BeforeClass public static void startUp () {
         testUtil = new SparkTestUtil (PORT);
 
         ServerConnector connector = new ServerConnector (server);
@@ -77,53 +77,52 @@ public class ServletTest {
         waitForStartup ("localhost", PORT);
     }
 
-    @Test public void testGetHi () {
-        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/hi", null);
+    @Test public void getHi () {
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/hi");
         assertEquals (200, response.status);
         assertEquals ("Hello World!", response.body);
     }
 
-    @Test public void testHiHead () {
-        UrlResponse response = testUtil.doMethod ("HEAD", SOMEPATH + "/hi", null);
+    @Test public void hiHead () {
+        UrlResponse response = testUtil.doMethod ("HEAD", SOMEPATH + "/hi");
         assertEquals (200, response.status);
         assertEquals ("", response.body);
     }
 
-    @Test public void testGetHiAfterFilter () {
-        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/hi", null);
+    @Test public void getHiAfterFilter () {
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/hi");
         assertTrue (response.headers.get ("after").contains ("foobar"));
     }
 
-    @Test public void testGetRoot () {
-        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/", null);
+    @Test public void getRoot () {
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/");
         assertEquals (200, response.status);
         assertEquals ("Hello Root!", response.body);
     }
 
-    @Test public void testEchoParam1 () {
-        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/shizzy", null);
+    @Test public void echoParam1 () {
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/shizzy");
         assertEquals (200, response.status);
         assertEquals ("echo: shizzy", response.body);
     }
 
-    @Test public void testEchoParam2 () {
-        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/gunit", null);
+    @Test public void echoParam2 () {
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/gunit");
         assertEquals (200, response.status);
         assertEquals ("echo: gunit", response.body);
     }
 
-    @Test public void testUnauthorized () throws Exception {
-        UrlResponse urlResponse =
-            testUtil.doMethod ("GET", SOMEPATH + "/protected/resource", null);
+    @Test public void unauthorized () throws Exception {
+        UrlResponse urlResponse = testUtil.doMethod ("GET", SOMEPATH + "/protected/resource");
         assertTrue (urlResponse.status == 401);
     }
 
-    @Test public void testNotFound () throws Exception {
-        UrlResponse urlResponse = testUtil.doMethod ("GET", SOMEPATH + "/no/resource", null);
+    @Test public void notFound () throws Exception {
+        UrlResponse urlResponse = testUtil.doMethod ("GET", SOMEPATH + "/no/resource");
         assertTrue (urlResponse.status == 404);
     }
 
-    @Test public void testPost () {
+    @Test public void post () {
         UrlResponse response = testUtil.doMethod ("POST", SOMEPATH + "/poster", "Fo shizzy");
         out.println (response.body);
         assertEquals (201, response.status);

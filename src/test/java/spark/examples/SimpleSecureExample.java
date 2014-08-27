@@ -24,7 +24,6 @@ import static spark.Spark.*;
  *         spark.examples.SimpleExample} by Per Wendel
  */
 class SimpleSecureExample {
-
     public static void main (String[] args) {
 
         // setPort(5678); <- Uncomment if you want spark to listen on a port different than 4567.

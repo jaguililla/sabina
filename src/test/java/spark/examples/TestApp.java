@@ -24,7 +24,6 @@ import javax.servlet.FilterConfig;
 import spark.servlet.SparkFilter;
 
 public class TestApp extends SparkFilter {
-
     @Override public void setup (FilterConfig aFilterConfig) {
         before ("/protected/*", it -> it.halt (401, "Go Away!"));
 

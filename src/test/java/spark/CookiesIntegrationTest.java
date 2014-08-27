@@ -30,7 +30,7 @@ public class CookiesIntegrationTest {
 
     private static SparkTestUtil testUtil = new SparkTestUtil (4568);
 
-    @BeforeClass public static void initRoutes () throws InterruptedException {
+    @BeforeClass public static void startUp () throws InterruptedException {
         setPort (testUtil.getPort ());
 
         post ("/assertNoCookies", it -> {
@@ -64,33 +64,29 @@ public class CookiesIntegrationTest {
         testUtil.waitForStartup ();
     }
 
-    @AfterClass public static void stopServer () {
+    @AfterClass public static void shutDown () {
         stop ();
         testUtil.waitForShutdown ();
     }
 
     @Test public void emptyCookies () {
-        httpPost ("/assertNoCookies");
+        testUtil.doPost ("/assertNoCookies");
     }
 
     @Test public void createCookie () {
         String cookieName = "testCookie";
         String cookieValue = "testCookieValue";
         String cookie = cookieName + "&cookieValue=" + cookieValue;
-        httpPost ("/setCookie?cookieName=" + cookie);
-        httpPost ("/assertHasCookie?cookieName=" + cookie);
+        testUtil.doPost ("/setCookie?cookieName=" + cookie);
+        testUtil.doPost ("/assertHasCookie?cookieName=" + cookie);
     }
 
     @Test public void removeCookie () {
         String cookieName = "testCookie";
         String cookieValue = "testCookieValue";
         String cookie = cookieName + "&cookieValue=" + cookieValue;
-        httpPost ("/setCookie?cookieName=" + cookie);
-        httpPost ("/removeCookie?cookieName=" + cookie);
-        httpPost ("/assertNoCookies");
-    }
-
-    private void httpPost (String aPath) {
-        testUtil.doMethod ("POST", aPath, "");
+        testUtil.doPost ("/setCookie?cookieName=" + cookie);
+        testUtil.doPost ("/removeCookie?cookieName=" + cookie);
+        testUtil.doPost ("/assertNoCookies");
     }
 }

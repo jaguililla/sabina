@@ -144,7 +144,7 @@ public class QueryParams {
     }
 
     /**
-     * Retruns and element fro the specified key. <br>
+     * Returns and element from the specified key. <br>
      * For querystring: <br>
      * <br>
      * <code>
