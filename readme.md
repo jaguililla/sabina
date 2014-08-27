@@ -83,3 +83,15 @@ TODO
 * Remove duplicated tests. Ie: postOk (JUnit test method)
 * Move tests to integration tests
 * Create unit tests
+* Integrate with:
+  * http://jackson.codehaus.org
+  * http://metrics.codahale.com
+  * http://www.jdbi.org
+  * http://flywaydb.org
+  * http://pholser.github.io/jopt-simple (expose a common set of options for all microservices)
+* Use https://huboard.com
+* Deploy to Maven: http://benlimmer.com/2014/01/04/automatically-publish-to-sonatype-with-gradle-and-travis-ci
+* Copy Javadoc to site prior to publishing
+* Helper for multiline strings
+* Helper for JDBC
+* Integrate Redis

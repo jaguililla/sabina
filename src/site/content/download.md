@@ -4,10 +4,6 @@ type=page
 status=published
 ~~~~~~
 
-<div class="contentBox">
-  <div class="innerBox">
-    <div class="contentText">
-      <div class="getting_started">
         <h1 class="getting_started_head">Downloads</h1>
 
         <div class="normal">!!! Spark version 2.0.0 re-written for Java 8 and lambdas is now
@@ -38,8 +34,3 @@ status=published
             Download the spark archive and the spark-dependencies archive from <a
             href="http://code.google.com/p/spark-java/downloads/list">the project's page on
             Google code</a>
-          </div>
-
-        </div>
-      </div>
-
