@@ -95,3 +95,4 @@ TODO
 * Helper for multiline strings
 * Helper for JDBC
 * Integrate Redis
+* Add Travis links, huboard, issues, etc.
