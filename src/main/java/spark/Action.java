@@ -16,43 +16,43 @@ package spark;
 
 import java.util.regex.Pattern;
 
+import spark.route.HttpMethod;
+
 /**
  * Functionality used in both Route and Filter.
+ * TODO Replace optional by Option<String>
  *
  * @author Per Wendel
  */
 abstract class Action {
-    private String path;
-    private Pattern pathPattern;
-    private String acceptType;
+    public final String path;
+    public final Pattern pathPattern;
+    public final String acceptType;
+    public final HttpMethod method;
 
     /**
      * TODO .
-     * @param path
+     *
+     * @param pathPattern
      * @param acceptType
      */
-    protected Action (Pattern path, String acceptType) {
-        this.pathPattern = path;
+    protected Action (HttpMethod method, Pattern pathPattern, String acceptType) {
+        if (pathPattern == null || acceptType == null || acceptType.isEmpty ())
+            throw new IllegalArgumentException ();
+
+        this.pathPattern = pathPattern;
         this.acceptType = acceptType;
+        this.path = null;
+        this.method = method;
     }
 
-    protected Action (String path, String acceptType) {
+    protected Action (HttpMethod method, String path, String acceptType) {
+        if (path == null || path.isEmpty () || acceptType == null || acceptType.isEmpty ())
+            throw new IllegalArgumentException ();
+
         this.path = path;
         this.acceptType = acceptType;
-    }
-
-    public String getAcceptType () {
-        return acceptType;
-    }
-
-    /**
-     * Returns this route's path.
-     */
-    protected String getPath () {
-        return this.path;
-    }
-
-    protected Pattern getPathPattern () {
-        return pathPattern;
+        this.pathPattern = null;
+        this.method = method;
     }
 }

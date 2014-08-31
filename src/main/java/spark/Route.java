@@ -16,6 +16,8 @@ package spark;
 
 import java.util.function.Function;
 
+import spark.route.HttpMethod;
+
 /**
  * A Route is built up by a path (for url-matching) and the implementation of the 'handle'
  * method.
@@ -35,9 +37,8 @@ public class Route extends Action {
      *
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      */
-    protected Route (String path, Function<Context, Object> aHandler) {
-        super (path, DEFAULT_ACCEPT_TYPE);
-        mHandler = aHandler;
+    protected Route (HttpMethod method, String path, Function<Context, Object> aHandler) {
+        this (method, path, DEFAULT_ACCEPT_TYPE, aHandler);
     }
 
     /**
@@ -46,8 +47,17 @@ public class Route extends Action {
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      * @param acceptType The accept type which is used for matching.
      */
-    protected Route (String path, String acceptType, Function<Context, Object> aHandler) {
-        super (path, acceptType);
+    protected Route (
+        HttpMethod method,
+        String path,
+        String acceptType,
+        Function<Context, Object> aHandler) {
+
+        super (method, path, acceptType);
+
+        if (aHandler == null)
+            throw new IllegalArgumentException ();
+
         mHandler = aHandler;
     }
 

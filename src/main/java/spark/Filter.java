@@ -18,6 +18,8 @@ import static spark.utils.SparkUtils.ALL_PATHS;
 
 import java.util.function.Consumer;
 
+import spark.route.HttpMethod;
+
 /**
  * A Filter is built up by a path (for url-matching) and the implementation of the 'handle'
  * method.
@@ -34,9 +36,8 @@ public class Filter extends Action {
     /**
      * Constructs a filter that matches on everything.
      */
-    protected Filter (Consumer<Context> aHandler) {
-        super (ALL_PATHS, DEFAUT_CONTENT_TYPE);
-        mHandler = aHandler;
+    protected Filter (HttpMethod method, Consumer<Context> aHandler) {
+        this (method, ALL_PATHS, aHandler);
     }
 
     /**
@@ -44,14 +45,18 @@ public class Filter extends Action {
      *
      * @param path The filter path which is used for matching. (e.g. /hello, users/:name).
      */
-    protected Filter (String path, Consumer<Context> aHandler) {
-        super (path, DEFAUT_CONTENT_TYPE);
-        mHandler = aHandler;
+    protected Filter (HttpMethod method, String path, Consumer<Context> aHandler) {
+        this (method, path, DEFAUT_CONTENT_TYPE, aHandler);
     }
 
-    protected Filter (String path, String acceptType, Consumer<Context> aHandler) {
+    protected Filter (
+        HttpMethod method, String path, String acceptType, Consumer<Context> aHandler) {
 
-        super (path, acceptType);
+        super (method, path, acceptType);
+
+        if (aHandler == null)
+            throw new IllegalArgumentException ();
+
         mHandler = aHandler;
     }
 

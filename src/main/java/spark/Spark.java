@@ -30,83 +30,6 @@ import spark.route.RouteMatcherFactory;
 import spark.webserver.SparkServer;
 import spark.webserver.SparkServerFactory;
 
-class ExceptionMapper {
-    /** Holds a default instance for the exception mapper. */
-    private static ExceptionMapper defaultInstance;
-
-    /**
-     * Returns the default instance for the exception mapper
-     *
-     * @return Default instance
-     */
-    public static ExceptionMapper getInstance() {
-        if (defaultInstance == null) {
-            defaultInstance = new ExceptionMapper();
-        }
-        return defaultInstance;
-    }
-
-    /** Holds a map of Exception classes and associated handlers. */
-    private Map<Class<? extends Exception>, ExceptionHandler> exceptionMap = new HashMap<>();
-
-    /**
-     * Maps the given handler to the provided exception type. If a handler was already registered to the same type, the
-     * handler is overwritten.
-     *
-     * @param exceptionClass Type of exception
-     * @param handler        Handler to map to exception
-     */
-    public void map(Class<? extends Exception> exceptionClass, ExceptionHandler handler) {
-        this.exceptionMap.put(exceptionClass, handler);
-    }
-
-    /**
-     * Returns the handler associated with the provided exception class
-     *
-     * @param exceptionClass Type of exception
-     * @return Associated handler
-     */
-    public ExceptionHandler getHandler(Class<? extends Exception> exceptionClass) {
-        // If the exception map does not contain the provided exception class, it might
-        // still be that a superclass of the exception class is.
-        if (!this.exceptionMap.containsKey(exceptionClass)) {
-
-            Class<?> superclass = exceptionClass.getSuperclass();
-            do {
-                // Is the superclass mapped?
-                if (this.exceptionMap.containsKey(superclass)) {
-                    // Use the handler for the mapped superclass, and cache handler
-                    // for this exception class
-                    ExceptionHandler handler = this.exceptionMap.get(superclass);
-                    this.exceptionMap.put(exceptionClass, handler);
-                    return handler;
-                }
-
-                // Iteratively walk through the exception class's superclasses
-                superclass = superclass.getSuperclass();
-            } while (superclass != null);
-
-            // No handler found either for the superclasses of the exception class
-            // We cache the null value to prevent future
-            this.exceptionMap.put(exceptionClass, null);
-            return null;
-        }
-
-        // Direct map
-        return this.exceptionMap.get(exceptionClass);
-    }
-
-    /**
-     * Returns the handler associated with the provided exception class
-     *
-     * @param exception Exception that occurred
-     * @return Associated handler
-     */
-    public ExceptionHandler getHandler(Exception exception) {
-        return this.getHandler(exception.getClass());
-    }
-}
-
 /**
  * The main building block of a Spark application is a set of routes. A route is
  * made up of three simple pieces:
@@ -258,10 +181,10 @@ public class Spark {
         }
     }
 
-    protected static void addRoute (String httpMethod, Route route) {
+    protected static void addRoute (Route route) {
         init ();
         routeMatcher.parseValidateAddRoute (
-            httpMethod + " '" + route.getPath () + "'", route.getAcceptType (), route);
+            route.method + " '" + route.path + "'", route.acceptType, route);
     }
 
     private static synchronized void init () {
@@ -287,10 +210,10 @@ public class Spark {
         return staticFileFolder != null || externalStaticFileFolder != null;
     }
 
-    protected static void addFilter (String httpMethod, Filter filter) {
+    protected static void addFilter (Filter filter) {
         init ();
         routeMatcher.parseValidateAddRoute (
-            httpMethod + " '" + filter.getPath () + "'", filter.getAcceptType (), filter);
+            filter.method + " '" + filter.path + "'", filter.acceptType, filter);
     }
 
     /**
@@ -299,13 +222,13 @@ public class Spark {
      * @param aPath The route
      */
     public static synchronized void get (String aPath, Function<Context, Object> aHandler) {
-        addRoute (get.name (), new Route (aPath, aHandler));
+        addRoute (new Route (get, aPath, aHandler));
     }
 
     public static synchronized void get (
         String aPath, String aAcceptType, Function<Context, Object> aHandler) {
 
-        addRoute (get.name (), new Route (aPath, aAcceptType, aHandler));
+        addRoute (new Route (get, aPath, aAcceptType, aHandler));
     }
 
     /**
@@ -314,7 +237,7 @@ public class Spark {
      * @param aPath The route
      */
     public static synchronized void post (String aPath, Function<Context, Object> aHandler) {
-        addRoute (post.name (), new Route (aPath, aHandler));
+        addRoute (new Route (post, aPath, aHandler));
     }
 
     /**
@@ -323,7 +246,7 @@ public class Spark {
      * @param aPath The route
      */
     public static synchronized void put (String aPath, Function<Context, Object> aHandler) {
-        addRoute (put.name (), new Route (aPath, aHandler));
+        addRoute (new Route (put, aPath, aHandler));
     }
 
     /**
@@ -332,7 +255,7 @@ public class Spark {
      * @param aPath The route
      */
     public static synchronized void patch (String aPath, Function<Context, Object> aHandler) {
-        addRoute (patch.name (), new Route (aPath, aHandler));
+        addRoute (new Route (patch, aPath, aHandler));
     }
 
     /**
@@ -341,7 +264,7 @@ public class Spark {
      * @param aPath The route
      */
     public static synchronized void delete (String aPath, Function<Context, Object> aHandler) {
-        addRoute (delete.name (), new Route (aPath, aHandler));
+        addRoute (new Route (delete, aPath, aHandler));
     }
 
     /**
@@ -350,7 +273,7 @@ public class Spark {
      * @param aPath The route
      */
     public static synchronized void head (String aPath, Function<Context, Object> aHandler) {
-        addRoute (head.name (), new Route (aPath, aHandler));
+        addRoute (new Route (head, aPath, aHandler));
     }
 
     /**
@@ -359,7 +282,7 @@ public class Spark {
      * @param aPath The route
      */
     public static synchronized void trace (String aPath, Function<Context, Object> aHandler) {
-        addRoute (trace.name (), new Route (aPath, aHandler));
+        addRoute (new Route (trace, aPath, aHandler));
     }
 
     /**
@@ -370,7 +293,7 @@ public class Spark {
     public static synchronized void connect (
         String aPath, Function<Context, Object> aHandler) {
 
-        addRoute (connect.name (), new Route (aPath, aHandler));
+        addRoute (new Route (connect, aPath, aHandler));
     }
 
     /**
@@ -381,7 +304,7 @@ public class Spark {
     public static synchronized void options (
         String aPath, Function<Context, Object> aHandler) {
 
-        addRoute (options.name (), new Route (aPath, aHandler));
+        addRoute (new Route (options, aPath, aHandler));
     }
 
     /**
@@ -390,17 +313,17 @@ public class Spark {
      * @param aHandler The filter
      */
     public static synchronized void before (Consumer<Context> aHandler) {
-        addFilter (before.name (), new Filter (aHandler));
+        addFilter (new Filter (before, aHandler));
     }
 
     public static synchronized void before (String aPath, Consumer<Context> aHandler) {
-        addFilter (before.name (), new Filter (aPath, aHandler));
+        addFilter (new Filter (before, aPath, aHandler));
     }
 
     public static synchronized void before (
         String aPath, String aAcceptType, Consumer<Context> aHandler) {
 
-        addFilter (before.name (), new Filter (aPath, aAcceptType, aHandler));
+        addFilter (new Filter (before, aPath, aAcceptType, aHandler));
     }
 
     /**
@@ -409,17 +332,17 @@ public class Spark {
      * @param aHandler The filter
      */
     public static synchronized void after (Consumer<Context> aHandler) {
-        addFilter (after.name (), new Filter (aHandler));
+        addFilter (new Filter (after, aHandler));
     }
 
     public static synchronized void after (String aPath, Consumer<Context> aHandler) {
-        addFilter (after.name (), new Filter (aPath, aHandler));
+        addFilter (new Filter (after, aPath, aHandler));
     }
 
     public static synchronized void after (
         String aPath, String aAcceptType, Consumer<Context> aHandler) {
 
-        addFilter (after.name (), new Filter (aPath, aAcceptType, aHandler));
+        addFilter (new Filter (after, aPath, aAcceptType, aHandler));
     }
 
     /**
@@ -450,12 +373,72 @@ public class Spark {
     public static synchronized <T extends Exception> void exception(
         Class<T> exceptionClass, BiConsumer<T, Context> aHandler) {
 
-        ExceptionHandler wrapper = new ExceptionHandler<T> (exceptionClass, aHandler);
-        ExceptionMapper.getInstance ().map(exceptionClass, wrapper);
+        Fault wrapper = new Fault<T> (exceptionClass, aHandler);
+        map (exceptionClass, wrapper);
     }
 
     // Hide constructor
     protected Spark () {
         throw new IllegalStateException ();
+    }
+
+    /** Holds a map of Exception classes and associated handlers. */
+    private static Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<>();
+
+    /**
+     * Maps the given handler to the provided exception type. If a handler was already registered to the same type, the
+     * handler is overwritten.
+     *
+     * @param exceptionClass Type of exception
+     * @param handler        Handler to map to exception
+     */
+    public static void map(Class<? extends Exception> exceptionClass, Fault handler) {
+        exceptionMap.put(exceptionClass, handler);
+    }
+
+    /**
+     * Returns the handler associated with the provided exception class
+     *
+     * @param exceptionClass Type of exception
+     * @return Associated handler
+     */
+    public static Fault getHandler(Class<? extends Exception> exceptionClass) {
+        // If the exception map does not contain the provided exception class, it might
+        // still be that a superclass of the exception class is.
+        if (!exceptionMap.containsKey(exceptionClass)) {
+
+            Class<?> superclass = exceptionClass.getSuperclass();
+            do {
+                // Is the superclass mapped?
+                if (exceptionMap.containsKey(superclass)) {
+                    // Use the handler for the mapped superclass, and cache handler
+                    // for this exception class
+                    Fault handler = exceptionMap.get(superclass);
+                    exceptionMap.put(exceptionClass, handler);
+                    return handler;
+                }
+
+                // Iteratively walk through the exception class's superclasses
+                superclass = superclass.getSuperclass();
+            } while (superclass != null);
+
+            // No handler found either for the superclasses of the exception class
+            // We cache the null value to prevent future
+            exceptionMap.put(exceptionClass, null);
+            return null;
+        }
+
+        // Direct map
+        return exceptionMap.get(exceptionClass);
+    }
+
+    /**
+     * Returns the handler associated with the provided exception class
+     *
+     * @param exception Exception that occurred
+     * @return Associated handler
+     */
+    public static Fault getHandler(Exception exception) {
+        return getHandler(exception.getClass());
     }
 }

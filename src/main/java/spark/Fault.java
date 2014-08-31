@@ -16,7 +16,7 @@ package spark;
 
 import java.util.function.BiConsumer;
 
-public class ExceptionHandler<T extends Exception> {
+public class Fault<T extends Exception> {
     /** Holds the type of exception that this filter will handle */
     final Class<T> exceptionClass;
     final BiConsumer<T, Context> mHandler;
@@ -26,7 +26,7 @@ public class ExceptionHandler<T extends Exception> {
      *
      * @param aException Type of exception
      */
-    protected ExceptionHandler (Class<T> aException, BiConsumer<T, Context> aHandler) {
+    protected Fault (Class<T> aException, BiConsumer<T, Context> aHandler) {
         exceptionClass = aException;
         mHandler = aHandler;
     }

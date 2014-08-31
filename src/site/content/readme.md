@@ -11,34 +11,30 @@ Getting started
 Add the Spark maven dependency
 
 ```xml
-
-    <dependency>
-      <groupId>com.sparkjava</groupId>
-      <artifactId>spark-core</artifactId>
-      <version>2.0.0</version>
-    </dependency>
-
+<dependency>
+  <groupId>com.sparkjava</groupId>
+  <artifactId>spark-core</artifactId>
+  <version>2.0.0</version>
+</dependency>
 ```
 
 Start coding:
 
 ```java
-
-    import static sabina.Sabina.*;
+import static sabina.Sabina.*;
     
-    public class HelloWorld {
-        public static void main(String[] args) {
-            get("/hello", it -> "Hello World");
-        }
+public class HelloWorld {
+    public static void main(String[] args) {
+        get("/hello", it -> "Hello World");
     }
-
+}
 ```
 
 
 Ignite and view at
 ------------------
 
-`http://localhost:4567/hello`
+    http://localhost:4567/hello
 
 
 Routes
@@ -55,57 +51,51 @@ NOTE! Routes are matched in the order they are defined. The first route that mat
 request is invoked.
 
 ```java
-
-    get ("/", it -> {
-        // Show something ...
-    });
+get ("/", it -> {
+    // Show something ...
+});
     
-    post ("/", it -> {
-        // Create something ...
-    });
+post ("/", it -> {
+    // Create something ...
+});
     
-    put ("/", it -> {
-        // Update something ...
-    });
+put ("/", it -> {
+    // Update something ...
+});
+  
+delete ("/", it -> {
+    // Annihilate something ...
+});
     
-    delete ("/", it -> {
-        // Annihilate something ...
-    });
-    
-    options ("/", it -> {
-        // Appease something ...
-    });
-
+options ("/", it -> {
+    // Appease something ...
+});
 ```
 
 Route patterns may include named parameters, accessible via the params method on the request
 object:
 
 ```java
-
-    /*
-     * Matches "GET /hello/foo" and "GET /hello/bar"
-     * it.request.params(":name") is 'foo' or 'bar'
-     */
-    get ("/hello/:name", it -> {
-        return "Hello: " + it.request.params(":name");
-    });
-  
+/*
+ * Matches "GET /hello/foo" and "GET /hello/bar"
+ * it.request.params(":name") is 'foo' or 'bar'
+ */
+get ("/hello/:name", it -> {
+    return "Hello: " + it.request.params(":name");
+});
 ```
 
 Route patterns may also include splat (or wildcard) parameters, accessible via the splat method
 on the request object:
 
 ```java
-
-    /*
-     * Matches "GET /say/hello/to/world"
-     * it.request.splat()[0] is 'hello' and request.splat()[1] 'world'
-     */
-    get ("/say/*/to/*", it -> {
-        return "Nbr of splat parameters: " + it.request.splat().length;
-    });
-  
+/*
+ * Matches "GET /say/hello/to/world"
+ * it.request.splat()[0] is 'hello' and request.splat()[1] 'world'
+ */
+get ("/say/*/to/*", it -> {
+    return "Nbr of splat parameters: " + it.request.splat().length;
+});
 ```
 
 
@@ -116,34 +106,32 @@ In the handle method request information and functionality is provided by the re
 parameter:
 
 ```java
-
-    request.body();                // Request body sent by the client
-    request.cookies();             // Request cookies sent by the client
-    request.contentLength();       // Length of request body
-    request.contentType();         // Content type of request.body
-    request.headers();             // The HTTP header list
-    request.headers("BAR");        // Value of BAR header
-    request.attributes();          // The attributes list
-    request.attribute("foo");      // Value of foo attribute
-    request.attribute("A", "V");   // Sets value of attribute A to V
-    request.host();                // "example.com"
-    request.ip();                  // Client IP address
-    request.pathInfo();            // The path info
-    request.params("foo");         // Value of foo path parameter
-    request.params();              // Map with all parameters
-    request.port();                // The server port
-    request.queryMap();            // The query map
-    request.queryMap("foo");       // Query map for a certain parameter
-    request.queryParams("FOO");    // Value of FOO query param
-    request.queryParams();         // The query param list
-    request.raw();                 // Raw request handed in by Jetty
-    request.requestMethod();       // The HTTP method (GET, ..etc)
-    request.scheme();              // "http"
-    request.session();             // Session management
-    request.splat();               // Splat (*) parameters
-    request.url();                 // "http://example.com/foo"
-    request.userAgent();           // User agent
-  
+request.body();                // Request body sent by the client
+request.cookies();             // Request cookies sent by the client
+request.contentLength();       // Length of request body
+request.contentType();         // Content type of request.body
+request.headers();             // The HTTP header list
+request.headers("BAR");        // Value of BAR header
+request.attributes();          // The attributes list
+request.attribute("foo");      // Value of foo attribute
+request.attribute("A", "V");   // Sets value of attribute A to V
+request.host();                // "example.com"
+request.ip();                  // Client IP address
+request.pathInfo();            // The path info
+request.params("foo");         // Value of foo path parameter
+request.params();              // Map with all parameters
+request.port();                // The server port
+request.queryMap();            // The query map
+request.queryMap("foo");       // Query map for a certain parameter
+request.queryParams("FOO");    // Value of FOO query param
+request.queryParams();         // The query param list
+request.raw();                 // Raw request handed in by Jetty
+request.requestMethod();       // The HTTP method (GET, ..etc)
+request.scheme();              // "http"
+request.session();             // Session management
+request.splat();               // Splat (*) parameters
+request.url();                 // "http://example.com/foo"
+request.userAgent();           // User agent
 ```
 
 
@@ -154,12 +142,10 @@ Query maps allows you to group parameters to a map by their prefix. This allows 
 two parameters like `user[name]` and `user[age]` to a `user` map.
 
 ```java
-
-    request.queryMap ().get ("user", "name").value ();
-    request.queryMap ().get ("user").get ("name").value ();
-    request.queryMap ("user").get ("age").integerValue ();
-    request.queryMap ("user").toMap ();
-
+request.queryMap ().get ("user", "name").value ();
+request.queryMap ().get ("user").get ("name").value ();
+request.queryMap ("user").get ("age").integerValue ();
+request.queryMap ("user").toMap ();
 ```
 
 
@@ -170,14 +156,12 @@ In the handle method response information and functionality is provided by the r
 parameter:
 
 ```java
-
-    response.body ("Hello");           // Sets content to Hello
-    response.header ("FOO", "bar");    // Sets header FOO with value bar
-    response.raw ();                   // Raw response handed in by Jetty
-    response.redirect ("/example");    // Browser redirect to /example
-    response.status (401);             // Set status code to 401
-    response.type ("text/xml");        // Set content type to text/xml
-
+response.body ("Hello");           // Sets content to Hello
+response.header ("FOO", "bar");    // Sets header FOO with value bar
+response.raw ();                   // Raw response handed in by Jetty
+response.redirect ("/example");    // Browser redirect to /example
+response.status (401);             // Set status code to 401
+response.type ("text/xml");        // Set content type to text/xml
 ```
 
 
@@ -193,15 +177,13 @@ Cookies
 Handling cookies can be done via spark request and response objects.
 
 ```java
-
-    request.cookies ();                            // Get map of all request cookies
-    request.cookie ("foo");                        // Access request cookie by name
+request.cookies ();                            // Get map of all request cookies
+request.cookie ("foo");                        // Access request cookie by name
   
-    response.cookie ("foo", "bar");                // Set cookie with a value
-    response.cookie ("foo", "bar", 3600);          // Set cookie with a max-age
-    response.cookie ("foo", "bar", 3600, true);    // Secure cookie
-    response.removeCookie ("foo");                 // Remove cookie
-
+response.cookie ("foo", "bar");                // Set cookie with a value
+response.cookie ("foo", "bar", 3600);          // Set cookie with a max-age
+response.cookie ("foo", "bar", 3600, true);    // Secure cookie
+response.removeCookie ("foo");                 // Remove cookie
 ```
 
 
@@ -212,16 +194,14 @@ Every request has access to the session created on the server side, provided wit
 methods:
 
 ```java
-
-    request.session (true);                        // Create (if not exists) and return session
-    request.session ().attribute ("user");              // Get session attribute 'user'
-    request.session ().attribute ("user", "foo");       // Set session attribute 'user'
-    request.session ().removeAttribute ("user", "foo"); // Remove session attribute 'user'
-    request.session ().attributes ();                   // Get all session attributes
-    request.session ().id ();                           // Get session id
-    request.session ().isNew ();                        // Check is session is new
-    request.session ().raw ();                          // Return servlet object
-
+request.session (true);                             // Create (first time) and return session
+request.session ().attribute ("user");              // Get session attribute 'user'
+request.session ().attribute ("user", "foo");       // Set session attribute 'user'
+request.session ().removeAttribute ("user", "foo"); // Remove session attribute 'user'
+request.session ().attributes ();                   // Get all session attributes
+request.session ().id ();                           // Get session id
+request.session ().isNew ();                        // Check is session is new
+request.session ().raw ();                          // Return servlet object
 ```
 
 
@@ -231,25 +211,25 @@ Halting
 To immediately stop a request within a filter or route use:
 
 ```java
-    halt ();
+halt ();
 ```
 
 You can also specify the status when halting:
 
 ```java
-    halt (401);
+halt (401);
 ```
 
 Or the body:
 
 ```java
-    halt ("This is the body");
+halt ("This is the body");
 ```
 
 Or both:
 
 ```java
-    halt (401, "Go Away!");
+halt (401, "Go Away!");
 ```
 
 
@@ -262,38 +242,32 @@ response.
 To stop execution, use halt:
 
 ```java
-
-    before (it -> {
-        boolean authenticated;
-        // Check if authenticated
-        if (!authenticated) {
-            halt (401, "You are not welcome here");
-        }
-    });
-    
+before (it -> {
+    boolean authenticated;
+    // Check if authenticated
+    if (!authenticated) {
+        halt (401, "You are not welcome here");
+    }
+});
 ```
 
 After filters are evaluated after each request and can read the request and read/modify the
 response:
 
 ```java
-
-    after (it -> {
-        response.header("foo", "set by after filter");
-    });
-
+after (it -> {
+    response.header("foo", "set by after filter");
+});
 ```
 
 Filters optionally take a pattern, causing them to be evaluated only if the request path
 matches that pattern:
 
 ```java
-
-    before ("/protected/*", it -> {
-        // Check if authenticated
-        halt (401, "Go Away!");
-    });
-  
+before ("/protected/*", it -> {
+    // Check if authenticated
+    halt (401, "Go Away!");
+});
 ```
 
 
@@ -303,13 +277,13 @@ Browser Redirect
 You can trigger a browser redirect with the redirect helper method:
 
 ```java
-    response.redirect ("/bar");
+response.redirect ("/bar");
 ```
 
 You can also trigger a browser redirect with specific http 3XX status code:
 
 ```java
-    response.redirect ("/bar", 301); // moved permanently
+response.redirect ("/bar", 301); // moved permanently
 ```
 
 
@@ -319,16 +293,14 @@ Exception Mapping
 To handle exceptions of a configured type for all routes and filters:
 
 ```java
+get ("/throwexception", it -> {
+    throw new NotFoundException ();
+});
 
-    get ("/throwexception", it -> {
-        throw new NotFoundException ();
-    });
-
-    exception (NotFoundException.class, (e, request, response) -> {
-        response.status (404);
-        response.body ("Resource not found");
-    });
-
+exception (NotFoundException.class, (e, request, response) -> {
+    response.status (404);
+    response.body ("Resource not found");
+});
 ```
 
 
@@ -338,7 +310,7 @@ Static files
 Assign a folder in the classpath serving static files with the staticFileLocation method.
 
 ```java
-    staticFileLocation ("/public"); // Static resources
+staticFileLocation ("/public"); // Static resources
 ```
 
 Note that the public directory name is not included in the URL. A file `/public/css/style.css`
@@ -348,7 +320,7 @@ You can also assign an external folder (not in the classpath) serving static fil
 `externalStaticFileLocation` method.
 
 ```java
-    externalStaticFileLocation ("/var/www/public"); // Static files
+externalStaticFileLocation ("/var/www/public"); // Static files
 ```
 
 
@@ -361,27 +333,23 @@ ResponseTransformer and pass this to the mapping method.
 Example Of a route transforming output to JSON using Gson:
 
 ```java
-
-    import com.google.gson.Gson;
+import com.google.gson.Gson;
   
-    public class JsonTransformer implements ResponseTransformer {
-        private Gson gson = new Gson ();
+public class JsonTransformer implements ResponseTransformer {
+    private Gson gson = new Gson ();
       
-        @Override public String render (Object model) {
-            return gson.toJson (model);
-        }
+    @Override public String render (Object model) {
+        return gson.toJson (model);
     }
-
+}
 ```
 
 and how it is used (MyMessage is a bean with one member 'message'):
 
 ```java
-
-    get ("/hello", "application/json", it -> {
-        return new MyMessage ("Hello World");
-    }, new JsonTransformer ());
-
+get ("/hello", "application/json", it -> {
+    return new MyMessage ("Hello World");
+}, new JsonTransformer ());
 ```
 
 
@@ -408,13 +376,11 @@ Renders objects to HTML using the Mustache template engine.
 Maven dependency:
 
 ```xml
-
-    <dependency>
-      <groupId>com.sparkjava</groupId>
-      <artifactId>spark-template-mustache</artifactId>
-      <version>1.0.0</version>
-    </dependency></pre>
-
+<dependency>
+  <groupId>com.sparkjava</groupId>
+  <artifactId>spark-template-mustache</artifactId>
+  <version>1.0.0</version>
+</dependency></pre>
 ```
 
 Source: [spark-template-mustache][msrc]
@@ -431,7 +397,7 @@ By default, Spark runs on port 4567. If you want to set another port use setPort
 This has to be done before using routes and filters:
 
 ```java
-    setPort (9090); // Spark will run on port 9090
+setPort (9090); // Spark will run on port 9090
 ```
 
 
@@ -449,21 +415,19 @@ interface `spark.servlet.SparkApplication` is needed. In the `init()` method the
 be initialized. In your `web.xml` the following filter needs to be configured:
 
 ```xml
-
-    <filter>
-      <filter-name>SparkFilter</filter-name>
-      <filter-class>spark.servlet.SparkFilter</filter-class>
-      <init-param>
-        <param-name>applicationClass</param-name>
-        <param-value>com.company.YourApplication</param-value>
-      </init-param>
-    </filter>
+<filter>
+  <filter-name>SparkFilter</filter-name>
+  <filter-class>spark.servlet.SparkFilter</filter-class>
+  <init-param>
+    <param-name>applicationClass</param-name>
+    <param-value>com.company.YourApplication</param-value>
+  </init-param>
+</filter>
  
-    <filter-mapping>
-      <filter-name>SparkFilter</filter-name>
-      <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
+<filter-mapping>
+  <filter-name>SparkFilter</filter-name>
+  <url-pattern>/*</url-pattern>
+</filter-mapping>
 ```
 
 
