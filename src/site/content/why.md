@@ -17,16 +17,18 @@ cumbersome (XML) configuration, to enable very fast web application development 
 with minimal effort. (It’s a totally different paradigm when compared to the overuse of
 annotations for accomplishing pretty trivial stuff seen in JAX-RS).
 
+
 Why not use Sinatra?
-====================
+--------------------
 
 If you're an experienced Ruby developer or in languages with similar syntax you should
 definitely use Sinatra. However, if you're a Java developer and want to get the benefits you
 get from Sinatra but you don't want or have the time (money) to learn a new language, Sabina is
 a really good alternative!
 
+
 Why not go with JAX-RS?
-=======================
+-----------------------
 
 JAX-RS is a nice API that made life easier for Java web developers when it arrived.  However,
 it's a bit messy due to the overuse of annotations for accomplishing pretty trivial things.
@@ -35,8 +37,15 @@ understanding on things as you get when looking at code using Sabina. For a newb
 frameworks and REST Sabina will have you up and running a bit faster than using one of the
 JAX-RS implementations.
 
+
+Why not use Spark?
+------------------
+
+TODO
+
+
 Okey, so why use Sabina?
-=======================
+------------------------
 
 Again, if you're a Java developer with neither the urge or time to learn a new programming
 language and are not planning to build a super large web application that scales in all

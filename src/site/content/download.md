@@ -4,33 +4,28 @@ type=page
 status=published
 ~~~~~~
 
-        <h1 class="getting_started_head">Downloads</h1>
 
-        <div class="normal">!!! Spark version 2.0.0 re-written for Java 8 and lambdas is now
-          available on maven central !!!
-        </div>
-        <div class="normal">Latest version: 2.0.0</div>
+Downloads
+=========
 
-        <div class="normal">New features: ResponseTransformerRoutes and TemplateViewRoutes
-        </div>
-        <h2 class="getting_started_head_loads">Maven users</h2>
+Spark version 2.0.0 is now available on maven central!
 
-        <div class="normal">
+Latest version: 2.0.0
 
-          <br />
+New features: ResponseTransformerRoutes and TemplateViewRoutes
 
-          Add the spark dependency:
 
-<pre class="prettyprint">&lt;dependency&gt;
-      &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
-      &lt;artifactId&gt;spark-core&lt;/artifactId&gt;
-      &lt;version&gt;2.0.0&lt;/version&gt;
-&lt;/dependency&gt;</pre>
+Maven users
+-----------
 
-          <h2 class="getting_started_head_loads">Non-Maven users</h2>
-          <br />
+Add the spark dependency:
 
-          <div class="normal">
-            Download the spark archive and the spark-dependencies archive from <a
-            href="http://code.google.com/p/spark-java/downloads/list">the project's page on
-            Google code</a>
+```xml
+
+    <dependency>
+      <groupId>com.sparkjava</groupId>
+      <artifactId>spark-core</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+
+```

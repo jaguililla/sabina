@@ -8,11 +8,13 @@ Sabina - a Sinatra inspired web framework
 Sabina 1.0.0 is now available on Bintray!!!
 
 ```xml
-<dependency>
-  <groupId>com.sabina</groupId>
-  <artifactId>sabina</artifactId>
-  <version>1.0.0</version>
-</dependency>
+    
+    <dependency>
+      <groupId>com.sabina</groupId>
+      <artifactId>sabina</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
 ```
 
 API Docs: [http://there4.co/spark]
@@ -22,13 +24,15 @@ Getting started
 ---------------
 
 ```java
-import static sabina.Sabina.*;
 
-public class HelloWorld {
-   public static void main (String[] args) {
-      get ("/hello", it -> "Hello World!");
-   }
-}
+    import static sabina.Sabina.*;
+    
+    public class HelloWorld {
+       public static void main (String[] args) {
+          get ("/hello", it -> "Hello World!");
+       }
+    }
+
 ```
 
 View at: [http://localhost:4567/hello]
@@ -90,9 +94,14 @@ TODO
   * http://flywaydb.org
   * http://pholser.github.io/jopt-simple (expose a common set of options for all microservices)
 * Use https://huboard.com
-* Deploy to Maven: http://benlimmer.com/2014/01/04/automatically-publish-to-sonatype-with-gradle-and-travis-ci
+* Deploy to Maven:
+  http://benlimmer.com/2014/01/04/automatically-publish-to-sonatype-with-gradle-and-travis-ci
 * Copy Javadoc to site prior to publishing
 * Helper for multiline strings
 * Helper for JDBC
 * Integrate Redis
 * Add Travis links, huboard, issues, etc.
+* Example project (command to fetch and start, deployment heroku, building executable WAR)
+* Start child processes (clones) of the microservice
+* Manage versions
+* Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages
