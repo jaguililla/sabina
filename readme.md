@@ -1,8 +1,10 @@
-[![Build Status](https://travis-ci.org/jamming/spark.svg?branch=master)][build]
-[build]: https://travis-ci.org/jamming/spark
+[![Build Image]][Build Status] [![Coverage Image]][Coverage Status]
 
-[![Coverage Status](https://img.shields.io/coveralls/jamming/spark.svg)][coverage]
-[coverage]: https://coveralls.io/r/jamming/spark
+[Build Image]: https://travis-ci.org/jamming/spark.svg?branch=master
+[Build Status]: https://travis-ci.org/jamming/spark
+
+[Coverage Image]: https://img.shields.io/coveralls/jamming/spark.svg
+[Coverage Status]: https://coveralls.io/r/jamming/spark
 
 Sabina - a Sinatra inspired web framework
 =========================================

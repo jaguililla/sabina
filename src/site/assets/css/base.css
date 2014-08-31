@@ -14,3 +14,9 @@
 
 div#wrap { margin-top: 100px; }
 p#header { text-align: center; }
+
+/*
+dl { display: table; }
+dt { display: table-row; }
+dd { margin-left: 10px; }
+*/
