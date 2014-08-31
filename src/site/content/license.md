@@ -162,8 +162,8 @@ incurred by, or claims asserted against, such Contributor by reason of your acce
 warranty or additional liability.
 
 
-APPENDIX: How to apply the Apache License to your work.
--------------------------------------------------------
+APPENDIX: How to apply the Apache License to your work
+------------------------------------------------------
 
 To apply the Apache License to your work, attach the following boilerplate notice, with the
 fields enclosed by brackets *"\[\]"* replaced with your own identifying information. (Don't 

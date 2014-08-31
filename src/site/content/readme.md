@@ -296,8 +296,6 @@ matches that pattern:
   
 ```
 
------------------------------------------------------------------------------------------------
-
 
 Browser Redirect
 ----------------
@@ -340,50 +338,49 @@ Static files
 Assign a folder in the classpath serving static files with the staticFileLocation method.
 
 ```java
-    staticFileLocation ("/public"); // Static files
+    staticFileLocation ("/public"); // Static resources
 ```
 
-
-Note that the public directory name is not included in the URL.
-A file /public/css/style.css is made available as http://&lt;host&gt;:&lt;port&gt;/css/style.css
+Note that the public directory name is not included in the URL. A file `/public/css/style.css`
+is made available as `http://<host>:<port>/css/style.css`
 
 You can also assign an external folder (not in the classpath) serving static files with the
-externalStaticFileLocation method.
+`externalStaticFileLocation` method.
 
 ```java
-    externalStaticFileLocation("/var/www/public"); // Static files
+    externalStaticFileLocation ("/var/www/public"); // Static files
 ```
 
 
 ResponseTransformer
 -------------------
 
-Mapped routes that transforms the output from the handle method. This is done by extending
-the ResponseTransformer and pass this to the mapping method.
+Mapped routes that transforms the output from the handle method. This is done by extending the
+ResponseTransformer and pass this to the mapping method.
 
 Example Of a route transforming output to JSON using Gson:
 
-<pre class="transform"><code>
+```java
+
     import com.google.gson.Gson;
   
     public class JsonTransformer implements ResponseTransformer {
-  
-    private Gson gson = new Gson();
-  
-    @Override
-    public String render(Object model) {
-    return gson.toJson(model);
+        private Gson gson = new Gson ();
+      
+        @Override public String render (Object model) {
+            return gson.toJson (model);
+        }
     }
-  
-    }
+
 ```
 
 and how it is used (MyMessage is a bean with one member 'message'):
 
 ```java
-    get("/hello", "application/json", it -> {
-    return new MyMessage("Hello World");
-    }, new JsonTransformer());
+
+    get ("/hello", "application/json", it -> {
+        return new MyMessage ("Hello World");
+    }, new JsonTransformer ());
 
 ```
 
@@ -393,63 +390,14 @@ Views / Templates - TemplateEngine
 
 A TemplateViewRoute is built up by a path (for url-matching) and the template engine holding
 the implementation of the 'render' method.
+
 Instead of returning the result of calling toString() as body the TemplateViewRoute returns
 the result of calling render method.
 
 The primary purpose of this kind of Route is to provide a way to create generic and reusable
 components for rendering output using a Template Engine.
 
-<b>NEWS: The available implementations HAVE been updated to support Spark 2.0.0</b>
-
-<b>Available TemplateEngine implementations:</b>
-
-<br /><br />
-
-
-FreeMarker
-----------
-
-Renders objects to HTML using Freemarker template engine.
-
-Maven dependency:
-
-<pre class="prettyprint">&lt;dependency&gt;
-      &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
-      &lt;artifactId&gt;spark-template-freemarker&lt;/artifactId&gt;
-      &lt;version&gt;2.0.0&lt;/version&gt;
-&lt;/dependency&gt;</pre>
-
-Source:
-<a
-  href="https://github.com/perwendel/spark-template-engines/tree/master/spark-template-freemarker">spark-template-freemarker</a>.
-
-Code example:
-<a
-  href="https://github.com/perwendel/spark-template-engines/blob/master/spark-template-freemarker/src/test/java/spark/template/freemarker/example/FreeMarkerExample.java">spark-template-freemarker
-  example</a>.
-
-
-Apache Velocity
----------------
-
-Renders objects to HTML using the Apache Velocity template engine.
-
-Maven dependency:
-
-<pre class="prettyprint">&lt;dependency&gt;
-      &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
-      &lt;artifactId&gt;spark-template-velocity&lt;/artifactId&gt;
-      &lt;version&gt;2.0.0&lt;/version&gt;
-&lt;/dependency&gt;</pre>
-
-Source:
-<a
-  href="https://github.com/perwendel/spark-template-engines/tree/master/spark-template-velocity">spark-template-velocity</a>.
-
-Code example:
-<a
-  href="https://github.com/perwendel/spark-template-engines/blob/master/spark-template-velocity/src/test/java/spark/template/velocity/example/VelocityExample.java">spark-template-velocity
-  example</a>.
+Available TemplateEngine implementations:
 
 
 Mustache
@@ -459,20 +407,21 @@ Renders objects to HTML using the Mustache template engine.
 
 Maven dependency:
 
-<pre class="prettyprint">&lt;dependency&gt;
-      &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
-      &lt;artifactId&gt;spark-template-mustache&lt;/artifactId&gt;
-      &lt;version&gt;1.0.0&lt;/version&gt;
-&lt;/dependency&gt;</pre>
+```xml
 
-Source:
-<a
-  href="https://github.com/perwendel/spark-template-engines/tree/master/spark-template-mustache">spark-template-mustache</a>.
+    <dependency>
+      <groupId>com.sparkjava</groupId>
+      <artifactId>spark-template-mustache</artifactId>
+      <version>1.0.0</version>
+    </dependency></pre>
 
-Code example:
-<a
-  href="https://github.com/perwendel/spark-template-engines/blob/master/spark-template-mustache/src/test/java/spark/template/mustache/MustacheTemplateExample.java">spark-template-mustache
-  example</a>.
+```
+
+Source: [spark-template-mustache][msrc]
+Code example: [spark-template-mustache example][mex]
+
+[msrc]: https://github.com/perwendel/spark-template-engines/tree/master/spark-template-mustache
+[mex]: https://github.com/perwendel/spark-template-engines/blob/master/spark-template-mustache/src/test/java/spark/template/mustache/MustacheTemplateExample.java
 
 
 Port
@@ -482,51 +431,50 @@ By default, Spark runs on port 4567. If you want to set another port use setPort
 This has to be done before using routes and filters:
 
 ```java
-    setPort(9090); // Spark will run on port 9090
+    setPort (9090); // Spark will run on port 9090
 ```
 
 
 Embedded Web Server
 -------------------
 
-Standalone Spark runs on an embedded Jetty web server.</div>
+Standalone Spark runs on an embedded Jetty web server.
 
 
-Running Spark on a Web Server, e.g. Tomcat
-------------------------------------------
+Running Spark on a Web Server
+-----------------------------
 
 To run Spark on a web server instead of standalone first of all an implementation of the
-interface `spark.servlet.SparkApplication` is needed.
-In the `init()` method the routes should be initialized.
-In your `web.xml` the following filter needs to be configured:
+interface `spark.servlet.SparkApplication` is needed. In the `init()` method the routes should
+be initialized. In your `web.xml` the following filter needs to be configured:
 
-<pre class="prettyprint">
- &lt;filter>
-   &lt;filter-name&gt;SparkFilter&lt;/filter-name&gt;
-   &lt;filter-class&gt;spark.servlet.SparkFilter&lt;/filter-class&gt;
-   &lt;init-param&gt;
-     &lt;param-name&gt;applicationClass&lt;/param-name&gt;
-     &lt;param-value&gt;com.company.YourApplication&lt;/param-value&gt;
-   &lt;/init-param&gt;
- &lt;/filter&gt;
+```xml
 
- &lt;filter-mapping&gt;
-   &lt;filter-name&gt;SparkFilter&lt;/filter-name&gt;
-   &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
- &lt;/filter-mapping
-</pre>
+    <filter>
+      <filter-name>SparkFilter</filter-name>
+      <filter-class>spark.servlet.SparkFilter</filter-class>
+      <init-param>
+        <param-name>applicationClass</param-name>
+        <param-value>com.company.YourApplication</param-value>
+      </init-param>
+    </filter>
+ 
+    <filter-mapping>
+      <filter-name>SparkFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+```
 
 
 Javadoc
 -------
 
-Javadoc is available in the zip files that can be downloaded from the project's page
-at <a href="http://code.google.com/p/spark-java/downloads/list">google code</a>
+Javadoc is available at [there4.co/spark](https://there4.co/spark)
 
 
 Examples
 --------
 
-Examples can be found on the project's page
-at <a href="http://code.google.com/p/spark-java/#Examples">google code</a>
+Examples can be found on the project's page at [Github](http://github.com/jamming/spark)
 

@@ -20,7 +20,7 @@ apply plugin: 'java'
 
 apply plugin: 'me.champeau.jbake'
 apply plugin: 'github-pages'
-apply plugin: 'cobertura'
+apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
 group = 'spark'
@@ -30,7 +30,12 @@ description = 'A Sinatra inspired java web framework'
 sourceCompatibility = VERSION_1_8
 targetCompatibility = VERSION_1_8
 
-cobertura.coverageFormats = ['html', 'xml'] // Coveralls plugin depends on xml format report
+jacocoTestReport {
+    reports {
+        xml.enabled = true // Coveralls plugin depends on xml format report
+        html.enabled = true
+    }
+}
 
 test {
     useTestNG ()
@@ -104,7 +109,6 @@ buildscript {
         classpath 'me.champeau.gradle:jbake-gradle-plugin:0.2'
         classpath 'org.freemarker:freemarker:2.3.19'
         classpath 'org.pegdown:pegdown:1.4.2'
-        classpath 'net.saliman:gradle-cobertura-plugin:2.2.4'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.0'
     }
 }
