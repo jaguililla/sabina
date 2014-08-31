@@ -81,560 +81,209 @@
 </div>
 <div class="container">
 
-
-
-<h1 class="getting_started_head">Getting started</h1>
-
-<div class="normal_text">
-  Add the Spark maven dependency
-</div>
-<pre class="prettyprint">&lt;dependency&gt;
+<h2>Getting started</h2><p>Add the Spark maven dependency</p>
+<pre><code class="xml"><br/>    &lt;dependency&gt;
       &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
       &lt;artifactId&gt;spark-core&lt;/artifactId&gt;
       &lt;version&gt;2.0.0&lt;/version&gt;
-&lt;/dependency&gt;</pre>
-<div class="normal_text">
-  Start coding:
-</div>
-
-				<pre>
-            <code>
-              import static spark.Spark.*;
-
-              public class HelloWorld {
-
-              public static void main(String[] args) {
-
-              get("/hello",(request, response) -> {
-              return "Hello World!";
-              };
-
-              }
-
-              }
-            </code>
-</pre>
-
-<b>Ignite and view at:</b>
-<pre><code>http://localhost:4567/hello</code></pre>
-
-<h1 class="getting_started_head">Routes</h1>
-
-<div class="normal">
-  The main building block of a Spark application is a set of routes. A route is made up of
-  three simple pieces:
-  <ul>
-    <li><i>A <b>verb</b> (get, post, put, delete, head, trace, connect, options)</i></li>
-    <li><i>A <b>path</b> (/hello, /users/:name)</i></li>
-    <li><i>A <b>callback</b> (request, response) -> { } </i></li>
-  </ul>
-  <br />
-
-  <div class="normal_obs">
-    NOTE! Routes are matched in the order they are defined. The first route that matches the
-    request is invoked.
-  </div>
-
-</div>
-<pre><code>
-
-  ....
-
-  get("/", (request, response) -> {
-  // .. Show something ..
-  });
-
-  post("/", (request, response) -> {
-  // .. Create something ..
-  });
-
-  put("/", (request, response) -> {
-  // .. Update something ..
-  });
-
-  delete("/", (request, response) -> {
-  // .. annihilate something ..
-  });
-
-  options("/", (request, response) -> {
-  // .. appease something ..
-  });
-
-  ....
-
-</pre>
-</code>
-<br />
-
-<div class="normal">Route patterns may include named parameters, accessible via the params
-  method on
-  the request object:
-</div>
-<pre><code>
-  // matches "GET /hello/foo" and "GET /hello/bar"
-  // request.params(":name") is 'foo' or 'bar'
-  get("/hello/:name", (request, response) -> {
-  return "Hello: " + request.params(":name");
-  });
-</pre>
-</code>
-
-<br />
-
-<div class="normal">Route patterns may also include splat (or wildcard) parameters, accessible
-  via the splat
-  method on the request object:
-</div>
-<pre><code>
-  // matches "GET /say/hello/to/world"
-  // request.splat()[0] is 'hello' and request.splat()[1] 'world'
-  get("/say/*/to/*", (request, response) -> {
-  return "Nbr of splat parameters: " + request.splat().length;
-  });
-</pre>
-</code>
-
-<h1 class="getting_started_head">Request</h1>
-
-<div class="normal">
-  In the handle method request information and functionality is provided by the request
-  parameter:
-</div>
-
-<pre><code>
-  ....
-  request.body(); // request body sent by the client
-  request.cookies(); // request cookies sent by the client
-  request.contentLength(); // length of request body
-  request.contentType(); // content type of request.body
-  request.headers(); // the HTTP header list
-  request.headers("BAR"); // value of BAR header
-  request.attributes(); // the attributes list
-  request.attribute("foo"); // value of foo attribute
-  request.attribute("A", "V"); // sets value of attribute A to V
-  request.host(); // "example.com"
-  request.ip(); // client IP address
-  request.pathInfo(); // the path info
-  request.params("foo"); // value of foo path parameter
-  request.params(); // map with all parameters
-  request.port(); // the server port
-  request.queryMap(); // the query map
-  request.queryMap("foo"); // query map for a certain parameter
-  request.queryParams("FOO"); // value of FOO query param
-  request.queryParams(); // the query param list
-  request.raw(); // raw request handed in by Jetty
-  request.requestMethod(); // The HTTP method (GET, ..etc)
-  request.scheme(); // "http"
-  request.session(); // session management
-  request.splat(); // splat (*) parameters
-  request.url(); // "http://example.com/foo"
-  request.userAgent(); // user agent
-  ....
-</code></pre>
-
-<h1 class="getting_started_head">Query maps</h1>
-
-<div class="normal">
-  Query maps allows you to group parameters to a map by their prefix. This allows you to group
-  two parameters like <i>user[name]</i> and <i>user[age]</i> to a <i>user</i> map.
-</div>
-
-<pre><code>
-  request.queryMap().get("user", "name").value();
-  request.queryMap().get("user").get("name").value();
-  request.queryMap("user").get("age").integerValue();
-  request.queryMap("user").toMap();
-</code></pre>
-
-<h1 class="getting_started_head">Response</h1>
-
-<div class="normal">
-  In the handle method response information and functionality is provided by the response
-  parameter:
-</div>
-
-<pre><code>
-  ....
-  response.body("Hello"); // sets content to Hello
-  response.header("FOO", "bar"); // sets header FOO with value bar
-  response.raw(); // raw response handed in by Jetty
-  response.redirect("/example"); // browser redirect to /example
-  response.status(401); // set status code to 401
-  response.type("text/xml"); // set content type to text/xml
-  ....
-</code></pre>
-
-<h1 class="getting_started_head">Stopping the server</h1>
-
-<div class="normal">
-  By calling the <i>stop()</i> method the server is stopped and all routes are cleared.
-</div>
-
-<h1 class="getting_started_head">Cookies</h1>
-
-<div class="normal">
-  Handling cookies can be done via spark request and response objects.
-</div>
-
-<pre><code>
-  ....
-  request.cookies(); // get map of all request cookies
-  request.cookie("foo"); // access request cookie by name
-  ....
-  response.cookie("foo", "bar"); // set cookie with a value
-  response.cookie("foo", "bar", 3600); // set cookie with a max-age
-  response.cookie("foo", "bar", 3600, true); // secure cookie
-  response.removeCookie("foo"); // remove cookie
-  ....
-</code></pre>
-
-<h1 class="getting_started_head">Session management</h1>
-
-<div class="normal">
-  Every request has access to the session created on the server side, provided with the
-  following methods:
-</div>
-
-<pre class="session"><code>
-  ....
-  request.session(true) // create (if not created) and return session
-  request.session().attribute("user") // Get session attribute 'user'
-  request.session().attribute("user", "foo") // Set session attribute 'user'
-  request.session().removeAttribute("user", "foo") // Remove session attribute 'user'
-  request.session().attributes() // Get all session attributes
-  request.session().id() // Get session id
-  request.session().isNew() // Check is session is new
-  request.session().raw() // Return servlet object
-  ....
-</code></pre>
-
-<h1 class="getting_started_head">Halting</h1>
-
-<div class="normal">
-  To immediately stop a request within a filter or route use:
-</div>
-
-<pre><code>
-  halt();
-</code></pre>
-
-<br />
-
-<div class="normal">
-  You can also specify the status when halting:
-</div>
-
-<pre><code>
-  halt(401);
-</code></pre>
-
-<br />
-
-<div class="normal">
-  Or the body:
-</div>
-
-<pre><code>
-  halt("This is the body");
-</code></pre>
-
-<br />
-
-<div class="normal">
-  Or both:
-</div>
-
-<pre><code>
-  halt(401, "Go Away!");
-</code></pre>
-
-<h1 class="getting_started_head">Filters</h1>
-
-<div class="normal">
-  Before filters are evaluated before each request and can read the request and read/modify the
-  response.
-  To stop execution, use halt:
-</div>
-
-<pre><code>
-  before((request, response) -> {
-  boolean authenticated;
-  // ... check if authenticated
-  if (!authenticated) {
-  halt(401, "You are not welcome here");
-  }
-  });
-</code></pre>
-
-<br />
-
-<div class="normal">
-  After filters are evaluated after each request and can read the request and read/modify the
-  response:
-</div>
-
-<pre><code>
-  after((request, response) -> {
-  response.header("foo", "set by after filter");
-  });
-</code></pre>
-<br />
-
-<div class="normal">
-  Filters optionally take a pattern, causing them to be evaluated only if the request path
-  matches that pattern:
-</div>
-
-<pre><code>
-  before("/protected/*", (request, response) -> {
-  // ... check if authenticated
-  halt(401, "Go Away!");
-  });
-</code></pre>
-
-<h1 class="getting_started_head">Browser Redirect</h1>
-
-<div class="normal">
-  You can trigger a browser redirect with the redirect helper method:
-</div>
-
-<pre><code>
-  response.redirect("/bar");
-</code></pre>
-<br />
-
-<div class="normal">
-  You can also trigger a browser redirect with specific http 3XX status code:
-</div>
-
-<pre><code>
-  response.redirect("/bar", 301); // moved permanently
-</code></pre>
-
-<h1 class="getting_started_head">Exception Mapping</h1>
-
-<div class="normal">
-  To handle exceptions of a configured type for all routes and filters:
-</div>
-
-<div class="transform">
-<pre><code>
-  get("/throwexception", (request, response) -> {
-  throw new NotFoundException();
-  });
-
-  exception(NotFoundException.class, (e, request, response) -> {
-  response.status(404);
-  response.body("Resource not found");
-  });
-</code></pre>
-</div>
-
-<h1 class="getting_started_head">Static files</h1>
-
-<div class="normal">
-  Assign a folder in the classpath serving static files with the staticFileLocation method.
-</div>
-
-<pre><code>
-  staticFileLocation("/public"); // Static files
-</code></pre>
-
-<div class="normal">
-  Note that the public directory name is not included in the URL.
-  A file /public/css/style.css is made available as http://&lt;host&gt;:&lt;port&gt;/css/style.css
-</div>
-<br />
-
-<div class="normal">
-  You can also assign an external folder (not in the classpath) serving static files with the
-  externalStaticFileLocation method.
-</div>
-
-<pre><code>
-  externalStaticFileLocation("/var/www/public"); // Static files
-</code></pre>
-
-<h1 class="getting_started_head">ResponseTransformer</h1>
-
-<div class="normal">
-  Mapped routes that transforms the output from the handle method. This is done by extending
-  the ResponseTransformer and pass this to the mapping method.
-  <br />
-  Example Of a route transforming output to JSON using Gson:
-</div>
-
-<pre class="transform"><code>
-  import com.google.gson.Gson;
-
-  public class JsonTransformer implements ResponseTransformer {
-
-  private Gson gson = new Gson();
-
-  @Override
-  public String render(Object model) {
-  return gson.toJson(model);
-  }
-
-  }
-</code></pre>
-
-<br />
-
-<div class="normal">
-  and how it is used (MyMessage is a bean with one member 'message'):
-</div>
- <pre><code>
-   get("/hello", "application/json", (request, response) -> {
-   return new MyMessage("Hello World");
-   }, new JsonTransformer());
-
- </code></pre>
-
-<h1 class="getting_started_head">Views / Templates - TemplateEngine </h1>
-
-<div class="normal">
-  A TemplateViewRoute is built up by a path (for url-matching) and the template engine holding
-  the implementation of the 'render' method.
-  Instead of returning the result of calling toString() as body the TemplateViewRoute returns
-  the result of calling render method.
-  <br /><br />
-  The primary purpose of this kind of Route is to provide a way to create generic and reusable
-  components for rendering output using a Template Engine.
-  <br /><br />
-
-  <b>NEWS: The available implementations HAVE been updated to support Spark 2.0.0</b>
-
-  <b>Available TemplateEngine implementations:</b>
-
-  <br /><br />
-
-  <h1 class="getting_started_head_inner">-- FreeMarker</h1>
-  <br />
-  Renders objects to HTML using Freemarker template engine.
-  <br /><br />
-  Maven dependency:
-</div>
-<pre class="prettyprint">&lt;dependency&gt;
-      &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
-      &lt;artifactId&gt;spark-template-freemarker&lt;/artifactId&gt;
-      &lt;version&gt;2.0.0&lt;/version&gt;
-&lt;/dependency&gt;</pre>
-<br />
-
-<div class="normal">
-  Source:
-  <a
-    href="https://github.com/perwendel/spark-template-engines/tree/master/spark-template-freemarker">spark-template-freemarker</a>.
-  <br />
-  Code example:
-  <a
-    href="https://github.com/perwendel/spark-template-engines/blob/master/spark-template-freemarker/src/test/java/spark/template/freemarker/example/FreeMarkerExample.java">spark-template-freemarker
-    example</a>.
-</div>
-<br />
-
-<div class="normal">
-  <h1 class="getting_started_head_inner">-- Apache Velocity</h1>
-  <br />
-  Renders objects to HTML using the Apache Velocity template engine.
-  <br /><br />
-  Maven dependency:
-</div>
-<pre class="prettyprint">&lt;dependency&gt;
-      &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
-      &lt;artifactId&gt;spark-template-velocity&lt;/artifactId&gt;
-      &lt;version&gt;2.0.0&lt;/version&gt;
-&lt;/dependency&gt;</pre>
-<br />
-
-<div class="normal">
-  Source:
-  <a
-    href="https://github.com/perwendel/spark-template-engines/tree/master/spark-template-velocity">spark-template-velocity</a>.
-  <br />
-  Code example:
-  <a
-    href="https://github.com/perwendel/spark-template-engines/blob/master/spark-template-velocity/src/test/java/spark/template/velocity/example/VelocityExample.java">spark-template-velocity
-    example</a>.
-</div>
-<br />
-
-<div class="normal">
-  <h1 class="getting_started_head_inner">-- Mustache</h1>
-  <br />
-  Renders objects to HTML using the Mustache template engine.
-  <br /><br />
-  Maven dependency:
-</div>
-<pre class="prettyprint">&lt;dependency&gt;
+    &lt;/dependency&gt;
+
+</code></pre><p>Start coding:</p>
+<pre><code class="java"><br/>    import static sabina.Sabina.*;
+    
+    public class HelloWorld {
+        public static void main(String[] args) {
+            get(&quot;/hello&quot;, it -&gt; &quot;Hello World&quot;);
+        }
+    }
+
+</code></pre><h2>Ignite and view at</h2><p><code>http://localhost:4567/hello</code></p><h2>Routes</h2><p>The main building block of a Spark application is a set of routes. A route is made up of three<br/>simple pieces:</p><p>A <strong>verb</strong> (<code>get</code>, <code>post</code>, <code>put</code>, <code>delete</code>, <code>head</code>, <code>trace</code>, <code>connect</code>, <code>options</code>)<br/>A <strong>path</strong> (<code>/hello</code>, <code>/users/:name</code>)<br/>A <strong>callback</strong> (<code>request -&gt; { }</code>)</p><p>NOTE! Routes are matched in the order they are defined. The first route that matches the<br/>request is invoked.</p>
+<pre><code class="java"><br/>    get (&quot;/&quot;, it -&gt; {
+        // Show something ...
+    });
+    
+    post (&quot;/&quot;, it -&gt; {
+        // Create something ...
+    });
+    
+    put (&quot;/&quot;, it -&gt; {
+        // Update something ...
+    });
+    
+    delete (&quot;/&quot;, it -&gt; {
+        // Annihilate something ...
+    });
+    
+    options (&quot;/&quot;, it -&gt; {
+        // Appease something ...
+    });
+
+</code></pre><p>Route patterns may include named parameters, accessible via the params method on the request<br/>object:</p>
+<pre><code class="java"><br/>    /*
+     * Matches &quot;GET /hello/foo&quot; and &quot;GET /hello/bar&quot;
+     * it.request.params(&quot;:name&quot;) is &#39;foo&#39; or &#39;bar&#39;
+     */
+    get (&quot;/hello/:name&quot;, it -&gt; {
+        return &quot;Hello: &quot; + it.request.params(&quot;:name&quot;);
+    });
+  
+</code></pre><p>Route patterns may also include splat (or wildcard) parameters, accessible via the splat method<br/>on the request object:</p>
+<pre><code class="java"><br/>    /*
+     * Matches &quot;GET /say/hello/to/world&quot;
+     * it.request.splat()[0] is &#39;hello&#39; and request.splat()[1] &#39;world&#39;
+     */
+    get (&quot;/say/*/to/*&quot;, it -&gt; {
+        return &quot;Nbr of splat parameters: &quot; + it.request.splat().length;
+    });
+  
+</code></pre><h2>Request</h2><p>In the handle method request information and functionality is provided by the request<br/>parameter:</p>
+<pre><code class="java"><br/>    request.body();                // Request body sent by the client
+    request.cookies();             // Request cookies sent by the client
+    request.contentLength();       // Length of request body
+    request.contentType();         // Content type of request.body
+    request.headers();             // The HTTP header list
+    request.headers(&quot;BAR&quot;);        // Value of BAR header
+    request.attributes();          // The attributes list
+    request.attribute(&quot;foo&quot;);      // Value of foo attribute
+    request.attribute(&quot;A&quot;, &quot;V&quot;);   // Sets value of attribute A to V
+    request.host();                // &quot;example.com&quot;
+    request.ip();                  // Client IP address
+    request.pathInfo();            // The path info
+    request.params(&quot;foo&quot;);         // Value of foo path parameter
+    request.params();              // Map with all parameters
+    request.port();                // The server port
+    request.queryMap();            // The query map
+    request.queryMap(&quot;foo&quot;);       // Query map for a certain parameter
+    request.queryParams(&quot;FOO&quot;);    // Value of FOO query param
+    request.queryParams();         // The query param list
+    request.raw();                 // Raw request handed in by Jetty
+    request.requestMethod();       // The HTTP method (GET, ..etc)
+    request.scheme();              // &quot;http&quot;
+    request.session();             // Session management
+    request.splat();               // Splat (*) parameters
+    request.url();                 // &quot;http://example.com/foo&quot;
+    request.userAgent();           // User agent
+  
+</code></pre><h2>Query maps</h2><p>Query maps allows you to group parameters to a map by their prefix. This allows you to group<br/>two parameters like <code>user[name]</code> and <code>user[age]</code> to a <code>user</code> map.</p>
+<pre><code class="java"><br/>    request.queryMap ().get (&quot;user&quot;, &quot;name&quot;).value ();
+    request.queryMap ().get (&quot;user&quot;).get (&quot;name&quot;).value ();
+    request.queryMap (&quot;user&quot;).get (&quot;age&quot;).integerValue ();
+    request.queryMap (&quot;user&quot;).toMap ();
+
+</code></pre><h2>Response</h2><p>In the handle method response information and functionality is provided by the response<br/>parameter:</p>
+<pre><code class="java"><br/>    response.body (&quot;Hello&quot;);           // Sets content to Hello
+    response.header (&quot;FOO&quot;, &quot;bar&quot;);    // Sets header FOO with value bar
+    response.raw ();                   // Raw response handed in by Jetty
+    response.redirect (&quot;/example&quot;);    // Browser redirect to /example
+    response.status (401);             // Set status code to 401
+    response.type (&quot;text/xml&quot;);        // Set content type to text/xml
+
+</code></pre><h2>Stopping the server</h2><p>By calling the <code>stop ()</code> method the server is stopped and all routes are cleared.</p><h2>Cookies</h2><p>Handling cookies can be done via spark request and response objects.</p>
+<pre><code class="java"><br/>    request.cookies ();                            // Get map of all request cookies
+    request.cookie (&quot;foo&quot;);                        // Access request cookie by name
+  
+    response.cookie (&quot;foo&quot;, &quot;bar&quot;);                // Set cookie with a value
+    response.cookie (&quot;foo&quot;, &quot;bar&quot;, 3600);          // Set cookie with a max-age
+    response.cookie (&quot;foo&quot;, &quot;bar&quot;, 3600, true);    // Secure cookie
+    response.removeCookie (&quot;foo&quot;);                 // Remove cookie
+
+</code></pre><h2>Session management</h2><p>Every request has access to the session created on the server side, provided with the following<br/>methods:</p>
+<pre><code class="java"><br/>    request.session (true);                        // Create (if not exists) and return session
+    request.session ().attribute (&quot;user&quot;);              // Get session attribute &#39;user&#39;
+    request.session ().attribute (&quot;user&quot;, &quot;foo&quot;);       // Set session attribute &#39;user&#39;
+    request.session ().removeAttribute (&quot;user&quot;, &quot;foo&quot;); // Remove session attribute &#39;user&#39;
+    request.session ().attributes ();                   // Get all session attributes
+    request.session ().id ();                           // Get session id
+    request.session ().isNew ();                        // Check is session is new
+    request.session ().raw ();                          // Return servlet object
+
+</code></pre><h2>Halting</h2><p>To immediately stop a request within a filter or route use:</p>
+<pre><code class="java">    halt ();
+</code></pre><p>You can also specify the status when halting:</p>
+<pre><code class="java">    halt (401);
+</code></pre><p>Or the body:</p>
+<pre><code class="java">    halt (&quot;This is the body&quot;);
+</code></pre><p>Or both:</p>
+<pre><code class="java">    halt (401, &quot;Go Away!&quot;);
+</code></pre><h2>Filters</h2><p>Before filters are evaluated before each request and can read the request and read/modify the<br/>response.</p><p>To stop execution, use halt:</p>
+<pre><code class="java"><br/>    before (it -&gt; {
+        boolean authenticated;
+        // Check if authenticated
+        if (!authenticated) {
+            halt (401, &quot;You are not welcome here&quot;);
+        }
+    });
+    
+</code></pre><p>After filters are evaluated after each request and can read the request and read/modify the<br/>response:</p>
+<pre><code class="java"><br/>    after (it -&gt; {
+        response.header(&quot;foo&quot;, &quot;set by after filter&quot;);
+    });
+
+</code></pre><p>Filters optionally take a pattern, causing them to be evaluated only if the request path<br/>matches that pattern:</p>
+<pre><code class="java"><br/>    before (&quot;/protected/*&quot;, it -&gt; {
+        // Check if authenticated
+        halt (401, &quot;Go Away!&quot;);
+    });
+  
+</code></pre><h2>Browser Redirect</h2><p>You can trigger a browser redirect with the redirect helper method:</p>
+<pre><code class="java">    response.redirect (&quot;/bar&quot;);
+</code></pre><p>You can also trigger a browser redirect with specific http 3XX status code:</p>
+<pre><code class="java">    response.redirect (&quot;/bar&quot;, 301); // moved permanently
+</code></pre><h2>Exception Mapping</h2><p>To handle exceptions of a configured type for all routes and filters:</p>
+<pre><code class="java"><br/>    get (&quot;/throwexception&quot;, it -&gt; {
+        throw new NotFoundException ();
+    });
+
+    exception (NotFoundException.class, (e, request, response) -&gt; {
+        response.status (404);
+        response.body (&quot;Resource not found&quot;);
+    });
+
+</code></pre><h2>Static files</h2><p>Assign a folder in the classpath serving static files with the staticFileLocation method.</p>
+<pre><code class="java">    staticFileLocation (&quot;/public&quot;); // Static resources
+</code></pre><p>Note that the public directory name is not included in the URL. A file <code>/public/css/style.css</code><br/>is made available as <code>http://&lt;host&gt;:&lt;port&gt;/css/style.css</code></p><p>You can also assign an external folder (not in the classpath) serving static files with the<br/><code>externalStaticFileLocation</code> method.</p>
+<pre><code class="java">    externalStaticFileLocation (&quot;/var/www/public&quot;); // Static files
+</code></pre><h2>ResponseTransformer</h2><p>Mapped routes that transforms the output from the handle method. This is done by extending the<br/>ResponseTransformer and pass this to the mapping method.</p><p>Example Of a route transforming output to JSON using Gson:</p>
+<pre><code class="java"><br/>    import com.google.gson.Gson;
+  
+    public class JsonTransformer implements ResponseTransformer {
+        private Gson gson = new Gson ();
+      
+        @Override public String render (Object model) {
+            return gson.toJson (model);
+        }
+    }
+
+</code></pre><p>and how it is used (MyMessage is a bean with one member 'message'):</p>
+<pre><code class="java"><br/>    get (&quot;/hello&quot;, &quot;application/json&quot;, it -&gt; {
+        return new MyMessage (&quot;Hello World&quot;);
+    }, new JsonTransformer ());
+
+</code></pre><h2>Views / Templates - TemplateEngine</h2><p>A TemplateViewRoute is built up by a path (for url-matching) and the template engine holding<br/>the implementation of the 'render' method.</p><p>Instead of returning the result of calling toString() as body the TemplateViewRoute returns<br/>the result of calling render method.</p><p>The primary purpose of this kind of Route is to provide a way to create generic and reusable<br/>components for rendering output using a Template Engine.</p><p>Available TemplateEngine implementations:</p><h2>Mustache</h2><p>Renders objects to HTML using the Mustache template engine.</p><p>Maven dependency:</p>
+<pre><code class="xml"><br/>    &lt;dependency&gt;
       &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
       &lt;artifactId&gt;spark-template-mustache&lt;/artifactId&gt;
       &lt;version&gt;1.0.0&lt;/version&gt;
-&lt;/dependency&gt;</pre>
-<br />
+    &lt;/dependency&gt;&lt;/pre&gt;
 
-<div class="normal">
-  Source:
-  <a
-    href="https://github.com/perwendel/spark-template-engines/tree/master/spark-template-mustache">spark-template-mustache</a>.
-  <br />
-  Code example:
-  <a
-    href="https://github.com/perwendel/spark-template-engines/blob/master/spark-template-mustache/src/test/java/spark/template/mustache/MustacheTemplateExample.java">spark-template-mustache
-    example</a>.
+</code></pre><p>Source: <a href="https://github.com/perwendel/spark-template-engines/tree/master/spark-template-mustache">spark-template-mustache</a><br/>Code example: <a href="https://github.com/perwendel/spark-template-engines/blob/master/spark-template-mustache/src/test/java/spark/template/mustache/MustacheTemplateExample.java">spark-template-mustache example</a></p><h2>Port</h2><p>By default, Spark runs on port 4567. If you want to set another port use setPort.<br/>This has to be done before using routes and filters:</p>
+<pre><code class="java">    setPort (9090); // Spark will run on port 9090
+</code></pre><h2>Embedded Web Server</h2><p>Standalone Spark runs on an embedded Jetty web server.</p><h2>Running Spark on a Web Server</h2><p>To run Spark on a web server instead of standalone first of all an implementation of the<br/>interface <code>spark.servlet.SparkApplication</code> is needed. In the <code>init()</code> method the routes should<br/>be initialized. In your <code>web.xml</code> the following filter needs to be configured:</p>
+<pre><code class="xml"><br/>    &lt;filter&gt;
+      &lt;filter-name&gt;SparkFilter&lt;/filter-name&gt;
+      &lt;filter-class&gt;spark.servlet.SparkFilter&lt;/filter-class&gt;
+      &lt;init-param&gt;
+        &lt;param-name&gt;applicationClass&lt;/param-name&gt;
+        &lt;param-value&gt;com.company.YourApplication&lt;/param-value&gt;
+      &lt;/init-param&gt;
+    &lt;/filter&gt;
+ 
+    &lt;filter-mapping&gt;
+      &lt;filter-name&gt;SparkFilter&lt;/filter-name&gt;
+      &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/filter-mapping&gt;
 
-<h1 class="getting_started_head">Port</h1>
-
-<div class="normal">
-  By default, Spark runs on port 4567. If you want to set another port use setPort.
-  This has to be done before using routes and filters:
-
-<pre><code>
-  setPort(9090); // Spark will run on port 9090
-</code></pre>
-
-<h1 class="getting_started_head">Embedded Web Server</h1>
-
-<div class="normal">Standalone Spark runs on an embedded Jetty web server.</div>
-
-<h1 class="getting_started_head">Running Spark on a Web Server, e.g. Tomcat</h1>
-
-<div class="normal">
-  To run Spark on a web server instead of standalone first of all an implementation of the
-  interface <i>spark.servlet.SparkApplication</i> is needed.
-  In the <i>init()</i> method the routes should be initialized.
-  In your <i>web.xml</i> the following filter needs to be configured:
-
-<pre class="prettyprint">
- &lt;filter>
-   &lt;filter-name&gt;SparkFilter&lt;/filter-name&gt;
-   &lt;filter-class&gt;spark.servlet.SparkFilter&lt;/filter-class&gt;
-   &lt;init-param&gt;
-     &lt;param-name&gt;applicationClass&lt;/param-name&gt;
-     &lt;param-value&gt;com.company.YourApplication&lt;/param-value&gt;
-   &lt;/init-param&gt;
- &lt;/filter&gt;
-
- &lt;filter-mapping&gt;
-   &lt;filter-name&gt;SparkFilter&lt;/filter-name&gt;
-   &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
- &lt;/filter-mapping
-</pre>
-
-<h1 class="getting_started_head">Javadoc</h1>
-
-<div class="normal">
-  Javadoc is available in the zip files that can be downloaded from the project's page
-  at <a href="http://code.google.com/p/spark-java/downloads/list">google code</a>
-
-<h1 class="getting_started_head">Examples</h1>
-
-<div class="normal">
-  Examples can be found on the project's page
-  at <a href="http://code.google.com/p/spark-java/#Examples">google code</a>
-
-
+</code></pre><h2>Javadoc</h2><p>Javadoc is available at <a href="https://there4.co/spark">there4.co/spark</a></p><h2>Examples</h2><p>Examples can be found on the project's page at <a href="http://github.com/jamming/spark">Github</a></p>
       </div>
       <div id="push"></div>
     </div>
