@@ -16,6 +16,7 @@ package spark.route;
 
 import java.util.List;
 
+import spark.HttpMethod;
 import spark.utils.SparkUtils;
 
 /**

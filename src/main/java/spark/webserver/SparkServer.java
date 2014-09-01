@@ -14,8 +14,6 @@
 
 package spark.webserver;
 
-import javax.servlet.ServletException;
-
 /**
  * @author Per Wendel
  */
@@ -33,7 +31,7 @@ public interface SparkServer {
      * @param staticFilesRoute The route to static files in classPath.
      * @param externalFilesLocation The route to static files external to classPath.
      */
-    void ignite (
+    void startUp (
         String host, int port,
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword,
@@ -42,5 +40,5 @@ public interface SparkServer {
     /**
      * Stops the spark server.
      */
-    void stop ();
+    void shutDown ();
 }

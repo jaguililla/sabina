@@ -260,11 +260,11 @@ public class Request {
     /**
      * Gets the value for the provided header
      *
-     * @param header the header
+     * @param name the header
      * @return the value of the provided header
      */
-    public String headers (String header) {
-        return servletRequest.getHeader (header);
+    public String headers (String name) {
+        return servletRequest.getHeader (name);
     }
 
     /**
@@ -307,11 +307,11 @@ public class Request {
     /**
      * Gets the value of the provided attribute
      *
-     * @param attribute The attribute value or null if not present
+     * @param name The attribute name.
      * @return the value for the provided attribute
      */
-    public Object attribute (String attribute) {
-        return servletRequest.getAttribute (attribute);
+    public Object attribute (String name) {
+        return servletRequest.getAttribute (name);
     }
 
     /**

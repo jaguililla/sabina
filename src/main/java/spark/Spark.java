@@ -14,7 +14,7 @@
 package spark;
 
 import static org.slf4j.LoggerFactory.getLogger;
-import static spark.route.HttpMethod.*;
+import static spark.HttpMethod.*;
 import static spark.servlet.SparkFilter.configureExternalStaticResources;
 import static spark.servlet.SparkFilter.configureStaticResources;
 
@@ -77,6 +77,9 @@ public class Spark {
     private static boolean runFromServlet;
     private static boolean servletStaticLocationSet;
     private static boolean servletExternalStaticLocationSet;
+
+    /** Holds a map of Exception classes and associated handlers. */
+    private static Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<>();
 
     /**
      * Set the IP address that Spark should listen on. If not called the default
@@ -181,7 +184,7 @@ public class Spark {
         }
     }
 
-    protected static void addRoute (Route route) {
+    protected static void addRoute (Action route) {
         init ();
         routeMatcher.parseValidateAddRoute (
             route.method + " '" + route.path + "'", route.acceptType, route);
@@ -192,15 +195,11 @@ public class Spark {
             routeMatcher = RouteMatcherFactory.get ();
             new Thread (() -> {
                 server = SparkServerFactory.create (hasMultipleHandlers ());
-                server.ignite (
-                    ipAddress,
-                    port,
-                    keystoreFile,
-                    keystorePassword,
-                    truststoreFile,
-                    truststorePassword,
-                    staticFileFolder,
-                    externalStaticFileFolder);
+                server.startUp (
+                    ipAddress, port,
+                    keystoreFile, keystorePassword,
+                    truststoreFile, truststorePassword,
+                    staticFileFolder, externalStaticFileFolder);
             }).start ();
             initialized = true;
         }
@@ -208,12 +207,6 @@ public class Spark {
 
     private static boolean hasMultipleHandlers () {
         return staticFileFolder != null || externalStaticFileFolder != null;
-    }
-
-    protected static void addFilter (Filter filter) {
-        init ();
-        routeMatcher.parseValidateAddRoute (
-            filter.method + " '" + filter.path + "'", filter.acceptType, filter);
     }
 
     /**
@@ -313,17 +306,17 @@ public class Spark {
      * @param aHandler The filter
      */
     public static synchronized void before (Consumer<Context> aHandler) {
-        addFilter (new Filter (before, aHandler));
+        addRoute (new Filter (before, aHandler));
     }
 
     public static synchronized void before (String aPath, Consumer<Context> aHandler) {
-        addFilter (new Filter (before, aPath, aHandler));
+        addRoute (new Filter (before, aPath, aHandler));
     }
 
     public static synchronized void before (
         String aPath, String aAcceptType, Consumer<Context> aHandler) {
 
-        addFilter (new Filter (before, aPath, aAcceptType, aHandler));
+        addRoute (new Filter (before, aPath, aAcceptType, aHandler));
     }
 
     /**
@@ -332,17 +325,17 @@ public class Spark {
      * @param aHandler The filter
      */
     public static synchronized void after (Consumer<Context> aHandler) {
-        addFilter (new Filter (after, aHandler));
+        addRoute (new Filter (after, aHandler));
     }
 
     public static synchronized void after (String aPath, Consumer<Context> aHandler) {
-        addFilter (new Filter (after, aPath, aHandler));
+        addRoute (new Filter (after, aPath, aHandler));
     }
 
     public static synchronized void after (
         String aPath, String aAcceptType, Consumer<Context> aHandler) {
 
-        addFilter (new Filter (after, aPath, aAcceptType, aHandler));
+        addRoute (new Filter (after, aPath, aAcceptType, aHandler));
     }
 
     /**
@@ -351,7 +344,7 @@ public class Spark {
     public static synchronized void stop () {
         if (server != null) {
             routeMatcher.clearRoutes ();
-            server.stop ();
+            server.shutDown ();
         }
         initialized = false;
     }
@@ -376,14 +369,6 @@ public class Spark {
         Fault wrapper = new Fault<T> (exceptionClass, aHandler);
         map (exceptionClass, wrapper);
     }
-
-    // Hide constructor
-    protected Spark () {
-        throw new IllegalStateException ();
-    }
-
-    /** Holds a map of Exception classes and associated handlers. */
-    private static Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<>();
 
     /**
      * Maps the given handler to the provided exception type. If a handler was already registered to the same type, the
@@ -440,5 +425,10 @@ public class Spark {
      */
     public static Fault getHandler(Exception exception) {
         return getHandler(exception.getClass());
+    }
+
+    // Hide constructor
+    protected Spark () {
+        throw new IllegalStateException ();
     }
 }

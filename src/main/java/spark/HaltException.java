@@ -24,37 +24,26 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public class HaltException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    private int statusCode = SC_OK;
-    private String body = null;
+    public final int statusCode;
+    public final String body;
 
     HaltException () {
-        super ();
+        this (SC_OK, null);
     }
 
     HaltException (int statusCode) {
-        this.statusCode = statusCode;
+        this (statusCode, null);
     }
 
     HaltException (String body) {
-        this.body = body;
+        this (SC_OK, body);
     }
 
     HaltException (int statusCode, String body) {
+        if (statusCode < 100)
+            throw new IllegalArgumentException ("Invalid HTTP error code: " + statusCode);
+
         this.statusCode = statusCode;
         this.body = body;
-    }
-
-    /**
-     * @return the statusCode.
-     */
-    public int getStatusCode () {
-        return statusCode;
-    }
-
-    /**
-     * @return the body.
-     */
-    public String getBody () {
-        return body;
     }
 }

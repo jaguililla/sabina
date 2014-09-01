@@ -18,20 +18,23 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
-public class Context {
+public final class Context {
     public final Request request;
     public final Response response;
 
-    protected Context (Request aRequest, Response aResponse) {
-        request = aRequest;
-        response = aResponse;
+    Context (final Request req, final Response res) {
+        if (req == null || res == null)
+            throw new IllegalArgumentException ();
+
+        this.request = req;
+        this.response = res;
     }
 
     public Map<String, String> params () {
         return request.params ();
     }
 
-    public String cookie (String name) {
+    public String cookie (final String name) {
         return request.cookie (name);
     }
 
@@ -43,8 +46,8 @@ public class Context {
         return request.port ();
     }
 
-    public Object attribute (String attribute) {
-        return request.attribute (attribute);
+    public Object attribute (final String name) {
+        return request.attribute (name);
     }
 
     public String queryString () {
@@ -67,11 +70,11 @@ public class Context {
         return request.attributes ();
     }
 
-    public void attribute (String attribute, Object value) {
-        request.attribute (attribute, value);
+    public void attribute (final String name, final Object value) {
+        request.attribute (name, value);
     }
 
-    public Session session (boolean create) {
+    public Session session (final boolean create) {
         return request.session (create);
     }
 
@@ -87,8 +90,8 @@ public class Context {
         return request.servletPath ();
     }
 
-    public String params (String param) {
-        return request.params (param);
+    public String params (final String name) {
+        return request.params (name);
     }
 
     public String host () {
@@ -99,8 +102,8 @@ public class Context {
         return request.scheme ();
     }
 
-    public String headers (String header) {
-        return request.headers (header);
+    public String headers (final String name) {
+        return request.headers (name);
     }
 
     public String contentType () {
@@ -127,11 +130,11 @@ public class Context {
         return request.splat ();
     }
 
-    public String queryParams (String queryParam) {
-        return request.queryParams (queryParam);
+    public String queryParams (final String name) {
+        return request.queryParams (name);
     }
 
-    public QueryParams queryMap (String key) {
+    public QueryParams queryMap (final String key) {
         return request.queryMap (key);
     }
 
@@ -151,47 +154,55 @@ public class Context {
         return request.requestMethod ();
     }
 
-    public void status (int statusCode) {
+    public void status (final int statusCode) {
         response.status (statusCode);
     }
 
-    public void cookie (String name, String value, int maxAge) {
+    public void cookie (final String name, final String value, final int maxAge) {
         response.cookie (name, value, maxAge);
     }
 
-    public void removeCookie (String name) {
+    public void removeCookie (final String name) {
         response.removeCookie (name);
     }
 
-    public void header (String header, String value) {
-        response.header (header, value);
+    public void header (final String name, final String value) {
+        response.header (name, value);
     }
 
-    public void body (String body) {
+    public void body (final String body) {
         response.body (body);
     }
 
-    public void cookie (String path, String name, String value, int maxAge, boolean secured) {
+    public void cookie (
+        final String path,
+        final String name,
+        final String value,
+        final int maxAge,
+        final boolean secured) {
+
         response.cookie (path, name, value, maxAge, secured);
     }
 
-    public void redirect (String location, int httpStatusCode) {
+    public void redirect (final String location, final int httpStatusCode) {
         response.redirect (location, httpStatusCode);
     }
 
-    public void cookie (String name, String value) {
+    public void cookie (final String name, final String value) {
         response.cookie (name, value);
     }
 
-    public void cookie (String name, String value, int maxAge, boolean secured) {
+    public void cookie (
+        final String name, final String value, final int maxAge, final boolean secured) {
+
         response.cookie (name, value, maxAge, secured);
     }
 
-    public void redirect (String location) {
+    public void redirect (final String location) {
         response.redirect (location);
     }
 
-    public void type (String contentType) {
+    public void type (final String contentType) {
         response.type (contentType);
     }
 
@@ -208,7 +219,7 @@ public class Context {
      * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
      * re-throw otherwise halt will not work.
      */
-    public final void halt () {
+    public void halt () {
         throw new HaltException ();
     }
 
@@ -219,7 +230,7 @@ public class Context {
      *
      * @param status the status code.
      */
-    public final void halt (int status) {
+    public void halt (final int status) {
         throw new HaltException (status);
     }
 
@@ -230,7 +241,7 @@ public class Context {
      *
      * @param body The body content.
      */
-    public final void halt (String body) {
+    public void halt (final String body) {
         throw new HaltException (body);
     }
 
@@ -243,7 +254,7 @@ public class Context {
      * @param status The status code.
      * @param body The body content.
      */
-    public final void halt (int status, String body) {
+    public void halt (final int status, final String body) {
         throw new HaltException (status, body);
     }
 
@@ -253,7 +264,7 @@ public class Context {
 
     public void redirect () {}
 
-    public void template (String aTemplate, Object aParams) {}
+    public void template (final String template, final Object params) {}
 
-    public void template (String aTemplate, String aLayout, Object aParams) {}
+    public void template (final String template, final String layout, final Object params) {}
 }

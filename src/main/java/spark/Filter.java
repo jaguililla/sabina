@@ -18,8 +18,6 @@ import static spark.utils.SparkUtils.ALL_PATHS;
 
 import java.util.function.Consumer;
 
-import spark.route.HttpMethod;
-
 /**
  * A Filter is built up by a path (for url-matching) and the implementation of the 'handle'
  * method.
@@ -27,17 +25,16 @@ import spark.route.HttpMethod;
  *
  * @author Per Wendel
  */
-public class Filter extends Action {
+public final class Filter extends Action {
+    private static final String DEFAUT_CONTENT_TYPE = "text/html";
 
-    protected static final String DEFAUT_CONTENT_TYPE = "text/html";
-
-    final Consumer<Context> mHandler;
+    private final Consumer<Context> handler;
 
     /**
      * Constructs a filter that matches on everything.
      */
-    protected Filter (HttpMethod method, Consumer<Context> aHandler) {
-        this (method, ALL_PATHS, aHandler);
+    Filter (final HttpMethod method, final Consumer<Context> handler) {
+        this (method, ALL_PATHS, handler);
     }
 
     /**
@@ -45,28 +42,31 @@ public class Filter extends Action {
      *
      * @param path The filter path which is used for matching. (e.g. /hello, users/:name).
      */
-    protected Filter (HttpMethod method, String path, Consumer<Context> aHandler) {
-        this (method, path, DEFAUT_CONTENT_TYPE, aHandler);
+    Filter (final HttpMethod method, final String path, final Consumer<Context> handler) {
+        this (method, path, DEFAUT_CONTENT_TYPE, handler);
     }
 
-    protected Filter (
-        HttpMethod method, String path, String acceptType, Consumer<Context> aHandler) {
+    Filter (
+        final HttpMethod method,
+        final String path,
+        final String acceptType,
+        final Consumer<Context> handler) {
 
         super (method, path, acceptType);
 
-        if (aHandler == null)
+        if (handler == null)
             throw new IllegalArgumentException ();
 
-        mHandler = aHandler;
+        this.handler = handler;
     }
 
     /**
      * Invoked when a request is made on this filter's corresponding path e.g. '/hello'.
      *
-     * @param request The request object providing information about the HTTP request.
-     * @param response The response object providing functionality for modifying the response.
+     * @param req The request object providing information about the HTTP request.
+     * @param res The response object providing functionality for modifying the response.
      */
-    public void handle (Request request, Response response) {
-        mHandler.accept (new Context (request, response));
+    public void handle (Request req, Response res) {
+        handler.accept (new Context (req, res));
     }
 }

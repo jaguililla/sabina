@@ -21,21 +21,13 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.HaltException;
-import spark.Request;
-import spark.Response;
-import spark.Route;
-import spark.route.HttpMethod;
+import spark.*;
 import spark.route.RouteMatch;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
@@ -140,8 +132,8 @@ public class MatcherFilter implements Filter {
         }
         catch (HaltException hEx) {
             LOG.debug ("halt performed");
-            httpRes.setStatus (hEx.getStatusCode ());
-            String haltBody = hEx.getBody ();
+            httpRes.setStatus (hEx.statusCode);
+            String haltBody = hEx.body;
             bodyContent = (haltBody != null)? haltBody : "";
         }
 
@@ -199,7 +191,7 @@ public class MatcherFilter implements Filter {
                 aRes.setDelegate (response);
 
                 Object element = route.handle (aReq, aRes);
-                result = route.render (element);
+                result = element != null? element.toString () : null;
             }
             if (result != null) {
                 aBodyContent = result;

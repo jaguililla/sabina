@@ -15,24 +15,8 @@
 package spark;
 
 /**
- * Functionality used in both Route and Filter.
- * TODO Move empty to utilities
- *
  * @author Per Wendel
  */
-abstract class Action {
-    public final String path;
-    public final String acceptType;
-    public final HttpMethod method;
-
-    protected Action (final HttpMethod method, final String path, final String acceptType) {
-        if (empty (path) || empty (acceptType) || method == null)
-            throw new IllegalArgumentException ();
-
-        this.path = path;
-        this.acceptType = acceptType;
-        this.method = method;
-    }
-
-    private boolean empty (String str) { return str == null || str.isEmpty (); }
+public enum HttpMethod {
+    get, post, put, patch, delete, head, trace, connect, options, before, after
 }

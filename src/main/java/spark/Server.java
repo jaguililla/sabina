@@ -18,7 +18,15 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static spark.servlet.SparkFilter.configureExternalStaticResources;
 import static spark.servlet.SparkFilter.configureStaticResources;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 import org.slf4j.Logger;
+import spark.builder.Node;
+import spark.route.RouteMatcher;
+import spark.route.RouteMatcherFactory;
 import spark.webserver.SparkServer;
 import spark.webserver.SparkServerFactory;
 
@@ -47,11 +55,14 @@ import spark.webserver.SparkServerFactory;
  */
 public class Server {
     private static final Logger LOG = getLogger (Server.class);
-    private static final int SPARK_DEFAULT_PORT = 4567;
+
     private static final String INIT_ERROR =
         "This must be done before route mapping has begun";
 
-    private int port = SPARK_DEFAULT_PORT;
+    public static final int DEFAULT_PORT = 4567;
+    public static final String DEFAULT_HOST = "localhost";
+
+    private int port = DEFAULT_PORT;
     private boolean initialized = false;
     private String ipAddress = "0.0.0.0";
 
@@ -68,6 +79,52 @@ public class Server {
     private boolean runFromServlet;
     private boolean servletStaticLocationSet;
     private boolean servletExternalStaticLocationSet;
+
+    private final RouteMatcher routeMatcher = RouteMatcherFactory.get ();
+    /** Holds a map of Exception classes and associated handlers. */
+    private final Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<> ();
+
+    public Server (Node... actions) {
+        buildActions (actions).forEach (this::addRoute);
+    }
+
+    private List<Action> buildActions (Node... actions) {
+        return null;
+    }
+
+//    static void getActions (final List<Action> rules, final Node root) {
+//        for (Node n : root.children)
+//            if (n.children.isEmpty ())
+//                rules.add (((MethodNode)n).getRule ());
+//            else
+//                getActions (rules, n);
+//    }
+//
+//    static List<Action> getActions (final Node root) {
+//        ArrayList<Action> rules = new ArrayList<> ();
+//        getActions (rules, root);
+//
+//        if (LOG.isLoggable (INFO))
+//            for (Action r : rules)
+//                LOG.info ("Rule for " + r.method + " " + r.path + " (" + r.contentType + ")");
+//
+//        return rules;
+//    }
+//
+//    Action getAction () {
+//        String aContentType = "";
+//        String aPath = "";
+//
+//        for (Node p = parent; p != null; p = p.parent)
+//            if (p instanceof PathNode)
+//                aPath = ((PathNode)p).path + aPath;
+//            else if (p instanceof ContentTypeNode)
+//                aContentType += ((ContentTypeNode)p).contentType;
+//            else
+//                throw new IllegalStateException ("Unsupported node type");
+//
+//        return new Rule (handler, method, aContentType, aPath);
+//    }
 
     /**
      * Set the IP address that Spark should listen on. If not called the default
@@ -176,7 +233,7 @@ public class Server {
         if (!initialized) {
             new Thread (() -> {
                 server = SparkServerFactory.create (hasMultipleHandlers ());
-                server.ignite (
+                server.startUp (
                     ipAddress,
                     port,
                     keystoreFile,
@@ -199,7 +256,7 @@ public class Server {
      */
     public synchronized void stop () {
         if (server != null) {
-            server.stop ();
+            server.shutDown ();
         }
         initialized = false;
     }
@@ -211,8 +268,78 @@ public class Server {
         }
     }
 
-    // Hide constructor
-    protected Server () {
-        throw new IllegalStateException ();
+    protected synchronized void addRoute (Action action) {
+        routeMatcher.parseValidateAddRoute (
+            action.method + " '" + action.path + "'", action.acceptType, action);
+    }
+
+    /**
+     * Maps an exception handler to be executed when an exception occurs during routing
+     *
+     * @param exceptionClass the exception class
+     * @param aHandler        The handler
+     */
+    public synchronized <T extends Exception> void exception(
+        Class<T> exceptionClass, BiConsumer<T, Context> aHandler) {
+
+        Fault wrapper = new Fault<> (exceptionClass, aHandler);
+        map (exceptionClass, wrapper);
+    }
+
+    /**
+     * Maps the given handler to the provided exception type. If a handler was already registered to the same type, the
+     * handler is overwritten.
+     *
+     * @param exceptionClass Type of exception
+     * @param handler        Handler to map to exception
+     */
+    public void map(Class<? extends Exception> exceptionClass, Fault handler) {
+        exceptionMap.put(exceptionClass, handler);
+    }
+
+    /**
+     * Returns the handler associated with the provided exception class
+     *
+     * @param exceptionClass Type of exception
+     * @return Associated handler
+     */
+    public Fault getHandler(Class<? extends Exception> exceptionClass) {
+        // If the exception map does not contain the provided exception class, it might
+        // still be that a superclass of the exception class is.
+        if (!exceptionMap.containsKey(exceptionClass)) {
+
+            Class<?> superclass = exceptionClass.getSuperclass();
+            do {
+                // Is the superclass mapped?
+                if (exceptionMap.containsKey(superclass)) {
+                    // Use the handler for the mapped superclass, and cache handler
+                    // for this exception class
+                    Fault handler = exceptionMap.get(superclass);
+                    exceptionMap.put(exceptionClass, handler);
+                    return handler;
+                }
+
+                // Iteratively walk through the exception class's superclasses
+                superclass = superclass.getSuperclass();
+            } while (superclass != null);
+
+            // No handler found either for the superclasses of the exception class
+            // We cache the null value to prevent future
+            exceptionMap.put(exceptionClass, null);
+            return null;
+        }
+
+        // Direct map
+        return exceptionMap.get(exceptionClass);
+    }
+
+    /**
+     * Returns the handler associated with the provided exception class
+     *
+     * @param exception Exception that occurred
+     * @return Associated handler
+     */
+    public Fault getHandler(Exception exception) {
+        return getHandler (exception.getClass ());
     }
 }

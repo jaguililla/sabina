@@ -16,38 +16,29 @@ package spark;
 
 import java.util.function.BiConsumer;
 
-public class Fault<T extends Exception> {
+public final class Fault<T extends Exception> {
     /** Holds the type of exception that this filter will handle */
-    final Class<T> exceptionClass;
-    final BiConsumer<T, Context> mHandler;
+    private final Class<T> exceptionClass;
+    private final BiConsumer<T, Context> handler;
 
     /**
      * Initializes the filter with the provided exception type
      *
-     * @param aException Type of exception
+     * @param exception Type of exception
      */
-    protected Fault (Class<T> aException, BiConsumer<T, Context> aHandler) {
-        exceptionClass = aException;
-        mHandler = aHandler;
+    Fault (final Class<T> exception, final BiConsumer<T, Context> handler) {
+        exceptionClass = exception;
+        this.handler = handler;
     }
 
     /**
      * Invoked when an exception that is mapped to this handler occurs during routing
      *
      * @param exception The exception that was thrown during routing
-     * @param request   The request object providing information about the HTTP request
-     * @param response  The response object providing functionality for modifying the response
+     * @param request The request object providing information about the HTTP request
+     * @param response The response object providing functionality for modifying the response
      */
-    public void handle (T exception, Request request, Response response) {
-        mHandler.accept (exception, new Context (request, response));
-    }
-
-    /**
-     * Returns type of exception that this filter will handle
-     *
-     * @return Type of exception
-     */
-    public Class<T> exceptionClass() {
-        return this.exceptionClass;
+    public void handle (final T exception, final Request request, final Response response) {
+        handler.accept (exception, new Context (request, response));
     }
 }

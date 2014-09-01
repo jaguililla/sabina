@@ -16,6 +16,8 @@ package spark.route;
 
 import java.util.List;
 
+import spark.HttpMethod;
+
 /**
  * Route matcher
  *

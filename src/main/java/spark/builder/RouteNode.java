@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Per Wendel. All rights reserved.
+ * Copyright © 2014 Juan José Aguililla. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -12,27 +12,27 @@
  * and limitations under the License.
  */
 
-package spark;
+package spark.builder;
+
+import java.util.function.Function;
+
+import spark.Context;
+import spark.HttpMethod;
 
 /**
- * Functionality used in both Route and Filter.
- * TODO Move empty to utilities
+ * TODO .
  *
- * @author Per Wendel
+ * @author jam
  */
-abstract class Action {
-    public final String path;
-    public final String acceptType;
-    public final HttpMethod method;
+public class RouteNode extends MethodNode {
+    private final Function<Context, Object> handler;
 
-    protected Action (final HttpMethod method, final String path, final String acceptType) {
-        if (empty (path) || empty (acceptType) || method == null)
+    RouteNode (HttpMethod aMethod, Function<Context, Object> aHandler) {
+        super (aMethod);
+
+        if (aHandler == null)
             throw new IllegalArgumentException ();
 
-        this.path = path;
-        this.acceptType = acceptType;
-        this.method = method;
+        handler = aHandler;
     }
-
-    private boolean empty (String str) { return str == null || str.isEmpty (); }
 }

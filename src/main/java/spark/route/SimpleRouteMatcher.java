@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
+import spark.HttpMethod;
 
 /**
  * Simple route matcher that is supposed to work exactly as Sinatra's

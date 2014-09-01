@@ -14,6 +14,8 @@
 
 package spark.route;
 
+import spark.HttpMethod;
+
 /**
  * @author Per Wendel
  */

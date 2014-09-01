@@ -19,13 +19,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This objects represent the parameters sent on a Http Request. <br>
- * Parses parameters keys like in Sinatra. <br>
- * <br>
+ * This objects represent the parameters sent on a Http Request. Parses parameters keys like in
+ * Sinatra.
+ * <p>
  * For a querystring like: <br>
  * user[name]=federico&#38;user[lastname]=dayan
  * <p>

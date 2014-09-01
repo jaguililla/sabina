@@ -132,7 +132,7 @@ class UndertowServer implements SparkServer {
         filter = aFilter;
     }
 
-    @Override public void ignite (
+    @Override public void startUp (
         String host, int port,
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword,
@@ -157,7 +157,7 @@ class UndertowServer implements SparkServer {
         }
     }
 
-    @Override public void stop () {
+    @Override public void shutDown () {
         try {
             if (server != null) {
                 server.stop ();

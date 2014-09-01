@@ -16,8 +16,6 @@ package spark;
 
 import java.util.function.Function;
 
-import spark.route.HttpMethod;
-
 /**
  * A Route is built up by a path (for url-matching) and the implementation of the 'handle'
  * method.
@@ -26,19 +24,20 @@ import spark.route.HttpMethod;
  *
  * @author Per Wendel
  */
-public class Route extends Action {
+public final class Route extends Action {
+    private static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
-    protected static final String DEFAULT_ACCEPT_TYPE = "*/*";
-
-    final Function<Context, Object> mHandler;
+    private final Function<Context, Object> handler;
 
     /**
      * Constructor.
      *
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      */
-    protected Route (HttpMethod method, String path, Function<Context, Object> aHandler) {
-        this (method, path, DEFAULT_ACCEPT_TYPE, aHandler);
+    Route (
+        final HttpMethod method, final String path, final Function<Context, Object> handler) {
+
+        this (method, path, DEFAULT_ACCEPT_TYPE, handler);
     }
 
     /**
@@ -47,44 +46,29 @@ public class Route extends Action {
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      * @param acceptType The accept type which is used for matching.
      */
-    protected Route (
-        HttpMethod method,
-        String path,
-        String acceptType,
-        Function<Context, Object> aHandler) {
+    Route (
+        final HttpMethod method,
+        final String path,
+        final String acceptType,
+        final Function<Context, Object> handler) {
 
         super (method, path, acceptType);
 
-        if (aHandler == null)
+        if (handler == null)
             throw new IllegalArgumentException ();
 
-        mHandler = aHandler;
+        this.handler = handler;
     }
 
     /**
-     * Invoked when a request is made on this route's corresponding path e.g. '/hello'.
+     * Invoked when a req is made on this route's corresponding path e.g. '/hello'.
      *
-     * @param request The request object providing information about the HTTP request.
-     * @param response The response object providing functionality for modifying the response.
+     * @param req The request object providing information about the HTTP request.
+     * @param res The response object providing functionality for modifying the response.
      *
      * @return The content to be set in the response.
      */
-    public Object handle (Request request, Response response) {
-        return mHandler.apply (new Context (request, response));
-    }
-
-    /**
-     * This method should render the given element into something that can be send through
-     * Response element.
-     * By default this method returns the result of calling toString method in given element,
-     * but can be overridden.
-     *
-     * @param element to be rendered.
-     *
-     * @return body content.
-     */
-    //TODO change String return type to Stream. It should be done in another issue.
-    public String render (Object element) {
-        return element != null? element.toString () : null;
+    public Object handle (Request req, Response res) {
+        return handler.apply (new Context (req, res));
     }
 }

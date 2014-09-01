@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Per Wendel. All rights reserved.
+ * Copyright © 2014 Juan José Aguililla. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -12,11 +12,19 @@
  * and limitations under the License.
  */
 
-package spark.route;
+package spark.builder;
 
-/**
- * @author Per Wendel
- */
-public enum HttpMethod {
-    get, post, put, patch, delete, head, trace, connect, options, before, after
+import static java.util.Arrays.asList;
+
+import java.util.List;
+
+public abstract class Node {
+    public Node parent;
+    public final List<Node> children;
+
+    Node (Node... aChildren) {
+        children = asList (aChildren);
+        for (Node n : children)
+            n.parent = this;
+    }
 }

@@ -80,7 +80,7 @@ class JettyServer implements SparkServer {
         this.handler = new JettyHandler (handler);
     }
 
-    public void ignite (
+    public void startUp (
         String host, int port, String keystoreFile,
         String keystorePassword, String truststoreFile,
         String truststorePassword, String staticFilesFolder,
@@ -138,7 +138,7 @@ class JettyServer implements SparkServer {
         }
     }
 
-    public void stop () {
+    public void shutDown () {
         System.out.print (">>> " + NAME + " shutting down..."); // NOSONAR
         try {
             if (server != null)

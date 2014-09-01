@@ -25,7 +25,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.testng.annotations.Test;
-import spark.route.HttpMethod;
 import spark.route.RouteMatch;
 
 public class RequestTest {
