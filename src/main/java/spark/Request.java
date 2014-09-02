@@ -125,8 +125,8 @@ public class Request {
      * Returns the value of the provided route pattern parameter.
      * Example: parameter 'name' from the following pattern: (get '/hello/:name')
      *
-     * @param param the param
-     * @return null if the given param is null or not found
+     * @param param The param.
+     * @return Null if the given param is null or not found.
      */
     public String params (String param) {
         if (param == null)

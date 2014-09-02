@@ -19,12 +19,10 @@ import static spark.servlet.SparkFilter.configureExternalStaticResources;
 import static spark.servlet.SparkFilter.configureStaticResources;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
-import spark.builder.Node;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
 import spark.webserver.SparkServer;
@@ -53,7 +51,7 @@ import spark.webserver.SparkServerFactory;
  *
  * @author Per Wendel
  */
-public class Server {
+public final class Server {
     private static final Logger LOG = getLogger (Server.class);
 
     private static final String INIT_ERROR =
@@ -61,6 +59,10 @@ public class Server {
 
     public static final int DEFAULT_PORT = 4567;
     public static final String DEFAULT_HOST = "localhost";
+
+    public static <T extends Action> void serve (T... actions) {
+        new Server (actions).init ();
+    }
 
     private int port = DEFAULT_PORT;
     private boolean initialized = false;
@@ -80,57 +82,21 @@ public class Server {
     private boolean servletStaticLocationSet;
     private boolean servletExternalStaticLocationSet;
 
+    /** TODO Only supports one matcher! */
     private final RouteMatcher routeMatcher = RouteMatcherFactory.get ();
     /** Holds a map of Exception classes and associated handlers. */
     private final Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<> ();
 
-    public Server (Node... actions) {
-        buildActions (actions).forEach (this::addRoute);
+    public Server (Action... actions) {
+        for (Action a : actions)
+            addRoute (a);
     }
-
-    private List<Action> buildActions (Node... actions) {
-        return null;
-    }
-
-//    static void getActions (final List<Action> rules, final Node root) {
-//        for (Node n : root.children)
-//            if (n.children.isEmpty ())
-//                rules.add (((MethodNode)n).getRule ());
-//            else
-//                getActions (rules, n);
-//    }
-//
-//    static List<Action> getActions (final Node root) {
-//        ArrayList<Action> rules = new ArrayList<> ();
-//        getActions (rules, root);
-//
-//        if (LOG.isLoggable (INFO))
-//            for (Action r : rules)
-//                LOG.info ("Rule for " + r.method + " " + r.path + " (" + r.contentType + ")");
-//
-//        return rules;
-//    }
-//
-//    Action getAction () {
-//        String aContentType = "";
-//        String aPath = "";
-//
-//        for (Node p = parent; p != null; p = p.parent)
-//            if (p instanceof PathNode)
-//                aPath = ((PathNode)p).path + aPath;
-//            else if (p instanceof ContentTypeNode)
-//                aContentType += ((ContentTypeNode)p).contentType;
-//            else
-//                throw new IllegalStateException ("Unsupported node type");
-//
-//        return new Rule (handler, method, aContentType, aPath);
-//    }
 
     /**
      * Set the IP address that Spark should listen on. If not called the default
      * address is '0.0.0.0'. This has to be called before any route mapping is done.
      *
-     * @param ipAddress The ipAddress
+     * @param ipAddress The ipAddress.
      */
     public synchronized void setIpAddress (String ipAddress) {
         if (initialized)

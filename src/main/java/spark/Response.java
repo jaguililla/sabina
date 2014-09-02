@@ -199,7 +199,7 @@ public class Response {
     /**
      * Removes the cookie.
      *
-     * @param name name of the cookie
+     * @param name Name of the cookie.
      */
     public void removeCookie(String name) {
         Cookie cookie = new Cookie(name, "");

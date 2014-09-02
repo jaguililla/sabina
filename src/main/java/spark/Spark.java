@@ -339,7 +339,7 @@ public class Spark {
     }
 
     /**
-     * Stops the Spark server and clears all routes
+     * Stops the Spark server and clears all routes.
      */
     public static synchronized void stop () {
         if (server != null) {

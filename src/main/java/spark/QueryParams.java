@@ -24,29 +24,24 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * This objects represent the parameters sent on a Http Request. Parses parameters keys like in
  * Sinatra.
- * <p>
- * For a querystring like: <br>
- * user[name]=federico&#38;user[lastname]=dayan
- * <p>
- * <br>
- * <br>
- * We get would get a structure like: <br>
+ *
+ * For a querystring like:
+ *
+ * <code>user[name]=federico&#38;user[lastname]=dayan</code>
+ *
+ * We get would get a structure like:
+ *
+ * <code>user : {name: federico, lastname: dayan}</code>
+ *
+ * That is:
+ *
  * <code>
- * user : {name: federico, lastname: dayan}
- * </code>
- * <p>
- * <br>
- * <br>
- * That is:<br>
- * <code>
- * queryParamsMapInstance.get("user).get("name").value(); <br>
+ * queryParamsMapInstance.get("user).get("name").value();
  * queryParamsMapInstance.get("user).get("lastname").value();
  * </code>
- * <p>
- * <br>
- * <br>
- * It is null safe, meaning that if a key does not exist, it does not throw NullPointerException
- * , it just returns null.
+ *
+ * It is null safe, meaning that if a key does not exist, it does not throw
+ * NullPointerException, it just returns null.
  *
  * @author fddayan
  */
@@ -262,7 +257,7 @@ public class QueryParams {
         return values;
     }
 
-    private static class NullQueryParams extends QueryParams {
+    private static final class NullQueryParams extends QueryParams {
         public NullQueryParams () {
             super ();
         }

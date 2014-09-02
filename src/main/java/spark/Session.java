@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 /**
  * Provides session information.
  */
-public class Session {
+public final class Session {
     private HttpSession session;
 
     /**

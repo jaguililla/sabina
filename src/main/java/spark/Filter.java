@@ -14,6 +14,7 @@
 
 package spark;
 
+import static spark.HttpMethod.*;
 import static spark.utils.SparkUtils.ALL_PATHS;
 
 import java.util.function.Consumer;
@@ -27,6 +28,30 @@ import java.util.function.Consumer;
  */
 public final class Filter extends Action {
     private static final String DEFAUT_CONTENT_TYPE = "text/html";
+
+    public static Filter before (Consumer<Context> handler) {
+        return new Filter (before, handler);
+    }
+
+    public static Filter before (String path, Consumer<Context> handler) {
+        return new Filter (before, path, handler);
+    }
+
+    public static Filter before (String path, String acceptType, Consumer<Context> handler) {
+        return new Filter (before, path, acceptType, handler);
+    }
+
+    public static Filter after (Consumer<Context> handler) {
+        return new Filter (after, handler);
+    }
+
+    public static Filter after (String path, Consumer<Context> handler) {
+        return new Filter (after, path, handler);
+    }
+
+    public static Filter after (String path, String acceptType, Consumer<Context> handler) {
+        return new Filter (after, path, acceptType, handler);
+    }
 
     private final Consumer<Context> handler;
 

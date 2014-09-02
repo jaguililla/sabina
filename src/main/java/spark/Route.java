@@ -14,6 +14,8 @@
 
 package spark;
 
+import static spark.HttpMethod.*;
+
 import java.util.function.Function;
 
 /**
@@ -26,6 +28,48 @@ import java.util.function.Function;
  */
 public final class Route extends Action {
     private static final String DEFAULT_ACCEPT_TYPE = "*/*";
+
+    public static Route get (String path, Function<Context, Object> handler) {
+        return new Route (get, path, handler);
+    }
+
+    public static Route get (
+        String path, String acceptType, Function<Context, Object> handler) {
+
+        return new Route (get, path, acceptType, handler);
+    }
+
+    public static Route post (String path, Function<Context, Object> handler) {
+        return new Route (post, path, handler);
+    }
+
+    public static Route put (String path, Function<Context, Object> handler) {
+        return new Route (put, path, handler);
+    }
+
+    public static Route patch (String path, Function<Context, Object> handler) {
+        return new Route (patch, path, handler);
+    }
+
+    public static Route delete (String path, Function<Context, Object> handler) {
+        return new Route (delete, path, handler);
+    }
+
+    public static Route head (String path, Function<Context, Object> handler) {
+        return new Route (head, path, handler);
+    }
+
+    public static Route trace (String path, Function<Context, Object> handler) {
+        return new Route (trace, path, handler);
+    }
+
+    public static Route connect (String path, Function<Context, Object> handler) {
+        return new Route (connect, path, handler);
+    }
+
+    public static Route options (String path, Function<Context, Object> handler) {
+        return new Route (options, path, handler);
+    }
 
     private final Function<Context, Object> handler;
 

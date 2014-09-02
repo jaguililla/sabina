@@ -28,3 +28,48 @@ public abstract class Node {
             n.parent = this;
     }
 }
+
+// TODO Integrate in spark.Server
+//
+//    public Server (Node... actions) {
+//        buildActions (actions).forEach (this::addRoute);
+//    }
+//
+//    private List<Action> buildActions (Node... actions) {
+//        return null;
+//    }
+//
+//    static void getActions (final List<Action> rules, final Node root) {
+//        for (Node n : root.children)
+//            if (n.children.isEmpty ())
+//                rules.add (((MethodNode)n).getRule ());
+//            else
+//                getActions (rules, n);
+//    }
+//
+//    static List<Action> getActions (final Node root) {
+//        ArrayList<Action> rules = new ArrayList<> ();
+//        getActions (rules, root);
+//
+//        if (LOG.isLoggable (INFO))
+//            for (Action r : rules)
+//                LOG.info ("Rule for " + r.method + " " + r.path + " (" + r.contentType + ")");
+//
+//        return rules;
+//    }
+//
+//    Action getAction () {
+//        String aContentType = "";
+//        String aPath = "";
+//
+//        for (Node p = parent; p != null; p = p.parent)
+//            if (p instanceof PathNode)
+//                aPath = ((PathNode)p).path + aPath;
+//            else if (p instanceof ContentTypeNode)
+//                aContentType += ((ContentTypeNode)p).contentType;
+//            else
+//                throw new IllegalStateException ("Unsupported node type");
+//
+//        return new Rule (handler, method, aContentType, aPath);
+//    }
+
