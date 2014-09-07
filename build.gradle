@@ -24,7 +24,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'com.github.kt3k.coveralls'
 
-    group = 'spark'
+    group = 'sabina'
     version = '2.0.1-SNAPSHOT'
     description = 'A Sinatra inspired Java web framework'
 
@@ -59,7 +59,7 @@ subprojects {
     }
 
     githubPages {
-        repoUri = 'https://github.com/jamming/spark.git'
+        repoUri = 'https://github.com/jamming/sabina.git'
         pages {
             from (file ("$buildDir/site")) {
                 into '.'
