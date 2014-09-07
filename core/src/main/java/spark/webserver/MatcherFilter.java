@@ -15,18 +15,18 @@
 package spark.webserver;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.logging.Logger.getLogger;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import spark.*;
 import spark.route.RouteMatch;
 import spark.route.RouteMatcher;
@@ -38,7 +38,7 @@ import spark.route.RouteMatcherFactory;
  * @author Per Wendel
  */
 public class MatcherFilter implements Filter {
-    private static final Logger LOG = LoggerFactory.getLogger (MatcherFilter.class);
+    private static final Logger LOG = getLogger (MatcherFilter.class.getName ());
 
     private static final String
         ACCEPT_TYPE_REQUEST_MIME_HEADER = "Accept",
@@ -131,7 +131,7 @@ public class MatcherFilter implements Filter {
                 afterFilters (httpReq, httpRes, uri, acceptType, bodyContent, req, res);
         }
         catch (HaltException hEx) {
-            LOG.debug ("halt performed");
+            LOG.fine ("halt performed");
             httpRes.setStatus (hEx.statusCode);
             String haltBody = hEx.body;
             bodyContent = (haltBody != null)? haltBody : "";
@@ -172,8 +172,8 @@ public class MatcherFilter implements Filter {
         handled = true;
 
         // TODO Merge logs and take care of method flow to log always
-        LOG.debug ("httpMethod:" + httpMethodStr + ", uri: " + uri);
-        LOG.debug ("Time for request: " + (currentTimeMillis () - t));
+        LOG.fine ("httpMethod:" + httpMethodStr + ", uri: " + uri);
+        LOG.fine ("Time for request: " + (currentTimeMillis () - t));
     }
 
     private String handleTargetRoute (
@@ -201,7 +201,7 @@ public class MatcherFilter implements Filter {
             throw hEx;
         }
         catch (Exception e) {
-            LOG.error ("", e);
+            LOG.severe (e.getMessage ());
             aHttpRes.setStatus (SC_INTERNAL_SERVER_ERROR);
             aBodyContent = INTERNAL_ERROR;
         }

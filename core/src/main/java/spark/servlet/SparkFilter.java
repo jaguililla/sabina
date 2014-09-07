@@ -15,6 +15,8 @@
 package spark.servlet;
 
 import static com.google.common.io.CharStreams.copy;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Logger.getLogger;
 import static spark.Spark.runFromServlet;
 
 import java.io.IOException;
@@ -22,17 +24,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import java.util.logging.Logger;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractFileResolvingResource;
 import org.springframework.core.io.ClassPathResource;
 import spark.route.RouteMatcherFactory;
@@ -46,7 +42,7 @@ import spark.webserver.MatcherFilter;
  * @author Per Wendel
  */
 public abstract class SparkFilter implements Filter {
-    private static final Logger LOG = LoggerFactory.getLogger (SparkFilter.class);
+    private static final Logger LOG = getLogger (SparkFilter.class.getName ());
 
     private static final String SLASH_WILDCARD = "/*";
     private static final String SLASH = "/";
@@ -118,9 +114,8 @@ public abstract class SparkFilter implements Filter {
 
         final String relativePath = getRelativePath (httpRequest, filterPath);
 
-        if (LOG.isDebugEnabled ()) {
-            LOG.debug (relativePath);
-        }
+        if (LOG.isLoggable (FINE))
+            LOG.fine (relativePath);
 
         HttpServletRequestWrapper requestWrapper =
             new HttpServletRequestWrapper (httpRequest) {
@@ -165,11 +160,11 @@ public abstract class SparkFilter implements Filter {
                         LOG.info ("StaticResourceHandler configured with folder = " + folder);
                     }
                     else {
-                        LOG.error ("Static resource location must be a folder");
+                        LOG.severe ("Static resource location must be a folder");
                     }
                 }
                 catch (IOException e) {
-                    LOG.error ("Error when creating StaticResourceHandler", e);
+                    LOG.severe ("Error when creating StaticResourceHandler" + e.getMessage ());
                 }
             }
             staticResourcesSet = true;
@@ -196,11 +191,12 @@ public abstract class SparkFilter implements Filter {
                             + folder);
                     }
                     else {
-                        LOG.error ("External Static resource location must be a folder");
+                        LOG.severe ("External Static resource location must be a folder");
                     }
                 }
                 catch (IOException e) {
-                    LOG.error ("Error when creating external StaticResourceHandler", e);
+                    LOG.severe ("Error when creating external StaticResourceHandler"
+                        + e.getMessage ());
                 }
             }
             externalStaticResourcesSet = true;

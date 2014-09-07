@@ -14,15 +14,12 @@
 
 package spark.route;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import static java.lang.String.format;
+import static java.util.logging.Logger.getLogger;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Logger;
 
-import org.slf4j.Logger;
 import spark.HttpMethod;
 
 /**
@@ -32,7 +29,7 @@ import spark.HttpMethod;
  */
 class SimpleRouteMatcher implements RouteMatcher {
 
-    private static final Logger LOG = getLogger (SimpleRouteMatcher.class);
+    private static final Logger LOG = getLogger (SimpleRouteMatcher.class.getName ());
     private static final char SINGLE_QUOTE = '\'';
 
     private List<RouteEntry> routes = new ArrayList<> ();
@@ -58,17 +55,20 @@ class SimpleRouteMatcher implements RouteMatcher {
                 method = HttpMethod.valueOf (httpMethod);
             }
             catch (IllegalArgumentException e) {
-                LOG.error ("The @Route value: "
-                    + route
-                    + " has an invalid HTTP method part: "
-                    + httpMethod
-                    + ".");
+                LOG.severe (
+                    "The @Route value: "
+                        + route
+                        + " has an invalid HTTP method part: "
+                        + httpMethod
+                        + ".");
                 return;
             }
             addRoute (method, url, acceptType, target);
         }
         catch (Exception e) {
-            LOG.error ("The @Route value: " + route + " is not in the correct format", e);
+            String msg = e.getMessage ();
+            LOG.severe (
+                format ("The @Route value: %s is not in the correct format: %s", route, msg));
         }
     }
 
@@ -141,7 +141,7 @@ class SimpleRouteMatcher implements RouteMatcher {
         entry.path = url;
         entry.target = target;
         entry.acceptedType = acceptedType;
-        LOG.debug ("Adds route: " + entry);
+        LOG.fine ("Adds route: " + entry);
         // Adds to end of list
         routes.add (entry);
     }

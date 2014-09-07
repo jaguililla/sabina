@@ -14,24 +14,16 @@
 
 package spark;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import static java.util.logging.Logger.getLogger;
 
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.io.CharStreams;
-import org.slf4j.Logger;
 import spark.route.RouteMatch;
 import spark.utils.SparkUtils;
 
@@ -41,7 +33,7 @@ import spark.utils.SparkUtils;
  * @author Per Wendel
  */
 public class Request {
-    private static final Logger LOG = getLogger(Request.class);
+    private static final Logger LOG = getLogger(Request.class.getName ());
     private static final String USER_AGENT = "user-agent";
 
     private static boolean isParam (String routePart) {
@@ -233,7 +225,7 @@ public class Request {
                 body = CharStreams.toString (input);
             }
             catch (Exception e) {
-                LOG.warn ("Exception when reading body", e);
+                LOG.warning ("Exception when reading body: " + e.getMessage ());
             }
         }
         return body;
@@ -424,14 +416,14 @@ public class Request {
     }
 
     private static Map<String, String> getParams (List<String> request, List<String> matched) {
-        LOG.debug ("get params");
+        LOG.fine ("get params");
 
         Map<String, String> params = new HashMap<> ();
 
         for (int i = 0; (i < request.size ()) && (i < matched.size ()); i++) {
             String matchedPart = matched.get (i);
             if (isParam (matchedPart)) {
-                LOG.debug ("matchedPart: "
+                LOG.fine ("matchedPart: "
                     + matchedPart
                     + " = "
                     + request.get (i));
@@ -442,7 +434,7 @@ public class Request {
     }
 
     private static List<String> getSplat(List<String> request, List<String> matched) {
-        LOG.debug("get splat");
+        LOG.fine("get splat");
 
         int nbrOfRequestParts = request.size();
         int nbrOfMatchedParts = matched.size();

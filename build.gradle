@@ -14,84 +14,62 @@
 
 import static JavaVersion.VERSION_1_8
 
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'java'
+subprojects {
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+    apply plugin: 'java'
 
-apply plugin: 'me.champeau.jbake'
-apply plugin: 'github-pages'
-apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
+    apply plugin: 'me.champeau.jbake'
+    apply plugin: 'github-pages'
+    apply plugin: 'jacoco'
+    apply plugin: 'com.github.kt3k.coveralls'
 
-group = 'spark'
-version = '2.0.1-SNAPSHOT'
-description = 'A Sinatra inspired java web framework'
+    group = 'spark'
+    version = '2.0.1-SNAPSHOT'
+    description = 'A Sinatra inspired Java web framework'
 
-sourceCompatibility = VERSION_1_8
-targetCompatibility = VERSION_1_8
+    sourceCompatibility = VERSION_1_8
+    targetCompatibility = VERSION_1_8
 
-jacocoTestReport {
-    reports {
-        xml.enabled = true // Coveralls plugin depends on xml format report
-        html.enabled = true
+    repositories {
+        mavenCentral ()
     }
-}
 
-test {
-    useTestNG ()
-    include 'spark/**'
-}
+    dependencies {
+        testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
+        testCompile 'org.testng:testng:6.8.8'
+        testCompile 'junit:junit:4.11'
+    }
 
-repositories {
-    mavenCentral ()
-}
+    test {
+        useTestNG ()
+        include 'spark/**'
+    }
 
-dependencies {
-    compile 'org.springframework:spring-core:4.0.6.RELEASE' // Only for Jetty
-    compile 'com.google.guava:guava:17.0' // To replace Apache commons
-    compile 'net.sf.jopt-simple:jopt-simple:4.6'
+    jacocoTestReport {
+        reports {
+            xml.enabled = true // Coveralls plugin depends on xml format report
+            html.enabled = true
+        }
+    }
 
-    // LOGGING DEPENDENCIES
-    compile 'org.slf4j:slf4j-simple:1.7.7'
+    jbake {
+        input = file("$project.projectDir/src/site")
+        output = file("$buildDir/site")
+    }
 
-    // TEMPLATE DEPENDENCIES
-    compile 'org.freemarker:freemarker:2.3.20'
-    compile 'com.samskivert:jmustache:1.9'
-    compile 'org.rythmengine:rythm-engine:1.0'
-
-    // CONTENT TYPES DEPENDENCIES
-    compile 'com.google.code.gson:gson:2.2.4'
-    compile 'org.yaml:snakeyaml:1.13'
-
-    // SECURITY
-    compile 'org.scribe:scribe:1.3.5'
-
-    // SERVER DEPENDENCIES
-    compile 'org.eclipse.jetty:jetty-webapp:9.2.0.v20140526'
-    compile 'io.undertow:undertow-servlet:1.0.15.Final'
-
-    // TESTING DEPENDENCIES
-    testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
-    testCompile 'org.testng:testng:6.8.8'
-    testCompile 'junit:junit:4.11'
+    githubPages {
+        repoUri = 'https://github.com/jamming/spark.git'
+        pages {
+            from (file ("$buildDir/site")) {
+                into '.'
+            }
+        }
+    }
 }
 
 task wrapper (type: Wrapper) {
     gradleVersion = '2.0'
-}
-
-jbake {
-    input = file("$project.projectDir/src/site")
-    output = file("$buildDir/site")
-}
-
-githubPages {
-    repoUri = 'https://github.com/jamming/spark.git'
-    pages {
-        from (file ("$buildDir/site")) {
-            into '.'
-        }
-    }
 }
 
 /*

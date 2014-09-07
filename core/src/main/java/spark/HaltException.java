@@ -21,7 +21,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
  *
  * @author Per Wendel
  */
-public class HaltException extends RuntimeException {
+public final class HaltException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public final int statusCode;

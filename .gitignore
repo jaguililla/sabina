@@ -8,8 +8,8 @@ target/
 reports/
 
 # Gradle
-/build/
-/.gradle/
+.gradle/
+build/
 
 # Eclipse
 .settings/

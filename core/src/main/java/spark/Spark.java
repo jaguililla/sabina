@@ -13,7 +13,7 @@
  */
 package spark;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import static java.util.logging.Logger.getLogger;
 import static spark.HttpMethod.*;
 import static spark.servlet.SparkFilter.configureExternalStaticResources;
 import static spark.servlet.SparkFilter.configureStaticResources;
@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
-import org.slf4j.Logger;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
 import spark.webserver.SparkServer;
@@ -53,8 +53,8 @@ import spark.webserver.SparkServerFactory;
  *
  * @author Per Wendel
  */
-public class Spark {
-    private static final Logger LOG = getLogger (Spark.class);
+public final class Spark {
+    private static final Logger LOG = getLogger (Spark.class.getName ());
     private static final int SPARK_DEFAULT_PORT = 4567;
     private static final String INIT_ERROR =
         "This must be done before route mapping has begun";
@@ -158,7 +158,7 @@ public class Spark {
             }
         }
         else {
-            LOG.warn ("Static file location has already been set");
+            LOG.warning ("Static file location has already been set");
         }
     }
 
@@ -180,7 +180,7 @@ public class Spark {
             }
         }
         else {
-            LOG.warn ("External static file location has already been set");
+            LOG.warning ("External static file location has already been set");
         }
     }
 

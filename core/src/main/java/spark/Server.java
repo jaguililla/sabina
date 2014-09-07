@@ -14,15 +14,15 @@
 
 package spark;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import static java.util.logging.Logger.getLogger;
 import static spark.servlet.SparkFilter.configureExternalStaticResources;
 import static spark.servlet.SparkFilter.configureStaticResources;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.logging.Logger;
 
-import org.slf4j.Logger;
 import spark.route.RouteMatcher;
 import spark.route.RouteMatcherFactory;
 import spark.webserver.SparkServer;
@@ -52,7 +52,7 @@ import spark.webserver.SparkServerFactory;
  * @author Per Wendel
  */
 public final class Server {
-    private static final Logger LOG = getLogger (Server.class);
+    private static final Logger LOG = getLogger (Server.class.getName ());
 
     private static final String INIT_ERROR =
         "This must be done before route mapping has begun";
@@ -65,7 +65,6 @@ public final class Server {
     }
 
     private int port = DEFAULT_PORT;
-    private boolean initialized = false;
     private String ipAddress = "0.0.0.0";
 
     private String keystoreFile;
@@ -99,9 +98,6 @@ public final class Server {
      * @param ipAddress The ipAddress.
      */
     public synchronized void setIpAddress (String ipAddress) {
-        if (initialized)
-            throw new IllegalStateException (INIT_ERROR);
-
         this.ipAddress = ipAddress;
     }
 
@@ -113,9 +109,6 @@ public final class Server {
      * @param port The port number
      */
     public synchronized void setPort (int port) {
-        if (initialized)
-            throw new IllegalStateException (INIT_ERROR);
-
         this.port = port;
     }
 
@@ -139,9 +132,6 @@ public final class Server {
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword) {
 
-        if (initialized)
-            throw new IllegalStateException (INIT_ERROR);
-
         if (keystoreFile == null)
             throw new IllegalArgumentException ("Must provide a keystore to run secured");
 
@@ -158,9 +148,6 @@ public final class Server {
      * @param folder the folder in classpath.
      */
     public synchronized void staticFileLocation (String folder) {
-        if (initialized && !runFromServlet)
-            throw new IllegalStateException (INIT_ERROR);
-
         staticFileFolder = folder.startsWith ("/")? folder.substring (1) : folder;
         if (!servletStaticLocationSet) {
             if (runFromServlet) {
@@ -169,7 +156,7 @@ public final class Server {
             }
         }
         else {
-            LOG.warn ("Static file location has already been set");
+            LOG.warning ("Static file location has already been set");
         }
     }
 
@@ -180,9 +167,6 @@ public final class Server {
      * @param externalFolder the external folder serving static files.
      */
     public synchronized void externalStaticFileLocation (String externalFolder) {
-        if (initialized && !runFromServlet)
-            throw new IllegalStateException (INIT_ERROR);
-
         externalStaticFileFolder = externalFolder;
         if (!servletExternalStaticLocationSet) {
             if (runFromServlet) {
@@ -191,26 +175,23 @@ public final class Server {
             }
         }
         else {
-            LOG.warn ("External static file location has already been set");
+            LOG.warning ("External static file location has already been set");
         }
     }
 
     private synchronized void init () {
-        if (!initialized) {
-            new Thread (() -> {
-                server = SparkServerFactory.create (hasMultipleHandlers ());
-                server.startUp (
-                    ipAddress,
-                    port,
-                    keystoreFile,
-                    keystorePassword,
-                    truststoreFile,
-                    truststorePassword,
-                    staticFileFolder,
-                    externalStaticFileFolder);
-            }).start ();
-            initialized = true;
-        }
+        new Thread (() -> {
+            server = SparkServerFactory.create (hasMultipleHandlers ());
+            server.startUp (
+                ipAddress,
+                port,
+                keystoreFile,
+                keystorePassword,
+                truststoreFile,
+                truststorePassword,
+                staticFileFolder,
+                externalStaticFileFolder);
+        }).start ();
     }
 
     private boolean hasMultipleHandlers () {
@@ -221,17 +202,12 @@ public final class Server {
      * Stops the Spark server and clears all routes
      */
     public synchronized void stop () {
-        if (server != null) {
+        if (server != null)
             server.shutDown ();
-        }
-        initialized = false;
     }
 
     public synchronized void runFromServlet () {
         runFromServlet = true;
-        if (!initialized) {
-            initialized = true;
-        }
     }
 
     protected synchronized void addRoute (Action action) {

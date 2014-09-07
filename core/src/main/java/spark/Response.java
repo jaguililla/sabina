@@ -14,14 +14,15 @@
 
 package spark;
 
+import static java.lang.String.format;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Logger.getLogger;
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides functionality for modifying the response.
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @author Per Wendel
  */
 public class Response {
-    private static final Logger LOG = LoggerFactory.getLogger(Response.class);
+    private static final Logger LOG = getLogger(Response.class.getName ());
 
     public static Response create (HttpServletResponse response) {
         return new Response (response);
@@ -96,13 +97,13 @@ public class Response {
      * @param location Where to redirect
      */
     public void redirect (String location) {
-        LOG.debug ("Redirecting ({} {} to {}", "Found", SC_FOUND, location);
+        LOG.fine (format ("Redirecting (%s %s to %s)", "Found", SC_FOUND, location));
 
         try {
             response.sendRedirect(location);
         }
         catch (IOException ioException) {
-            LOG.warn("Redirect failure", ioException);
+            LOG.warning ("Redirect failure: " + ioException.getMessage ());
         }
     }
 
@@ -113,9 +114,9 @@ public class Response {
      * @param httpStatusCode the http status code
      */
     public void redirect(String location, int httpStatusCode) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Redirecting ({} to {}", httpStatusCode, location);
-        }
+        if (LOG.isLoggable (FINE))
+            LOG.fine (format ("Redirecting (%s to %s)", httpStatusCode, location));
+
         response.setStatus(httpStatusCode);
         response.setHeader("Location", location);
         response.setHeader("Connection", "close");
@@ -123,7 +124,7 @@ public class Response {
             response.sendError(httpStatusCode);
         }
         catch (IOException e) {
-            LOG.warn("Exception when trying to redirect permanently", e);
+            LOG.warning ("Exception when trying to redirect permanently: " + e.getMessage ());
         }
     }
 
