@@ -14,8 +14,8 @@
 
 package spark;
 
-import static spark.HttpMethod.*;
-import static spark.utils.SparkUtils.ALL_PATHS;
+import static spark.HttpMethod.after;
+import static spark.HttpMethod.before;
 
 import java.util.function.Consumer;
 
@@ -27,6 +27,8 @@ import java.util.function.Consumer;
  * @author Per Wendel
  */
 public final class Filter extends Action {
+    public static final String ALL_PATHS = "+/*paths";
+
     private static final String DEFAUT_CONTENT_TYPE = "text/html";
 
     public static Filter before (Consumer<Context> handler) {

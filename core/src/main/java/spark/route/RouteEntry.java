@@ -14,6 +14,8 @@
 
 package spark.route;
 
+import static spark.Filter.ALL_PATHS;
+
 import java.util.List;
 
 import spark.HttpMethod;
@@ -32,7 +34,7 @@ class RouteEntry {
     boolean matches (HttpMethod httpMethod, String path) {
         if ((httpMethod == HttpMethod.before || httpMethod == HttpMethod.after)
             && (this.httpMethod == httpMethod)
-            && this.path.equals (SparkUtils.ALL_PATHS)) {
+            && this.path.equals (ALL_PATHS)) {
             // Is filter and matches all
             return true;
         }

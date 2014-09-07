@@ -23,11 +23,6 @@ import java.util.List;
  * @author Per Wendel
  */
 public final class SparkUtils {
-
-    public static final String ALL_PATHS = "+/*paths";
-
-    private SparkUtils () {}
-
     public static List<String> convertRouteToList (String route) {
         String[] pathArray = route.split ("/");
         List<String> path = new ArrayList<> ();
@@ -38,4 +33,6 @@ public final class SparkUtils {
         }
         return path;
     }
+
+    private SparkUtils () {}
 }

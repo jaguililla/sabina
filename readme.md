@@ -106,3 +106,7 @@ TODO
 * Manage versions
 * Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages
 * Fix documentation site styles and pages
+* Clean code:
+  * Remove SparkUtils
+  * Replace MimeParse with JDKs javax.activation.MimetypesFileTypeMap
+  * Replace Action.empty with Guava's isNullOrEmpty
