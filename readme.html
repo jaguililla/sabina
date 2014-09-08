@@ -44,12 +44,13 @@
 
 
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <a href="https://github.com/perwendel/spark">
+  <a href="https://github.com/jamming/sabina">
     <img
       style="position: absolute; top: 0; right: 0; border: 0;"
       src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
       alt="Fork me on GitHub"
-      data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+      data-canonical-src=
+        "https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
   </a>
   <div class="container">
     <div class="navbar-header">
@@ -81,10 +82,10 @@
 </div>
 <div class="container">
 
-<h2>Getting started</h2><p>Add the Spark maven dependency</p>
+<h2>Getting started</h2><p>Add the Sabina maven dependency</p>
 <pre><code class="xml">&lt;dependency&gt;
-  &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
-  &lt;artifactId&gt;spark-core&lt;/artifactId&gt;
+  &lt;groupId&gt;com.sabina&lt;/groupId&gt;
+  &lt;artifactId&gt;sabina-core&lt;/artifactId&gt;
   &lt;version&gt;2.0.0&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre><p>Start coding:</p>
@@ -97,7 +98,7 @@ public class HelloWorld {
 }
 </code></pre><h2>Ignite and view at</h2>
 <pre><code>http://localhost:4567/hello
-</code></pre><h2>Routes</h2><p>The main building block of a Spark application is a set of routes. A route is made up of three<br/>simple pieces:</p><p>A <strong>verb</strong> (<code>get</code>, <code>post</code>, <code>put</code>, <code>delete</code>, <code>head</code>, <code>trace</code>, <code>connect</code>, <code>options</code>)<br/>A <strong>path</strong> (<code>/hello</code>, <code>/users/:name</code>)<br/>A <strong>callback</strong> (<code>request -&gt; { }</code>)</p><p>NOTE! Routes are matched in the order they are defined. The first route that matches the<br/>request is invoked.</p>
+</code></pre><h2>Routes</h2><p>The main building block of a Sabina application is a set of routes. A route is made up of three<br/>simple pieces:</p><p>A <strong>verb</strong> (<code>get</code>, <code>post</code>, <code>put</code>, <code>delete</code>, <code>head</code>, <code>trace</code>, <code>connect</code>, <code>options</code>)<br/>A <strong>path</strong> (<code>/hello</code>, <code>/users/:name</code>)<br/>A <strong>callback</strong> (<code>request -&gt; { }</code>)</p><p>NOTE! Routes are matched in the order they are defined. The first route that matches the<br/>request is invoked.</p>
 <pre><code class="java">get (&quot;/&quot;, it -&gt; {
     // Show something ...
 });
@@ -172,7 +173,7 @@ response.raw ();                   // Raw response handed in by Jetty
 response.redirect (&quot;/example&quot;);    // Browser redirect to /example
 response.status (401);             // Set status code to 401
 response.type (&quot;text/xml&quot;);        // Set content type to text/xml
-</code></pre><h2>Stopping the server</h2><p>By calling the <code>stop ()</code> method the server is stopped and all routes are cleared.</p><h2>Cookies</h2><p>Handling cookies can be done via spark request and response objects.</p>
+</code></pre><h2>Stopping the server</h2><p>By calling the <code>stop ()</code> method the server is stopped and all routes are cleared.</p><h2>Cookies</h2><p>Handling cookies can be done via sabina request and response objects.</p>
 <pre><code class="java">request.cookies ();                            // Get map of all request cookies
 request.cookie (&quot;foo&quot;);                        // Access request cookie by name
   
@@ -247,16 +248,16 @@ public class JsonTransformer implements ResponseTransformer {
 }, new JsonTransformer ());
 </code></pre><h2>Views / Templates - TemplateEngine</h2><p>A TemplateViewRoute is built up by a path (for url-matching) and the template engine holding<br/>the implementation of the 'render' method.</p><p>Instead of returning the result of calling toString() as body the TemplateViewRoute returns<br/>the result of calling render method.</p><p>The primary purpose of this kind of Route is to provide a way to create generic and reusable<br/>components for rendering output using a Template Engine.</p><p>Available TemplateEngine implementations:</p><h2>Mustache</h2><p>Renders objects to HTML using the Mustache template engine.</p><p>Maven dependency:</p>
 <pre><code class="xml">&lt;dependency&gt;
-  &lt;groupId&gt;com.sparkjava&lt;/groupId&gt;
-  &lt;artifactId&gt;spark-template-mustache&lt;/artifactId&gt;
+  &lt;groupId&gt;com.sabina&lt;/groupId&gt;
+  &lt;artifactId&gt;sabina-template-mustache&lt;/artifactId&gt;
   &lt;version&gt;1.0.0&lt;/version&gt;
 &lt;/dependency&gt;&lt;/pre&gt;
-</code></pre><p>Source: <a href="https://github.com/perwendel/spark-template-engines/tree/master/spark-template-mustache">spark-template-mustache</a><br/>Code example: <a href="https://github.com/perwendel/spark-template-engines/blob/master/spark-template-mustache/src/test/java/spark/template/mustache/MustacheTemplateExample.java">spark-template-mustache example</a></p><h2>Port</h2><p>By default, Spark runs on port 4567. If you want to set another port use setPort.<br/>This has to be done before using routes and filters:</p>
-<pre><code class="java">setPort (9090); // Spark will run on port 9090
-</code></pre><h2>Embedded Web Server</h2><p>Standalone Spark runs on an embedded Jetty web server.</p><h2>Running Spark on a Web Server</h2><p>To run Spark on a web server instead of standalone first of all an implementation of the<br/>interface <code>spark.servlet.SparkApplication</code> is needed. In the <code>init()</code> method the routes should<br/>be initialized. In your <code>web.xml</code> the following filter needs to be configured:</p>
+</code></pre><p>Source: <a href="https://github.com/perwendel/sabina-template-engines/tree/master/sabina-template-mustache">sabina-template-mustache</a><br/>Code example: <a href="https://github.com/perwendel/sabina-template-engines/blob/master/sabina-template-mustache/src/test/java/sabina/template/mustache/MustacheTemplateExample.java">sabina-template-mustache example</a></p><h2>Port</h2><p>By default, Sabina runs on port 4567. If you want to set another port use setPort.<br/>This has to be done before using routes and filters:</p>
+<pre><code class="java">setPort (9090); // Sabina will run on port 9090
+</code></pre><h2>Embedded Web Server</h2><p>Standalone Sabina runs on an embedded Jetty web server.</p><h2>Running Sabina on a Web Server</h2><p>To run Sabina on a web server instead of standalone first of all an implementation of the<br/>interface <code>sabina.servlet.Sabina</code> is needed. In the <code>init()</code> method the routes should<br/>be initialized. In your <code>web.xml</code> the following filter needs to be configured:</p>
 <pre><code class="xml">&lt;filter&gt;
-  &lt;filter-name&gt;SparkFilter&lt;/filter-name&gt;
-  &lt;filter-class&gt;spark.servlet.SparkFilter&lt;/filter-class&gt;
+  &lt;filter-name&gt;SabinaFilter&lt;/filter-name&gt;
+  &lt;filter-class&gt;sabina.servlet.SabinaFilter&lt;/filter-class&gt;
   &lt;init-param&gt;
     &lt;param-name&gt;applicationClass&lt;/param-name&gt;
     &lt;param-value&gt;com.company.YourApplication&lt;/param-value&gt;
@@ -264,10 +265,10 @@ public class JsonTransformer implements ResponseTransformer {
 &lt;/filter&gt;
  
 &lt;filter-mapping&gt;
-  &lt;filter-name&gt;SparkFilter&lt;/filter-name&gt;
+  &lt;filter-name&gt;SabinaFilter&lt;/filter-name&gt;
   &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
 &lt;/filter-mapping&gt;
-</code></pre><h2>Javadoc</h2><p>Javadoc is available at <a href="https://there4.co/spark">there4.co/spark</a></p><h2>Examples</h2><p>Examples can be found on the project's page at <a href="http://github.com/jamming/spark">Github</a></p>
+</code></pre><h2>Javadoc</h2><p>Javadoc is available at <a href="https://there4.co/sabina">there4.co/sabina</a></p><h2>Examples</h2><p>Examples can be found on the project's page at <a href="http://github.com/jamming/sabina">Github</a></p>
       </div>
       <div id="push"></div>
     </div>
