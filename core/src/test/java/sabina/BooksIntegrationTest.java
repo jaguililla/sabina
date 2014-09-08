@@ -23,17 +23,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import sabina.examples.Books;
-import sabina.util.SparkTestUtil;
+import sabina.util.TestUtil;
 
 public class BooksIntegrationTest {
     private static final int PORT = 4567;
     private static final String AUTHOR = "FOO", TITLE = "BAR", NEW_TITLE = "SPARK";
 
-    private static SparkTestUtil testUtil = new SparkTestUtil (4567);
+    private static TestUtil testUtil = new TestUtil (4567);
 
     private static String id = "1";
 
-    private static SparkTestUtil.UrlResponse doMethod (String requestMethod, String path)
+    private static TestUtil.UrlResponse doMethod (String requestMethod, String path)
         throws FileNotFoundException {
 
         return testUtil.doMethod (requestMethod, path);
@@ -56,7 +56,7 @@ public class BooksIntegrationTest {
     }
 
     @Test public void createBook () throws FileNotFoundException {
-        SparkTestUtil.UrlResponse res =
+        TestUtil.UrlResponse res =
             doMethod ("POST", "/books?author=" + AUTHOR + "&title=" + TITLE);
         id = res.body.trim ();
 
@@ -68,7 +68,7 @@ public class BooksIntegrationTest {
 
     @Test public void listBooks () throws FileNotFoundException {
         createBook ();
-        SparkTestUtil.UrlResponse res = doMethod ("GET", "/books");
+        TestUtil.UrlResponse res = doMethod ("GET", "/books");
 
         assertNotNull (res);
         assertNotNull (res.body.trim ());
@@ -80,7 +80,7 @@ public class BooksIntegrationTest {
     @Test public void getBook () throws FileNotFoundException {
         // ensure there is a book
         createBook ();
-        SparkTestUtil.UrlResponse res = doMethod ("GET", "/books/" + id);
+        TestUtil.UrlResponse res = doMethod ("GET", "/books/" + id);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -95,7 +95,7 @@ public class BooksIntegrationTest {
 
     @Test public void updateBook () throws FileNotFoundException {
         createBook ();
-        SparkTestUtil.UrlResponse res = doMethod ("PUT", "/books/" + id + "?title=" + NEW_TITLE);
+        TestUtil.UrlResponse res = doMethod ("PUT", "/books/" + id + "?title=" + NEW_TITLE);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -106,7 +106,7 @@ public class BooksIntegrationTest {
 
     @Test public void getUpdatedBook () throws FileNotFoundException {
         updateBook ();
-        SparkTestUtil.UrlResponse res = doMethod ("GET", "/books/" + id);
+        TestUtil.UrlResponse res = doMethod ("GET", "/books/" + id);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -116,7 +116,7 @@ public class BooksIntegrationTest {
     }
 
     @Test public void deleteBook () throws FileNotFoundException {
-        SparkTestUtil.UrlResponse res = doMethod ("DELETE", "/books/" + id);
+        TestUtil.UrlResponse res = doMethod ("DELETE", "/books/" + id);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -126,7 +126,7 @@ public class BooksIntegrationTest {
     }
 
     @Test public void bookNotFound () throws FileNotFoundException {
-        SparkTestUtil.UrlResponse res = doMethod ("GET", "/books/" + 9999);
+        TestUtil.UrlResponse res = doMethod ("GET", "/books/" + 9999);
 
         assertNotNull (res);
         assertNotNull (res.body);

@@ -15,8 +15,8 @@ package sabina;
 
 import static java.util.logging.Logger.getLogger;
 import static sabina.HttpMethod.*;
-import static sabina.servlet.SparkFilter.configureExternalStaticResources;
-import static sabina.servlet.SparkFilter.configureStaticResources;
+import static sabina.servlet.ServletFilter.configureExternalStaticResources;
+import static sabina.servlet.ServletFilter.configureStaticResources;
 
 import java.util.HashMap;
 import java.util.Map;

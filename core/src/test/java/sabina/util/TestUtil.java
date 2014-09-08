@@ -54,7 +54,7 @@ import org.apache.http.impl.conn.ManagedHttpClientConnectionFactory;
 import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 
-public class SparkTestUtil {
+public class TestUtil {
 
     public static class UrlResponse {
         public Map<String, String> headers;
@@ -66,7 +66,7 @@ public class SparkTestUtil {
 
     private CloseableHttpClient httpClient;
 
-    public SparkTestUtil (int aPort) {
+    public TestUtil (int aPort) {
         this.port = aPort;
 
         SSLConnectionSocketFactory sslConnectionSocketFactory =

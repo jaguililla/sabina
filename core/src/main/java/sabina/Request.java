@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.io.CharStreams;
-import sabina.utils.SparkUtils;
+import sabina.utils.Utils;
 import sabina.route.RouteMatch;
 
 /**
@@ -97,8 +97,8 @@ public class Request {
     Request (RouteMatch match, HttpServletRequest request) {
         this.servletRequest = request;
 
-        List<String> requestList = SparkUtils.convertRouteToList (match.getRequestURI ());
-        List<String> matchedList = SparkUtils.convertRouteToList(match.getMatchUri());
+        List<String> requestList = Utils.convertRouteToList (match.getRequestURI ());
+        List<String> matchedList = Utils.convertRouteToList (match.getMatchUri ());
 
         params = getParams(requestList, matchedList);
         splat = getSplat(requestList, matchedList);

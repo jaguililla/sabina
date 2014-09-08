@@ -22,11 +22,11 @@ import static sabina.Sabina.*;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sabina.util.SparkTestUtil;
+import sabina.util.TestUtil;
 
 public class GenericSecureIntegrationTest {
 
-    private static SparkTestUtil testUtil = new SparkTestUtil (4560);
+    private static TestUtil testUtil = new TestUtil (4560);
 
     @AfterClass public static void shutDown () {
         stop ();
@@ -40,7 +40,7 @@ public class GenericSecureIntegrationTest {
         // respects JVM params for keystore, password
         // but offers a default included store if not.
         Sabina.setSecure (
-            SparkTestUtil.getKeyStoreLocation (), SparkTestUtil.getKeystorePassword (), null,
+            TestUtil.getKeyStoreLocation (), TestUtil.getKeystorePassword (), null,
             null);
 
         before ("/protected/*", it -> it.halt (401, "Go Away!"));
@@ -71,65 +71,65 @@ public class GenericSecureIntegrationTest {
     }
 
     @Test public void getHi () {
-        SparkTestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
+        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
         assertEquals (200, response.status);
         assertEquals ("Hello World!", response.body);
     }
 
     @Test public void hiHead () {
-        SparkTestUtil.UrlResponse response = testUtil.doMethodSecure ("HEAD", "/hi");
+        TestUtil.UrlResponse response = testUtil.doMethodSecure ("HEAD", "/hi");
         assertEquals (200, response.status);
         assertEquals ("", response.body);
     }
 
     @Test public void getHiAfterFilter () {
-        SparkTestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
+        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
         assertTrue (response.headers.get ("after").contains ("foobar"));
     }
 
     @Test public void getRoot () {
-        SparkTestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/");
+        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/");
         assertEquals (200, response.status);
         assertEquals ("Hello Root!", response.body);
     }
 
     @Test public void echoParam1 () {
-        SparkTestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/shizzy");
+        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/shizzy");
         assertEquals (200, response.status);
         assertEquals ("echo: shizzy", response.body);
     }
 
     @Test public void echoParam2 () {
-        SparkTestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/gunit");
+        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/gunit");
         assertEquals (200, response.status);
         assertEquals ("echo: gunit", response.body);
     }
 
     @Test public void echoParamWithMaj () {
-        SparkTestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/paramwithmaj/plop");
+        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/paramwithmaj/plop");
         assertEquals (200, response.status);
         assertEquals ("echo: plop", response.body);
     }
 
     @Test public void unauthorized () throws Exception {
-        SparkTestUtil.UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/protected/resource");
+        TestUtil.UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/protected/resource");
         assertTrue (urlResponse.status == 401);
     }
 
     @Test public void notFound () throws Exception {
-        SparkTestUtil.UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/no/resource");
+        TestUtil.UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/no/resource");
         assertTrue (urlResponse.status == 404);
     }
 
     @Test public void postOk () {
-        SparkTestUtil.UrlResponse response = testUtil.doMethodSecure ("POST", "/poster", "Fo shizzy");
+        TestUtil.UrlResponse response = testUtil.doMethodSecure ("POST", "/poster", "Fo shizzy");
         out.println (response.body);
         assertEquals (201, response.status);
         assertTrue (response.body.contains ("Fo shizzy"));
     }
 
     @Test public void patchOk () {
-        SparkTestUtil.UrlResponse response = testUtil.doMethodSecure ("PATCH", "/patcher", "Fo shizzy");
+        TestUtil.UrlResponse response = testUtil.doMethodSecure ("PATCH", "/patcher", "Fo shizzy");
         out.println (response.body);
         assertEquals (200, response.status);
         assertTrue (response.body.contains ("Fo shizzy"));

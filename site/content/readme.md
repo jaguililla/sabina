@@ -8,12 +8,12 @@ status=published
 Getting started
 ---------------
 
-Add the Spark maven dependency
+Add the Sabina maven dependency
 
 ```xml
 <dependency>
-  <groupId>com.sparkjava</groupId>
-  <artifactId>spark-core</artifactId>
+  <groupId>com.sabina</groupId>
+  <artifactId>sabina-core</artifactId>
   <version>2.0.0</version>
 </dependency>
 ```
@@ -40,7 +40,7 @@ Ignite and view at
 Routes
 ------
 
-The main building block of a Spark application is a set of routes. A route is made up of three
+The main building block of a Sabina application is a set of routes. A route is made up of three
 simple pieces:
 
 A **verb** (`get`, `post`, `put`, `delete`, `head`, `trace`, `connect`, `options`)
@@ -174,7 +174,7 @@ By calling the `stop ()` method the server is stopped and all routes are cleared
 Cookies
 -------
 
-Handling cookies can be done via spark request and response objects.
+Handling cookies can be done via sabina request and response objects.
 
 ```java
 request.cookies ();                            // Get map of all request cookies
@@ -377,47 +377,47 @@ Maven dependency:
 
 ```xml
 <dependency>
-  <groupId>com.sparkjava</groupId>
-  <artifactId>spark-template-mustache</artifactId>
+  <groupId>com.sabina</groupId>
+  <artifactId>sabina-template-mustache</artifactId>
   <version>1.0.0</version>
 </dependency></pre>
 ```
 
-Source: [spark-template-mustache][msrc]
-Code example: [spark-template-mustache example][mex]
+Source: [sabina-template-mustache][msrc]
+Code example: [sabina-template-mustache example][mex]
 
-[msrc]: https://github.com/perwendel/spark-template-engines/tree/master/spark-template-mustache
-[mex]: https://github.com/perwendel/spark-template-engines/blob/master/spark-template-mustache/src/test/java/spark/template/mustache/MustacheTemplateExample.java
+[msrc]: https://github.com/perwendel/sabina-template-engines/tree/master/sabina-template-mustache
+[mex]: https://github.com/perwendel/sabina-template-engines/blob/master/sabina-template-mustache/src/test/java/sabina/template/mustache/MustacheTemplateExample.java
 
 
 Port
 ----
 
-By default, Spark runs on port 4567. If you want to set another port use setPort.
+By default, Sabina runs on port 4567. If you want to set another port use setPort.
 This has to be done before using routes and filters:
 
 ```java
-setPort (9090); // Spark will run on port 9090
+setPort (9090); // Sabina will run on port 9090
 ```
 
 
 Embedded Web Server
 -------------------
 
-Standalone Spark runs on an embedded Jetty web server.
+Standalone Sabina runs on an embedded Jetty web server.
 
 
-Running Spark on a Web Server
+Running Sabina on a Web Server
 -----------------------------
 
-To run Spark on a web server instead of standalone first of all an implementation of the
-interface `spark.servlet.SparkApplication` is needed. In the `init()` method the routes should
+To run Sabina on a web server instead of standalone first of all an implementation of the
+interface `sabina.servlet.Sabina` is needed. In the `init()` method the routes should
 be initialized. In your `web.xml` the following filter needs to be configured:
 
 ```xml
 <filter>
-  <filter-name>SparkFilter</filter-name>
-  <filter-class>spark.servlet.SparkFilter</filter-class>
+  <filter-name>SabinaFilter</filter-name>
+  <filter-class>sabina.servlet.SabinaFilter</filter-class>
   <init-param>
     <param-name>applicationClass</param-name>
     <param-value>com.company.YourApplication</param-value>
@@ -425,7 +425,7 @@ be initialized. In your `web.xml` the following filter needs to be configured:
 </filter>
  
 <filter-mapping>
-  <filter-name>SparkFilter</filter-name>
+  <filter-name>SabinaFilter</filter-name>
   <url-pattern>/*</url-pattern>
 </filter-mapping>
 ```
@@ -434,11 +434,11 @@ be initialized. In your `web.xml` the following filter needs to be configured:
 Javadoc
 -------
 
-Javadoc is available at [there4.co/spark](https://there4.co/spark)
+Javadoc is available at [there4.co/sabina](https://there4.co/sabina)
 
 
 Examples
 --------
 
-Examples can be found on the project's page at [Github](http://github.com/jamming/spark)
+Examples can be found on the project's page at [Github](http://github.com/jamming/sabina)
 

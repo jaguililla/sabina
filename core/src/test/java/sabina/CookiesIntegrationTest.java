@@ -19,7 +19,7 @@ import static sabina.Sabina.*;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sabina.util.SparkTestUtil;
+import sabina.util.TestUtil;
 
 /**
  * System tests for the Cookies support.
@@ -28,7 +28,7 @@ import sabina.util.SparkTestUtil;
  */
 public class CookiesIntegrationTest {
 
-    private static SparkTestUtil testUtil = new SparkTestUtil (4568);
+    private static TestUtil testUtil = new TestUtil (4568);
 
     @BeforeClass public static void startUp () throws InterruptedException {
         setPort (testUtil.getPort ());

@@ -18,7 +18,7 @@ import static sabina.Filter.ALL_PATHS;
 
 import java.util.List;
 
-import sabina.utils.SparkUtils;
+import sabina.utils.Utils;
 import sabina.HttpMethod;
 
 /**
@@ -58,8 +58,8 @@ class RouteEntry {
         }
 
         // check params
-        List<String> thisPathList = SparkUtils.convertRouteToList (this.path);
-        List<String> pathList = SparkUtils.convertRouteToList (path);
+        List<String> thisPathList = Utils.convertRouteToList (this.path);
+        List<String> pathList = Utils.convertRouteToList (path);
 
         int thisPathSize = thisPathList.size ();
         int pathSize = pathList.size ();

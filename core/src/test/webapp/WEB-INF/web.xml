@@ -21,7 +21,7 @@
 
   <filter>
     <filter-name>TestAppFilter</filter-name>
-    <filter-class>spark.examples.TestApp</filter-class>
+    <filter-class>sabina.examples.TestApp</filter-class>
   </filter>
 
   <filter-mapping>

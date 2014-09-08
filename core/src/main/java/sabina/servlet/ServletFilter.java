@@ -41,8 +41,8 @@ import sabina.webserver.MatcherFilter;
  *
  * @author Per Wendel
  */
-public abstract class SparkFilter implements Filter {
-    private static final Logger LOG = getLogger (SparkFilter.class.getName ());
+public abstract class ServletFilter implements Filter {
+    private static final Logger LOG = getLogger (ServletFilter.class.getName ());
 
     private static final String SLASH_WILDCARD = "/*";
     private static final String SLASH = "/";

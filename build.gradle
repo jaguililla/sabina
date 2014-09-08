@@ -19,8 +19,6 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'java'
 
-    apply plugin: 'me.champeau.jbake'
-    apply plugin: 'github-pages'
     apply plugin: 'jacoco'
     apply plugin: 'com.github.kt3k.coveralls'
 
@@ -43,7 +41,7 @@ subprojects {
 
     test {
         useTestNG ()
-        include 'spark/**'
+        include 'sabina/**'
     }
 
     jacocoTestReport {
@@ -52,18 +50,21 @@ subprojects {
             html.enabled = true
         }
     }
+}
 
-    jbake {
-        input = file("$project.projectDir/src/site")
-        output = file("$buildDir/site")
-    }
+apply plugin: 'me.champeau.jbake'
+apply plugin: 'github-pages'
 
-    githubPages {
-        repoUri = 'https://github.com/jamming/sabina.git'
-        pages {
-            from (file ("$buildDir/site")) {
-                into '.'
-            }
+jbake {
+    input = file("$project.projectDir/site")
+    output = file("$buildDir/site")
+}
+
+githubPages {
+    repoUri = 'https://github.com/jamming/sabina.git'
+    pages {
+        from (file ("$buildDir/site")) {
+            into '.'
         }
     }
 }

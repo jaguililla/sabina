@@ -27,7 +27,7 @@ class FreeMarkerExample {
             attributes.put ("message", "Hello World");
 
             // The hello.ftl file is located in directory:
-            // src/test/resources/spark/examples/templateview/freemarker
+            // src/test/resources/sabina/examples/templateview/freemarker
             return renderFreeMarker ("hello.ftl", attributes);
         });
     }

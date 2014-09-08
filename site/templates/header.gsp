@@ -1,5 +1,5 @@
 <% root = content.rootpath ?: '' %>
-<% title = content.title ?: 'Spark - A small web framework for Java' %>
+<% title = content.title ?: 'Sabina - A small web framework for Java' %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +34,7 @@
   <div id="wrap">
     <p id="header">
       <img
-        src="http://raw.githubusercontent.com/jamming/spark/gh-pages/sabina-logo.png"
+        src="http://raw.githubusercontent.com/jamming/sabina/gh-pages/sabina-logo.png"
         alt="Project Logo"/>
       <h1>
         A Sinatra inspired micro web framework for quickly creating web applications in Java
