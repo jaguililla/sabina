@@ -5,7 +5,6 @@
 # Maven & Ant
 bin/
 target/
-reports/
 
 # Gradle
 .gradle/
