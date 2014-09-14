@@ -30,7 +30,7 @@ subprojects {
     targetCompatibility = VERSION_1_8
 
     repositories {
-        mavenCentral ()
+        jcenter ()
     }
 
     dependencies {
@@ -79,7 +79,6 @@ task wrapper (type: Wrapper) {
  */
 buildscript {
     repositories {
-        mavenLocal ()
         jcenter ()
     }
 
