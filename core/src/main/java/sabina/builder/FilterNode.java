@@ -25,9 +25,9 @@ import sabina.HttpMethod;
  * @author jam
  */
 public class FilterNode extends MethodNode {
-    private final Consumer<Context> handler;
+    public final Consumer<Context> handler;
 
-    FilterNode (HttpMethod aMethod, Consumer<Context> aHandler) {
+    public FilterNode (HttpMethod aMethod, Consumer<Context> aHandler) {
         super (aMethod);
 
         if (aHandler == null)

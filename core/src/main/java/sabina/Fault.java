@@ -27,6 +27,7 @@ public final class Fault<T extends Exception> {
      * @param exception Type of exception
      */
     Fault (final Class<T> exception, final BiConsumer<T, Context> handler) {
+        // TODO Check params
         exceptionClass = exception;
         this.handler = handler;
     }

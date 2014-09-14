@@ -15,18 +15,20 @@
 package sabina;
 
 import static java.util.logging.Logger.getLogger;
-import static sabina.servlet.ServletFilter.configureExternalStaticResources;
-import static sabina.servlet.ServletFilter.configureStaticResources;
+import static sabina.Route.path;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
-import sabina.route.RouteMatcherFactory;
-import sabina.webserver.SparkServerFactory;
+import sabina.builder.*;
 import sabina.route.RouteMatcher;
+import sabina.route.RouteMatcherFactory;
 import sabina.webserver.SparkServer;
+import sabina.webserver.SparkServerFactory;
 
 /**
  * The main building block of a Spark application is a set of routes. A route is
@@ -54,14 +56,62 @@ import sabina.webserver.SparkServer;
 public final class Server {
     private static final Logger LOG = getLogger (Server.class.getName ());
 
-    private static final String INIT_ERROR =
-        "This must be done before route mapping has begun";
-
     public static final int DEFAULT_PORT = 4567;
     public static final String DEFAULT_HOST = "localhost";
 
-    public static <T extends Action> void serve (T... actions) {
-        new Server (actions).init ();
+    public static Server server (Node... aHandler) {
+        return new Server (aHandler);
+    }
+
+    public static Server server (String [] aArgs, Node... aHandler) {
+        // TODO Parse args to parameters
+        return server (aHandler);
+    }
+
+    public static Server server (List<Parameter<?>> parameters, Node... aHandler) {
+        Server s = server (aHandler);
+        for (Parameter<?> p : parameters)
+            switch (p.name) {
+                case PORT:
+                    s.setPort ((Integer)p.value);
+                    break;
+                case HOST:
+                    s.setIpAddress ((String)p.value);
+                    break;
+                case KEYSTORE:
+                    s.keystoreFile = (String)p.value;
+                    break;
+                case KEYSTORE_PASSWORD:
+                    s.keystorePassword = (String)p.value;
+                    break;
+                case TRUSTSTORE:
+                    s.truststoreFile = (String)p.value;
+                    break;
+                case TRUSTSTORE_PASSWORD:
+                    s.truststorePassword = (String)p.value;
+                    break;
+                case RESOURCES_FOLDER:
+                    s.staticFileFolder = (String)p.value;
+                    break;
+                case FILES_FOLDER:
+                    s.externalStaticFileFolder = (String)p.value;
+                    break;
+                default:
+                    throw new IllegalStateException ("Not handled parameter: " + p.name);
+            }
+        return s;
+    }
+
+    public static void serve (Node... aHandler) {
+        server (aHandler).startUp ();
+    }
+
+    public static void serve (String [] aArgs, Node... aHandler) {
+        server (aArgs, aHandler).startUp ();
+    }
+
+    public static void serve (List<Parameter<?>> parameters, Node... aHandler) {
+        server (parameters, aHandler).startUp ();
     }
 
     private int port = DEFAULT_PORT;
@@ -77,18 +127,47 @@ public final class Server {
 
     private SparkServer server;
 
-    private boolean runFromServlet;
-    private boolean servletStaticLocationSet;
-    private boolean servletExternalStaticLocationSet;
-
     /** TODO Only supports one matcher! */
     private final RouteMatcher routeMatcher = RouteMatcherFactory.get ();
     /** Holds a map of Exception classes and associated handlers. */
     private final Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<> ();
 
-    public Server (Action... actions) {
+    public Server (Node... nodes) {
+        List<Action> actions = getActions (nodes);
         for (Action a : actions)
             addRoute (a);
+    }
+
+    List<Action> getActions (Node... nodes) {
+        List<Action> r = new ArrayList<> ();
+        getRules (r, path ("/", nodes));
+        return r;
+    }
+
+    // TODO Add actions of leaf nodes
+    void getRules (final List<Action> rules, final Node root) {
+        for (Node n : root.children)
+            if (n.children.isEmpty ())
+                rules.add (getAction ((MethodNode)n));
+            else
+                getRules (rules, n);
+    }
+
+    Action getAction (MethodNode node) {
+        String aContentType = "";
+        String aPath = "";
+
+        for (Node p = node.parent; p != null; p = p.parent)
+            if (p instanceof PathNode)
+                aPath = ((PathNode)p).path + aPath;
+            else if (p instanceof ContentTypeNode)
+                aContentType += ((ContentTypeNode)p).contentType;
+            else
+                throw new IllegalStateException ("Unsupported node type");
+
+        return node instanceof FilterNode?
+            new Filter (node.method, aPath, aContentType, ((FilterNode)node).handler) :
+            new Route (node.method, aPath, aContentType, ((RouteNode)node).handler);
     }
 
     /**
@@ -149,15 +228,6 @@ public final class Server {
      */
     public synchronized void staticFileLocation (String folder) {
         staticFileFolder = folder.startsWith ("/")? folder.substring (1) : folder;
-        if (!servletStaticLocationSet) {
-            if (runFromServlet) {
-                configureStaticResources (staticFileFolder);
-                servletStaticLocationSet = true;
-            }
-        }
-        else {
-            LOG.warning ("Static file location has already been set");
-        }
     }
 
     /**
@@ -168,18 +238,9 @@ public final class Server {
      */
     public synchronized void externalStaticFileLocation (String externalFolder) {
         externalStaticFileFolder = externalFolder;
-        if (!servletExternalStaticLocationSet) {
-            if (runFromServlet) {
-                configureExternalStaticResources (externalStaticFileFolder);
-                servletExternalStaticLocationSet = true;
-            }
-        }
-        else {
-            LOG.warning ("External static file location has already been set");
-        }
     }
 
-    private synchronized void init () {
+    private synchronized void startUp () {
         new Thread (() -> {
             server = SparkServerFactory.create (hasMultipleHandlers ());
             server.startUp (
@@ -204,10 +265,6 @@ public final class Server {
     public synchronized void stop () {
         if (server != null)
             server.shutDown ();
-    }
-
-    public synchronized void runFromServlet () {
-        runFromServlet = true;
     }
 
     protected synchronized void addRoute (Action action) {

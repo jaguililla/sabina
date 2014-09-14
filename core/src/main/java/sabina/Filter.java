@@ -14,10 +14,12 @@
 
 package sabina;
 
-import static sabina.HttpMethod.after;
-import static sabina.HttpMethod.before;
+import static sabina.HttpMethod.*;
 
 import java.util.function.Consumer;
+
+import sabina.builder.FilterNode;
+import sabina.builder.PathNode;
 
 /**
  * A Filter is built up by a path (for url-matching) and the implementation of the 'handle'
@@ -31,28 +33,28 @@ public final class Filter extends Action {
 
     private static final String DEFAUT_CONTENT_TYPE = "text/html";
 
-    public static Filter before (Consumer<Context> handler) {
-        return new Filter (before, handler);
+    public static FilterNode after (Consumer<Context> handler) {
+        return new FilterNode (after, handler);
     }
 
-    public static Filter before (String path, Consumer<Context> handler) {
-        return new Filter (before, path, handler);
+    public static FilterNode before (Consumer<Context> handler) {
+        return new FilterNode (before, handler);
     }
 
-    public static Filter before (String path, String acceptType, Consumer<Context> handler) {
-        return new Filter (before, path, acceptType, handler);
+    public static PathNode after (String path, Consumer<Context> handler) {
+        return Route.path (path, after (handler));
     }
 
-    public static Filter after (Consumer<Context> handler) {
-        return new Filter (after, handler);
+    public static PathNode before (String path, Consumer<Context> handler) {
+        return Route.path (path, before (handler));
     }
 
-    public static Filter after (String path, Consumer<Context> handler) {
-        return new Filter (after, path, handler);
+    public static PathNode after (String path, String contentType, Consumer<Context> handler) {
+        return Route.path (path, Route.contentType (contentType, after (handler)));
     }
 
-    public static Filter after (String path, String acceptType, Consumer<Context> handler) {
-        return new Filter (after, path, acceptType, handler);
+    public static PathNode before (String path, String contentType, Consumer<Context> handler) {
+        return Route.path (path, Route.contentType (contentType, before (handler)));
     }
 
     private final Consumer<Context> handler;

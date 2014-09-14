@@ -15,10 +15,10 @@
 package sabina.route;
 
 import static sabina.Filter.ALL_PATHS;
+import static sabina.Request.convertRouteToList;
 
 import java.util.List;
 
-import sabina.utils.Utils;
 import sabina.HttpMethod;
 
 /**
@@ -58,8 +58,8 @@ class RouteEntry {
         }
 
         // check params
-        List<String> thisPathList = Utils.convertRouteToList (this.path);
-        List<String> pathList = Utils.convertRouteToList (path);
+        List<String> thisPathList = convertRouteToList (this.path);
+        List<String> pathList = convertRouteToList (path);
 
         int thisPathSize = thisPathList.size ();
         int pathSize = pathList.size ();

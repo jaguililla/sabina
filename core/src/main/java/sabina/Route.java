@@ -14,7 +14,12 @@
 
 package sabina;
 
+import static sabina.HttpMethod.*;
+
+import java.util.function.Consumer;
 import java.util.function.Function;
+
+import sabina.builder.*;
 
 /**
  * A Route is built up by a path (for url-matching) and the implementation of the 'handle'
@@ -27,46 +32,166 @@ import java.util.function.Function;
 public final class Route extends Action {
     private static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
-    public static Route get (String path, Function<Context, Object> handler) {
-        return new Route (HttpMethod.get, path, handler);
+    /*
+     * PATHS
+     */
+    public static PathNode path (String path, Node... aNodes) {
+        return new PathNode (path, aNodes);
     }
 
-    public static Route get (
-        String path, String acceptType, Function<Context, Object> handler) {
-
-        return new Route (HttpMethod.get, path, acceptType, handler);
+    public static PathNode path (String path, Consumer<Context> handler) {
+        return path (path, Filter.before (handler));
     }
 
-    public static Route post (String path, Function<Context, Object> handler) {
-        return new Route (HttpMethod.post, path, handler);
+    /*
+     * METHODS
+     */
+    public static RouteNode connect (Function<Context, Object> handler) {
+        return new RouteNode (connect, handler);
     }
 
-    public static Route put (String path, Function<Context, Object> handler) {
-        return new Route (HttpMethod.put, path, handler);
+    public static RouteNode delete (Function<Context, Object> handler) {
+        return new RouteNode (delete, handler);
     }
 
-    public static Route patch (String path, Function<Context, Object> handler) {
-        return new Route (HttpMethod.patch, path, handler);
+    public static RouteNode get (Function<Context, Object> handler) {
+        return new RouteNode (get, handler);
     }
 
-    public static Route delete (String path, Function<Context, Object> handler) {
-        return new Route (HttpMethod.delete, path, handler);
+    public static RouteNode head (Function<Context, Object> handler) {
+        return new RouteNode (head, handler);
     }
 
-    public static Route head (String path, Function<Context, Object> handler) {
-        return new Route (HttpMethod.head, path, handler);
+    public static RouteNode options (Function<Context, Object> handler) {
+        return new RouteNode (options, handler);
     }
 
-    public static Route trace (String path, Function<Context, Object> handler) {
-        return new Route (HttpMethod.trace, path, handler);
+    public static RouteNode patch (Function<Context, Object> handler) {
+        return new RouteNode (patch, handler);
     }
 
-    public static Route connect (String path, Function<Context, Object> handler) {
-        return new Route (HttpMethod.connect, path, handler);
+    public static RouteNode post (Function<Context, Object> handler) {
+        return new RouteNode (post, handler);
     }
 
-    public static Route options (String path, Function<Context, Object> handler) {
-        return new Route (HttpMethod.options, path, handler);
+    public static RouteNode put (Function<Context, Object> handler) {
+        return new RouteNode (put, handler);
+    }
+
+    public static RouteNode trace (Function<Context, Object> handler) {
+        return new RouteNode (trace, handler);
+    }
+
+    /*
+     * CONTENT TYPES
+     */
+    public static ContentTypeNode contentType (String contentType, MethodNode... aMethods) {
+        return new ContentTypeNode (contentType, aMethods);
+    }
+
+    public static ContentTypeNode textHtml (MethodNode... aMethods) {
+        return contentType ("text/html", aMethods);
+    }
+
+    public static ContentTypeNode textPlain (MethodNode... aMethods) {
+        return contentType ("text/plain", aMethods);
+    }
+
+    public static ContentTypeNode applicationJson (MethodNode... aMethods) {
+        return contentType ("application/json", aMethods);
+    }
+
+    /*
+     * METHOD UTILITIES
+     */
+    public static PathNode connect (String path, Function<Context, Object> handler) {
+        return path (path, connect (handler));
+    }
+
+    public static PathNode delete (String path, Function<Context, Object> handler) {
+        return path (path, delete (handler));
+    }
+
+    public static PathNode get (String path, Function<Context, Object> handler) {
+        return path (path, get (handler));
+    }
+
+    public static PathNode head (String path, Function<Context, Object> handler) {
+        return path (path, head (handler));
+    }
+
+    public static PathNode options (String path, Function<Context, Object> handler) {
+        return path (path, options (handler));
+    }
+
+    public static PathNode patch (String path, Function<Context, Object> handler) {
+        return path (path, patch (handler));
+    }
+
+    public static PathNode post (String path, Function<Context, Object> handler) {
+        return path (path, post (handler));
+    }
+
+    public static PathNode put (String path, Function<Context, Object> handler) {
+        return path (path, put (handler));
+    }
+
+    public static PathNode trace (String path, Function<Context, Object> handler) {
+        return path (path, trace (handler));
+    }
+
+    public static PathNode connect (
+        String path, String contentType, Function<Context, Object> handler) {
+
+        return path (path, contentType (contentType, connect (handler)));
+    }
+
+    public static PathNode delete (
+        String path, String contentType, Function<Context, Object> handler) {
+
+        return path (path, contentType (contentType, delete (handler)));
+    }
+
+    public static PathNode get (
+        String path, String contentType, Function<Context, Object> handler) {
+
+        return path (path, contentType (contentType, get (handler)));
+    }
+
+    public static PathNode head (
+        String path, String contentType, Function<Context, Object> handler) {
+
+        return path (path, contentType (contentType, head (handler)));
+    }
+
+    public static PathNode options (
+        String path, String contentType, Function<Context, Object> handler) {
+
+        return path (path, contentType (contentType, options (handler)));
+    }
+
+    public static PathNode patch (
+        String path, String contentType, Function<Context, Object> handler) {
+
+        return path (path, contentType (contentType, patch (handler)));
+    }
+
+    public static PathNode post (
+        String path, String contentType, Function<Context, Object> handler) {
+
+        return path (path, contentType (contentType, post (handler)));
+    }
+
+    public static PathNode put (
+        String path, String contentType, Function<Context, Object> handler) {
+
+        return path (path, contentType (contentType, put (handler)));
+    }
+
+    public static PathNode trace (
+        String path, String contentType, Function<Context, Object> handler) {
+
+        return path (path, contentType (contentType, trace (handler)));
     }
 
     private final Function<Context, Object> handler;

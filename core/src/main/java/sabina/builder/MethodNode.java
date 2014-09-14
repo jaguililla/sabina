@@ -17,7 +17,7 @@ package sabina.builder;
 import sabina.HttpMethod;
 
 public class MethodNode extends Node {
-    final HttpMethod method;
+    public final HttpMethod method;
 
     MethodNode (HttpMethod aMethod) {
         if (aMethod == null)

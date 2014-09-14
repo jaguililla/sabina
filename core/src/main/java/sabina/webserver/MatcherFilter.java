@@ -18,6 +18,8 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.logging.Logger.getLogger;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static sabina.HttpMethod.after;
+import static sabina.HttpMethod.before;
 
 import java.io.IOException;
 import java.util.List;
@@ -104,7 +106,7 @@ public class MatcherFilter implements Filter {
 
         try {
             bodyContent =
-                beforeFilters (httpReq, httpRes, uri, acceptType, bodyContent, req, res);
+                onFilter (before, httpReq, httpRes, uri, acceptType, bodyContent, req, res);
 
             HttpMethod httpMethod = HttpMethod.valueOf (httpMethodStr);
 
@@ -128,7 +130,7 @@ public class MatcherFilter implements Filter {
             }
 
             bodyContent =
-                afterFilters (httpReq, httpRes, uri, acceptType, bodyContent, req, res);
+                onFilter (after, httpReq, httpRes, uri, acceptType, bodyContent, req, res);
         }
         catch (HaltException hEx) {
             LOG.fine ("halt performed");
@@ -212,61 +214,33 @@ public class MatcherFilter implements Filter {
     /*
      * After and before are the same method except for HttpMethod.after|before
      */
-    private String afterFilters (
-        HttpServletRequest aHttpRequest, HttpServletResponse aHttpResponse, String aUri,
-        String aAcceptType, String aBodyContent, RequestWrapper aReq, ResponseWrapper aRes) {
+    private String onFilter (
+        HttpMethod method, HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+        String uri, String acceptType, String bodyContent, RequestWrapper req,
+        ResponseWrapper res) {
 
         List<RouteMatch> matchSet =
-            routeMatcher.findTargetsForRequestedRoute (HttpMethod.after, aUri, aAcceptType);
+            routeMatcher.findTargetsForRequestedRoute (method, uri, acceptType);
 
         for (RouteMatch filterMatch : matchSet) {
             Object filterTarget = filterMatch.getTarget ();
             if (filterTarget instanceof sabina.Filter) {
-                Request request = Request.create (filterMatch, aHttpRequest);
-                Response response = Response.create (aHttpResponse);
+                Request request = Request.create (filterMatch, httpRequest);
+                Response response = Response.create (httpResponse);
 
-                aReq.setDelegate (request);
-                aRes.setDelegate (response);
+                req.setDelegate (request);
+                res.setDelegate (response);
 
                 sabina.Filter filter = (sabina.Filter)filterTarget;
-                filter.handle (aReq, aRes);
+                filter.handle (req, res);
 
                 String bodyAfterFilter = response.body ();
                 if (bodyAfterFilter != null) {
-                    aBodyContent = bodyAfterFilter;
+                    bodyContent = bodyAfterFilter;
                 }
             }
         }
-        return aBodyContent;
-    }
-
-    private String beforeFilters (
-        HttpServletRequest aHttpRequest, HttpServletResponse aHttpResponse, String aUri,
-        String aAcceptType, String aBodyContent, RequestWrapper aReq, ResponseWrapper aRes) {
-
-        List<RouteMatch> matchSet =
-            routeMatcher.findTargetsForRequestedRoute (HttpMethod.before, aUri, aAcceptType);
-
-        for (RouteMatch filterMatch : matchSet) {
-            Object filterTarget = filterMatch.getTarget ();
-            if (filterTarget instanceof sabina.Filter) {
-                Request request = Request.create (filterMatch, aHttpRequest);
-                Response response = Response.create (aHttpResponse);
-
-                aReq.setDelegate (request);
-                aRes.setDelegate (response);
-
-                sabina.Filter filter = (sabina.Filter)filterTarget;
-                filter.handle (aReq, aRes);
-
-                String bodyAfterFilter = response.body ();
-                if (bodyAfterFilter != null) {
-                    aBodyContent = bodyAfterFilter;
-                }
-            }
-        }
-
-        return aBodyContent;
+        return bodyContent;
     }
 
     @Override public void init (FilterConfig filterConfig) {

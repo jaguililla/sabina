@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.io.CharStreams;
-import sabina.utils.Utils;
 import sabina.route.RouteMatch;
 
 /**
@@ -46,6 +45,17 @@ public class Request {
 
     public static Request create (RouteMatch match, HttpServletRequest request) {
         return new Request (match, request);
+    }
+
+    public static List<String> convertRouteToList (String route) {
+        String[] pathArray = route.split ("/");
+        List<String> path = new ArrayList<> ();
+        for (String p : pathArray) {
+            if (p.length () > 0) {
+                path.add (p);
+            }
+        }
+        return path;
     }
 
     private Map<String, String> params;
@@ -97,8 +107,8 @@ public class Request {
     Request (RouteMatch match, HttpServletRequest request) {
         this.servletRequest = request;
 
-        List<String> requestList = Utils.convertRouteToList (match.getRequestURI ());
-        List<String> matchedList = Utils.convertRouteToList (match.getMatchUri ());
+        List<String> requestList = convertRouteToList (match.getRequestURI ());
+        List<String> matchedList = convertRouteToList (match.getMatchUri ());
 
         params = getParams(requestList, matchedList);
         splat = getSplat(requestList, matchedList);

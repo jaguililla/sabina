@@ -15,9 +15,9 @@
 package sabina.builder;
 
 public class PathNode extends Node {
-    final String path;
+    public final String path;
 
-    PathNode (String aPath, Node... aChildren) {
+    public PathNode (String aPath, Node... aChildren) {
         super (aChildren);
 
         if (aPath == null

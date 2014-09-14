@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Per Wendel. All rights reserved.
+ * Copyright © 2014 Juan José Aguililla. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -12,27 +12,16 @@
  * and limitations under the License.
  */
 
-package sabina.utils;
-
-import java.util.ArrayList;
-import java.util.List;
+package sabina.builder;
 
 /**
- * Some utility methods
+ * TODO .
  *
- * @author Per Wendel
+ * @author jam
  */
-public final class Utils {
-    public static List<String> convertRouteToList (String route) {
-        String[] pathArray = route.split ("/");
-        List<String> path = new ArrayList<> ();
-        for (String p : pathArray) {
-            if (p.length () > 0) {
-                path.add (p);
-            }
-        }
-        return path;
-    }
-
-    private Utils () {}
+public enum ParameterName {
+    PORT, HOST,
+    KEYSTORE, KEYSTORE_PASSWORD,
+    TRUSTSTORE, TRUSTSTORE_PASSWORD,
+    RESOURCES_FOLDER, FILES_FOLDER
 }

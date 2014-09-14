@@ -15,9 +15,9 @@
 package sabina.builder;
 
 public class ContentTypeNode extends Node {
-    final String contentType;
+    public final String contentType;
 
-    ContentTypeNode (String aContentType, MethodNode... aChildren) {
+    public ContentTypeNode (String aContentType, MethodNode... aChildren) {
         super (aChildren);
 
         if (aContentType == null || aContentType.isEmpty () || aChildren.length == 0)

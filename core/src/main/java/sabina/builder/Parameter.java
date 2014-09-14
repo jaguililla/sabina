@@ -14,25 +14,29 @@
 
 package sabina.builder;
 
-import java.util.function.Function;
+import static java.util.Arrays.asList;
 
-import sabina.Context;
-import sabina.HttpMethod;
+import java.util.List;
 
 /**
  * TODO .
  *
  * @author jam
  */
-public class RouteNode extends MethodNode {
-    public final Function<Context, Object> handler;
+public class Parameter<T> {
+    public final ParameterName name;
+    public final T value;
 
-    public RouteNode (HttpMethod aMethod, Function<Context, Object> aHandler) {
-        super (aMethod);
+    public static List<Parameter<?>> parameters (Parameter... parameters) {
+        return asList (parameters);
+    }
 
-        if (aHandler == null)
-            throw new IllegalArgumentException ();
+    public static <P> Parameter<P> parameter (ParameterName name, P value) {
+        return new Parameter (name, value);
+    }
 
-        handler = aHandler;
+    public Parameter (ParameterName name, T value) {
+        this.name = name;
+        this.value = value;
     }
 }
