@@ -1,13 +1,10 @@
-[![Build Img]][Build Status] [![Coverage Img]][Coverage Status] [![Scan Img]][Scan Status]
+[![Build Img]][Build Status] [![Coverage Img]][Coverage Status]
 
 [Build Img]: https://travis-ci.org/jamming/sabina.svg?branch=master
 [Build Status]: https://travis-ci.org/jamming/sabina
 
 [Coverage Img]: https://img.shields.io/coveralls/jamming/sabina.svg
 [Coverage Status]: https://coveralls.io/r/jamming/sabina
-
-[Scan Img]: https://scan.coverity.com/projects/2979/badge.svg
-[Scan Status]: https://scan.coverity.com/projects/2979
 
 
 Sabina - a Sinatra inspired web framework
