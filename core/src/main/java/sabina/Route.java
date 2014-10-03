@@ -14,6 +14,7 @@
 
 package sabina;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static sabina.HttpMethod.*;
 
 import java.util.function.Consumer;
@@ -219,7 +220,7 @@ public final class Route extends Action {
         final String acceptType,
         final Function<Context, Object> handler) {
 
-        super (method, path, acceptType);
+        super (method, path, isNullOrEmpty (acceptType)? DEFAULT_ACCEPT_TYPE : acceptType);
 
         if (handler == null)
             throw new IllegalArgumentException ();

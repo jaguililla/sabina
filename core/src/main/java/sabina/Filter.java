@@ -14,6 +14,7 @@
 
 package sabina;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static sabina.HttpMethod.*;
 
 import java.util.function.Consumer;
@@ -31,7 +32,7 @@ import sabina.builder.PathNode;
 public final class Filter extends Action {
     public static final String ALL_PATHS = "+/*paths";
 
-    private static final String DEFAUT_CONTENT_TYPE = "text/html";
+    private static final String DEFAULT_CONTENT_TYPE = "text/html";
 
     public static FilterNode after (Consumer<Context> handler) {
         return new FilterNode (after, handler);
@@ -72,7 +73,7 @@ public final class Filter extends Action {
      * @param path The filter path which is used for matching. (e.g. /hello, users/:name).
      */
     Filter (final HttpMethod method, final String path, final Consumer<Context> handler) {
-        this (method, path, DEFAUT_CONTENT_TYPE, handler);
+        this (method, path, DEFAULT_CONTENT_TYPE, handler);
     }
 
     Filter (
@@ -81,7 +82,7 @@ public final class Filter extends Action {
         final String acceptType,
         final Consumer<Context> handler) {
 
-        super (method, path, acceptType);
+        super (method, path, isNullOrEmpty (acceptType)? DEFAULT_CONTENT_TYPE : acceptType);
 
         if (handler == null)
             throw new IllegalArgumentException ();

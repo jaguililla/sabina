@@ -14,9 +14,11 @@
 
 package sabina;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.String.format;
+
 /**
  * Functionality used in both Route and Filter.
- * TODO Move empty to utilities
  *
  * @author Per Wendel
  */
@@ -26,7 +28,7 @@ abstract class Action {
     public final HttpMethod method;
 
     protected Action (final HttpMethod method, final String path, final String acceptType) {
-        if (empty (path) || empty (acceptType) || method == null)
+        if (isNullOrEmpty (path) || isNullOrEmpty (acceptType) || method == null)
             throw new IllegalArgumentException ();
 
         this.path = path;
@@ -34,5 +36,7 @@ abstract class Action {
         this.method = method;
     }
 
-    private boolean empty (String str) { return str == null || str.isEmpty (); }
+    @Override public String toString () {
+        return format ("%s %s [%s]", method, path, acceptType);
+    }
 }

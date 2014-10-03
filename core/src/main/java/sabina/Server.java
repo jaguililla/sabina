@@ -134,6 +134,7 @@ public final class Server {
 
     public Server (Node... nodes) {
         List<Action> actions = getActions (nodes);
+
         for (Action a : actions)
             addRoute (a);
     }
@@ -158,12 +159,19 @@ public final class Server {
         String aPath = "";
 
         for (Node p = node.parent; p != null; p = p.parent)
-            if (p instanceof PathNode)
-                aPath = ((PathNode)p).path + aPath;
-            else if (p instanceof ContentTypeNode)
+            // TODO Handle '/' properly at the beginning (and also at the end /b/ != /b)
+            if (p instanceof PathNode) {
+                String nodePath = ((PathNode)p).path;
+                aPath = nodePath.endsWith ("/")?
+                    nodePath + aPath :
+                    nodePath + '/' + aPath;
+            }
+            else if (p instanceof ContentTypeNode) {
                 aContentType += ((ContentTypeNode)p).contentType;
-            else
+            }
+            else {
                 throw new IllegalStateException ("Unsupported node type");
+            }
 
         return node instanceof FilterNode?
             new Filter (node.method, aPath, aContentType, ((FilterNode)node).handler) :
@@ -268,6 +276,9 @@ public final class Server {
     }
 
     protected synchronized void addRoute (Action action) {
+//        LOG.fine (">>> " + action);
+        System.out.println (">>> " + action);
+
         routeMatcher.parseValidateAddRoute (
             action.method + " '" + action.path + "'", action.acceptType, action);
     }
