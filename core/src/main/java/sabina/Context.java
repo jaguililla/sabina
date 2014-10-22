@@ -14,6 +14,8 @@
 
 package sabina;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
@@ -24,8 +26,7 @@ public final class Context {
     public final Response response;
 
     Context (final Request req, final Response res) {
-        if (req == null || res == null)
-            throw new IllegalArgumentException ();
+        checkArgument (req != null && res != null);
 
         this.request = req;
         this.response = res;

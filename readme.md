@@ -10,7 +10,7 @@
 Sabina - a Sinatra inspired web framework
 =========================================
 
-Sabina 2.0.1 is now available on Bintray!!!
+Sabina 2.0.1 is now available on [Bintray]!!! (TODO Add JCenter link)
 
 ```xml
 <dependency>
@@ -20,7 +20,9 @@ Sabina 2.0.1 is now available on Bintray!!!
 </dependency>
 ```
 
-API Docs: http://there4.co/sabina
+API Docs: http://there4.co/sabina (TODO)
+
+[Bintray]: https://bintray.com/jamming/maven/Sabina
 
 
 Getting started
@@ -31,7 +33,9 @@ import static sabina.Sabina.*;
 
 public class HelloWorld {
    public static void main (String[] args) {
-      get ("/hello", it -> "Hello World!");
+      serve (
+          get ("/hello", it -> "Hello World!");
+      )
    }
 }
 ```
@@ -81,8 +85,6 @@ Example of using Transformer.
 TODO
 ----
 
-* Add license to this readme (and to the site)
-* Add source url in the site (scm:git:git@github.com:perwendel/sabina.git)
 * Add optimize 'profile'
 * Remove duplicated tests. Ie: postOk (JUnit test method)
 * Move tests to integration tests
@@ -94,8 +96,6 @@ TODO
   * http://flywaydb.org
   * http://pholser.github.io/jopt-simple (expose a common set of options for all microservices)
 * Use https://huboard.com
-* Deploy to Maven:
-  http://benlimmer.com/2014/01/04/automatically-publish-to-sonatype-with-gradle-and-travis-ci
 * Copy Javadoc to site prior to publishing
 * Helper for multiline strings
 * Helper for JDBC
@@ -106,6 +106,7 @@ TODO
 * Manage versions
 * Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages
 * Fix documentation site styles and pages
+* Deploy releases into Bintray
 * Clean code:
   * Remove Utils
   * Replace MimeParse with JDKs javax.activation.MimetypesFileTypeMap

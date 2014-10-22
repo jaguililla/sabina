@@ -14,6 +14,7 @@
 
 package sabina;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 
@@ -28,8 +29,7 @@ abstract class Action {
     public final HttpMethod method;
 
     protected Action (final HttpMethod method, final String path, final String acceptType) {
-        if (isNullOrEmpty (path) || isNullOrEmpty (acceptType) || method == null)
-            throw new IllegalArgumentException ();
+        checkArgument (!isNullOrEmpty (path) && !isNullOrEmpty (acceptType) && method != null);
 
         this.path = path;
         this.acceptType = acceptType;

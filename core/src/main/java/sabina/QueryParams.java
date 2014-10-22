@@ -14,6 +14,8 @@
 
 package sabina;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,6 +48,10 @@ import javax.servlet.http.HttpServletRequest;
  * @author fddayan
  */
 public class QueryParams {
+    private static final class NullQueryParams extends QueryParams {
+        public NullQueryParams () { super (); }
+    }
+
     private static final QueryParams NULL = new NullQueryParams ();
 
     /** Holds the nested keys */
@@ -64,16 +70,13 @@ public class QueryParams {
      * @param request the servlet request
      */
     public QueryParams (HttpServletRequest request) {
-        if (request == null)
-            throw new IllegalArgumentException ("HttpServletRequest cannot be null.");
+        checkArgument (request != null);
 
         loadQueryString (request.getParameterMap ());
     }
 
     // Just for testing
-    QueryParams () {
-        super ();
-    }
+    QueryParams () { super (); }
 
     /**
      * Parses the key and creates the child QueryParamMaps
@@ -246,22 +249,12 @@ public class QueryParams {
     /**
      * @return the queryMap
      */
-    Map<String, QueryParams> getQueryMap () {
-        return queryMap;
-    }
+    Map<String, QueryParams> getQueryMap () { return queryMap; }
 
     /**
      * @return the values
      */
-    String[] getValues () {
-        return values;
-    }
-
-    private static final class NullQueryParams extends QueryParams {
-        public NullQueryParams () {
-            super ();
-        }
-    }
+    String[] getValues () { return values; }
 
     /**
      * @return Map representation

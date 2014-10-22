@@ -14,6 +14,8 @@
 
 package sabina;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.function.BiConsumer;
 
 public final class Fault<T extends Exception> {
@@ -27,7 +29,8 @@ public final class Fault<T extends Exception> {
      * @param exception Type of exception
      */
     Fault (final Class<T> exception, final BiConsumer<T, Context> handler) {
-        // TODO Check params
+        checkArgument (exception != null && handler != null);
+
         exceptionClass = exception;
         this.handler = handler;
     }

@@ -123,6 +123,11 @@ buildscript {
 
 def String externalProperty (String fileName, String propertyName) {
     Properties properties = new Properties ()
-    properties.load (project.rootProject.file (fileName).newDataInputStream ())
+    def file = project.rootProject.file (fileName)
+
+    if (!file.exists ())
+        return "";
+
+    properties.load (file.newDataInputStream ())
     return properties.getProperty (propertyName)
 }

@@ -14,8 +14,12 @@
 
 package sabina;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static sabina.HttpMethod.*;
+import static sabina.HttpMethod.after;
+import static sabina.HttpMethod.before;
+import static sabina.Route.contentType;
+import static sabina.Route.path;
 
 import java.util.function.Consumer;
 
@@ -31,7 +35,6 @@ import sabina.builder.PathNode;
  */
 public final class Filter extends Action {
     public static final String ALL_PATHS = "+/*paths";
-
     private static final String DEFAULT_CONTENT_TYPE = "text/html";
 
     public static FilterNode after (Consumer<Context> handler) {
@@ -43,19 +46,21 @@ public final class Filter extends Action {
     }
 
     public static PathNode after (String path, Consumer<Context> handler) {
-        return Route.path (path, after (handler));
+        return path (path, after (handler));
     }
 
     public static PathNode before (String path, Consumer<Context> handler) {
-        return Route.path (path, before (handler));
+        return path (path, before (handler));
     }
 
     public static PathNode after (String path, String contentType, Consumer<Context> handler) {
-        return Route.path (path, Route.contentType (contentType, after (handler)));
+        return path (path, contentType (contentType, after (handler)));
     }
 
-    public static PathNode before (String path, String contentType, Consumer<Context> handler) {
-        return Route.path (path, Route.contentType (contentType, before (handler)));
+    public static PathNode before (
+        String path, String contentType, Consumer<Context> handler) {
+
+        return path (path, contentType (contentType, before (handler)));
     }
 
     private final Consumer<Context> handler;
@@ -84,9 +89,7 @@ public final class Filter extends Action {
 
         super (method, path, isNullOrEmpty (acceptType)? DEFAULT_CONTENT_TYPE : acceptType);
 
-        if (handler == null)
-            throw new IllegalArgumentException ();
-
+        checkArgument (handler != null);
         this.handler = handler;
     }
 

@@ -30,7 +30,6 @@
         <li><a href="${root}why.html">Why</a></li>
         <li><a href="${root}readme.html">Readme</a></li>
         <li><a href="${root}download.html">Download</a></li>
-        <li><a href="https://github.com/jamming/sabina">Source</a></li>
         <li><a href="${root}license.html">License</a></li>
         <li><a href="${root}contact.html">Contact</a></li>
       </ul>
