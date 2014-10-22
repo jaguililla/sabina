@@ -85,9 +85,24 @@ subprojects {
 apply plugin: 'me.champeau.jbake'
 apply plugin: 'github-pages'
 
+defaultTasks 'check'
+
 jbake {
     input = file("$project.projectDir/site")
     output = file("$buildDir/site")
+}
+
+task site (dependsOn: "jbake") {
+    copy {
+        from "core/build/docs/javadoc/"
+        into "$buildDir/site/core/"
+        include ("**")
+    }
+    copy {
+        from "extra/build/docs/javadoc/"
+        into "$buildDir/site/extra/"
+        include ("**")
+    }
 }
 
 githubPages {
