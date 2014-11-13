@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Per Wendel. All rights reserved.
+ * Copyright © 2014 Juan José Aguililla. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -12,9 +12,22 @@
  * and limitations under the License.
  */
 
-package sabina.examples.exception;
+package sabina.builder;
 
-public class NotFoundException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
+import static org.testng.Assert.assertTrue;
+import static sabina.HttpMethod.*;
+
+import org.testng.annotations.Test;
+
+public class FilterNodeTest {
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void filterNodeNull () {
+        new FilterNode (get, null);
+    }
+
+    @Test public void filterNode () {
+        assertTrue (new FilterNode (after, c -> {}).handler != null);
+        assertTrue (new FilterNode (get, c -> {}).handler != null);
+    }
+
 }
-

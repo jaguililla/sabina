@@ -10,7 +10,7 @@
 Sabina - a Sinatra inspired web framework
 =========================================
 
-Sabina 2.0.1 is now available on [Bintray]!!! (TODO Add JCenter link)
+Sabina 2.0.1 is now available on [JCenter]!!! (TODO Add JCenter link)
 
 ```xml
 <dependency>
@@ -20,9 +20,9 @@ Sabina 2.0.1 is now available on [Bintray]!!! (TODO Add JCenter link)
 </dependency>
 ```
 
-API Docs: http://there4.co/sabina (TODO)
+API Docs: [Core](http://there4.co/sabina/core/) [Extra](http://there4.co/sabina/core/)
 
-[Bintray]: https://bintray.com/jamming/maven/Sabina
+[JCenter]: 
 
 
 Getting started
@@ -42,11 +42,9 @@ public class HelloWorld {
 
 View at: http://localhost:4567/hello
 
-More documentation is on the way!
-
 You can also check out the javadoc. After getting the source from github run: 
 
-    ./gradlew javadoc
+    ./gradlew javadoc site
 
 The result is put in `/build/docs/javadoc`
 
@@ -103,27 +101,23 @@ TODO
 
 * Add badges to site
 * Add social buttons to site
+* Fix documentation site styles and pages
+* Add Travis links, huboard, issues, etc.
+
 * Add optimize 'profile'
-* Remove duplicated tests. Ie: postOk (JUnit test method)
-* Move tests to integration tests
 * Create unit tests
+
 * Integrate with:
   * http://jackson.codehaus.org
   * http://metrics.codahale.com
   * http://www.jdbi.org
   * http://flywaydb.org
   * http://pholser.github.io/jopt-simple (expose a common set of options for all microservices)
-* Use https://huboard.com
-* Copy Javadoc to site prior to publishing
+  * http://redis.io
 * Helper for multiline strings
 * Helper for JDBC
-* Integrate Redis
-* Add Travis links, huboard, issues, etc.
+  
 * Example project (command to fetch and start, deployment heroku, building executable WAR)
 * Start child processes (clones) of the microservice
 * Manage versions
 * Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages
-* Fix documentation site styles and pages
-* Clean code:
-  * Remove Utils
-  * Replace MimeParse with JDKs javax.activation.MimetypesFileTypeMap

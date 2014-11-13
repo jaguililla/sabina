@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina;
+package sabina.it;
 
 import static java.lang.System.exit;
 import static java.lang.System.out;
@@ -28,7 +28,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import sabina.util.TestUtil;
 
-public class ServletTest {
+public class ServletIT {
 
     private static final String SOMEPATH = "/somepath";
     private static final int PORT = 9393;

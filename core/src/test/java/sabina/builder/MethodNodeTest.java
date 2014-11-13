@@ -14,15 +14,20 @@
 
 package sabina.builder;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static org.testng.Assert.*;
+import static sabina.HttpMethod.after;
+import static sabina.HttpMethod.get;
 
-import sabina.HttpMethod;
+import org.testng.annotations.Test;
 
-public abstract class MethodNode extends Node {
-    public final HttpMethod method;
+public class MethodNodeTest {
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void methodNodeNull () {
+        new MethodNode (null) {};
+    }
 
-    MethodNode (HttpMethod aMethod) {
-        checkArgument (aMethod != null);
-        method = aMethod;
+    @Test public void methodNode () {
+        assertEquals (new MethodNode (after) {}.method, after);
+        assertEquals (new MethodNode (get) {}.method, get);
     }
 }

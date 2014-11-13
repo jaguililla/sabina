@@ -14,15 +14,15 @@
 
 package sabina.builder;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 public class ContentTypeNode extends Node {
     public final String contentType;
 
     public ContentTypeNode (String aContentType, MethodNode... aChildren) {
         super (aChildren);
-
-        if (aContentType == null || aContentType.isEmpty () || aChildren.length == 0)
-            throw new IllegalArgumentException ();
-
+        checkArgument (!isNullOrEmpty (aContentType) && aChildren.length > 0);
         contentType = aContentType;
     }
 }

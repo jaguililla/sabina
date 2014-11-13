@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina;
+package sabina.it;
 
 import static sabina.Sabina.*;
 
@@ -26,9 +26,9 @@ import sabina.util.TestUtil;
  *
  * @author dreambrother
  */
-public class CookiesIntegrationTest {
+public class CookiesIT {
 
-    private static TestUtil testUtil = new TestUtil (4568);
+    private static TestUtil testUtil = new TestUtil ();
 
     @BeforeClass public static void startUp () throws InterruptedException {
         setPort (testUtil.getPort ());

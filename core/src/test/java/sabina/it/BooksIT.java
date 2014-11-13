@@ -12,10 +12,11 @@
  * and limitations under the License.
  */
 
-package sabina;
+package sabina.it;
 
 import static org.testng.Assert.*;
 import static sabina.Sabina.*;
+import static sabina.util.TestUtil.UrlResponse;
 
 import java.io.FileNotFoundException;
 
@@ -25,22 +26,20 @@ import org.testng.annotations.Test;
 import sabina.examples.Books;
 import sabina.util.TestUtil;
 
-public class BooksIntegrationTest {
-    private static final int PORT = 4567;
+public class BooksIT {
     private static final String AUTHOR = "FOO", TITLE = "BAR", NEW_TITLE = "SPARK";
 
-    private static TestUtil testUtil = new TestUtil (4567);
+    private static TestUtil testUtil = new TestUtil ();
 
     private static String id = "1";
 
-    private static TestUtil.UrlResponse doMethod (String requestMethod, String path)
+    private static UrlResponse doMethod (String requestMethod, String path)
         throws FileNotFoundException {
 
         return testUtil.doMethod (requestMethod, path);
     }
 
     @AfterClass public static void shutDown () throws InterruptedException {
-//        sleep (5); // Avoid stopping before processing last test
         stop ();
         testUtil.waitForShutdown ();
     }
@@ -56,7 +55,7 @@ public class BooksIntegrationTest {
     }
 
     @Test public void createBook () throws FileNotFoundException {
-        TestUtil.UrlResponse res =
+        UrlResponse res =
             doMethod ("POST", "/books?author=" + AUTHOR + "&title=" + TITLE);
         id = res.body.trim ();
 
@@ -68,7 +67,7 @@ public class BooksIntegrationTest {
 
     @Test public void listBooks () throws FileNotFoundException {
         createBook ();
-        TestUtil.UrlResponse res = doMethod ("GET", "/books");
+        UrlResponse res = doMethod ("GET", "/books");
 
         assertNotNull (res);
         assertNotNull (res.body.trim ());
@@ -80,7 +79,7 @@ public class BooksIntegrationTest {
     @Test public void getBook () throws FileNotFoundException {
         // ensure there is a book
         createBook ();
-        TestUtil.UrlResponse res = doMethod ("GET", "/books/" + id);
+        UrlResponse res = doMethod ("GET", "/books/" + id);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -95,7 +94,7 @@ public class BooksIntegrationTest {
 
     @Test public void updateBook () throws FileNotFoundException {
         createBook ();
-        TestUtil.UrlResponse res = doMethod ("PUT", "/books/" + id + "?title=" + NEW_TITLE);
+        UrlResponse res = doMethod ("PUT", "/books/" + id + "?title=" + NEW_TITLE);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -106,7 +105,7 @@ public class BooksIntegrationTest {
 
     @Test public void getUpdatedBook () throws FileNotFoundException {
         updateBook ();
-        TestUtil.UrlResponse res = doMethod ("GET", "/books/" + id);
+        UrlResponse res = doMethod ("GET", "/books/" + id);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -116,7 +115,7 @@ public class BooksIntegrationTest {
     }
 
     @Test public void deleteBook () throws FileNotFoundException {
-        TestUtil.UrlResponse res = doMethod ("DELETE", "/books/" + id);
+        UrlResponse res = doMethod ("DELETE", "/books/" + id);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -126,7 +125,7 @@ public class BooksIntegrationTest {
     }
 
     @Test public void bookNotFound () throws FileNotFoundException {
-        TestUtil.UrlResponse res = doMethod ("GET", "/books/" + 9999);
+        UrlResponse res = doMethod ("GET", "/books/" + 9999);
 
         assertNotNull (res);
         assertNotNull (res.body);

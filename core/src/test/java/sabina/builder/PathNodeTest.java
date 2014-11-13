@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Per Wendel. All rights reserved.
+ * Copyright © 2014 Juan José Aguililla. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -12,8 +12,10 @@
  * and limitations under the License.
  */
 
-package sabina.examples.exception;
+package sabina.builder;
 
-public class SubclassOfBaseException extends BaseException {
-    private static final long serialVersionUID = 1L;
+import static org.testng.Assert.*;
+
+public class PathNodeTest {
+
 }

@@ -14,6 +14,7 @@
 
 package sabina.util;
 
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static org.apache.http.conn.socket.PlainConnectionSocketFactory.INSTANCE;
 import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
@@ -55,6 +56,7 @@ import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 
 public class TestUtil {
+    public static final int PORT = 4567;
 
     public static class UrlResponse {
         public Map<String, String> headers;
@@ -65,6 +67,10 @@ public class TestUtil {
     private int port;
 
     private CloseableHttpClient httpClient;
+
+    public TestUtil () {
+        this (PORT);
+    }
 
     public TestUtil (int aPort) {
         this.port = aPort;
@@ -119,12 +125,6 @@ public class TestUtil {
 
     public UrlResponse doMethod (String requestMethod, String path, String body) {
         return doMethod (requestMethod, path, body, false, "text/html");
-    }
-
-    public UrlResponse doMethodSecure (
-        String requestMethod, String path, String body, String acceptType) {
-
-        return doMethod (requestMethod, path, body, true, acceptType);
     }
 
     public UrlResponse doMethod (
@@ -254,7 +254,7 @@ public class TestUtil {
      * keystore specified in JVM params
      */
     private SSLSocketFactory getSslFactory () {
-        KeyStore keyStore = null;
+        KeyStore keyStore;
 
         try {
             keyStore = KeyStore.getInstance (KeyStore.getDefaultType ());
@@ -281,7 +281,7 @@ public class TestUtil {
      * @return Keystore location as string
      */
     public static String getKeyStoreLocation () {
-        String keyStoreLoc = System.getProperty ("javax.net.ssl.keyStore");
+        String keyStoreLoc = getProperty ("javax.net.ssl.keyStore");
         return keyStoreLoc == null? "./src/test/resources/keystore.jks" : keyStoreLoc;
     }
 
@@ -291,7 +291,7 @@ public class TestUtil {
      * @return Keystore password as string
      */
     public static String getKeystorePassword () {
-        String password = System.getProperty ("javax.net.ssl.keyStorePassword");
+        String password = getProperty ("javax.net.ssl.keyStorePassword");
         return password == null? "password" : password;
     }
 
@@ -302,7 +302,7 @@ public class TestUtil {
      * @return truststore location as string
      */
     public static String getTrustStoreLocation () {
-        String trustStoreLoc = System.getProperty ("javax.net.ssl.trustStore");
+        String trustStoreLoc = getProperty ("javax.net.ssl.trustStore");
         return trustStoreLoc == null? getKeyStoreLocation () : trustStoreLoc;
     }
 
@@ -313,7 +313,7 @@ public class TestUtil {
      * @return truststore password as string
      */
     public static String getTrustStorePassword () {
-        String password = System.getProperty ("javax.net.ssl.trustStorePassword");
+        String password = getProperty ("javax.net.ssl.trustStorePassword");
         return password == null? getKeystorePassword () : password;
     }
 

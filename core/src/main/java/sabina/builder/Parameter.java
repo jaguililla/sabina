@@ -14,6 +14,7 @@
 
 package sabina.builder;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Arrays.asList;
 
 import java.util.List;
@@ -27,15 +28,18 @@ public class Parameter<T> {
     public final ParameterName name;
     public final T value;
 
-    public static List<Parameter<?>> parameters (Parameter... parameters) {
-        return asList (parameters);
+    public static List<Parameter<?>> parameters (Parameter<?>... parameters) {
+        checkArgument (parameters != null);
+        assert parameters != null;
+        return asList (parameters); // TODO Check 'null' elements
     }
 
     public static <P> Parameter<P> parameter (ParameterName name, P value) {
-        return new Parameter (name, value);
+        return new Parameter<> (name, value);
     }
 
     public Parameter (ParameterName name, T value) {
+        checkArgument (name != null && value != null);
         this.name = name;
         this.value = value;
     }

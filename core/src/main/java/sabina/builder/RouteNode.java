@@ -14,6 +14,8 @@
 
 package sabina.builder;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.function.Function;
 
 import sabina.Context;
@@ -29,10 +31,7 @@ public class RouteNode extends MethodNode {
 
     public RouteNode (HttpMethod aMethod, Function<Context, Object> aHandler) {
         super (aMethod);
-
-        if (aHandler == null)
-            throw new IllegalArgumentException ();
-
+        checkArgument (aHandler != null);
         handler = aHandler;
     }
 }

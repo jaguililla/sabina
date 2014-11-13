@@ -14,6 +14,8 @@
 
 package sabina.builder;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.function.Consumer;
 
 import sabina.Context;
@@ -29,25 +31,7 @@ public class FilterNode extends MethodNode {
 
     public FilterNode (HttpMethod aMethod, Consumer<Context> aHandler) {
         super (aMethod);
-
-        if (aHandler == null)
-            throw new IllegalArgumentException ();
-
+        checkArgument (aHandler != null);
         handler = aHandler;
     }
-//
-//    Rule getRule () {
-//        String aContentType = "";
-//        String aPath = "";
-//
-//        for (Node p = parent; p != null; p = p.parent)
-//            if (p instanceof PathNode)
-//                aPath = ((PathNode)p).path + aPath;
-//            else if (p instanceof ContentTypeNode)
-//                aContentType += ((ContentTypeNode)p).contentType;
-//            else
-//                throw new IllegalStateException ("Unsupported node type");
-//
-//        return new Rule (handler, method, aContentType, aPath);
-//    }
 }

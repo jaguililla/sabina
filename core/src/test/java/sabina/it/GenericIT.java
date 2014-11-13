@@ -12,12 +12,14 @@
  * and limitations under the License.
  */
 
-package sabina;
+package sabina.it;
 
+import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static sabina.Sabina.*;
+import static sabina.util.TestUtil.UrlResponse;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,11 +28,12 @@ import java.io.IOException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import sabina.Sabina;
 import sabina.util.TestUtil;
 
-public class GenericIntegrationTest {
+public class GenericIT {
 
-    private static TestUtil testUtil = new TestUtil (4569);
+    private static TestUtil testUtil = new TestUtil ();
     private static File tmpExternalFile;
 
     @AfterClass public static void shutDown () {
@@ -41,8 +44,7 @@ public class GenericIntegrationTest {
     }
 
     @BeforeClass public static void startUp () throws IOException, InterruptedException {
-        tmpExternalFile =
-            new File (System.getProperty ("java.io.tmpdir"), "externalFile.html");
+        tmpExternalFile = new File (getProperty ("java.io.tmpdir"), "externalFile.html");
 
         FileWriter writer = new FileWriter (tmpExternalFile);
         writer.write ("Content of external file");
@@ -51,12 +53,12 @@ public class GenericIntegrationTest {
 
         setPort (testUtil.getPort ());
         staticFileLocation ("/public");
-        externalStaticFileLocation (System.getProperty ("java.io.tmpdir"));
+        externalStaticFileLocation (getProperty ("java.io.tmpdir"));
 
         before ("/protected/*", it -> it.halt (401, "Go Away!"));
 
         before ("/protected/*", "application/json", it ->
-                it.halt (401, "{\"message\": \"Go Away!\"}")
+            it.halt (401, "{\"message\": \"Go Away!\"}")
         );
 
         get ("/hi", "application/json", it -> "{\"message\": \"Hello World\"}");
@@ -91,63 +93,63 @@ public class GenericIntegrationTest {
     }
 
     @Test public void filtersShouldBeAcceptTypeAware () throws Exception {
-        TestUtil.UrlResponse response =
+        UrlResponse response =
             testUtil.doMethod ("GET", "/protected/resource", null, "application/json");
         assertTrue (response.status == 401);
         assertEquals ("{\"message\": \"Go Away!\"}", response.body);
     }
 
     @Test public void routesShouldBeAcceptTypeAware () throws Exception {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/hi", null, "application/json");
+        UrlResponse response = testUtil.doMethod ("GET", "/hi", null, "application/json");
         assertEquals (200, response.status);
         assertEquals ("{\"message\": \"Hello World\"}", response.body);
     }
 
     @Test public void getHi () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/hi");
+        UrlResponse response = testUtil.doMethod ("GET", "/hi");
         assertEquals (200, response.status);
         assertEquals ("Hello World!", response.body);
     }
 
     @Test public void hiHead () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("HEAD", "/hi");
+        UrlResponse response = testUtil.doMethod ("HEAD", "/hi");
         assertEquals (200, response.status);
         assertEquals ("", response.body);
     }
 
     @Test public void getHiAfterFilter () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/hi");
+        UrlResponse response = testUtil.doMethod ("GET", "/hi");
         assertTrue (response.headers.get ("after").contains ("foobar"));
     }
 
     @Test public void getRoot () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/");
+        UrlResponse response = testUtil.doMethod ("GET", "/");
         assertEquals (200, response.status);
         assertEquals ("Hello Root!", response.body);
     }
 
     @Test public void paramAndWild () {
-        TestUtil.UrlResponse response =
+        UrlResponse response =
             testUtil.doMethod ("GET", "/paramandwild/thedude/stuff/andits");
         assertEquals (200, response.status);
         assertEquals ("paramandwild: thedudeandits", response.body);
     }
 
     @Test public void echoParam1 () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/param/shizzy");
+        UrlResponse response = testUtil.doMethod ("GET", "/param/shizzy");
         assertEquals (200, response.status);
         assertEquals ("echo: shizzy", response.body);
     }
 
     @Test public void echoParam2 () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/param/gunit");
+        UrlResponse response = testUtil.doMethod ("GET", "/param/gunit");
         assertEquals (200, response.status);
         assertEquals ("echo: gunit", response.body);
     }
 
     @Test public void echoParamWithUpperCaseInValue () {
         final String camelCased = "ThisIsAValueAndSparkShouldRetainItsUpperCasedCharacters";
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/param/" + camelCased);
+        UrlResponse response = testUtil.doMethod ("GET", "/param/" + camelCased);
         assertEquals (200, response.status);
         assertEquals ("echo: " + camelCased, response.body);
     }
@@ -170,55 +172,55 @@ public class GenericIntegrationTest {
 
     private static void assertEchoRoute (String routePart) {
         final String expected = "expected";
-        TestUtil.UrlResponse response =
+        UrlResponse response =
             testUtil.doMethod ("GET", "/tworoutes/" + routePart + "/" + expected);
         assertEquals (200, response.status);
         assertEquals (routePart + " route: " + expected, response.body);
     }
 
     @Test public void echoParamWithMaj () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/paramwithmaj/plop");
+        UrlResponse response = testUtil.doMethod ("GET", "/paramwithmaj/plop");
         assertEquals (200, response.status);
         assertEquals ("echo: plop", response.body);
     }
 
     @Test public void unauthorized () throws Exception {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/protected/resource");
+        UrlResponse response = testUtil.doMethod ("GET", "/protected/resource");
         assertTrue (response.status == 401);
     }
 
     @Test public void notFound () throws Exception {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/no/resource");
+        UrlResponse response = testUtil.doMethod ("GET", "/no/resource");
         assertTrue (response.status == 404);
     }
 
 	@Test public void fileNotFound () throws Exception {
-		TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/resource.html");
+		UrlResponse response = testUtil.doMethod ("GET", "/resource.html");
 		assertTrue (response.status == 404);
 	}
 
     @Test public void postOk () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("POST", "/poster", "Fo shizzy");
+        UrlResponse response = testUtil.doMethod ("POST", "/poster", "Fo shizzy");
         out.println (response.body);
         assertEquals (201, response.status);
         assertTrue (response.body.contains ("Fo shizzy"));
     }
 
     @Test public void patchOk () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("PATCH", "/patcher", "Fo shizzy");
+        UrlResponse response = testUtil.doMethod ("PATCH", "/patcher", "Fo shizzy");
         out.println (response.body);
         assertEquals (200, response.status);
         assertTrue (response.body.contains ("Fo shizzy"));
     }
 
     @Test public void staticFile () throws Exception {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/css/style.css");
+        UrlResponse response = testUtil.doMethod ("GET", "/css/style.css");
         assertEquals (200, response.status);
         assertEquals ("/*\n * Content of css file\n */\n", response.body);
     }
 
     @Test public void externalStaticFile () throws Exception {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", "/externalFile.html");
+        UrlResponse response = testUtil.doMethod ("GET", "/externalFile.html");
         assertEquals (200, response.status);
         assertEquals ("Content of external file", response.body);
     }

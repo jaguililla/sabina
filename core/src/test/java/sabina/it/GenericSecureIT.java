@@ -12,21 +12,24 @@
  * and limitations under the License.
  */
 
-package sabina;
+package sabina.it;
 
 import static java.lang.System.out;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static sabina.Sabina.*;
+import static sabina.util.TestUtil.UrlResponse;
+import static sabina.util.TestUtil.getKeyStoreLocation;
+import static sabina.util.TestUtil.getKeystorePassword;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import sabina.util.TestUtil;
 
-public class GenericSecureIntegrationTest {
+public class GenericSecureIT {
 
-    private static TestUtil testUtil = new TestUtil (4560);
+    private static TestUtil testUtil = new TestUtil ();
 
     @AfterClass public static void shutDown () {
         stop ();
@@ -39,9 +42,7 @@ public class GenericSecureIntegrationTest {
         // note that the keystore stuff is retrieved from SparkTestUtil which
         // respects JVM params for keystore, password
         // but offers a default included store if not.
-        Sabina.setSecure (
-            TestUtil.getKeyStoreLocation (), TestUtil.getKeystorePassword (), null,
-            null);
+        setSecure (getKeyStoreLocation (), getKeystorePassword (), null, null);
 
         before ("/protected/*", it -> it.halt (401, "Go Away!"));
 
@@ -71,65 +72,65 @@ public class GenericSecureIntegrationTest {
     }
 
     @Test public void getHi () {
-        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
+        UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
         assertEquals (200, response.status);
         assertEquals ("Hello World!", response.body);
     }
 
     @Test public void hiHead () {
-        TestUtil.UrlResponse response = testUtil.doMethodSecure ("HEAD", "/hi");
+        UrlResponse response = testUtil.doMethodSecure ("HEAD", "/hi");
         assertEquals (200, response.status);
         assertEquals ("", response.body);
     }
 
     @Test public void getHiAfterFilter () {
-        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
+        UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
         assertTrue (response.headers.get ("after").contains ("foobar"));
     }
 
     @Test public void getRoot () {
-        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/");
+        UrlResponse response = testUtil.doMethodSecure ("GET", "/");
         assertEquals (200, response.status);
         assertEquals ("Hello Root!", response.body);
     }
 
     @Test public void echoParam1 () {
-        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/shizzy");
+        UrlResponse response = testUtil.doMethodSecure ("GET", "/shizzy");
         assertEquals (200, response.status);
         assertEquals ("echo: shizzy", response.body);
     }
 
     @Test public void echoParam2 () {
-        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/gunit");
+        UrlResponse response = testUtil.doMethodSecure ("GET", "/gunit");
         assertEquals (200, response.status);
         assertEquals ("echo: gunit", response.body);
     }
 
     @Test public void echoParamWithMaj () {
-        TestUtil.UrlResponse response = testUtil.doMethodSecure ("GET", "/paramwithmaj/plop");
+        UrlResponse response = testUtil.doMethodSecure ("GET", "/paramwithmaj/plop");
         assertEquals (200, response.status);
         assertEquals ("echo: plop", response.body);
     }
 
     @Test public void unauthorized () throws Exception {
-        TestUtil.UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/protected/resource");
+        UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/protected/resource");
         assertTrue (urlResponse.status == 401);
     }
 
     @Test public void notFound () throws Exception {
-        TestUtil.UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/no/resource");
+        UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/no/resource");
         assertTrue (urlResponse.status == 404);
     }
 
     @Test public void postOk () {
-        TestUtil.UrlResponse response = testUtil.doMethodSecure ("POST", "/poster", "Fo shizzy");
+        UrlResponse response = testUtil.doMethodSecure ("POST", "/poster", "Fo shizzy");
         out.println (response.body);
         assertEquals (201, response.status);
         assertTrue (response.body.contains ("Fo shizzy"));
     }
 
     @Test public void patchOk () {
-        TestUtil.UrlResponse response = testUtil.doMethodSecure ("PATCH", "/patcher", "Fo shizzy");
+        UrlResponse response = testUtil.doMethodSecure ("PATCH", "/patcher", "Fo shizzy");
         out.println (response.body);
         assertEquals (200, response.status);
         assertTrue (response.body.contains ("Fo shizzy"));
