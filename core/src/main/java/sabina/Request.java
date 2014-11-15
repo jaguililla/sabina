@@ -14,6 +14,7 @@
 
 package sabina;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.logging.Logger.getLogger;
 
 import java.io.InputStreamReader;
@@ -93,9 +94,10 @@ public class Request {
     //    request.form_data?        # false
     //    request.referrer          # the referrer of the client or '/'
 
-    protected Request () {
-        // Used by wrapper
-    }
+    /**
+     * Used by wrapper.
+     */
+    protected Request () { super (); }
 
     /**
      * Constructor
@@ -119,7 +121,7 @@ public class Request {
      * @return a map containing all route params
      */
     public Map<String, String> params () {
-        return Collections.unmodifiableMap (params);
+        return unmodifiableMap (params);
     }
 
     /**
@@ -439,7 +441,7 @@ public class Request {
                 params.put (matchedPart.toLowerCase (), request.get (i));
             }
         }
-        return Collections.unmodifiableMap (params);
+        return unmodifiableMap (params);
     }
 
     private static List<String> getSplat(List<String> request, List<String> matched) {

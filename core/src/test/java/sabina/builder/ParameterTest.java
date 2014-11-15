@@ -15,7 +15,53 @@
 package sabina.builder;
 
 import static org.testng.Assert.*;
+import static sabina.builder.Parameter.parameter;
+import static sabina.builder.Parameter.parameters;
+import static sabina.builder.ParameterName.*;
+
+import java.util.List;
+
+import org.testng.annotations.Test;
 
 public class ParameterTest {
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void parameterWithoutName () throws Exception {
+        new Parameter<> (null, 0);
+    }
 
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void parameterWithoutValue () throws Exception {
+        new Parameter<> (FILES_FOLDER, null);
+    }
+
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void parameterWithoutNameNeitherValue () throws Exception {
+        new Parameter<> (null, null);
+    }
+
+    @Test public void parameterCreation () throws Exception {
+        Parameter<String> param = new Parameter<> (FILES_FOLDER, "_");
+        assertEquals (param.name, FILES_FOLDER);
+        assertEquals (param.value, "_");
+    }
+
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void parametersWithNulls () throws Exception {
+        parameters (
+            parameter (FILES_FOLDER, "value"),
+            null
+        );
+    }
+
+    @Test public void listOfParameters () throws Exception {
+        List<Parameter<?>> params = parameters (
+            parameter (FILES_FOLDER, "/"),
+            parameter (PORT, 6868)
+        );
+
+        assertEquals (params.get (0).name, FILES_FOLDER);
+        assertEquals (params.get (0).value, "/");
+        assertEquals (params.get (1).name, PORT);
+        assertEquals (params.get (1).value, 6868);
+    }
 }

@@ -31,7 +31,11 @@ public class Parameter<T> {
     public static List<Parameter<?>> parameters (Parameter<?>... parameters) {
         checkArgument (parameters != null);
         assert parameters != null;
-        return asList (parameters); // TODO Check 'null' elements
+
+        for (Parameter<?> p : parameters)
+            checkArgument (p != null);
+
+        return asList (parameters);
     }
 
     public static <P> Parameter<P> parameter (ParameterName name, P value) {

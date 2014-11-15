@@ -72,7 +72,7 @@ public final class Sabina {
     private static String externalStaticFileFolder;
 
     private static SparkServer server;
-    private static RouteMatcher routeMatcher;
+    public static RouteMatcher routeMatcher;
 
     private static boolean runFromServlet;
     private static boolean servletStaticLocationSet;

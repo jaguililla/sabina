@@ -18,6 +18,8 @@ import static java.lang.System.exit;
 import static java.lang.System.out;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static sabina.util.TestUtil.getBase;
+import static sabina.util.TestUtil.waitForShutdown;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -26,7 +28,9 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import sabina.Sabina;
 import sabina.util.TestUtil;
+import sabina.util.TestUtil.UrlResponse;
 
 public class ServletIT {
 
@@ -38,10 +42,11 @@ public class ServletIT {
 
     @AfterClass public static void shutDown () throws Exception {
         server.stop ();
-        TestUtil.waitForShutdown ("localhost", PORT);
+        waitForShutdown ("localhost", PORT);
     }
 
     @BeforeClass public static void startUp () {
+        Sabina.routeMatcher.clearRoutes ();
         testUtil = new TestUtil (PORT);
 
         ServerConnector connector = new ServerConnector (server);
@@ -55,7 +60,7 @@ public class ServletIT {
         WebAppContext bb = new WebAppContext ();
         bb.setServer (server);
         bb.setContextPath (SOMEPATH);
-        bb.setWar ("src/test/webapp");
+        bb.setWar (getBase () + "/test/webapp");
 
         server.setHandler (bb);
 
@@ -76,52 +81,52 @@ public class ServletIT {
     }
 
     @Test public void getHi () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/hi");
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/hi");
         assertEquals (200, response.status);
         assertEquals ("Hello World!", response.body);
     }
 
     @Test public void hiHead () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("HEAD", SOMEPATH + "/hi");
+        UrlResponse response = testUtil.doMethod ("HEAD", SOMEPATH + "/hi");
         assertEquals (200, response.status);
         assertEquals ("", response.body);
     }
 
     @Test public void getHiAfterFilter () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/hi");
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/hi");
         assertTrue (response.headers.get ("after").contains ("foobar"));
     }
 
     @Test public void getRoot () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/");
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/");
         assertEquals (200, response.status);
         assertEquals ("Hello Root!", response.body);
     }
 
     @Test public void echoParam1 () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/shizzy");
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/shizzy");
         assertEquals (200, response.status);
         assertEquals ("echo: shizzy", response.body);
     }
 
     @Test public void echoParam2 () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/gunit");
+        UrlResponse response = testUtil.doMethod ("GET", SOMEPATH + "/gunit");
         assertEquals (200, response.status);
         assertEquals ("echo: gunit", response.body);
     }
 
     @Test public void unauthorized () throws Exception {
-        TestUtil.UrlResponse urlResponse = testUtil.doMethod ("GET", SOMEPATH + "/protected/resource");
+        UrlResponse urlResponse = testUtil.doMethod ("GET", SOMEPATH + "/protected/resource");
         assertTrue (urlResponse.status == 401);
     }
 
     @Test public void notFound () throws Exception {
-        TestUtil.UrlResponse urlResponse = testUtil.doMethod ("GET", SOMEPATH + "/no/resource");
+        UrlResponse urlResponse = testUtil.doMethod ("GET", SOMEPATH + "/no/resource");
         assertTrue (urlResponse.status == 404);
     }
 
     @Test public void post () {
-        TestUtil.UrlResponse response = testUtil.doMethod ("POST", SOMEPATH + "/poster", "Fo shizzy");
+        UrlResponse response = testUtil.doMethod ("POST", SOMEPATH + "/poster", "Fo shizzy");
         out.println (response.body);
         assertEquals (201, response.status);
         assertTrue (response.body.contains ("Fo shizzy"));

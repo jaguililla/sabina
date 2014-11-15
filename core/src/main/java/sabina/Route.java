@@ -14,6 +14,7 @@
 
 package sabina;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static sabina.HttpMethod.*;
 
@@ -221,10 +222,7 @@ public final class Route extends Action {
         final Function<Context, Object> handler) {
 
         super (method, path, isNullOrEmpty (acceptType)? DEFAULT_ACCEPT_TYPE : acceptType);
-
-        if (handler == null)
-            throw new IllegalArgumentException ();
-
+        checkArgument (handler != null);
         this.handler = handler;
     }
 

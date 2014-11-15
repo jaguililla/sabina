@@ -12,20 +12,28 @@
  * and limitations under the License.
  */
 
-package sabina.builder;
+package sabina;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static org.testng.Assert.*;
+import static sabina.Route.*;
 
-public class PathNode extends Node {
-    public final String path;
+import org.testng.annotations.Test;
+import sabina.builder.Node;
 
-    public PathNode (String aPath, Node... aChildren) {
-        super (aChildren);
+public class ServerTest {
+    @Test public void getActions () {
+        Node node =
+            path ("path",
+                contentType ("html",
+                    get (con -> 200)
+                )
+            );
 
-        checkArgument (
-            aPath != null && !aPath.isEmpty () && aChildren.length > 0,
-            "Invalid path: " + aPath + " or children count: " + aChildren.length);
+        Server server = new Server ();
+        Action action = server.getActions (node).get (0);
 
-        path = aPath;
+        assertEquals (action.path, "/path");
+        assertEquals (action.acceptType, "html");
+        assertEquals (action.method, HttpMethod.get);
     }
 }

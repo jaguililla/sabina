@@ -12,39 +12,44 @@
  * and limitations under the License.
  */
 
-package sabina.builder;
+package sabina;
 
 import static org.testng.Assert.*;
+import static sabina.HttpMethod.after;
 
 import org.testng.annotations.Test;
 
-public class PathNodeTest {
+public class ActionTest {
     @Test (expectedExceptions = IllegalArgumentException.class)
-    public void pathNodeNullPath () {
-        new PathNode (null, new Node () {});
+    public void actionWithNullMethod () {
+        new Action (null, "path", "type") {};
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class)
-    public void pathNodeEmptyPath () {
-        new PathNode ("", new Node () {});
+    public void actionWithNullPath () {
+        new Action (after, null, "type") {};
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class)
-    public void pathNodeWithoutChildren () {
-        new PathNode ("path");
+    public void actionWithNullAcceptType () {
+        new Action (after, "path", null) {};
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class)
-    public void pathNodeWithNullChild () {
-        new PathNode ("path", null);
+    public void actionWithEmptyPath () {
+        new Action (after, "", "type") {};
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class)
-    public void pathNodeWithNullChildren () {
-        new PathNode ("path", null, null);
+    public void actionWithEmptyAcceptType () {
+        new Action (after, "path", "") {};
     }
 
-    @Test public void pathNode () {
-        assertEquals (new PathNode ("path", new Node () {}).path, "path");
+    @Test public void testToString () throws Exception {
+        Action action = new Action (after, "path", "type") {};
+        assertEquals (action.path, "path");
+        assertEquals (action.acceptType, "type");
+        assertEquals (action.method, after);
+        assertEquals (action.toString (), "after path [type]");
     }
 }

@@ -19,6 +19,7 @@ import static java.lang.System.out;
 import static org.apache.http.conn.socket.PlainConnectionSocketFactory.INSTANCE;
 import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -276,13 +277,22 @@ public class TestUtil {
     }
 
     /**
+     * Returns the base directory for files.
+     *
+     * @return Base directory for files.
+     */
+    public static String getBase () {
+        return new File ("./src").exists ()? "./src" : "./core/src";
+    }
+
+    /**
      * Return JVM param set keystore or default if not set.
      *
      * @return Keystore location as string
      */
     public static String getKeyStoreLocation () {
         String keyStoreLoc = getProperty ("javax.net.ssl.keyStore");
-        return keyStoreLoc == null? "./src/test/resources/keystore.jks" : keyStoreLoc;
+        return keyStoreLoc == null? getBase () + "/test/resources/keystore.jks" : keyStoreLoc;
     }
 
     /**

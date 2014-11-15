@@ -71,6 +71,7 @@ public class QueryParams {
      */
     public QueryParams (HttpServletRequest request) {
         checkArgument (request != null);
+        assert request != null;
 
         loadQueryString (request.getParameterMap ());
     }

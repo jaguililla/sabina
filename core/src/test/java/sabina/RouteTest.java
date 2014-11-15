@@ -12,20 +12,14 @@
  * and limitations under the License.
  */
 
-package sabina.builder;
+package sabina;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static org.testng.Assert.*;
 
-public class PathNode extends Node {
-    public final String path;
+import org.testng.annotations.Test;
 
-    public PathNode (String aPath, Node... aChildren) {
-        super (aChildren);
-
-        checkArgument (
-            aPath != null && !aPath.isEmpty () && aChildren.length > 0,
-            "Invalid path: " + aPath + " or children count: " + aChildren.length);
-
-        path = aPath;
+public class RouteTest {
+    @Test public void route () {
+        // TODO
     }
 }

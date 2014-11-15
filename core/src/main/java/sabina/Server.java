@@ -14,8 +14,11 @@
 
 package sabina;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.logging.Logger.getLogger;
+import static sabina.Route.get;
 import static sabina.Route.path;
+import static sabina.HttpMethod.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,15 +136,13 @@ public final class Server {
     private final Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<> ();
 
     public Server (Node... nodes) {
-        List<Action> actions = getActions (nodes);
-
-        for (Action a : actions)
-            addRoute (a);
+        checkArgument (nodes != null);
+        getActions (nodes).forEach (this::addRoute);
     }
 
     List<Action> getActions (Node... nodes) {
         List<Action> r = new ArrayList<> ();
-        getRules (r, path ("/", nodes));
+        getRules (r, nodes.length == 0? get ("/", c -> "") : path ("/", nodes));
         return r;
     }
 
@@ -162,9 +163,9 @@ public final class Server {
             // TODO Handle '/' properly at the beginning (and also at the end /b/ != /b)
             if (p instanceof PathNode) {
                 String nodePath = ((PathNode)p).path;
-                aPath = nodePath.endsWith ("/")?
-                    nodePath + aPath :
-                    nodePath + '/' + aPath;
+//                String separator = nodePath.endsWith ("/") || aPath.startsWith ("/")? "/" : "";
+//                aPath = nodePath + separator + aPath;
+                aPath = nodePath + aPath;
             }
             else if (p instanceof ContentTypeNode) {
                 aContentType += ((ContentTypeNode)p).contentType;
