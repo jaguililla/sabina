@@ -14,10 +14,13 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.get;
+import static sabina.Route.get;
+import static sabina.Server.serve;
 
 class HelloWorld {
     public static void main (String[] args) {
-        get ("/hello", it -> "Hello World!");
+        serve (
+            get ("/hello", it -> "Hello World!")
+        );
     }
 }

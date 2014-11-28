@@ -19,6 +19,9 @@ import static java.lang.String.format;
 import static java.util.logging.Logger.getLogger;
 import static sabina.Route.get;
 import static sabina.Route.path;
+import static sabina.builder.Parameter.parameter;
+import static sabina.builder.Parameter.parameters;
+import static sabina.builder.ParameterName.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -58,6 +61,10 @@ public final class Server {
 
     public static final int DEFAULT_PORT = 4567;
     public static final String DEFAULT_HOST = "localhost";
+
+    public static Server server (int port, Node... aHandler) {
+        return server (parameters (parameter (PORT, port)), aHandler);
+    }
 
     public static Server server (Node... aHandler) {
         return new Server (aHandler);
@@ -239,7 +246,7 @@ public final class Server {
         externalStaticFileFolder = externalFolder;
     }
 
-    private synchronized void startUp () {
+    public synchronized void startUp () {
         new Thread (() -> {
             server = SparkServerFactory.create (hasMultipleHandlers ());
             server.startUp (
