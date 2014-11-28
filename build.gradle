@@ -18,6 +18,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     apply plugin: 'java'
+    apply plugin: 'groovy'
 
     apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
@@ -115,7 +116,9 @@ githubPages {
 }
 
 task wrapper (type: Wrapper) {
-    gradleVersion = '2.1'
+    gradleVersion = "2.2.1"
+    jarFile = wrapperPath + "/wrapper.jar"
+    scriptFile = wrapperPath + "/gradlew"
 }
 
 /*
@@ -123,6 +126,10 @@ task wrapper (type: Wrapper) {
  * In the article uses TWO gradle files are used
  */
 buildscript {
+    ext {
+        wrapperPath = "${project.projectDir}/gradle"
+    }
+
     repositories {
         jcenter ()
     }

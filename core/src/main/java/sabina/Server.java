@@ -15,15 +15,12 @@
 package sabina;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.lang.String.format;
 import static java.util.logging.Logger.getLogger;
 import static sabina.Route.get;
 import static sabina.Route.path;
-import static sabina.HttpMethod.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
@@ -156,27 +153,34 @@ public final class Server {
     }
 
     Action getAction (MethodNode node) {
-        String aContentType = "";
-        String aPath = "";
+        String contentType = "";
+        List<String> paths = new ArrayList<> ();
 
         for (Node p = node.parent; p != null; p = p.parent)
-            // TODO Handle '/' properly at the beginning (and also at the end /b/ != /b)
-            if (p instanceof PathNode) {
-                String nodePath = ((PathNode)p).path;
-//                String separator = nodePath.endsWith ("/") || aPath.startsWith ("/")? "/" : "";
-//                aPath = nodePath + separator + aPath;
-                aPath = nodePath + aPath;
-            }
-            else if (p instanceof ContentTypeNode) {
-                aContentType += ((ContentTypeNode)p).contentType;
-            }
-            else {
+            if (p instanceof PathNode)
+                paths.add (((PathNode)p).path);
+            else if (p instanceof ContentTypeNode)
+                contentType += ((ContentTypeNode)p).contentType;
+            else
                 throw new IllegalStateException ("Unsupported node type");
-            }
 
+        // TODO Handle '/' properly at the beginning (and also at the end /b/ != /b)
+        StringBuilder builder = new StringBuilder ();
+        for (int ii = paths.size () - 1; ii >= 0; ii--) {
+            String p = paths.get (ii);
+            p = p.startsWith ("/") && p.length () > 1? p.substring (1) : p;
+            p = p.endsWith ("/") && p.length () > 1? p.substring (0, p.length () - 2) : p;
+            builder.append (p);
+            if (ii > 0)
+                builder.append ("/");
+        }
+
+        String path = builder.toString ();
+        LOG.severe (format (">>> SEGMENTS: %d", paths.size ()));
+        LOG.severe (format (">>> ADDING: %s '%s' [%s]", node.method, path, contentType));
         return node instanceof FilterNode?
-            new Filter (node.method, aPath, aContentType, ((FilterNode)node).handler) :
-            new Route (node.method, aPath, aContentType, ((RouteNode)node).handler);
+            new Filter (node.method, path, contentType, ((FilterNode)node).handler) :
+            new Route (node.method, path, contentType, ((RouteNode)node).handler);
     }
 
     /**

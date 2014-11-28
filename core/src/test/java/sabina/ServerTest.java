@@ -15,25 +15,58 @@
 package sabina;
 
 import static org.testng.Assert.*;
+import static sabina.Filter.after;
 import static sabina.Route.*;
+
+import java.util.List;
 
 import org.testng.annotations.Test;
 import sabina.builder.Node;
 
 public class ServerTest {
-    @Test public void getActions () {
-        Node node =
+    private List<Action> getActions (Node... nodes) {
+        return new Server ().getActions (nodes);
+    }
+
+    private void checkFilter (Action action, HttpMethod method, String path) {
+        checkAction (action, method, path, "text/html");
+    }
+
+    private void checkRoute (Action action, HttpMethod method, String path) {
+        checkAction (action, method, path, "*/*");
+    }
+
+    private void checkAction (Action action, HttpMethod method, String path, String type) {
+        assertEquals (action.method, method);
+        assertEquals (action.path, path);
+        assertEquals (action.acceptType, type);
+    }
+
+    @Test public void getActionsOneRoute () {
+        List<Action> actions = getActions (
+            get (con -> 200)
+        );
+
+        checkRoute (actions.get (0), HttpMethod.get, "/");
+    }
+
+    @Test public void getActionsOneFilter () {
+        List<Action> actions = getActions (
+            after (con -> {})
+        );
+
+        checkFilter (actions.get (0), HttpMethod.after, "/");
+    }
+
+    @Test public void getActionsContentType () {
+        List<Action> actions = getActions (
             path ("path",
-                contentType ("html",
+                contentType ("type",
                     get (con -> 200)
                 )
-            );
+            )
+        );
 
-        Server server = new Server ();
-        Action action = server.getActions (node).get (0);
-
-        assertEquals (action.path, "/path");
-        assertEquals (action.acceptType, "html");
-        assertEquals (action.method, HttpMethod.get);
+        checkAction (actions.get (0), HttpMethod.get, "/path", "type");
     }
 }
