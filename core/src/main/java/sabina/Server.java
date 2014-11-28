@@ -143,7 +143,6 @@ public final class Server {
         return r;
     }
 
-    // TODO Add actions of leaf nodes
     void getRules (final List<Action> rules, final Node root) {
         for (Node n : root.children)
             if (n.children.isEmpty ())
@@ -154,29 +153,16 @@ public final class Server {
 
     Action getAction (MethodNode node) {
         String contentType = "";
-        List<String> paths = new ArrayList<> ();
+        String path = "";
 
         for (Node p = node.parent; p != null; p = p.parent)
             if (p instanceof PathNode)
-                paths.add (((PathNode)p).path);
+                path = (((PathNode)p).path) + path;
             else if (p instanceof ContentTypeNode)
                 contentType += ((ContentTypeNode)p).contentType;
             else
                 throw new IllegalStateException ("Unsupported node type");
 
-        // TODO Handle '/' properly at the beginning (and also at the end /b/ != /b)
-        StringBuilder builder = new StringBuilder ();
-        for (int ii = paths.size () - 1; ii >= 0; ii--) {
-            String p = paths.get (ii);
-            p = p.startsWith ("/") && p.length () > 1? p.substring (1) : p;
-            p = p.endsWith ("/") && p.length () > 1? p.substring (0, p.length () - 2) : p;
-            builder.append (p);
-            if (ii > 0)
-                builder.append ("/");
-        }
-
-        String path = builder.toString ();
-        LOG.severe (format (">>> SEGMENTS: %d", paths.size ()));
         LOG.severe (format (">>> ADDING: %s '%s' [%s]", node.method, path, contentType));
         return node instanceof FilterNode?
             new Filter (node.method, path, contentType, ((FilterNode)node).handler) :

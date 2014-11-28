@@ -67,7 +67,7 @@ subprojects {
                 from components.java
 
                 artifact sourceJar {
-                    classifier "sources"
+                    classifier 'sources'
                 }
             }
         }
@@ -93,16 +93,16 @@ jbake {
     output = file("$buildDir/site")
 }
 
-task site (dependsOn: "jbake") {
+task site (dependsOn: 'jbake') {
     copy {
-        from "core/build/docs/javadoc/"
+        from 'core/build/docs/javadoc/'
         into "$buildDir/site/core/"
-        include ("**")
+        include ('**')
     }
     copy {
-        from "extra/build/docs/javadoc/"
+        from 'extra/build/docs/javadoc/'
         into "$buildDir/site/extra/"
-        include ("**")
+        include ('**')
     }
 }
 
@@ -116,9 +116,9 @@ githubPages {
 }
 
 task wrapper (type: Wrapper) {
-    gradleVersion = "2.2.1"
-    jarFile = wrapperPath + "/wrapper.jar"
-    scriptFile = wrapperPath + "/gradlew"
+    gradleVersion = '2.2.1'
+    jarFile = wrapperPath + '/wrapper.jar'
+    scriptFile = wrapperPath + '/gradlew'
 }
 
 /*
@@ -148,7 +148,7 @@ def String externalProperty (String fileName, String propertyName) {
     def file = project.rootProject.file (fileName)
 
     if (!file.exists ())
-        return "";
+        return '';
 
     properties.load (file.newDataInputStream ())
     return properties.getProperty (propertyName)
