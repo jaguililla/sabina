@@ -15,8 +15,6 @@ package sabina;
 
 import static java.util.logging.Logger.getLogger;
 import static sabina.HttpMethod.*;
-import static sabina.servlet.ServletFilter.configureExternalStaticResources;
-import static sabina.servlet.ServletFilter.configureStaticResources;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -73,10 +71,6 @@ public final class Sabina {
 
     private static SparkServer server;
     public static RouteMatcher routeMatcher;
-
-    private static boolean runFromServlet;
-    private static boolean servletStaticLocationSet;
-    private static boolean servletExternalStaticLocationSet;
 
     /** Holds a map of Exception classes and associated handlers. */
     private static Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<>();
@@ -147,19 +141,10 @@ public final class Sabina {
      * @param folder the folder in classpath.
      */
     public static synchronized void staticFileLocation (String folder) {
-        if (initialized && !runFromServlet)
+        if (initialized)
             throw new IllegalStateException (INIT_ERROR);
 
         staticFileFolder = folder.startsWith ("/")? folder.substring (1) : folder;
-        if (!servletStaticLocationSet) {
-            if (runFromServlet) {
-                configureStaticResources (staticFileFolder);
-                servletStaticLocationSet = true;
-            }
-        }
-        else {
-            LOG.warning ("Static file location has already been set");
-        }
     }
 
     /**
@@ -169,19 +154,10 @@ public final class Sabina {
      * @param externalFolder the external folder serving static files.
      */
     public static synchronized void externalStaticFileLocation (String externalFolder) {
-        if (initialized && !runFromServlet)
+        if (initialized)
             throw new IllegalStateException (INIT_ERROR);
 
         externalStaticFileFolder = externalFolder;
-        if (!servletExternalStaticLocationSet) {
-            if (runFromServlet) {
-                configureExternalStaticResources (externalStaticFileFolder);
-                servletExternalStaticLocationSet = true;
-            }
-        }
-        else {
-            LOG.warning ("External static file location has already been set");
-        }
     }
 
     protected static void addRoute (Action route) {
@@ -349,14 +325,6 @@ public final class Sabina {
         initialized = false;
     }
 
-    public static synchronized void runFromServlet () {
-        runFromServlet = true;
-        if (!initialized) {
-            routeMatcher = RouteMatcherFactory.get ();
-            initialized = true;
-        }
-    }
-
     /**
      * Maps an exception handler to be executed when an exception occurs during routing
      *
@@ -366,7 +334,7 @@ public final class Sabina {
     public static synchronized <T extends Exception> void exception(
         Class<T> exceptionClass, BiConsumer<T, Context> aHandler) {
 
-        Fault wrapper = new Fault<T> (exceptionClass, aHandler);
+        Fault<T> wrapper = new Fault<> (exceptionClass, aHandler);
         map (exceptionClass, wrapper);
     }
 
