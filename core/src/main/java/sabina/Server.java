@@ -15,19 +15,13 @@
 package sabina;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.logging.Logger.getLogger;
-import static sabina.Route.get;
-import static sabina.Route.path;
-import static sabina.builder.Parameter.parameter;
-import static sabina.builder.Parameter.parameters;
-import static sabina.builder.ParameterName.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
-import sabina.builder.*;
 import sabina.route.RouteMatcher;
 import sabina.route.RouteMatcherFactory;
 import sabina.webserver.SparkServer;
@@ -62,63 +56,25 @@ public final class Server {
     public static final int DEFAULT_PORT = 4567;
     public static final String DEFAULT_HOST = "localhost";
 
-    public static Server server (int port, Node... aHandler) {
-        return server (parameters (parameter (PORT, port)), aHandler);
+    public static Server server (int port, Action... aHandler) {
+        return new Server (port, aHandler);
     }
 
-    public static Server server (Node... aHandler) {
+    public static Server server (Action... aHandler) {
         return new Server (aHandler);
     }
 
-    public static Server server (String [] aArgs, Node... aHandler) {
+    public static Server server (String [] aArgs, Action... aHandler) {
         // TODO Parse args to parameters
         return server (aHandler);
     }
 
-    public static Server server (List<Parameter<?>> parameters, Node... aHandler) {
-        Server s = server (aHandler);
-        for (Parameter<?> p : parameters)
-            switch (p.name) {
-                case PORT:
-                    s.setPort ((Integer)p.value);
-                    break;
-                case HOST:
-                    s.setIpAddress ((String)p.value);
-                    break;
-                case KEYSTORE:
-                    s.keystoreFile = (String)p.value;
-                    break;
-                case KEYSTORE_PASSWORD:
-                    s.keystorePassword = (String)p.value;
-                    break;
-                case TRUSTSTORE:
-                    s.truststoreFile = (String)p.value;
-                    break;
-                case TRUSTSTORE_PASSWORD:
-                    s.truststorePassword = (String)p.value;
-                    break;
-                case RESOURCES_FOLDER:
-                    s.staticFileFolder = (String)p.value;
-                    break;
-                case FILES_FOLDER:
-                    s.externalStaticFileFolder = (String)p.value;
-                    break;
-                default:
-                    throw new IllegalStateException ("Not handled parameter: " + p.name);
-            }
-        return s;
-    }
-
-    public static void serve (Node... aHandler) {
+    public static void serve (Action... aHandler) {
         server (aHandler).startUp ();
     }
 
-    public static void serve (String [] aArgs, Node... aHandler) {
+    public static void serve (String [] aArgs, Action... aHandler) {
         server (aArgs, aHandler).startUp ();
-    }
-
-    public static void serve (List<Parameter<?>> parameters, Node... aHandler) {
-        server (parameters, aHandler).startUp ();
     }
 
     private int port = DEFAULT_PORT;
@@ -139,41 +95,15 @@ public final class Server {
     /** Holds a map of Exception classes and associated handlers. */
     private final Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<> ();
 
-    public Server (Node... nodes) {
+    public Server (int port, Action... nodes) {
+        this (nodes);
+        setPort (port);
+    }
+
+    public Server (Action... nodes) {
         checkArgument (nodes != null);
-        getActions (nodes).forEach (this::addRoute);
-    }
-
-    List<Action> getActions (Node... nodes) {
-        List<Action> r = new ArrayList<> ();
-        getRules (r, nodes.length == 0? get ("/", c -> "") : path ("/", nodes));
-        return r;
-    }
-
-    void getRules (final List<Action> rules, final Node root) {
-        for (Node n : root.children)
-            if (n.children.isEmpty ())
-                rules.add (getAction ((MethodNode)n));
-            else
-                getRules (rules, n);
-    }
-
-    Action getAction (MethodNode node) {
-        String contentType = "";
-        String path = "";
-
-        for (Node p = node.parent; p != null; p = p.parent)
-            if (p instanceof PathNode)
-                path = (((PathNode)p).path) + path;
-            else if (p instanceof ContentTypeNode)
-                contentType += ((ContentTypeNode)p).contentType;
-            else
-                throw new IllegalStateException ("Unsupported node type");
-
-        LOG.severe (format (">>> ADDING: %s '%s' [%s]", node.method, path, contentType));
-        return node instanceof FilterNode?
-            new Filter (node.method, path, contentType, ((FilterNode)node).handler) :
-            new Route (node.method, path, contentType, ((RouteNode)node).handler);
+        assert nodes != null;
+        asList (nodes).forEach (this::addRoute);
     }
 
     /**
@@ -288,7 +218,7 @@ public final class Server {
      * @param aHandler        The handler
      */
     public synchronized <T extends Exception> void exception(
-        Class<T> exceptionClass, BiConsumer<T, Context> aHandler) {
+        Class<T> exceptionClass, BiConsumer<T, Exchange> aHandler) {
 
         Fault wrapper = new Fault<> (exceptionClass, aHandler);
         map (exceptionClass, wrapper);

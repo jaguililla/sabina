@@ -190,12 +190,12 @@ public final class Sabina {
      *
      * @param aPath The route
      */
-    public static synchronized void get (String aPath, Function<Context, Object> aHandler) {
+    public static synchronized void get (String aPath, Function<Exchange, Object> aHandler) {
         addRoute (new Route (get, aPath, aHandler));
     }
 
     public static synchronized void get (
-        String aPath, String aAcceptType, Function<Context, Object> aHandler) {
+        String aPath, String aAcceptType, Function<Exchange, Object> aHandler) {
 
         addRoute (new Route (get, aPath, aAcceptType, aHandler));
     }
@@ -205,7 +205,7 @@ public final class Sabina {
      *
      * @param aPath The route
      */
-    public static synchronized void post (String aPath, Function<Context, Object> aHandler) {
+    public static synchronized void post (String aPath, Function<Exchange, Object> aHandler) {
         addRoute (new Route (post, aPath, aHandler));
     }
 
@@ -214,7 +214,7 @@ public final class Sabina {
      *
      * @param aPath The route
      */
-    public static synchronized void put (String aPath, Function<Context, Object> aHandler) {
+    public static synchronized void put (String aPath, Function<Exchange, Object> aHandler) {
         addRoute (new Route (put, aPath, aHandler));
     }
 
@@ -223,7 +223,7 @@ public final class Sabina {
      *
      * @param aPath The route
      */
-    public static synchronized void patch (String aPath, Function<Context, Object> aHandler) {
+    public static synchronized void patch (String aPath, Function<Exchange, Object> aHandler) {
         addRoute (new Route (patch, aPath, aHandler));
     }
 
@@ -232,7 +232,7 @@ public final class Sabina {
      *
      * @param aPath The route
      */
-    public static synchronized void delete (String aPath, Function<Context, Object> aHandler) {
+    public static synchronized void delete (String aPath, Function<Exchange, Object> aHandler) {
         addRoute (new Route (delete, aPath, aHandler));
     }
 
@@ -241,7 +241,7 @@ public final class Sabina {
      *
      * @param aPath The route
      */
-    public static synchronized void head (String aPath, Function<Context, Object> aHandler) {
+    public static synchronized void head (String aPath, Function<Exchange, Object> aHandler) {
         addRoute (new Route (head, aPath, aHandler));
     }
 
@@ -250,7 +250,7 @@ public final class Sabina {
      *
      * @param aPath The route
      */
-    public static synchronized void trace (String aPath, Function<Context, Object> aHandler) {
+    public static synchronized void trace (String aPath, Function<Exchange, Object> aHandler) {
         addRoute (new Route (trace, aPath, aHandler));
     }
 
@@ -260,7 +260,7 @@ public final class Sabina {
      * @param aPath The route
      */
     public static synchronized void connect (
-        String aPath, Function<Context, Object> aHandler) {
+        String aPath, Function<Exchange, Object> aHandler) {
 
         addRoute (new Route (connect, aPath, aHandler));
     }
@@ -271,7 +271,7 @@ public final class Sabina {
      * @param aPath The route
      */
     public static synchronized void options (
-        String aPath, Function<Context, Object> aHandler) {
+        String aPath, Function<Exchange, Object> aHandler) {
 
         addRoute (new Route (options, aPath, aHandler));
     }
@@ -281,16 +281,16 @@ public final class Sabina {
      *
      * @param aHandler The filter
      */
-    public static synchronized void before (Consumer<Context> aHandler) {
+    public static synchronized void before (Consumer<Exchange> aHandler) {
         addRoute (new Filter (before, aHandler));
     }
 
-    public static synchronized void before (String aPath, Consumer<Context> aHandler) {
+    public static synchronized void before (String aPath, Consumer<Exchange> aHandler) {
         addRoute (new Filter (before, aPath, aHandler));
     }
 
     public static synchronized void before (
-        String aPath, String aAcceptType, Consumer<Context> aHandler) {
+        String aPath, String aAcceptType, Consumer<Exchange> aHandler) {
 
         addRoute (new Filter (before, aPath, aAcceptType, aHandler));
     }
@@ -300,16 +300,16 @@ public final class Sabina {
      *
      * @param aHandler The filter
      */
-    public static synchronized void after (Consumer<Context> aHandler) {
+    public static synchronized void after (Consumer<Exchange> aHandler) {
         addRoute (new Filter (after, aHandler));
     }
 
-    public static synchronized void after (String aPath, Consumer<Context> aHandler) {
+    public static synchronized void after (String aPath, Consumer<Exchange> aHandler) {
         addRoute (new Filter (after, aPath, aHandler));
     }
 
     public static synchronized void after (
-        String aPath, String aAcceptType, Consumer<Context> aHandler) {
+        String aPath, String aAcceptType, Consumer<Exchange> aHandler) {
 
         addRoute (new Filter (after, aPath, aAcceptType, aHandler));
     }
@@ -332,7 +332,7 @@ public final class Sabina {
      * @param aHandler        The handler
      */
     public static synchronized <T extends Exception> void exception(
-        Class<T> exceptionClass, BiConsumer<T, Context> aHandler) {
+        Class<T> exceptionClass, BiConsumer<T, Exchange> aHandler) {
 
         Fault<T> wrapper = new Fault<> (exceptionClass, aHandler);
         map (exceptionClass, wrapper);

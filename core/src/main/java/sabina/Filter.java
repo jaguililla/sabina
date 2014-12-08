@@ -18,13 +18,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static sabina.HttpMethod.after;
 import static sabina.HttpMethod.before;
-import static sabina.Route.contentType;
-import static sabina.Route.path;
 
 import java.util.function.Consumer;
-
-import sabina.builder.FilterNode;
-import sabina.builder.PathNode;
 
 /**
  * A Filter is built up by a path (for url-matching) and the implementation of the 'handle'
@@ -37,38 +32,38 @@ public final class Filter extends Action {
     public static final String ALL_PATHS = "+/*paths";
     private static final String DEFAULT_CONTENT_TYPE = "text/html";
 
-    public static FilterNode after (Consumer<Context> handler) {
-        return new FilterNode (after, handler);
+    public static Filter after (Consumer<Exchange> handler) {
+        return new Filter (after, handler);
     }
 
-    public static FilterNode before (Consumer<Context> handler) {
-        return new FilterNode (before, handler);
+    public static Filter before (Consumer<Exchange> handler) {
+        return new Filter (before, handler);
     }
 
-    public static PathNode after (String path, Consumer<Context> handler) {
-        return path (path, after (handler));
+    public static Filter after (String path, Consumer<Exchange> handler) {
+        return new Filter (after, path, handler);
     }
 
-    public static PathNode before (String path, Consumer<Context> handler) {
-        return path (path, before (handler));
+    public static Filter before (String path, Consumer<Exchange> handler) {
+        return new Filter (before, path, handler);
     }
 
-    public static PathNode after (String path, String contentType, Consumer<Context> handler) {
-        return path (path, contentType (contentType, after (handler)));
+    public static Filter after (String path, String contentType, Consumer<Exchange> handler) {
+        return new Filter (after, path, contentType, handler);
     }
 
-    public static PathNode before (
-        String path, String contentType, Consumer<Context> handler) {
+    public static Filter before (
+        String path, String contentType, Consumer<Exchange> handler) {
 
-        return path (path, contentType (contentType, before (handler)));
+        return new Filter (before, path, contentType, handler);
     }
 
-    private final Consumer<Context> handler;
+    private final Consumer<Exchange> handler;
 
     /**
      * Constructs a filter that matches on everything.
      */
-    Filter (final HttpMethod method, final Consumer<Context> handler) {
+    Filter (final HttpMethod method, final Consumer<Exchange> handler) {
         this (method, ALL_PATHS, handler);
     }
 
@@ -77,7 +72,7 @@ public final class Filter extends Action {
      *
      * @param path The filter path which is used for matching. (e.g. /hello, users/:name).
      */
-    Filter (final HttpMethod method, final String path, final Consumer<Context> handler) {
+    Filter (final HttpMethod method, final String path, final Consumer<Exchange> handler) {
         this (method, path, DEFAULT_CONTENT_TYPE, handler);
     }
 
@@ -85,7 +80,7 @@ public final class Filter extends Action {
         final HttpMethod method,
         final String path,
         final String acceptType,
-        final Consumer<Context> handler) {
+        final Consumer<Exchange> handler) {
 
         super (method, path, isNullOrEmpty (acceptType)? DEFAULT_CONTENT_TYPE : acceptType);
 
@@ -100,6 +95,6 @@ public final class Filter extends Action {
      * @param res The response object providing functionality for modifying the response.
      */
     public void handle (Request req, Response res) {
-        handler.accept (new Context (req, res));
+        handler.accept (new Exchange (req, res));
     }
 }

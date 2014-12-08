@@ -14,13 +14,8 @@
 
 package sabina.it;
 
-import static java.util.Arrays.asList;
 import static sabina.Route.post;
-import static sabina.Server.serve;
 import static sabina.Server.server;
-import static sabina.builder.Parameter.parameters;
-import static sabina.builder.ParameterName.*;
-import static sabina.builder.Parameter.parameter;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

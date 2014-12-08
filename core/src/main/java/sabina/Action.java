@@ -23,7 +23,7 @@ import static java.lang.String.format;
  *
  * @author Per Wendel
  */
-abstract class Action {
+public abstract class Action {
     public final String path;
     public final String acceptType;
     public final HttpMethod method;

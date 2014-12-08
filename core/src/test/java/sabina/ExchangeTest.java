@@ -19,33 +19,33 @@ import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
-public class ContextTest {
+public class ExchangeTest {
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void contextWithNullRequest () {
-        new Context (null, new Response ());
+        new Exchange (null, new Response ());
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void contextWithNullResponse () {
-        new Context (new Request (), null);
+        new Exchange (new Request (), null);
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void contextWithNullRequestAndResponse () {
-        new Context (null, null);
+        new Exchange (null, null);
     }
 
     @Test public void validContext () {
-        Context context = new Context (new Request (), new Response ());
-        assertTrue (context.request != null);
-        assertTrue (context.response != null);
+        Exchange exchange = new Exchange (new Request (), new Response ());
+        assertTrue (exchange.request != null);
+        assertTrue (exchange.response != null);
     }
 
     @Test (expectedExceptions = HaltException.class)
     public void halt () {
         try {
-            Context context = new Context (new Request (), new Response ());
-            context.halt ();
+            Exchange exchange = new Exchange (new Request (), new Response ());
+            exchange.halt ();
         }
         catch (HaltException he) {
             assertEquals (he.statusCode, SC_OK);
@@ -57,8 +57,8 @@ public class ContextTest {
     @Test (expectedExceptions = HaltException.class)
     public void haltStatus () {
         try {
-            Context context = new Context (new Request (), new Response ());
-            context.halt (SC_ACCEPTED);
+            Exchange exchange = new Exchange (new Request (), new Response ());
+            exchange.halt (SC_ACCEPTED);
         }
         catch (HaltException he) {
             assertEquals (he.statusCode, SC_ACCEPTED);
@@ -69,15 +69,15 @@ public class ContextTest {
 
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void haltInvalidStatus () {
-        Context context = new Context (new Request (), new Response ());
-        context.halt (99);
+        Exchange exchange = new Exchange (new Request (), new Response ());
+        exchange.halt (99);
     }
 
     @Test (expectedExceptions = HaltException.class)
     public void haltBody () {
         try {
-            Context context = new Context (new Request (), new Response ());
-            context.halt ("body");
+            Exchange exchange = new Exchange (new Request (), new Response ());
+            exchange.halt ("body");
         }
         catch (HaltException he) {
             assertEquals (he.statusCode, SC_OK);
@@ -89,8 +89,8 @@ public class ContextTest {
     @Test (expectedExceptions = HaltException.class)
     public void haltStatusAndBody () {
         try {
-            Context context = new Context (new Request (), new Response ());
-            context.halt (SC_ACCEPTED, "body");
+            Exchange exchange = new Exchange (new Request (), new Response ());
+            exchange.halt (SC_ACCEPTED, "body");
         }
         catch (HaltException he) {
             assertEquals (he.statusCode, SC_ACCEPTED);

@@ -14,22 +14,13 @@
 
 package sabina.examples;
 
-import static sabina.Route.contentType;
 import static sabina.Route.get;
-import static sabina.Route.path;
 import static sabina.Server.serve;
 
 class ServeHelloWorld {
     public static void main (String[] args) {
         serve (
-            get ("hello", it -> "Hello World!"),
-            path ("hi",
-                path ("Joe", i -> i.response.body ("Joe")),
-                get ("Jane", j -> "Jane"),
-                contentType ("text/xml",
-                    get (z -> "a")
-                )
-            )
+            get ("hello", it -> "Hello World!")
         );
     }
 }

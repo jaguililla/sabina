@@ -21,11 +21,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public final class Context {
+public final class Exchange {
     public final Request request;
     public final Response response;
 
-    Context (final Request req, final Response res) {
+    Exchange (final Request req, final Response res) {
         checkArgument (req != null && res != null);
 
         this.request = req;
