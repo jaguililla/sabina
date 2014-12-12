@@ -14,7 +14,10 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.*;
+import static sabina.Route.*;
+import static sabina.Server.*;
+
+import sabina.Server;
 
 /**
  * A simple example just showing some basic functionality You'll need to provide a JKS keystore
@@ -25,38 +28,39 @@ import static sabina.Sabina.*;
  */
 class SimpleSecureExample {
     public static void main (String[] args) {
+        Server server = server (
+            get ("/hello", it -> "Hello Secure World!"),
 
-        // setPort(5678); <- Uncomment if you want spark to listen on a port different than 4567.
+            post ("/hello", it -> "Hello Secure World: " + it.requestBody ()),
 
-        setSecure (args[0], args[1], null, null);
+            get ("/private", it -> {
+                it.status (401);
+                return "Go Away!!!";
+            }),
 
-        get ("/hello", it -> "Hello Secure World!");
+            get ("/users/:name", it -> "Selected user: " + it.params (":name")),
 
-        post ("/hello", it -> "Hello Secure World: " + it.requestBody ());
+            get ("/news/:section", it -> {
+                it.type ("text/xml");
+                return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
+                    + it.params ("section") + "</news>";
+            }),
 
-        get ("/private", it -> {
-            it.status (401);
-            return "Go Away!!!";
-        });
+            get ("/protected", it -> {
+                it.halt (403, "I don't think so!!!");
+                return null;
+            }),
 
-        get ("/users/:name", it -> "Selected user: " + it.params (":name"));
+            get ("/redirect", it -> {
+                it.redirect ("/news/world");
+                return null;
+            }),
 
-        get ("/news/:section", it -> {
-            it.type ("text/xml");
-            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
-                + it.params ("section") + "</news>";
-        });
+            get ("/", it -> "root")
+        );
 
-        get ("/protected", it -> {
-            it.halt (403, "I don't think so!!!");
-            return null;
-        });
-
-        get ("/redirect", it -> {
-            it.redirect ("/news/world");
-            return null;
-        });
-
-        get ("/", it -> "root");
+        server.setPort(5678);
+        server.setSecure (args[0], args[1], null, null);
+        server.startUp ();
     }
 }

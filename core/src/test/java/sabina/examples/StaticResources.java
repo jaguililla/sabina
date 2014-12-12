@@ -14,19 +14,25 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.get;
-import static sabina.Sabina.staticFileLocation;
+import static sabina.Route.get;
+import static sabina.Server.server;
+
+import sabina.Server;
 
 /**
  * Example showing how serve static resources.
  */
 class StaticResources {
     public static void main (String[] args) {
+        Server server = server (
+            get ("/hello", it -> "Hello World!")
+        );
+
         /*
          * Will serve all static file are under "/public" in classpath if the route isn't consumed
          * by others routes.
          */
-        staticFileLocation ("/public");
-        get ("/hello", it -> "Hello World!");
+        server.staticFileLocation ("/public");
+        server.startUp ();
     }
 }

@@ -39,7 +39,7 @@ import sabina.route.RouteMatcherFactory;
  *
  * @author Per Wendel
  */
-public class MatcherFilter implements Filter {
+class MatcherFilter implements Filter {
     private static final Logger LOG = getLogger (MatcherFilter.class.getName ());
 
     private static final String
@@ -167,6 +167,7 @@ public class MatcherFilter implements Filter {
             httpRes.getOutputStream ().write (bodyContent.getBytes ("utf-8"));
         }
         else if (chain != null) {
+            // TODO 'SessionExample' triggers an error here!
             chain.doFilter (httpReq, httpRes);
         }
 

@@ -15,8 +15,9 @@
 package sabina.examples;
 
 import static java.lang.System.out;
-import static sabina.Sabina.after;
-import static sabina.Sabina.get;
+import static sabina.Filter.after;
+import static sabina.Route.get;
+import static sabina.Server.serve;
 
 /**
  * Example showing the use of attributes
@@ -25,20 +26,22 @@ import static sabina.Sabina.get;
  */
 class FilterExampleAttributes {
     public static void main (String[] args) {
-        get ("/hi", it -> {
-            it.attribute ("foo", "bar");
-            return null;
-        });
+        serve (
+            get ("/hi", it -> {
+                it.attribute ("foo", "bar");
+                return "hi";
+            }),
 
-        after ("/hi", it -> {
-            for (String attr : it.attributes ())
-                out.println ("attr: " + attr);
-        });
+            after ("/hi", it -> {
+                for (String attr : it.attributes ())
+                    out.println ("attr: " + attr);
+            }),
 
-        after ("/hi", it -> {
-            Object foo = it.attribute ("foo");
-            it.body (asXml ("foo", foo));
-        });
+            after ("/hi", it -> {
+                Object foo = it.attribute ("foo");
+                it.body (asXml ("foo", foo));
+            })
+        );
     }
 
     private static String asXml (String name, Object value) {

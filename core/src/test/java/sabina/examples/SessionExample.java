@@ -15,43 +15,46 @@
 package sabina.examples;
 
 import static java.lang.String.format;
-import static sabina.Sabina.get;
-import static sabina.Sabina.post;
+import static sabina.Route.*;
+import static sabina.Server.serve;
 
 class SessionExample {
     private static final String SESSION_NAME = "username";
 
     public static void main (String[] args) {
-        get ("/", it -> {
-            return it.session ().<String>attribute (SESSION_NAME) == null?
-                "<html>" +
-                "    <body>" +
-                "        What's your name?:" +
-                "        <form action=\"/entry\" method=\"POST\">" +
-                "            <input type=\"text\" name=\"name\"/>" +
-                "            <input type=\"submit\" value=\"go\"/>" +
-                "        </form>" +
-                "    </body>" +
-                "</html>"
-                :
-                format (
-                    "<html><body>Hello, %s!</body></html>",
-                    it.session ().attribute (SESSION_NAME));
-        });
+        // TODO Not working with Undertow
+        serve (
+            get ("/", it ->
+                it.session ().<String>attribute (SESSION_NAME) == null?
+                    "<html>" +
+                    "    <body>" +
+                    "        What's your name?:" +
+                    "        <form action=\"/entry\" method=\"POST\">" +
+                    "            <input type=\"text\" name=\"name\"/>" +
+                    "            <input type=\"submit\" value=\"go\"/>" +
+                    "        </form>" +
+                    "    </body>" +
+                    "</html>"
+                    :
+                    format (
+                        "<html><body>Hello, %s!</body></html>",
+                        it.session ().<String>attribute (SESSION_NAME))
+            ),
 
-        post ("/entry", it -> {
-            String name = it.queryParams ("name");
-            if (name != null)
-                it.session ().attribute (SESSION_NAME, name);
+            post ("/entry", it -> {
+                String name = it.queryParams ("name");
+                if (name != null)
+                    it.session ().attribute (SESSION_NAME, name);
 
-            it.redirect ("/");
-            return null;
-        });
+                it.redirect ("/");
+                return "";
+            }),
 
-        get ("/clear", it -> {
-            it.session ().removeAttribute (SESSION_NAME);
-            it.redirect ("/");
-            return null;
-        });
+            get ("/clear", it -> {
+                it.session ().removeAttribute (SESSION_NAME);
+                it.redirect ("/");
+                return "";
+            })
+        );
     }
 }

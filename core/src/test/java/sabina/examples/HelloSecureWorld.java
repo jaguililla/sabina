@@ -14,15 +14,21 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.get;
-import static sabina.Sabina.setSecure;
+import static sabina.Route.get;
+import static sabina.Server.server;
+
+import sabina.Server;
 
 /**
  * You'll need to provide a JKS keystore as arg 0 and its password as arg 1.
  */
 class HelloSecureWorld {
     public static void main (String[] args) {
-        setSecure (args[0], args[1], null, null);
-        get ("/hello", it -> "Hello Secure World!");
+        Server server = server (
+            get ("/hello", it -> "Hello Secure World!")
+        );
+
+        server.setSecure (args[0], args[1], null, null);
+        server.startUp ();
     }
 }
