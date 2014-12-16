@@ -14,7 +14,6 @@
 
 package sabina.examples;
 
-import static sabina.Route.*;
 import static sabina.Server.*;
 
 import sabina.Server;

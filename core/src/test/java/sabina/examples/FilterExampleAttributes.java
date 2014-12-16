@@ -15,9 +15,7 @@
 package sabina.examples;
 
 import static java.lang.System.out;
-import static sabina.Filter.after;
-import static sabina.Route.get;
-import static sabina.Server.serve;
+import static sabina.Server.*;
 
 /**
  * Example showing the use of attributes

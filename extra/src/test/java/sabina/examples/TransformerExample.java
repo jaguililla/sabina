@@ -14,7 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.get;
+import static sabina.Server.*;
 import static sabina.content.JsonContent.toJson;
 
 class MyMessage {
@@ -28,6 +28,8 @@ class MyMessage {
 
 class TransformerExample {
     public static void main (String args[]) {
-        get ("/hello", "application/json", it -> toJson (new MyMessage ("Hello World")));
+        serve (
+            get ("/hello", "application/json", it -> toJson (new MyMessage ("Hello World")))
+        );
     }
 }

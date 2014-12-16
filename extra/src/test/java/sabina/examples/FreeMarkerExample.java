@@ -14,7 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.get;
+import static sabina.Server.*;
 import static sabina.view.FreeMarkerView.renderFreeMarker;
 
 import java.util.HashMap;
@@ -22,13 +22,15 @@ import java.util.Map;
 
 class FreeMarkerExample {
     public static void main (String args[]) {
-        get ("/hello", it -> {
-            Map<String, Object> attributes = new HashMap<> ();
-            attributes.put ("message", "Hello World");
+        serve (
+            get ("/hello", it -> {
+                Map<String, Object> attributes = new HashMap<> ();
+                attributes.put ("message", "Hello World");
 
-            // The hello.ftl file is located in directory:
-            // src/test/resources/sabina/examples/templateview/freemarker
-            return renderFreeMarker ("hello.ftl", attributes);
-        });
+                // The hello.ftl file is located in directory:
+                // src/test/resources/sabina/examples/templateview/freemarker
+                return renderFreeMarker ("hello.ftl", attributes);
+            })
+        );
     }
 }

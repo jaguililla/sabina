@@ -17,9 +17,14 @@ package sabina;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Arrays.asList;
 import static java.util.logging.Logger.getLogger;
+import static sabina.HttpMethod.after;
+import static sabina.HttpMethod.before;
+import static sabina.HttpMethod.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 import sabina.route.RouteMatcher;
@@ -54,8 +59,11 @@ public final class Server {
     private static final Logger LOG = getLogger (Server.class.getName ());
 
     public static final int DEFAULT_PORT = 4567;
-    public static final String DEFAULT_HOST = "localhost";
+    public static final String DEFAULT_IP = "0.0.0.0";
 
+    /*
+     * Server
+     */
     public static Server server (int port, Action... aHandler) {
         return new Server (port, aHandler);
     }
@@ -77,8 +85,110 @@ public final class Server {
         server (aArgs, aHandler).startUp ();
     }
 
+    /*
+     * Filters
+     */
+    public static Filter after (Filter.Handler handler) {
+        return new Filter (after, handler);
+    }
+
+    public static Filter before (Filter.Handler handler) {
+        return new Filter (before, handler);
+    }
+
+    public static Filter after (String path, Filter.Handler handler) {
+        return new Filter (after, path, handler);
+    }
+
+    public static Filter before (String path, Filter.Handler handler) {
+        return new Filter (before, path, handler);
+    }
+
+    public static Filter after (String path, String contentType, Filter.Handler handler) {
+        return new Filter (after, path, contentType, handler);
+    }
+
+    public static Filter before (String path, String contentType, Filter.Handler handler) {
+        return new Filter (before, path, contentType, handler);
+    }
+
+    /*
+     * Routes
+     */
+    public static Route connect (String path, Route.Handler handler) {
+        return new Route (connect, path, handler);
+    }
+
+    public static Route delete (String path, Route.Handler handler) {
+        return new Route (delete, path, handler);
+    }
+
+    public static Route get (String path, Route.Handler handler) {
+        return new Route (get, path, handler);
+    }
+
+    public static Route head (String path, Route.Handler handler) {
+        return new Route (head, path, handler);
+    }
+
+    public static Route options (String path, Route.Handler handler) {
+        return new Route (options, path, handler);
+    }
+
+    public static Route patch (String path, Route.Handler handler) {
+        return new Route (patch, path, handler);
+    }
+
+    public static Route post (String path, Route.Handler handler) {
+        return new Route (post, path, handler);
+    }
+
+    public static Route put (String path, Route.Handler handler) {
+        return new Route (put, path, handler);
+    }
+
+    public static Route trace (String path, Route.Handler handler) {
+        return new Route (trace, path, handler);
+    }
+
+    public static Route connect (String path, String contentType, Route.Handler handler) {
+        return new Route (connect, path, contentType, handler);
+    }
+
+    public static Route delete (String path, String contentType, Route.Handler handler) {
+        return new Route (delete, path, contentType, handler);
+    }
+
+    public static Route get (String path, String contentType, Route.Handler handler) {
+        return new Route (get, path, contentType, handler);
+    }
+
+    public static Route head (String path, String contentType, Route.Handler handler) {
+        return new Route (head, path, contentType, handler);
+    }
+
+    public static Route options (String path, String contentType, Route.Handler handler) {
+        return new Route (options, path, contentType, handler);
+    }
+
+    public static Route patch (String path, String contentType, Route.Handler handler) {
+        return new Route (patch, path, contentType, handler);
+    }
+
+    public static Route post (String path, String contentType, Route.Handler handler) {
+        return new Route (post, path, contentType, handler);
+    }
+
+    public static Route put (String path, String contentType, Route.Handler handler) {
+        return new Route (put, path, contentType, handler);
+    }
+
+    public static Route trace (String path, String contentType, Route.Handler handler) {
+        return new Route (trace, path, contentType, handler);
+    }
+
     private int port = DEFAULT_PORT;
-    private String ipAddress = "0.0.0.0";
+    private String ipAddress = DEFAULT_IP;
 
     private String keystoreFile;
     private String keystorePassword;

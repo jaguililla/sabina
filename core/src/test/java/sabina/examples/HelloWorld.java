@@ -14,8 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Route.get;
-import static sabina.Server.serve;
+import static sabina.Server.*;
 
 class HelloWorld {
     public static void main (String[] args) {

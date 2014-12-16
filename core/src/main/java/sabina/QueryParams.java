@@ -69,7 +69,7 @@ public class QueryParams {
      *
      * @param request the servlet request
      */
-    public QueryParams (HttpServletRequest request) {
+    QueryParams (HttpServletRequest request) {
         checkArgument (request != null);
         assert request != null;
 

@@ -118,7 +118,7 @@ githubPages {
 task wrapper (type: Wrapper) {
     gradleVersion = '2.2.1'
     jarFile = wrapperPath + '/wrapper.jar'
-    scriptFile = wrapperPath + '/gradlew'
+    scriptFile = wrapperPath + '/wrapper'
 }
 
 /*

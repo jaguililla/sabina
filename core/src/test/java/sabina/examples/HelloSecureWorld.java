@@ -14,8 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Route.get;
-import static sabina.Server.server;
+import static sabina.Server.*;
 
 import sabina.Server;
 

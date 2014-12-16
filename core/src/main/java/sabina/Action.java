@@ -24,11 +24,11 @@ import static java.lang.String.format;
  * @author Per Wendel
  */
 public abstract class Action {
-    public final String path;
-    public final String acceptType;
-    public final HttpMethod method;
+    final String path;
+    final String acceptType;
+    final HttpMethod method;
 
-    protected Action (final HttpMethod method, final String path, final String acceptType) {
+    Action (final HttpMethod method, final String path, final String acceptType) {
         checkArgument (!isNullOrEmpty (path) && !isNullOrEmpty (acceptType) && method != null);
 
         this.path = path;

@@ -16,7 +16,6 @@ package sabina;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static sabina.HttpMethod.*;
 
 import java.util.function.Function;
 
@@ -29,108 +28,18 @@ import java.util.function.Function;
  * @author Per Wendel
  */
 public final class Route extends Action {
+    public static interface Handler extends Function<Exchange, Object> {}
+
     private static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
-    public static Route connect (String path, Function<Exchange, Object> handler) {
-        return new Route (connect, path, handler);
-    }
-
-    public static Route delete (String path, Function<Exchange, Object> handler) {
-        return new Route (delete, path, handler);
-    }
-
-    public static Route get (String path, Function<Exchange, Object> handler) {
-        return new Route (get, path, handler);
-    }
-
-    public static Route head (String path, Function<Exchange, Object> handler) {
-        return new Route (head, path, handler);
-    }
-
-    public static Route options (String path, Function<Exchange, Object> handler) {
-        return new Route (options, path, handler);
-    }
-
-    public static Route patch (String path, Function<Exchange, Object> handler) {
-        return new Route (patch, path, handler);
-    }
-
-    public static Route post (String path, Function<Exchange, Object> handler) {
-        return new Route (post, path, handler);
-    }
-
-    public static Route put (String path, Function<Exchange, Object> handler) {
-        return new Route (put, path, handler);
-    }
-
-    public static Route trace (String path, Function<Exchange, Object> handler) {
-        return new Route (trace, path, handler);
-    }
-
-    public static Route connect (
-        String path, String contentType, Function<Exchange, Object> handler) {
-
-        return new Route (connect, path, contentType, handler);
-    }
-
-    public static Route delete (
-        String path, String contentType, Function<Exchange, Object> handler) {
-
-        return new Route (delete, path, contentType, handler);
-    }
-
-    public static Route get (
-        String path, String contentType, Function<Exchange, Object> handler) {
-
-        return new Route (get, path, contentType, handler);
-    }
-
-    public static Route head (
-        String path, String contentType, Function<Exchange, Object> handler) {
-
-        return new Route (head, path, contentType, handler);
-    }
-
-    public static Route options (
-        String path, String contentType, Function<Exchange, Object> handler) {
-
-        return new Route (options, path, contentType, handler);
-    }
-
-    public static Route patch (
-        String path, String contentType, Function<Exchange, Object> handler) {
-
-        return new Route (patch, path, contentType, handler);
-    }
-
-    public static Route post (
-        String path, String contentType, Function<Exchange, Object> handler) {
-
-        return new Route (post, path, contentType, handler);
-    }
-
-    public static Route put (
-        String path, String contentType, Function<Exchange, Object> handler) {
-
-        return new Route (put, path, contentType, handler);
-    }
-
-    public static Route trace (
-        String path, String contentType, Function<Exchange, Object> handler) {
-
-        return new Route (trace, path, contentType, handler);
-    }
-
-    private final Function<Exchange, Object> handler;
+    private final Handler handler;
 
     /**
      * Constructor.
      *
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      */
-    Route (
-        final HttpMethod method, final String path, final Function<Exchange, Object> handler) {
-
+    Route (final HttpMethod method, final String path, final Handler handler) {
         this (method, path, DEFAULT_ACCEPT_TYPE, handler);
     }
 
@@ -144,7 +53,7 @@ public final class Route extends Action {
         final HttpMethod method,
         final String path,
         final String acceptType,
-        final Function<Exchange, Object> handler) {
+        final Handler handler) {
 
         super (method, path, isNullOrEmpty (acceptType)? DEFAULT_ACCEPT_TYPE : acceptType);
         checkArgument (handler != null);

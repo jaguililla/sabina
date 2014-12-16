@@ -14,8 +14,7 @@
 
 package sabina.it;
 
-import static sabina.Route.post;
-import static sabina.Server.server;
+import static sabina.Server.*;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

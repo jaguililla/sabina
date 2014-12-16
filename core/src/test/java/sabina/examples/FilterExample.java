@@ -14,9 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Filter.*;
-import static sabina.Route.*;
-import static sabina.Server.serve;
+import static sabina.Server.*;
 
 import java.util.HashMap;
 import java.util.Map;

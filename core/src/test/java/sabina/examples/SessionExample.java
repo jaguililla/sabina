@@ -15,8 +15,7 @@
 package sabina.examples;
 
 import static java.lang.String.format;
-import static sabina.Route.*;
-import static sabina.Server.serve;
+import static sabina.Server.*;
 
 class SessionExample {
     private static final String SESSION_NAME = "username";

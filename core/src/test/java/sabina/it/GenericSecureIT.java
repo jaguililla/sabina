@@ -17,7 +17,7 @@ package sabina.it;
 import static java.lang.System.out;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static sabina.Sabina.*;
+import static sabina.Server.*;
 import static sabina.util.TestUtil.UrlResponse;
 import static sabina.util.TestUtil.getKeyStoreLocation;
 import static sabina.util.TestUtil.getKeystorePassword;
@@ -25,48 +25,53 @@ import static sabina.util.TestUtil.getKeystorePassword;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import sabina.Server;
 import sabina.util.TestUtil;
 
 public class GenericSecureIT {
 
     private static TestUtil testUtil = new TestUtil ();
+    private static Server server;
 
     @AfterClass public static void shutDown () {
-        stop ();
+        server.stop ();
         testUtil.waitForShutdown ();
     }
 
     @BeforeClass public static void startUp () throws InterruptedException {
-        setPort (testUtil.getPort ());
+        server = server (
+            before ("/protected/*", it -> it.halt (401, "Go Away!")),
+
+            get ("/hi", it -> "Hello World!"),
+
+            get ("/:param", it -> "echo: " + it.params (":param")),
+
+            get ("/paramwithmaj/:paramWithMaj", it -> "echo: " + it.params (":paramWithMaj")),
+
+            get ("/", it -> "Hello Root!"),
+
+            post ("/poster", it -> {
+                String body = it.requestBody ();
+                it.status (201); // created
+                return "Body was: " + body;
+            }),
+
+            patch ("/patcher", it -> {
+                String body = it.requestBody ();
+                it.status (200);
+                return "Body was: " + body;
+            }),
+
+            after ("/hi", it -> it.header ("after", "foobar"))
+        );
+
+        server.setPort (testUtil.getPort ());
 
         // note that the keystore stuff is retrieved from SparkTestUtil which
         // respects JVM params for keystore, password
         // but offers a default included store if not.
-        setSecure (getKeyStoreLocation (), getKeystorePassword (), null, null);
-
-        before ("/protected/*", it -> it.halt (401, "Go Away!"));
-
-        get ("/hi", it -> "Hello World!");
-
-        get ("/:param", it -> "echo: " + it.params (":param"));
-
-        get ("/paramwithmaj/:paramWithMaj", it -> "echo: " + it.params (":paramWithMaj"));
-
-        get ("/", it -> "Hello Root!");
-
-        post ("/poster", it -> {
-            String body = it.requestBody ();
-            it.status (201); // created
-            return "Body was: " + body;
-        });
-
-        patch ("/patcher", it -> {
-            String body = it.requestBody ();
-            it.status (200);
-            return "Body was: " + body;
-        });
-
-        after ("/hi", it -> it.header ("after", "foobar"));
+        server.setSecure (getKeyStoreLocation (), getKeystorePassword (), null, null);
+        server.startUp ();
 
         testUtil.waitForStartup ();
     }

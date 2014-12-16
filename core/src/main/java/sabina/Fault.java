@@ -42,7 +42,7 @@ public final class Fault<T extends Exception> {
      * @param request The request object providing information about the HTTP request
      * @param response The response object providing functionality for modifying the response
      */
-    public void handle (final T exception, final Request request, final Response response) {
+    void handle (final T exception, final Request request, final Response response) {
         handler.accept (exception, new Exchange (request, response));
     }
 }

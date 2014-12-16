@@ -14,8 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Filter.before;
-import static sabina.Server.serve;
+import static sabina.Server.*;
 
 class FilterExampleWildcard {
     public static void main (String[] args) {
