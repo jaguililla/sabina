@@ -44,12 +44,6 @@ public class BooksIT {
      */
     private static Map<String, Book> books = new HashMap<> ();
 
-    private static UrlResponse doMethod (String requestMethod, String path)
-        throws FileNotFoundException {
-
-        return testUtil.doMethod (requestMethod, path);
-    }
-
     @AfterClass public static void shutDown () throws InterruptedException {
         server.stop ();
         testUtil.waitForShutdown ();
@@ -138,7 +132,7 @@ public class BooksIT {
 
     @Test public void createBook () throws FileNotFoundException {
         UrlResponse res =
-            doMethod ("POST", "/books?author=" + AUTHOR + "&title=" + TITLE);
+            testUtil.doPost ("/books?author=" + AUTHOR + "&title=" + TITLE);
         sid = res.body.trim ();
 
         assertNotNull (res);
@@ -149,19 +143,19 @@ public class BooksIT {
 
     @Test public void listBooks () throws FileNotFoundException {
         createBook ();
-        UrlResponse res = doMethod ("GET", "/books");
+        UrlResponse res = testUtil.doGet ("/books");
 
         assertNotNull (res);
         assertNotNull (res.body.trim ());
         assertTrue (res.body.trim ().length () > 0);
-        assertTrue (res.body.contains (sid));
+        assertTrue (res.body.contains ("2"));
         assertEquals (200, res.status);
     }
 
     @Test public void getBook () throws FileNotFoundException {
         // ensure there is a book
         createBook ();
-        UrlResponse res = doMethod ("GET", "/books/" + sid);
+        UrlResponse res = testUtil.doGet ("/books/" + sid);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -176,7 +170,7 @@ public class BooksIT {
 
     @Test public void updateBook () throws FileNotFoundException {
         createBook ();
-        UrlResponse res = doMethod ("PUT", "/books/" + sid + "?title=" + NEW_TITLE);
+        UrlResponse res = testUtil.doPut ("/books/" + sid + "?title=" + NEW_TITLE);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -187,7 +181,7 @@ public class BooksIT {
 
     @Test public void getUpdatedBook () throws FileNotFoundException {
         updateBook ();
-        UrlResponse res = doMethod ("GET", "/books/" + sid);
+        UrlResponse res = testUtil.doGet ("/books/" + sid);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -197,7 +191,7 @@ public class BooksIT {
     }
 
     @Test public void deleteBook () throws FileNotFoundException {
-        UrlResponse res = doMethod ("DELETE", "/books/" + sid);
+        UrlResponse res = testUtil.doDelete ("/books/" + sid);
 
         assertNotNull (res);
         assertNotNull (res.body);
@@ -207,7 +201,7 @@ public class BooksIT {
     }
 
     @Test public void bookNotFound () throws FileNotFoundException {
-        UrlResponse res = doMethod ("GET", "/books/" + 9999);
+        UrlResponse res = testUtil.doGet ("/books/" + 9999);
 
         assertNotNull (res);
         assertNotNull (res.body);

@@ -167,8 +167,20 @@ public class TestUtil {
         }
     }
 
-    public void doPost (String aPath) {
-        doMethod ("POST", aPath, "");
+    public UrlResponse doPost (String aPath) {
+        return doMethod ("POST", aPath, "");
+    }
+
+    public UrlResponse doGet (String aPath) {
+        return doMethod ("GET", aPath, "");
+    }
+
+    public UrlResponse doPut (String aPath) {
+        return doMethod ("PUT", aPath, "");
+    }
+
+    public UrlResponse doDelete (String aPath) {
+        return doMethod ("DELETE", aPath, "");
     }
 
     private HttpUriRequest getHttpRequest (
