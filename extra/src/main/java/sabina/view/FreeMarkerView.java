@@ -26,7 +26,7 @@ public class FreeMarkerView {
 
     private static Configuration createFreemarkerConfiguration () {
         Configuration retVal = new Configuration ();
-        retVal.setClassForTemplateLoading (FreeMarkerView.class, "freemarker");
+        retVal.setClassForTemplateLoading (FreeMarkerView.class, "");
         return retVal;
     }
 
