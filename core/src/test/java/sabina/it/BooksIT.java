@@ -124,7 +124,6 @@ public class BooksIT {
             after (it -> it.header ("FOO", "BAR"))
         );
 
-        server.setPort (testUtil.getPort ());
         server.startUp ();
 
         testUtil.waitForStartup ();
