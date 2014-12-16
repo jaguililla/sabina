@@ -29,7 +29,7 @@ import sabina.Server;
 import sabina.util.TestUtil;
 
 public class BooksIT {
-    private static final String AUTHOR = "FOO", TITLE = "BAR", NEW_TITLE = "SPARK";
+    private static final String AUTHOR = "FOO", TITLE = "BAR", NEW_TITLE = "SABINA";
 
     private static TestUtil testUtil = new TestUtil ();
 

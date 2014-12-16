@@ -67,7 +67,7 @@ public class GenericSecureIT {
 
         server.setPort (testUtil.getPort ());
 
-        // note that the keystore stuff is retrieved from SparkTestUtil which
+        // note that the keystore stuff is retrieved from TestUtil which
         // respects JVM params for keystore, password
         // but offers a default included store if not.
         server.setSecure (getKeyStoreLocation (), getKeystorePassword (), null, null);

@@ -152,7 +152,7 @@ public class GenericIT {
     }
 
     @Test public void echoParamWithUpperCaseInValue () {
-        final String camelCased = "ThisIsAValueAndSparkShouldRetainItsUpperCasedCharacters";
+        final String camelCased = "ThisIsAValueAndSabinaShouldRetainItsUpperCasedCharacters";
         UrlResponse response = testUtil.doMethod ("GET", "/param/" + camelCased);
         assertEquals (200, response.status);
         assertEquals ("echo: " + camelCased, response.body);

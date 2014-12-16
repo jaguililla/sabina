@@ -23,8 +23,6 @@ import static sabina.HttpMethod.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 import sabina.route.RouteMatcher;
@@ -33,7 +31,7 @@ import sabina.webserver.SparkServer;
 import sabina.webserver.SparkServerFactory;
 
 /**
- * The main building block of a Spark application is a set of routes. A route is
+ * The main building block of a Sabina application is a set of routes. A route is
  * made up of three simple pieces:
  * <p>
  * <ul>
@@ -45,11 +43,9 @@ import sabina.webserver.SparkServerFactory;
  * Example:
  * <p>
  * <pre>
- * Spark.get(new Route("/hello") {
- *    public Object handle(Request request, Response response) {
- *       return "Hello World!";
- *    }
- * });
+ *   serve (
+ *     get("/hello", it -> "Hello World!")
+ *   );
  * </pre>
  * <p>
  *
@@ -217,7 +213,7 @@ public final class Server {
     }
 
     /**
-     * Set the IP address that Spark should listen on. If not called the default
+     * Set the IP address that Sabina should listen on. If not called the default
      * address is '0.0.0.0'. This has to be called before any route mapping is done.
      *
      * @param ipAddress The ipAddress.
@@ -227,7 +223,7 @@ public final class Server {
     }
 
     /**
-     * Set the port that Spark should listen on. If not called the default port
+     * Set the port that Sabina should listen on. If not called the default port
      * is 4567. This has to be called before any route mapping is done.
      * If provided port = 0 then the an arbitrary available port will be used.
      *
@@ -306,7 +302,7 @@ public final class Server {
     }
 
     /**
-     * Stops the Spark server and clears all routes
+     * Stops the Sabina server and clears all routes
      */
     public synchronized void stop () {
         if (server != null)

@@ -56,7 +56,7 @@ class FilterExample {
 
             get ("/hello", it -> "Hello World!"),
 
-            after ("/hello", it -> it.header ("spark", "added by after-filter"))
+            after ("/hello", it -> it.header ("sabina", "added by after-filter"))
         );
     }
 }
