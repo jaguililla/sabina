@@ -17,6 +17,10 @@ buildscript {
         wrapperPath = "${project.projectDir}/gradle"
     }
 
+    repositories {
+        jcenter ()
+    }
+
     dependencies {
         classpath 'org.freemarker:freemarker:2.3.19'
         classpath 'org.pegdown:pegdown:1.4.2'
