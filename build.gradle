@@ -12,24 +12,34 @@
  * and limitations under the License.
  */
 
-import static JavaVersion.VERSION_1_8
+buildscript {
+    ext {
+        wrapperPath = "${project.projectDir}/gradle"
+    }
+
+    dependencies {
+        classpath 'org.freemarker:freemarker:2.3.19'
+        classpath 'org.pegdown:pegdown:1.4.2'
+    }
+}
+
+plugins {
+    id 'me.champeau.jbake' version '0.2'
+    id 'org.ajoberstar.github-pages' version '0.13.0-milestone.1'
+    id "com.github.kt3k.coveralls" version "2.0.1x"
+}
 
 subprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
     apply plugin: 'java'
     apply plugin: 'groovy'
-
-    apply plugin: 'jacoco'
+//    apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
-    apply plugin: 'com.github.kt3k.coveralls'
 
     group = 'sabina'
     version = '2.0.1-SNAPSHOT'
     description = 'A Sinatra inspired Java web framework'
-
-    sourceCompatibility = VERSION_1_8
-    targetCompatibility = VERSION_1_8
 
     repositories {
         jcenter ()
@@ -50,12 +60,12 @@ subprojects {
         include 'sabina/**'
     }
 
-    jacocoTestReport {
-        reports {
-            xml.enabled = true // Coveralls plugin depends on xml format report
-            html.enabled = true
-        }
-    }
+//    jacocoTestReport {
+//        reports {
+//            xml.enabled = true // Coveralls plugin depends on xml format report
+//            html.enabled = true
+//        }
+//    }
 
     task sourceJar(type: Jar) {
         from sourceSets.main.allJava
@@ -82,9 +92,6 @@ subprojects {
         }
     }
 }
-
-apply plugin: 'me.champeau.jbake'
-apply plugin: 'github-pages'
 
 defaultTasks 'check'
 
@@ -115,32 +122,10 @@ githubPages {
     }
 }
 
-task wrapper (type: Wrapper) {
+wrapper {
     gradleVersion = '2.2.1'
     jarFile = wrapperPath + '/wrapper.jar'
     scriptFile = wrapperPath + '/wrapper'
-}
-
-/*
- * Check 'http://melix.github.io/blog//2014/02/hosting-jbake-github.html' if any problem arises
- * In the article uses TWO gradle files are used
- */
-buildscript {
-    ext {
-        wrapperPath = "${project.projectDir}/gradle"
-    }
-
-    repositories {
-        jcenter ()
-    }
-
-    dependencies {
-        classpath 'org.ajoberstar:gradle-git:0.9.0'
-        classpath 'me.champeau.gradle:jbake-gradle-plugin:0.2'
-        classpath 'org.freemarker:freemarker:2.3.19'
-        classpath 'org.pegdown:pegdown:1.4.2'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.0'
-    }
 }
 
 def String externalProperty (String fileName, String propertyName) {

@@ -44,11 +44,6 @@ public class BooksIT {
      */
     private static Map<String, Book> books = new HashMap<> ();
 
-    @AfterClass public static void shutDown () throws InterruptedException {
-        server.stop ();
-        testUtil.waitForShutdown ();
-    }
-
     @BeforeClass public static void startUp () throws InterruptedException {
         server = server (
             before (it -> it.header ("FOZ", "BAZ")),
@@ -125,8 +120,12 @@ public class BooksIT {
         );
 
         server.startUp ();
-
         testUtil.waitForStartup ();
+    }
+
+    @AfterClass public static void shutDown () throws InterruptedException {
+        server.stop ();
+        testUtil.waitForShutdown ();
     }
 
     @Test public void createBook () throws FileNotFoundException {

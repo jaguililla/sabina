@@ -167,8 +167,8 @@ class MatcherFilter implements Filter {
             httpRes.getOutputStream ().write (bodyContent.getBytes ("utf-8"));
         }
         else if (chain != null) {
-            // TODO 'SessionExample' triggers an error here!
-            chain.doFilter (httpReq, httpRes);
+            if (!httpRes.isCommitted ())
+                chain.doFilter (httpReq, httpRes);
         }
 
         // TODO this is an instance variable take care of multi-threading!

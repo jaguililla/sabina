@@ -21,7 +21,7 @@ class SessionExample {
     private static final String SESSION_NAME = "username";
 
     public static void main (String[] args) {
-        // TODO Not working with Undertow
+        // TODO Not working with Undertow (IllegalStateException)
         serve (
             get ("/", it ->
                 it.session ().<String>attribute (SESSION_NAME) == null?

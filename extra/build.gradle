@@ -15,7 +15,7 @@
 description = 'A Sinatra inspired java web framework (extra)'
 
 dependencies {
-    compile project(':core')
+    compile project(':http')
 
     // TEMPLATE DEPENDENCIES
     compile 'org.freemarker:freemarker:2.3.20'
