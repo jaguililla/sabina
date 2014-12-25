@@ -90,7 +90,7 @@ subprojects {
                 url 'https://api.bintray.com/maven/jamming/maven/Sabina'
                 credentials {
                     username 'jamming'
-                    password bintrayPassword
+                    password "$bintrayPassword" // Set it in '~/.gradle/gradle.properties'
                 }
             }
         }
@@ -115,6 +115,7 @@ task site (dependsOn: 'jbake') {
         into "$buildDir/site/extra/"
         include ('**')
     }
+    doLast { print "$bintrayPassword" }
 }
 
 githubPages {
