@@ -40,6 +40,7 @@ subprojects {
     apply plugin: 'groovy'
     apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.github.kt3k.coveralls'
 
     group = 'sabina'
     version = '2.0.1-SNAPSHOT'
