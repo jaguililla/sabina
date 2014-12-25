@@ -38,7 +38,7 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'java'
     apply plugin: 'groovy'
-//    apply plugin: 'jacoco'
+    apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
 
     group = 'sabina'
@@ -64,12 +64,12 @@ subprojects {
         include 'sabina/**'
     }
 
-//    jacocoTestReport {
-//        reports {
-//            xml.enabled = true // Coveralls plugin depends on xml format report
-//            html.enabled = true
-//        }
-//    }
+    jacocoTestReport {
+        reports {
+            xml.enabled = true // Coveralls plugin depends on xml format report
+            html.enabled = true
+        }
+    }
 
     task sourceJar(type: Jar) {
         from sourceSets.main.allJava
@@ -90,7 +90,7 @@ subprojects {
                 url 'https://api.bintray.com/maven/jamming/maven/Sabina'
                 credentials {
                     username 'jamming'
-                    password externalProperty ('.gradle/gradle.properties', 'bintrayPassword')
+                    password bintrayPassword
                 }
             }
         }
@@ -130,15 +130,4 @@ wrapper {
     gradleVersion = '2.2.1'
     jarFile = wrapperPath + '/wrapper.jar'
     scriptFile = wrapperPath + '/wrapper'
-}
-
-def String externalProperty (String fileName, String propertyName) {
-    Properties properties = new Properties ()
-    def file = project.rootProject.file (fileName)
-
-    if (!file.exists ())
-        return '';
-
-    properties.load (file.newDataInputStream ())
-    return properties.getProperty (propertyName)
 }
