@@ -14,13 +14,10 @@
 
 package sabina.examples;
 
-import static sabina.Server.*;
+import static sabina.Sabina.*;
 
 class FilterExampleWildcard {
     public static void main (String[] args) {
-        serve (
-            // ... check if authenticated
-            before ("/protected/*", it -> it.halt (401, "Go Away!"))
-        );
+        before ("/protected/*", it -> it.halt (401, "Go Away!")).start ();
     }
 }

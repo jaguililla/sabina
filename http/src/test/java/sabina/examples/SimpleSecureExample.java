@@ -14,9 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Server.*;
-
-import sabina.Server;
+import static sabina.Sabina.*;
 
 /**
  * A simple example just showing some basic functionality You'll need to provide a JKS keystore
@@ -27,39 +25,36 @@ import sabina.Server;
  */
 class SimpleSecureExample {
     public static void main (String[] args) {
-        Server server = server (
-            get ("/hello", it -> "Hello Secure World!"),
+        get ("/hello", it -> "Hello Secure World!");
 
-            post ("/hello", it -> "Hello Secure World: " + it.requestBody ()),
+        post ("/hello", it -> "Hello Secure World: " + it.requestBody ());
 
-            get ("/private", it -> {
-                it.status (401);
-                return "Go Away!!!";
-            }),
+        get ("/private", it -> {
+            it.status (401);
+            return "Go Away!!!";
+        });
 
-            get ("/users/:name", it -> "Selected user: " + it.params (":name")),
+        get ("/users/:name", it -> "Selected user: " + it.params (":name"));
 
-            get ("/news/:section", it -> {
-                it.type ("text/xml");
-                return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
-                    + it.params ("section") + "</news>";
-            }),
+        get ("/news/:section", it -> {
+            it.type ("text/xml");
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
+                + it.params ("section") + "</news>";
+        });
 
-            get ("/protected", it -> {
-                it.halt (403, "I don't think so!!!");
-                return null;
-            }),
+        get ("/protected", it -> {
+            it.halt (403, "I don't think so!!!");
+            return null;
+        });
 
-            get ("/redirect", it -> {
-                it.redirect ("/news/world");
-                return null;
-            }),
+        get ("/redirect", it -> {
+            it.redirect ("/news/world");
+            return null;
+        });
 
-            get ("/", it -> "root")
-        );
+        get ("/", it -> "root");
 
-        server.setPort(5678);
-        server.setSecure (args[0], args[1], null, null);
-        server.startUp ();
+        setSecure (args[0], args[1], null, null);
+        start (5678);
     }
 }

@@ -22,7 +22,7 @@ Sabina 2.0.1 is now available on [JCenter]!!! (TODO Add JCenter link)
 
 API Docs: [Core](http://there4.co/sabina/core/) [Extra](http://there4.co/sabina/core/)
 
-[JCenter]: 
+[JCenter]:
 
 
 Getting started
@@ -42,7 +42,7 @@ public class HelloWorld {
 
 View at: http://localhost:4567/hello
 
-You can also check out the javadoc. After getting the source from github run: 
+You can also check out the javadoc. After getting the source from github run:
 
     ./gradlew javadoc site
 
@@ -116,8 +116,9 @@ TODO
   * http://redis.io
 * Helper for multiline strings
 * Helper for JDBC
-  
+
 * Example project (command to fetch and start, deployment heroku, building executable WAR)
 * Start child processes (clones) of the microservice
 * Manage versions
 * Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages
+* Create 'amqp' module for async queues communication (with producer and consumer)

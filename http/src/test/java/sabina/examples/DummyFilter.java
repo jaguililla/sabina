@@ -15,13 +15,12 @@
 package sabina.examples;
 
 import static java.lang.System.out;
-import static sabina.Server.*;
+import static sabina.Sabina.*;
 
 class DummyFilter {
     public static void main (String[] args) {
-        serve (
-            before (it -> out.println ("Before")),
-            after (it -> out.println ("After"))
-        );
+        before (it -> out.println ("Before"));
+        after (it -> out.println ("After"));
+        start ();
     }
 }

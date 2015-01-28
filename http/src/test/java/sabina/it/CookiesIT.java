@@ -14,12 +14,11 @@
 
 package sabina.it;
 
-import static sabina.Server.*;
+import static sabina.Sabina.*;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sabina.Server;
 import sabina.util.TestUtil;
 
 /**
@@ -28,48 +27,44 @@ import sabina.util.TestUtil;
  * @author dreambrother
  */
 public class CookiesIT {
-
-    private static Server server;
     private static TestUtil testUtil = new TestUtil ();
 
-    @BeforeClass public static void startUp () throws InterruptedException {
-        server = server (testUtil.getPort (),
+    @BeforeClass public static void setup () throws InterruptedException {
 
-            post ("assertNoCookies", it -> {
-                if (!it.cookies ().isEmpty ()) {
-                    it.halt (500);
-                }
-                return "";
-            }),
+        post ("assertNoCookies", it -> {
+            if (!it.cookies ().isEmpty ()) {
+                it.halt (500);
+            }
+            return "";
+        });
 
-            post ("setCookie", it -> {
-                it.cookie (it.queryParams ("cookieName"), it.queryParams ("cookieValue"));
-                return "";
-            }),
+        post ("setCookie", it -> {
+            it.cookie (it.queryParams ("cookieName"), it.queryParams ("cookieValue"));
+            return "";
+        });
 
-            post ("assertHasCookie", it -> {
-                String cookieValue = it.cookie (it.queryParams ("cookieName"));
-                if (!it.queryParams ("cookieValue").equals (cookieValue))
-                    it.halt (500);
-                return "";
-            }),
+        post ("assertHasCookie", it -> {
+            String cookieValue = it.cookie (it.queryParams ("cookieName"));
+            if (!it.queryParams ("cookieValue").equals (cookieValue))
+                it.halt (500);
+            return "";
+        });
 
-            post ("removeCookie", it -> {
-                String cookieName = it.queryParams ("cookieName");
-                String cookieValue = it.cookie (cookieName);
-                if (!it.queryParams ("cookieValue").equals (cookieValue))
-                    it.halt (500);
-                it.removeCookie (cookieName);
-                return "";
-            })
-        );
+        post ("removeCookie", it -> {
+            String cookieName = it.queryParams ("cookieName");
+            String cookieValue = it.cookie (cookieName);
+            if (!it.queryParams ("cookieValue").equals (cookieValue))
+                it.halt (500);
+            it.removeCookie (cookieName);
+            return "";
+        });
 
-        server.startUp ();
+        start (testUtil.getPort ());
         testUtil.waitForStartup ();
     }
 
-    @AfterClass public static void shutDown () {
-        server.stop ();
+    @AfterClass public static void cleanup () {
+        stop ();
         testUtil.waitForShutdown ();
     }
 

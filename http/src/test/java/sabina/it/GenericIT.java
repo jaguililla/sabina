@@ -18,7 +18,7 @@ import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static sabina.Server.*;
+import static sabina.Sabina.*;
 import static sabina.util.TestUtil.UrlResponse;
 
 import java.io.File;
@@ -28,23 +28,21 @@ import java.io.IOException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sabina.Server;
 import sabina.util.TestUtil;
 
 public class GenericIT {
 
     private static TestUtil testUtil = new TestUtil ();
     private static File tmpExternalFile;
-    private static Server server;
 
-    @AfterClass public static void shutDown () {
-        server.stop ();
+    @AfterClass public static void cleanup () {
+        stop ();
         testUtil.waitForShutdown ();
         if (tmpExternalFile != null)
             tmpExternalFile.delete ();
     }
 
-    @BeforeClass public static void startUp () throws IOException, InterruptedException {
+    @BeforeClass public static void setup () throws IOException, InterruptedException {
         tmpExternalFile = new File (getProperty ("java.io.tmpdir"), "externalFile.html");
 
         FileWriter writer = new FileWriter (tmpExternalFile);
@@ -52,46 +50,43 @@ public class GenericIT {
         writer.flush ();
         writer.close ();
 
-        server = server (
-            before ("/protected/*", it -> it.halt (401, "Go Away!")),
+        before ("/protected/*", it -> it.halt (401, "Go Away!"));
 
-            before ("/protected/*", "application/json", it ->
-                    it.halt (401, "{\"message\": \"Go Away!\"}")
-            ),
-
-            get ("/hi", "application/json", it -> "{\"message\": \"Hello World\"}"),
-
-            get ("/hi", it -> "Hello World!"),
-
-            get ("/param/:param", it -> "echo: " + it.params (":param")),
-
-            get ("/paramandwild/:param/stuff/*", it ->
-                    "paramandwild: " + it.params (":param") + it.splat ()[0]
-            ),
-
-            get ("/paramwithmaj/:paramWithMaj", it -> "echo: " + it.params (":paramWithMaj")),
-
-            get ("/", it -> "Hello Root!"),
-
-            post ("/poster", it -> {
-                String body = it.requestBody ();
-                it.status (201); // created
-                return "Body was: " + body;
-            }),
-
-            patch ("/patcher", it -> {
-                String body = it.requestBody ();
-                it.status (200);
-                return "Body was: " + body;
-            }),
-
-            after ("/hi", it -> it.header ("after", "foobar"))
+        before ("/protected/*", "application/json", it ->
+                it.halt (401, "{\"message\": \"Go Away!\"}")
         );
 
-        server.setPort (testUtil.getPort ());
-        server.staticFileLocation ("/public");
-        server.externalStaticFileLocation (getProperty ("java.io.tmpdir"));
-        server.startUp ();
+        get ("/hi", "application/json", it -> "{\"message\": \"Hello World\"}");
+
+        get ("/hi", it -> "Hello World!");
+
+        get ("/param/:param", it -> "echo: " + it.params (":param"));
+
+        get ("/paramandwild/:param/stuff/*", it ->
+                "paramandwild: " + it.params (":param") + it.splat ()[0]
+        );
+
+        get ("/paramwithmaj/:paramWithMaj", it -> "echo: " + it.params (":paramWithMaj"));
+
+        get ("/", it -> "Hello Root!");
+
+        post ("/poster", it -> {
+            String body = it.requestBody ();
+            it.status (201); // created
+            return "Body was: " + body;
+        });
+
+        patch ("/patcher", it -> {
+            String body = it.requestBody ();
+            it.status (200);
+            return "Body was: " + body;
+        });
+
+        after ("/hi", it -> it.header ("after", "foobar"));
+
+        staticFileLocation ("/public");
+        externalStaticFileLocation (getProperty ("java.io.tmpdir"));
+        start (testUtil.getPort ());
 
         testUtil.waitForStartup ();
     }

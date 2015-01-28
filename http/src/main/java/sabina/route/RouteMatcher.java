@@ -27,28 +27,22 @@ public interface RouteMatcher {
     /**
      * Parses, validates and adds a route
      *
-     * @param route
-     * @param acceptType
-     * @param target
+     * @param route .
+     * @param acceptType .
+     * @param target .
      */
     void parseValidateAddRoute (String route, String acceptType, Object target);
 
     /**
-     * Finds the a target route for the requested route path and accept type
+     * Finds the target route for the requested route path and accept type
      *
-     * @param httpMethod
-     * @param path
-     * @param acceptType
+     * @param httpMethod .
+     * @param path .
+     * @param acceptType .
      *
-     * @return
+     * @return .
      */
-    RouteMatch findTargetForRequestedRoute (
-        HttpMethod httpMethod, String path, String acceptType);
-
-    /**
-     * Clear all routes
-     */
-    void clearRoutes ();
+    RouteMatch findTargetForRequestedRoute (HttpMethod httpMethod, String path, String acceptType);
 
     List<RouteMatch> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path, String acceptType);

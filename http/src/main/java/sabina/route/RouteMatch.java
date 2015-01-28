@@ -14,64 +14,21 @@
 
 package sabina.route;
 
-import sabina.HttpMethod;
-
 /**
  * @author Per Wendel
  */
 public class RouteMatch {
-    private final HttpMethod httpMethod;
     private final Object target;
     private final String matchUri;
     private final String requestURI;
-    private final String acceptType;
 
-    public RouteMatch (
-        HttpMethod httpMethod,
-        Object target,
-        String matchUri,
-        String requestUri,
-        String acceptType) {
-
-        this.httpMethod = httpMethod;
+    public RouteMatch (Object target, String matchUri, String requestUri) {
         this.target = target;
         this.matchUri = matchUri;
         this.requestURI = requestUri;
-        this.acceptType = acceptType;
     }
 
-    /**
-     * @return the accept type
-     */
-    public String getAcceptType () {
-        return acceptType;
-    }
-
-    /**
-     * @return the httpMethod
-     */
-    public HttpMethod getHttpMethod () {
-        return httpMethod;
-    }
-
-    /**
-     * @return the target
-     */
-    public Object getTarget () {
-        return target;
-    }
-
-    /**
-     * @return the matchUri
-     */
-    public String getMatchUri () {
-        return matchUri;
-    }
-
-    /**
-     * @return the requestUri
-     */
-    public String getRequestURI () {
-        return requestURI;
-    }
+    public Object getTarget () { return target; }
+    public String getMatchUri () { return matchUri; }
+    public String getRequestURI () { return requestURI; }
 }

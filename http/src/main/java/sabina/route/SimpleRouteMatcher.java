@@ -34,6 +34,10 @@ class SimpleRouteMatcher implements RouteMatcher {
 
     private List<RouteEntry> routes = new ArrayList<> ();
 
+    SimpleRouteMatcher () {
+        LOG.fine ("RouteMatcher created");
+    }
+
     /**
      * Parse and validates a route and adds it
      *
@@ -86,7 +90,7 @@ class SimpleRouteMatcher implements RouteMatcher {
         List<RouteEntry> routeEntries = this.findTargetsForRequestedRoute (httpMethod, path);
         RouteEntry entry = findTargetWithGivenAcceptType (routeEntries, acceptType);
         return entry != null?
-            new RouteMatch (httpMethod, entry.target, entry.path, path, acceptType) : null;
+            new RouteMatch (entry.target, entry.path, path) : null;
     }
 
     /**
@@ -109,26 +113,15 @@ class SimpleRouteMatcher implements RouteMatcher {
                     MimeParse.bestMatch (Arrays.asList (routeEntry.acceptedType), acceptType);
 
                 if (routeWithGivenAcceptType (bestMatch)) {
-                    matchSet.add (
-                        new RouteMatch (httpMethod, routeEntry.target, routeEntry.path, path,
-                            acceptType));
+                    matchSet.add (new RouteMatch (routeEntry.target, routeEntry.path, path));
                 }
             }
             else {
-                matchSet.add (
-                    new RouteMatch (httpMethod, routeEntry.target, routeEntry.path, path,
-                        acceptType));
+                matchSet.add (new RouteMatch (routeEntry.target, routeEntry.path, path));
             }
         }
 
         return matchSet;
-    }
-
-    /**
-     * ¨Clear all routes
-     */
-    public void clearRoutes () {
-        routes.clear ();
     }
 
     //////////////////////////////////////////////////

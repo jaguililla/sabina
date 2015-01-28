@@ -15,7 +15,7 @@
 package sabina.it;
 
 import static org.testng.Assert.*;
-import static sabina.Server.*;
+import static sabina.Sabina.*;
 import static sabina.util.TestUtil.UrlResponse;
 
 import java.io.FileNotFoundException;
@@ -25,15 +25,12 @@ import java.util.Map;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sabina.Server;
 import sabina.util.TestUtil;
 
 public class BooksIT {
     private static final String AUTHOR = "FOO", TITLE = "BAR", NEW_TITLE = "SABINA";
 
     private static TestUtil testUtil = new TestUtil ();
-
-    private static Server server;
 
     private static String sid = "1";
 
@@ -44,87 +41,85 @@ public class BooksIT {
      */
     private static Map<String, Book> books = new HashMap<> ();
 
-    @BeforeClass public static void startUp () throws InterruptedException {
-        server = server (
-            before (it -> it.header ("FOZ", "BAZ")),
+    @BeforeClass public static void setup () throws InterruptedException {
+        before (it -> it.header ("FOZ", "BAZ"));
 
-            post ("/books", it1 -> {
-                String author = it1.queryParams ("author");
-                String title = it1.queryParams ("title");
-                Book book = new Book (author, title);
+        post ("/books", it1 -> {
+            String author = it1.queryParams ("author");
+            String title = it1.queryParams ("title");
+            Book book = new Book (author, title);
 
-                books.put (String.valueOf (id), book);
+            books.put (String.valueOf (id), book);
 
-                it1.status (201); // 201 Created
-                return id++;
-            }),
+            it1.status (201); // 201 Created
+            return id++;
+        });
 
-            // Gets the book resource for the provided id
-            get ("/books/:id", it1 -> {
-                Book book = books.get (it1.params (":id"));
-                if (book != null) {
-                    return "Title: " + book.getTitle () + ", Author: " + book.getAuthor ();
-                }
-                else {
-                    it1.status (404); // 404 Not found
-                    return "Book not found";
-                }
-            }),
+        // Gets the book resource for the provided id
+        get ("/books/:id", it1 -> {
+            Book book = books.get (it1.params (":id"));
+            if (book != null) {
+                return "Title: " + book.getTitle () + ", Author: " + book.getAuthor ();
+            }
+            else {
+                it1.status (404); // 404 Not found
+                return "Book not found";
+            }
+        });
 
-            // Updates the book resource for the provided id with new information
-            // author and title are sent as query parameters e.g. /books/<id>?author=Foo&title=Bar
-            put ("/books/:id", it1 -> {
-                String id1 = it1.params (":id");
-                Book book = books.get (id1);
-                if (book != null) {
-                    String newAuthor = it1.queryParams ("author");
-                    String newTitle = it1.queryParams ("title");
-                    if (newAuthor != null)
-                        book.setAuthor (newAuthor);
+        // Updates the book resource for the provided id with new information
+        // author and title are sent as query parameters e.g. /books/<id>?author=Foo&title=Bar
+        put ("/books/:id", it1 -> {
+            String id1 = it1.params (":id");
+            Book book = books.get (id1);
+            if (book != null) {
+                String newAuthor = it1.queryParams ("author");
+                String newTitle = it1.queryParams ("title");
+                if (newAuthor != null)
+                    book.setAuthor (newAuthor);
 
-                    if (newTitle != null)
-                        book.setTitle (newTitle);
+                if (newTitle != null)
+                    book.setTitle (newTitle);
 
-                    return "Book with id '" + id1 + "' updated";
-                }
-                else {
-                    it1.status (404); // 404 Not found
-                    return "Book not found";
-                }
-            }),
+                return "Book with id '" + id1 + "' updated";
+            }
+            else {
+                it1.status (404); // 404 Not found
+                return "Book not found";
+            }
+        });
 
-            // Deletes the book resource for the provided id
-            delete ("/books/:id", it1 -> {
-                String id1 = it1.params (":id");
-                Book book = books.remove (id1);
-                if (book != null) {
-                    return "Book with id '" + id1 + "' deleted";
-                }
-                else {
-                    it1.status (404); // 404 Not found
-                    return "Book not found";
-                }
-            }),
+        // Deletes the book resource for the provided id
+        delete ("/books/:id", it1 -> {
+            String id1 = it1.params (":id");
+            Book book = books.remove (id1);
+            if (book != null) {
+                return "Book with id '" + id1 + "' deleted";
+            }
+            else {
+                it1.status (404); // 404 Not found
+                return "Book not found";
+            }
+        });
 
-            // Gets all available book resources (id's)
-            get ("/books", it1 -> {
-                String ids = "";
+        // Gets all available book resources (id's)
+        get ("/books", it1 -> {
+            String ids = "";
 
-                for (String id1 : books.keySet ())
-                    ids += id1 + " ";
+            for (String id1 : books.keySet ())
+                ids += id1 + " ";
 
-                return ids;
-            }),
+            return ids;
+        });
 
-            after (it -> it.header ("FOO", "BAR"))
-        );
+        after (it -> it.header ("FOO", "BAR"));
 
-        server.startUp ();
+        start (testUtil.getPort ());
         testUtil.waitForStartup ();
     }
 
-    @AfterClass public static void shutDown () throws InterruptedException {
-        server.stop ();
+    @AfterClass public static void cleanup () throws InterruptedException {
+        stop ();
         testUtil.waitForShutdown ();
     }
 

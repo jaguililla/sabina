@@ -14,7 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Server.*;
+import static sabina.Sabina.*;
 
 class JsonAcceptTypeExample {
     public static void main (String args[]) {
@@ -25,8 +25,6 @@ class JsonAcceptTypeExample {
 		 * Running curl -i -H "Accept: text/html" http://localhost:4567/hello HTTP 404 error is
 		 * thrown.
 		 */
-        serve (
-            get ("/hello", "application/json", it -> "{\"message\": \"Hello World\"}")
-        );
+        get ("/hello", "application/json", it -> "{\"message\": \"Hello World\"}").start ();
     }
 }

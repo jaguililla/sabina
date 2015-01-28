@@ -65,9 +65,7 @@ public final class Exchange {
     public HttpServletRequest requestRaw () { return request.raw (); }
     public String requestBody () { return request.body (); }
     public String requestMethod () { return request.requestMethod (); }
-    public void attribute (final String name, final Object value) {
-        request.attribute (name, value);
-    }
+    public void attribute (final String name, final Object value) { request.attribute (name, value); }
 
     /*
      * Response delegates
@@ -79,13 +77,11 @@ public final class Exchange {
     public String responseBody () { return response.body (); }
     public void status (final int statusCode) { response.status (statusCode); }
     public void removeCookie (final String name) { response.removeCookie (name); }
+    public void header (final String name, final String value) { response.header (name, value); }
+    public void cookie (final String name, final String value) { response.cookie (name, value); }
 
     public void cookie (final String name, final String value, final int maxAge) {
         response.cookie (name, value, maxAge);
-    }
-
-    public void header (final String name, final String value) {
-        response.header (name, value);
     }
 
     public void cookie (
@@ -98,18 +94,14 @@ public final class Exchange {
         response.cookie (path, name, value, maxAge, secured);
     }
 
-    public void redirect (final String location, final int httpStatusCode) {
-        response.redirect (location, httpStatusCode);
-    }
-
-    public void cookie (final String name, final String value) {
-        response.cookie (name, value);
-    }
-
     public void cookie (
         final String name, final String value, final int maxAge, final boolean secured) {
 
         response.cookie (name, value, maxAge, secured);
+    }
+
+    public void redirect (final String location, final int httpStatusCode) {
+        response.redirect (location, httpStatusCode);
     }
 
     /**
@@ -146,9 +138,7 @@ public final class Exchange {
      * @param status The status code.
      * @param body The body content.
      */
-    public void halt (final int status, final String body) {
-        throw new HaltException (status, body);
-    }
+    public void halt (final int status, final String body) { throw new HaltException (status, body); }
 
     /*
      * TODO Implement these methods!

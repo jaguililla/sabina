@@ -55,7 +55,7 @@ public final class Session {
      * @param <T>  The type parameter.
      * @return The object with the specified name.
      */
-    public <T> T attribute (String name) {
+    @SuppressWarnings("unchecked") public <T> T attribute (String name) {
         return (T)session.getAttribute (name);
     }
 

@@ -15,6 +15,8 @@
 package sabina.route;
 
 import static sabina.Filter.ALL_PATHS;
+import static sabina.HttpMethod.after;
+import static sabina.HttpMethod.before;
 import static sabina.Request.convertRouteToList;
 
 import java.util.List;
@@ -22,32 +24,25 @@ import java.util.List;
 import sabina.HttpMethod;
 
 /**
- * Created by Per Wendel on 2014-05-10.
+ * @author Per Wendel
  */
 class RouteEntry {
-
     HttpMethod httpMethod;
     String path;
     String acceptedType;
     Object target;
 
     boolean matches (HttpMethod httpMethod, String path) {
-        if ((httpMethod == HttpMethod.before || httpMethod == HttpMethod.after)
-            && (this.httpMethod == httpMethod)
-            && this.path.equals (ALL_PATHS)) {
-            // Is filter and matches all
-            return true;
-        }
-        boolean match = false;
-        if (this.httpMethod == httpMethod) {
-            match = matchPath (path);
-        }
-        return match;
+        return
+            ( (httpMethod == before || httpMethod == after)
+                && (this.httpMethod == httpMethod)
+                && this.path.equals (ALL_PATHS) )
+            || ( this.httpMethod == httpMethod
+                && matchPath (path) );
     }
 
-    private boolean matchPath (String path) { // NOSONAR
+    private boolean matchPath (String path) {
         if (!this.path.endsWith ("*") && ((path.endsWith ("/") && !this.path.endsWith ("/"))
-            // NOSONAR
             || (this.path.endsWith ("/") && !path.endsWith ("/")))) {
             // One and not both ends with slash
             return false;

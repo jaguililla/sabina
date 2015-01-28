@@ -14,20 +14,16 @@
 
 package sabina.examples;
 
-import static sabina.Server.*;
-
-import sabina.Server;
+import static sabina.Sabina.*;
 
 /**
  * You'll need to provide a JKS keystore as arg 0 and its password as arg 1.
  */
 class HelloSecureWorld {
     public static void main (String[] args) {
-        Server server = server (
-            get ("/hello", it -> "Hello Secure World!")
-        );
+        get ("/hello", it -> "Hello Secure World!");
 
-        server.setSecure (args[0], args[1], null, null);
-        server.startUp ();
+        setSecure (args[0], args[1], null, null);
+        start ();
     }
 }

@@ -14,7 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Server.*;
+import static sabina.Sabina.*;
 
 /**
  * A simple example just showing some basic functionality
@@ -23,35 +23,35 @@ import static sabina.Server.*;
  */
 class SimpleExample {
     public static void main (String[] args) {
-        serve (
-            get ("/hello", it -> "Hello World!"),
+        get ("/hello", it -> "Hello World!");
 
-            post ("/hello", it -> "Hello World: " + it.requestBody ()),
+        post ("/hello", it -> "Hello World: " + it.requestBody ());
 
-            get ("/private", it -> {
-                it.status (401);
-                return "Go Away!!!";
-            }),
+        get ("/private", it -> {
+            it.status (401);
+            return "Go Away!!!";
+        });
 
-            get ("/users/:name", it -> "Selected user: " + it.params (":name")),
+        get ("/users/:name", it -> "Selected user: " + it.params (":name"));
 
-            get ("/news/:section", it -> {
-                it.type ("text/xml");
-                return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
-                    + it.params ("section") + "</news>";
-            }),
+        get ("/news/:section", it -> {
+            it.type ("text/xml");
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
+                + it.params ("section") + "</news>";
+        });
 
-            get ("/protected", it -> {
-                it.halt (403, "I don't think so!!!");
-                return null;
-            }),
+        get ("/protected", it -> {
+            it.halt (403, "I don't think so!!!");
+            return null;
+        });
 
-            get ("/redirect", it -> {
-                it.redirect ("/news/world");
-                return null;
-            }),
+        get ("/redirect", it -> {
+            it.redirect ("/news/world");
+            return null;
+        });
 
-            get ("/", it -> "root")
-        );
+        get ("/", it -> "root");
+
+        start ();
     }
 }

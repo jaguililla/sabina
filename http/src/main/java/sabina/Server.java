@@ -57,130 +57,13 @@ public final class Server {
     public static final int DEFAULT_PORT = 4567;
     public static final String DEFAULT_IP = "0.0.0.0";
 
-    /*
-     * Server
-     */
-    public static Server server (int port, Action... aHandler) {
-        return new Server (port, aHandler);
+    public static Server server (int port) {
+        return new Server (port);
     }
 
-    public static Server server (Action... aHandler) {
-        return new Server (aHandler);
-    }
-
-    public static Server server (String [] aArgs, Action... aHandler) {
+    public static Server server (String [] aArgs) {
         // TODO Parse args to parameters
-        return server (aHandler);
-    }
-
-    public static void serve (Action... aHandler) {
-        server (aHandler).startUp ();
-    }
-
-    public static void serve (String [] aArgs, Action... aHandler) {
-        server (aArgs, aHandler).startUp ();
-    }
-
-    /*
-     * Filters
-     */
-    public static Filter after (Filter.Handler handler) {
-        return new Filter (after, handler);
-    }
-
-    public static Filter before (Filter.Handler handler) {
-        return new Filter (before, handler);
-    }
-
-    public static Filter after (String path, Filter.Handler handler) {
-        return new Filter (after, path, handler);
-    }
-
-    public static Filter before (String path, Filter.Handler handler) {
-        return new Filter (before, path, handler);
-    }
-
-    public static Filter after (String path, String contentType, Filter.Handler handler) {
-        return new Filter (after, path, contentType, handler);
-    }
-
-    public static Filter before (String path, String contentType, Filter.Handler handler) {
-        return new Filter (before, path, contentType, handler);
-    }
-
-    /*
-     * Routes
-     */
-    public static Route connect (String path, Route.Handler handler) {
-        return new Route (connect, path, handler);
-    }
-
-    public static Route delete (String path, Route.Handler handler) {
-        return new Route (delete, path, handler);
-    }
-
-    public static Route get (String path, Route.Handler handler) {
-        return new Route (get, path, handler);
-    }
-
-    public static Route head (String path, Route.Handler handler) {
-        return new Route (head, path, handler);
-    }
-
-    public static Route options (String path, Route.Handler handler) {
-        return new Route (options, path, handler);
-    }
-
-    public static Route patch (String path, Route.Handler handler) {
-        return new Route (patch, path, handler);
-    }
-
-    public static Route post (String path, Route.Handler handler) {
-        return new Route (post, path, handler);
-    }
-
-    public static Route put (String path, Route.Handler handler) {
-        return new Route (put, path, handler);
-    }
-
-    public static Route trace (String path, Route.Handler handler) {
-        return new Route (trace, path, handler);
-    }
-
-    public static Route connect (String path, String contentType, Route.Handler handler) {
-        return new Route (connect, path, contentType, handler);
-    }
-
-    public static Route delete (String path, String contentType, Route.Handler handler) {
-        return new Route (delete, path, contentType, handler);
-    }
-
-    public static Route get (String path, String contentType, Route.Handler handler) {
-        return new Route (get, path, contentType, handler);
-    }
-
-    public static Route head (String path, String contentType, Route.Handler handler) {
-        return new Route (head, path, contentType, handler);
-    }
-
-    public static Route options (String path, String contentType, Route.Handler handler) {
-        return new Route (options, path, contentType, handler);
-    }
-
-    public static Route patch (String path, String contentType, Route.Handler handler) {
-        return new Route (patch, path, contentType, handler);
-    }
-
-    public static Route post (String path, String contentType, Route.Handler handler) {
-        return new Route (post, path, contentType, handler);
-    }
-
-    public static Route put (String path, String contentType, Route.Handler handler) {
-        return new Route (put, path, contentType, handler);
-    }
-
-    public static Route trace (String path, String contentType, Route.Handler handler) {
-        return new Route (trace, path, contentType, handler);
+        return new Server ();
     }
 
     private int port = DEFAULT_PORT;
@@ -201,15 +84,12 @@ public final class Server {
     /** Holds a map of Exception classes and associated handlers. */
     private final Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<> ();
 
-    public Server (int port, Action... nodes) {
-        this (nodes);
-        setPort (port);
+    public Server () {
+        super ();
     }
 
-    public Server (Action... nodes) {
-        checkArgument (nodes != null);
-        assert nodes != null;
-        asList (nodes).forEach (this::addRoute);
+    public Server (int port) {
+        setPort (port);
     }
 
     /**
@@ -282,7 +162,7 @@ public final class Server {
         externalStaticFileFolder = externalFolder;
     }
 
-    public synchronized void startUp () {
+    public synchronized void start () {
         new Thread (() -> {
             server = SparkServerFactory.create (hasMultipleHandlers ());
             server.startUp (
@@ -309,12 +189,14 @@ public final class Server {
             server.shutDown ();
     }
 
-    protected synchronized void addRoute (Action action) {
+    protected synchronized Server addRoute (Action action) {
 //        LOG.fine (">>> " + action);
         System.out.println (">>> " + action);
 
         routeMatcher.parseValidateAddRoute (
             action.method + " '" + action.path + "'", action.acceptType, action);
+
+        return this;
     }
 
     /**
@@ -323,11 +205,12 @@ public final class Server {
      * @param exceptionClass the exception class
      * @param aHandler        The handler
      */
-    public synchronized <T extends Exception> void exception(
+    public synchronized <T extends Exception> Server exception(
         Class<T> exceptionClass, BiConsumer<T, Exchange> aHandler) {
 
         Fault wrapper = new Fault<> (exceptionClass, aHandler);
         map (exceptionClass, wrapper);
+        return this;
     }
 
     /**
@@ -385,5 +268,107 @@ public final class Server {
      */
     public Fault getHandler(Exception exception) {
         return getHandler (exception.getClass ());
+    }
+
+    /*
+     * Filters
+     */
+    public Server after (Filter.Handler handler) {
+        return addRoute (new Filter (after, handler));
+    }
+
+    public Server before (Filter.Handler handler) {
+        return addRoute (new Filter (before, handler));
+    }
+
+    public Server after (String path, Filter.Handler handler) {
+        return addRoute (new Filter (after, path, handler));
+    }
+
+    public Server before (String path, Filter.Handler handler) {
+        return addRoute (new Filter (before, path, handler));
+    }
+
+    public Server after (String path, String contentType, Filter.Handler handler) {
+        return addRoute (new Filter (after, path, contentType, handler));
+    }
+
+    public Server before (String path, String contentType, Filter.Handler handler) {
+        return addRoute (new Filter (before, path, contentType, handler));
+    }
+
+    /*
+     * Routes
+     */
+    public Server connect (String path, Route.Handler handler) {
+        return addRoute (new Route (connect, path, handler));
+    }
+
+    public Server delete (String path, Route.Handler handler) {
+        return addRoute (new Route (delete, path, handler));
+    }
+
+    public Server get (String path, Route.Handler handler) {
+        return addRoute (new Route (get, path, handler));
+    }
+
+    public Server head (String path, Route.Handler handler) {
+        return addRoute (new Route (head, path, handler));
+    }
+
+    public Server options (String path, Route.Handler handler) {
+        return addRoute (new Route (options, path, handler));
+    }
+
+    public Server patch (String path, Route.Handler handler) {
+        return addRoute (new Route (patch, path, handler));
+    }
+
+    public Server post (String path, Route.Handler handler) {
+        return addRoute (new Route (post, path, handler));
+    }
+
+    public Server put (String path, Route.Handler handler) {
+        return addRoute (new Route (put, path, handler));
+    }
+
+    public Server trace (String path, Route.Handler handler) {
+        return addRoute (new Route (trace, path, handler));
+    }
+
+    public Server connect (String path, String contentType, Route.Handler handler) {
+        return addRoute (new Route (connect, path, contentType, handler));
+    }
+
+    public Server delete (String path, String contentType, Route.Handler handler) {
+        return addRoute (new Route (delete, path, contentType, handler));
+    }
+
+    public Server get (String path, String contentType, Route.Handler handler) {
+        return addRoute (new Route (get, path, contentType, handler));
+    }
+
+    public Server head (String path, String contentType, Route.Handler handler) {
+        return addRoute (new Route (head, path, contentType, handler));
+    }
+
+    public Server options (String path, String contentType, Route.Handler handler) {
+        return addRoute (new Route (options, path, contentType, handler));
+    }
+
+    public Server patch (String path, String contentType, Route.Handler handler) {
+        return addRoute (new Route (patch, path, contentType, handler));
+    }
+
+    public Server post (String path, String contentType, Route.Handler handler) {
+        return addRoute (new Route (post, path, contentType, handler));
+    }
+
+    public Server put (String path, String contentType, Route.Handler handler) {
+        return addRoute (new Route (put, path, contentType, handler));
+    }
+
+    public Server trace (String path, String contentType, Route.Handler handler) {
+        return addRoute (new Route (trace, path, contentType, handler));
     }
 }

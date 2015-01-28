@@ -45,7 +45,7 @@ class MimeParse {
     /**
      * Parse results container.
      */
-    private static class ParseResults {
+    static class ParseResults {
         String type;
         String subType;
 
@@ -105,7 +105,7 @@ class MimeParse {
      *
      * @param range .
      */
-    private static ParseResults parseMediaRange (String range) {
+    static ParseResults parseMediaRange (String range) {
         ParseResults results = parseMimeType (range);
         String q = results.params.get ("q");
         float f = toFloat (q, 1);
@@ -118,7 +118,7 @@ class MimeParse {
     /**
      * Structure for holding a fitness/quality combo.
      */
-    private static class FitnessAndQuality implements Comparable<FitnessAndQuality> {
+    static class FitnessAndQuality implements Comparable<FitnessAndQuality> {
         int fitness;
         float quality;
         String mimeType; // optionally used

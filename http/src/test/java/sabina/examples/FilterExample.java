@@ -14,7 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Server.*;
+import static sabina.Sabina.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,25 +38,24 @@ class FilterExample {
     private static Map<String, String> usernamePasswords = new HashMap<> ();
 
     public static void main (String[] args) {
-
         usernamePasswords.put ("foo", "bar");
         usernamePasswords.put ("admin", "admin");
 
-        serve (
-            before (it -> {
-                String user = it.queryParams ("user");
-                String password = it.queryParams ("password");
+        before (it -> {
+            String user = it.queryParams ("user");
+            String password = it.queryParams ("password");
 
-                String dbPassword = usernamePasswords.get (user);
-                if (!(password != null && password.equals (dbPassword)))
-                    it.halt (401, "You are not welcome here!!!");
-            }),
+            String dbPassword = usernamePasswords.get (user);
+            if (!(password != null && password.equals (dbPassword)))
+                it.halt (401, "You are not welcome here!!!");
+        });
 
-            before ("/hello", it -> it.header ("Foo", "Set by second before filter")),
+        before ("/hello", it -> it.header ("Foo", "Set by second before filter"));
 
-            get ("/hello", it -> "Hello World!"),
+        get ("/hello", it -> "Hello World!");
 
-            after ("/hello", it -> it.header ("sabina", "added by after-filter"))
-        );
+        after ("/hello", it -> it.header ("sabina", "added by after-filter"));
+
+        start ();
     }
 }

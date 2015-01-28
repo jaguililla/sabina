@@ -14,29 +14,19 @@
 
 package sabina.route;
 
-import static java.util.logging.Logger.getLogger;
-
-import java.util.logging.Logger;
-
 /**
  * RouteMatcherFactory
  *
  * @author Per Wendel
  */
 public final class RouteMatcherFactory {
-    private static final Logger LOG = getLogger (RouteMatcherFactory.class.getName ());
-
     private static RouteMatcher routeMatcher;
 
     private RouteMatcherFactory () {
-        super ();
+        throw new IllegalStateException ();
     }
 
     public static synchronized RouteMatcher get () {
-        if (routeMatcher == null) {
-            LOG.fine ("creates RouteMatcher");
-            routeMatcher = new SimpleRouteMatcher ();
-        }
-        return routeMatcher;
+        return routeMatcher == null? routeMatcher = new SimpleRouteMatcher () : routeMatcher;
     }
 }
