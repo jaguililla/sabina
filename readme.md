@@ -10,19 +10,25 @@
 Sabina - a Sinatra inspired web framework
 =========================================
 
-Sabina 2.0.1 is now available on [JCenter]!!! (TODO Add JCenter link)
+Sabina 2.1.0 is now available on [JCenter]!!!
+
+```groovy
+dependencies {
+  compile 'sabina:http:2.1.0'
+}
+```
 
 ```xml
 <dependency>
-  <groupId>com.sabina</groupId>
-  <artifactId>sabina</artifactId>
-  <version>1.0.0</version>
+  <groupId>sabina</groupId>
+  <artifactId>http</artifactId>
+  <version>2.1.0</version>
 </dependency>
 ```
 
-API Docs: [Core](http://there4.co/sabina/core/) [Extra](http://there4.co/sabina/core/)
+API Docs: [Core](http://there4.co/sabina/http/) [Extra](http://there4.co/sabina/http/)
 
-[JCenter]:
+[JCenter]: TODO Add JCenter link
 
 
 Getting started
@@ -31,12 +37,10 @@ Getting started
 ```java
 import static sabina.Sabina.*;
 
-public class HelloWorld {
-   public static void main (String[] args) {
-      serve (
-          get ("/hello", it -> "Hello World!")
-      );
-   }
+public class HiWorld {
+    public static void main (String[] args) {
+        get ("/hello", it -> "Hi World!").start ();
+    }
 }
 ```
 
@@ -55,29 +59,29 @@ Examples
 Check out and try the examples in the source code.
 
 Simple example showing some basic functionality ([SimpleExample.java][Simple])
-[Simple]: //github.com/jamming/sabina/tree/master/core/src/test/java/sabina/examples/SimpleExample.java
+[Simple]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/SimpleExample.java
 
 A simple CRUD example showing howto create, get, update and delete book resources ([Books.java][Books])
-[Books]: //github.com/jamming/sabina/tree/master/core/src/test/java/sabina/examples/Books.java
+[Books]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/Books.java
 
 Example showing a very simple (and stupid) authentication filter that is executed before all
 other resources ([FilterExample.java][Filter])
-[Filter]: //github.com/jamming/sabina/tree/master/core/src/test/java/sabina/examples/FilterExample.java
+[Filter]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/FilterExample.java
 
 Example showing how to use attributes ([FilterExampleAttributes.java][FilterAttributes])
-[FilterAttributes]: //github.com/jamming/sabina/tree/master/core/src/test/java/sabina/examples/FilterExampleAttributes.java
+[FilterAttributes]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/FilterExampleAttributes.java
 
 Example showing how to serve static resources ([StaticResources.java][StaticResources])
-[StaticResources]: //github.com/jamming/sabina/tree/master/core/src/test/java/sabina/examples/StaticResources.java
+[StaticResources]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/StaticResources.java
 
 Example showing how to define content depending on accept type ([JsonAcceptTypeExample.java][JsonAcceptType])
-[JsonAcceptType]: //github.com/jamming/sabina/tree/master/core/src/test/java/sabina/examples/JsonAcceptTypeExample.java
+[JsonAcceptType]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/JsonAcceptTypeExample.java
 
 Example showing how to render a view from a template ([FreeMarkerExample.java][FreeMarker])
-[FreeMarker]: //github.com/jamming/sabina/tree/master/core/src/test/java/sabina/examples/FreeMarkerExample.java
+[FreeMarker]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/FreeMarkerExample.java
 
 Example of using Transformer. ([TransformerExample.java][Transformer])
-[Transformer]: //github.com/jamming/sabina/tree/master/core/src/test/java/sabina/examples/TransformerExample.java
+[Transformer]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/TransformerExample.java
 
 
 LICENSE
@@ -99,13 +103,11 @@ and limitations under the License.
 TODO
 ----
 
-* Add badges to site
 * Add social buttons to site
 * Fix documentation site styles and pages
-* Add Travis links, huboard, issues, etc.
+* Add Travis links, huboard, issues, etc. (in reference documentation)
 
 * Add optimize 'profile'
-* Create unit tests
 
 * Integrate with:
   * http://jackson.codehaus.org
@@ -118,7 +120,4 @@ TODO
 * Helper for JDBC
 
 * Example project (command to fetch and start, deployment heroku, building executable WAR)
-* Start child processes (clones) of the microservice
-* Manage versions
 * Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages
-* Create 'amqp' module for async queues communication (with producer and consumer)

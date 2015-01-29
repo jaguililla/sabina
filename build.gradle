@@ -45,7 +45,7 @@ subprojects {
     apply plugin: 'com.github.kt3k.coveralls'
 
     group = 'sabina'
-    version = '2.0.1-SNAPSHOT'
+    version = '2.1.0-SNAPSHOT'
     description = 'A Sinatra inspired Java web framework'
 
     repositories {

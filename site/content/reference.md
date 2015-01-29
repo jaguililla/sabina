@@ -8,5 +8,5 @@ status=published
 API Documentation
 =================
 
-* [Core Javadoc](core/index.html)
+* [HTTP Javadoc](http/index.html)
 * [Extra Javadoc](extra/index.html)

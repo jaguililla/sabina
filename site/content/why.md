@@ -43,6 +43,12 @@ Why not use Spark?
 
 TODO
 
+* Working tests
+* All in one project (http, extra, documentation)
+* Coverage and deployment
+* Undertow backend
+* Multiple servers
+
 
 Okey, so why use Sabina?
 ------------------------
