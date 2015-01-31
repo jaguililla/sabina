@@ -44,7 +44,7 @@ import sabina.webserver.SparkServerFactory;
  * <p>
  * <pre>
  *   serve (
- *     get("/hello", it -> "Hello World!")
+ *     get("/hello", it -&gt; "Hello World!")
  *   );
  * </pre>
  * <p>

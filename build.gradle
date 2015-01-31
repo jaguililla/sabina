@@ -113,8 +113,8 @@ jbake {
 
 task site (dependsOn: 'jbake') {
     copy {
-        from 'html/build/docs/javadoc/'
-        into "$buildDir/site/html/"
+        from 'http/build/docs/javadoc/'
+        into "$buildDir/site/http/"
         include ('**')
     }
     copy {
