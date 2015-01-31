@@ -27,7 +27,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import sabina.util.TestUtil;
 
-public class BooksIT {
+@Test public class BooksIT {
     private static final String AUTHOR = "FOO", TITLE = "BAR", NEW_TITLE = "SABINA";
 
     private static TestUtil testUtil = new TestUtil ();
@@ -123,7 +123,7 @@ public class BooksIT {
         testUtil.waitForShutdown ();
     }
 
-    @Test public void createBook () throws FileNotFoundException {
+    public void createBook () throws FileNotFoundException {
         UrlResponse res =
             testUtil.doPost ("/books?author=" + AUTHOR + "&title=" + TITLE);
         sid = res.body.trim ();
@@ -134,7 +134,7 @@ public class BooksIT {
         assertEquals (201, res.status);
     }
 
-    @Test public void listBooks () throws FileNotFoundException {
+    public void listBooks () throws FileNotFoundException {
         createBook ();
         UrlResponse res = testUtil.doGet ("/books");
 
@@ -145,7 +145,7 @@ public class BooksIT {
         assertEquals (200, res.status);
     }
 
-    @Test public void getBook () throws FileNotFoundException {
+    public void getBook () throws FileNotFoundException {
         // ensure there is a book
         createBook ();
         UrlResponse res = testUtil.doGet ("/books/" + sid);
@@ -161,7 +161,7 @@ public class BooksIT {
         assertTrue (res.headers.get ("FOZ").equals ("BAZ"));
     }
 
-    @Test public void updateBook () throws FileNotFoundException {
+    public void updateBook () throws FileNotFoundException {
         createBook ();
         UrlResponse res = testUtil.doPut ("/books/" + sid + "?title=" + NEW_TITLE);
 
@@ -172,7 +172,7 @@ public class BooksIT {
         assertEquals (200, res.status);
     }
 
-    @Test public void getUpdatedBook () throws FileNotFoundException {
+    public void getUpdatedBook () throws FileNotFoundException {
         updateBook ();
         UrlResponse res = testUtil.doGet ("/books/" + sid);
 
@@ -183,7 +183,7 @@ public class BooksIT {
         assertEquals (200, res.status);
     }
 
-    @Test public void deleteBook () throws FileNotFoundException {
+    public void deleteBook () throws FileNotFoundException {
         UrlResponse res = testUtil.doDelete ("/books/" + sid);
 
         assertNotNull (res);
@@ -193,7 +193,7 @@ public class BooksIT {
         assertEquals (200, res.status);
     }
 
-    @Test public void bookNotFound () throws FileNotFoundException {
+    public void bookNotFound () throws FileNotFoundException {
         UrlResponse res = testUtil.doGet ("/books/" + 9999);
 
         assertNotNull (res);

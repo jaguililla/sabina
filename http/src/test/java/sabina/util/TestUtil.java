@@ -294,7 +294,7 @@ public class TestUtil {
      * @return Base directory for files.
      */
     public static String getBase () {
-        return new File ("./src").exists ()? "./src" : "./core/src";
+        return new File ("./src").exists ()? "./src" : "./http/src";
     }
 
     /**

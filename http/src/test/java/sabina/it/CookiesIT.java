@@ -26,7 +26,7 @@ import sabina.util.TestUtil;
  *
  * @author dreambrother
  */
-public class CookiesIT {
+@Test public class CookiesIT {
     private static TestUtil testUtil = new TestUtil ();
 
     @BeforeClass public static void setup () throws InterruptedException {
@@ -68,11 +68,11 @@ public class CookiesIT {
         testUtil.waitForShutdown ();
     }
 
-    @Test public void emptyCookies () {
+    public void emptyCookies () {
         testUtil.doPost ("/assertNoCookies");
     }
 
-    @Test public void createCookie () {
+    public void createCookie () {
         String cookieName = "testCookie";
         String cookieValue = "testCookieValue";
         String cookie = cookieName + "&cookieValue=" + cookieValue;
@@ -80,7 +80,7 @@ public class CookiesIT {
         testUtil.doPost ("/assertHasCookie?cookieName=" + cookie);
     }
 
-    @Test public void removeCookie () {
+    public void removeCookie () {
         String cookieName = "testCookie";
         String cookieValue = "testCookieValue";
         String cookie = cookieName + "&cookieValue=" + cookieValue;

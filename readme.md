@@ -53,6 +53,13 @@ You can also check out the javadoc. After getting the source from github run:
 The result is put in `/build/docs/javadoc`
 
 
+IDE Settings
+------------
+
+Take care of the output path in IntelliJ, for Gradle projects maybe the tests classes are not
+generated in the same place as Gradle itself.
+
+
 Examples
 ---------
 
@@ -118,6 +125,7 @@ TODO
   * http://redis.io
 * Helper for multiline strings
 * Helper for JDBC
+* Swagger code generator
 
 * Example project (command to fetch and start, deployment heroku, building executable WAR)
 * Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages

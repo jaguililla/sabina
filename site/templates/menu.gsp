@@ -22,11 +22,11 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
+      <a class="navbar-brand" href="${root}index.html">Sabina</a>
     </div>
 
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li><a href="${root}index.html">Home</a></li>
         <li><a href="${root}why.html">Why</a></li>
         <li><a href="${root}readme.html">Readme</a></li>
         <li><a href="${root}reference.html">Reference</a></li>

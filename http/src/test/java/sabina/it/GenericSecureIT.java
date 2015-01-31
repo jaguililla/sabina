@@ -27,7 +27,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import sabina.util.TestUtil;
 
-public class GenericSecureIT {
+@Test public class GenericSecureIT {
 
     private static TestUtil testUtil = new TestUtil ();
 
@@ -70,65 +70,65 @@ public class GenericSecureIT {
         testUtil.waitForStartup ();
     }
 
-    @Test public void getHi () {
+    public void getHi () {
         UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
         assertEquals (200, response.status);
         assertEquals ("Hello World!", response.body);
     }
 
-    @Test public void hiHead () {
+    public void hiHead () {
         UrlResponse response = testUtil.doMethodSecure ("HEAD", "/hi");
         assertEquals (200, response.status);
         assertEquals ("", response.body);
     }
 
-    @Test public void getHiAfterFilter () {
+    public void getHiAfterFilter () {
         UrlResponse response = testUtil.doMethodSecure ("GET", "/hi");
         assertTrue (response.headers.get ("after").contains ("foobar"));
     }
 
-    @Test public void getRoot () {
+    public void getRoot () {
         UrlResponse response = testUtil.doMethodSecure ("GET", "/");
         assertEquals (200, response.status);
         assertEquals ("Hello Root!", response.body);
     }
 
-    @Test public void echoParam1 () {
+    public void echoParam1 () {
         UrlResponse response = testUtil.doMethodSecure ("GET", "/shizzy");
         assertEquals (200, response.status);
         assertEquals ("echo: shizzy", response.body);
     }
 
-    @Test public void echoParam2 () {
+    public void echoParam2 () {
         UrlResponse response = testUtil.doMethodSecure ("GET", "/gunit");
         assertEquals (200, response.status);
         assertEquals ("echo: gunit", response.body);
     }
 
-    @Test public void echoParamWithMaj () {
+    public void echoParamWithMaj () {
         UrlResponse response = testUtil.doMethodSecure ("GET", "/paramwithmaj/plop");
         assertEquals (200, response.status);
         assertEquals ("echo: plop", response.body);
     }
 
-    @Test public void unauthorized () throws Exception {
+    public void unauthorized () throws Exception {
         UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/protected/resource");
         assertTrue (urlResponse.status == 401);
     }
 
-    @Test public void notFound () throws Exception {
+    public void notFound () throws Exception {
         UrlResponse urlResponse = testUtil.doMethodSecure ("GET", "/no/resource");
         assertTrue (urlResponse.status == 404);
     }
 
-    @Test public void postOk () {
+    public void postOk () {
         UrlResponse response = testUtil.doMethodSecure ("POST", "/poster", "Fo shizzy");
         out.println (response.body);
         assertEquals (201, response.status);
         assertTrue (response.body.contains ("Fo shizzy"));
     }
 
-    @Test public void patchOk () {
+    public void patchOk () {
         UrlResponse response = testUtil.doMethodSecure ("PATCH", "/patcher", "Fo shizzy");
         out.println (response.body);
         assertEquals (200, response.status);
