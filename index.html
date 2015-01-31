@@ -54,14 +54,13 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
+      <a class="navbar-brand" href="index.html">Sabina</a>
     </div>
 
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li><a href="">Home</a></li>
         <li><a href="why.html">Why</a></li>
         <li><a href="readme.html">Readme</a></li>
-        <li><a href="download.html">Download</a></li>
         <li><a href="reference.html">Reference</a></li>
         <li><a href="license.html">License</a></li>
         <li><a href="contact.html">Contact</a></li>
@@ -72,35 +71,46 @@
 <div class="container">
 
 
-  <p id="header">
-    <img
-      src="http://raw.githubusercontent.com/jamming/sabina/gh-pages/sabina-logo.png"
-      alt="Project Logo"/>
-    <h1>
-      A Sinatra inspired micro web framework for quickly creating web applications in Java with
-      minimal effort
-    </h1>
-  </p>
-
-  <h2>News</h2>
-
-  <p>Sabina 2.0.0 re-written for Java 8 and Lambdas available on Bintray and Maven central!</p>
+  <div class="row">
+    <div class="col-md-4 col-xs-4 col-sm-2 text-right">
+      <img
+        src="http://raw.githubusercontent.com/jamming/sabina/gh-pages/sabina-logo.png"
+        alt="Project Logo"/>
+    </div>
+    <div class="col-md-8 col-xs-8 col-sm-4">
+      <h1 id="project-title">Sabina</h1>
+      <h2>
+        A Sinatra inspired micro web framework for quickly creating web applications in Java with
+        minimal effort
+      </h2>
+      <p>
+        <a href="https://travis-ci.org/jamming/sabina">
+          <img
+            src="https://travis-ci.org/jamming/sabina.svg?branch=master"
+            alt="Build Img"
+            style="max-width:100%;">
+        </a>
+        <a href="https://coveralls.io/r/jamming/sabina">
+          <img
+            src="https://img.shields.io/coveralls/jamming/sabina.svg"
+            alt="Coverage Img"
+            style="max-width:100%;">
+        </a>
+      </p>
+    </div>
+  </div>
 
   <h2>Quick start</h2>
 
-  <p>Add the Sabina maven dependency and you're ready to go:</p>
+  <p>Add the Sabina dependency and you're ready to go:</p>
 
-  <pre>
-    <code class="java">
-import static sabina.Sabina.*;
+<pre><code class="java">import static sabina.Sabina.*;
 
-public class HelloWorld {
-    public static void main(String[] args) {
-        get(&quot;/hello&quot;, it -&gt; &quot;Hello World&quot;);
+public class HiWorld {
+    public static void main (String[] args) {
+        get(&quot;/hello&quot;, it -&gt; &quot;Hi World!&quot;).start ();
     }
-}
-    </code>
-  </pre>
+}</code></pre>
 
   <h2>Ignite and view at</h2>
 
