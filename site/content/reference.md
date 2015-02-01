@@ -18,6 +18,7 @@ Release process
 Steps:
 
 * Commit and push all changes
+* Check build is okey
 * Change version in gradle.properties
 * Build and deploy (binary and documentation)
 * Commit and tag the release
