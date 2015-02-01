@@ -74,7 +74,23 @@
 <ul>
   <li><a href="http/index.html">HTTP Javadoc</a></li>
   <li><a href="extra/index.html">Extra Javadoc</a></li>
-</ul>
+</ul><h1>Release process</h1><p>Steps:</p>
+<ul>
+  <li>Commit and push all changes</li>
+  <li>Check build is okey</li>
+  <li>Change version in gradle.properties</li>
+  <li>Build and deploy (binary and documentation)</li>
+  <li>Commit and tag the release</li>
+  <li>Update version in gradle.properties</li>
+  <li>Commit and push</li>
+</ul><p>Command:</p>
+<pre><code>git add . &amp;&amp; git commit &amp;&amp; \
+vim gradle.properties &amp;&amp; \
+gw clean check site publish publishGhPages &amp;&amp; \
+git add gradle.properties &amp;&amp; git commit -m &quot;Release 1.0.0&quot; &amp;&amp; git tag &quot;1.0.0&quot; &amp;&amp; \
+vim gradle.properties &amp;&amp; \
+git add gradle.properties &amp;&amp; git commit -m &quot;New snapshot&quot; &amp;&amp; git push origin master
+</code></pre>
       </div>
       <div id="push"></div>
     </div>
