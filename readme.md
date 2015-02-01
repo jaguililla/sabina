@@ -129,5 +129,3 @@ TODO
 
 * Example project (command to fetch and start, deployment heroku, building executable WAR)
 * Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages
-* Release command:
-    change version, build, deploy, doc, deploy doc, commit, tag, next version, commit, push
