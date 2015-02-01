@@ -28,7 +28,7 @@ dependencies {
 
 API Docs: [Core](http://there4.co/sabina/http/) [Extra](http://there4.co/sabina/http/)
 
-[JCenter]: TODO Add JCenter link
+[JCenter]: https://bintray.com/jamming/maven/Sabina
 
 
 Getting started
@@ -129,4 +129,5 @@ TODO
 
 * Example project (command to fetch and start, deployment heroku, building executable WAR)
 * Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages
-* Release command: change version, build, deploy, doc, commit, tag, next version, commit
+* Release command:
+    change version, build, deploy, doc, deploy doc, commit, tag, next version, commit, push

@@ -94,9 +94,9 @@ subprojects {
                 url 'https://api.bintray.com/maven/jamming/maven/Sabina'
                 credentials {
                     // Set 'bintrayKey' in '~/.gradle/gradle.properties'
-                    def hasBintrayKey = Project.hasProperty ("${name}BintrayKey")
+                    def hasBintrayKey = project.hasProperty ("${project.name}BintrayKey")
                     def bintrayKey = hasBintrayKey?
-                        Project.property ("${name}BintrayKey") : "UNDEFINED"
+                        project.property ("${project.name}BintrayKey") : "UNDEFINED"
 
                     username 'jamming'
                     password bintrayKey
