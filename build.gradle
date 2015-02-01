@@ -13,10 +13,6 @@
  */
 
 buildscript {
-    ext {
-        wrapperPath = "${project.projectDir}/gradle"
-    }
-
     repositories {
         jcenter ()
     }
@@ -34,6 +30,11 @@ plugins {
     id 'org.ajoberstar.github-pages' version '0.13.0-milestone.1'
 }
 
+/*
+ * Some properties are defined in 'gradle.properties'
+ * TODO Javadoc doclet
+ * TODO Replace variables (${var}) in documentation
+ */
 subprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
@@ -45,7 +46,7 @@ subprojects {
     apply plugin: 'com.github.kt3k.coveralls'
 
     group = 'sabina'
-    version = '2.1.0-SNAPSHOT'
+    version = projectVersion
     description = 'A Sinatra inspired Java web framework'
 
     repositories {
@@ -94,7 +95,8 @@ subprojects {
                 credentials {
                     // Set 'bintrayKey' in '~/.gradle/gradle.properties'
                     def hasBintrayKey = Project.hasProperty ("${name}BintrayKey")
-                    def bintrayKey = hasBintrayKey? Project.property ("${name}BintrayKey") : "UNDEFINED"
+                    def bintrayKey = hasBintrayKey?
+                        Project.property ("${name}BintrayKey") : "UNDEFINED"
 
                     username 'jamming'
                     password bintrayKey
@@ -135,6 +137,6 @@ githubPages {
 
 wrapper {
     gradleVersion = '2.2.1'
-    jarFile = wrapperPath + '/wrapper.jar'
-    scriptFile = wrapperPath + '/wrapper'
+    jarFile = "${project.projectDir}/" + wrapperPath + '/wrapper.jar'
+    scriptFile = "${project.projectDir}/" + wrapperPath + '/wrapper'
 }

@@ -30,9 +30,23 @@
     </div>
   </div>
 
-  <h2>Quick start</h2>
+  <h2>Add the dependency</h2>
 
-  <p>Add the Sabina dependency and you're ready to go:</p>
+  <p>Gradle</p>
+
+<pre><code class="groovy">dependencies {
+    compile 'sabina:http:1.0.0'
+}</code></pre>
+
+  <p>Maven</p>
+
+<pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;sabina&lt;/groupId&gt;
+    &lt;artifactId&gt;http&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+
+  <h2>Write the code</h2>
 
 <pre><code class="java">import static sabina.Sabina.*;
 

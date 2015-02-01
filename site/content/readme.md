@@ -12,9 +12,9 @@ Add the Sabina maven dependency
 
 ```xml
 <dependency>
-  <groupId>com.sabina</groupId>
-  <artifactId>sabina-core</artifactId>
-  <version>2.0.0</version>
+  <groupId>sabina</groupId>
+  <artifactId>http</artifactId>
+  <version>1.0.0</version>
 </dependency>
 ```
 
@@ -22,10 +22,10 @@ Start coding:
 
 ```java
 import static sabina.Sabina.*;
-    
-public class HelloWorld {
+
+public class HiWorld {
     public static void main(String[] args) {
-        get("/hello", it -> "Hello World");
+        get("/hello", it -> "Hi World!").start ();
     }
 }
 ```
@@ -54,19 +54,19 @@ request is invoked.
 get ("/", it -> {
     // Show something ...
 });
-    
+
 post ("/", it -> {
     // Create something ...
 });
-    
+
 put ("/", it -> {
     // Update something ...
 });
-  
+
 delete ("/", it -> {
     // Annihilate something ...
 });
-    
+
 options ("/", it -> {
     // Appease something ...
 });
@@ -179,7 +179,7 @@ Handling cookies can be done via sabina request and response objects.
 ```java
 request.cookies ();                            // Get map of all request cookies
 request.cookie ("foo");                        // Access request cookie by name
-  
+
 response.cookie ("foo", "bar");                // Set cookie with a value
 response.cookie ("foo", "bar", 3600);          // Set cookie with a max-age
 response.cookie ("foo", "bar", 3600, true);    // Secure cookie
@@ -324,8 +324,8 @@ externalStaticFileLocation ("/var/www/public"); // Static files
 ```
 
 
-ResponseTransformer
--------------------
+Content Serialization
+---------------------
 
 Mapped routes that transforms the output from the handle method. This is done by extending the
 ResponseTransformer and pass this to the mapping method.
@@ -334,10 +334,10 @@ Example Of a route transforming output to JSON using Gson:
 
 ```java
 import com.google.gson.Gson;
-  
+
 public class JsonTransformer implements ResponseTransformer {
     private Gson gson = new Gson ();
-      
+
     @Override public String render (Object model) {
         return gson.toJson (model);
     }
@@ -377,8 +377,8 @@ Maven dependency:
 
 ```xml
 <dependency>
-  <groupId>com.sabina</groupId>
-  <artifactId>sabina-template-mustache</artifactId>
+  <groupId>sabina</groupId>
+  <artifactId>extra</artifactId>
   <version>1.0.0</version>
 </dependency></pre>
 ```
@@ -405,30 +405,6 @@ Embedded Web Server
 -------------------
 
 Standalone Sabina runs on an embedded Jetty web server.
-
-
-Running Sabina on a Web Server
------------------------------
-
-To run Sabina on a web server instead of standalone first of all an implementation of the
-interface `sabina.servlet.Sabina` is needed. In the `init()` method the routes should
-be initialized. In your `web.xml` the following filter needs to be configured:
-
-```xml
-<filter>
-  <filter-name>SabinaFilter</filter-name>
-  <filter-class>sabina.servlet.SabinaFilter</filter-class>
-  <init-param>
-    <param-name>applicationClass</param-name>
-    <param-value>com.company.YourApplication</param-value>
-  </init-param>
-</filter>
- 
-<filter-mapping>
-  <filter-name>SabinaFilter</filter-name>
-  <url-pattern>/*</url-pattern>
-</filter-mapping>
-```
 
 
 Javadoc

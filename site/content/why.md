@@ -41,13 +41,13 @@ JAX-RS implementations.
 Why not use Spark?
 ------------------
 
-TODO
+The infrastructure has been changed, Sabina uses gradle and has all the modules (http, extra and
+documentation) inside the project.
 
-* Working tests
-* All in one project (http, extra, documentation)
-* Coverage and deployment
-* Undertow backend
-* Multiple servers
+It features a continuous integration process including working tests, code coverage and deployment.
+
+And finally, it supports Undertow backend and a refactor is on the way to support more backends
+(including non blocking ones).
 
 
 Okey, so why use Sabina?
