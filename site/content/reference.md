@@ -32,4 +32,4 @@ Command:
     gw clean check site publish publishGhPages && \
     git add gradle.properties && git commit -m "Release 1.0.0" && git tag "1.0.0" && \
     vim gradle.properties && \
-    git add gradle.properties && git commit -m "New snapshot" && git push origin master
+    git add gradle.properties && git commit -m "New snapshot" && git push origin master --tags

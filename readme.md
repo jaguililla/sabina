@@ -112,6 +112,7 @@ TODO
 
 * Add social buttons to site
 * Fix documentation site styles and pages
+* Add go to there4.co button in site
 * Add Travis links, huboard, issues, etc. (in reference documentation)
 
 * Add optimize 'profile'
