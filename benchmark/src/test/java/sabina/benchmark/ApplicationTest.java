@@ -17,7 +17,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-@org.testng.annotations.Test
+@org.testng.annotations.Test (enabled = false)
 public final class ApplicationTest {
     private static final String ENDPOINT = "http://localhost:8080";
     private static final Gson GSON = new Gson ();
