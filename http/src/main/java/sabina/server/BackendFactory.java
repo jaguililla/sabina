@@ -12,19 +12,19 @@
  * and limitations under the License.
  */
 
-package sabina.webserver;
+package sabina.server;
 
 /**
  * @author Per Wendel
  */
-public final class SparkServerFactory {
+public final class BackendFactory {
     public static final int IMPL = 1;
 
-    private SparkServerFactory () {
+    private BackendFactory () {
         throw new IllegalStateException ();
     }
 
-    private static SparkServer createJetty (boolean hasMultipleHandler) {
+    private static Backend createJetty (boolean hasMultipleHandler) {
         return new JettyServer (createFilter (hasMultipleHandler));
     }
 
@@ -34,11 +34,11 @@ public final class SparkServerFactory {
         return matcherFilter;
     }
 
-    private static SparkServer createUndertow (boolean hasMultipleHandler) {
+    private static Backend createUndertow (boolean hasMultipleHandler) {
         return new UndertowServer (createFilter (hasMultipleHandler));
     }
 
-    public static SparkServer create (boolean hasMultipleHandler) {
+    public static Backend create (boolean hasMultipleHandler) {
         switch (IMPL) {
             case 0:
                 return createJetty (hasMultipleHandler);

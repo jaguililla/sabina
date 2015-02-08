@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina.webserver;
+package sabina.server;
 
 import java.util.Map;
 import java.util.Set;

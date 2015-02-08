@@ -12,14 +12,14 @@
  * and limitations under the License.
  */
 
-package sabina.webserver;
+package sabina.server;
 
 /**
  * @author Per Wendel
  */
-public interface SparkServer {
+public interface Backend {
     /**
-     * Ignites the spark server, listening on the specified port, running SSL secured with the
+     * Ignites the Sabina server, listening on the specified port, running SSL secured with the
      * specified keystore and truststore. If truststore is null, keystore is reused.
      *
      * @param host The address to listen on.
@@ -38,7 +38,7 @@ public interface SparkServer {
         String staticFilesRoute, String externalFilesLocation);
 
     /**
-     * Stops the spark server.
+     * Stops the Sabina server.
      */
     void shutDown ();
 }

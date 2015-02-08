@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina.webserver;
+package sabina.server;
 
 import static io.undertow.Handlers.predicate;
 import static io.undertow.Handlers.resource;
@@ -124,7 +124,7 @@ class ChainResourceManager implements ResourceManager {
     }
 }
 
-class UndertowServer implements SparkServer {
+class UndertowServer implements Backend {
     private final MatcherFilter filter;
     private Undertow server;
 

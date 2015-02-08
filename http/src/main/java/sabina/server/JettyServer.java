@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina.webserver;
+package sabina.server;
 
 import static java.lang.System.exit;
 
@@ -66,13 +66,13 @@ class JettyHandler extends SessionHandler {
 }
 
 /**
- * Spark server implementation
+ * Sabina server backend implementation
  *
  * @author Per Wendel
  */
-class JettyServer implements SparkServer {
+class JettyServer implements Backend {
 
-    private static final String NAME = "Spark";
+    private static final String NAME = "Sabina";
     private Handler handler;
     private Server server;
 

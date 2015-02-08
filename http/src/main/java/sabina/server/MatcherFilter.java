@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina.webserver;
+package sabina.server;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.logging.Logger.getLogger;
@@ -47,7 +47,7 @@ class MatcherFilter implements Filter {
         INTERNAL_ERROR = "<html><body><h2>500 Internal Error</h2></body></html>",
         NOT_FOUND =
             "<html><body>" +
-                "<h2>404 Not found</h2>The requested route [%s] has not been mapped in Spark" +
+                "<h2>404 Not found</h2>The requested route [%s] has not been mapped in Sabina" +
                 "</body></html>";
 
     public final RouteMatcher routeMatcher;
@@ -70,8 +70,8 @@ class MatcherFilter implements Filter {
      *
      * @param routeMatcher The route matcher
      * @param isServletContext If true, chain.doFilter will be invoked if request is not
-     * consumed by Spark.
-     * @param hasOtherHandlers If true, do nothing if request is not consumed by Spark in
+     * consumed by Sabina.
+     * @param hasOtherHandlers If true, do nothing if request is not consumed by Sabina in
      * order
      * to let others handlers process the request.
      */
@@ -148,7 +148,7 @@ class MatcherFilter implements Filter {
         if (!consumed && hasOtherHandlers) {
 //            throw new NotConsumedException ();
             handled = false;
-			if (SparkServerFactory.IMPL == 1)
+			if (BackendFactory.IMPL == 1)
 				httpRes.setStatus (SC_NOT_FOUND); // TODO Only for Undertow
             return;
         }

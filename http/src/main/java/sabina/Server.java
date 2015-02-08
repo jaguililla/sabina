@@ -15,7 +15,6 @@
 package sabina;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Arrays.asList;
 import static java.util.logging.Logger.getLogger;
 import static sabina.HttpMethod.after;
 import static sabina.HttpMethod.before;
@@ -27,8 +26,8 @@ import java.util.logging.Logger;
 
 import sabina.route.RouteMatcher;
 import sabina.route.RouteMatcherFactory;
-import sabina.webserver.SparkServer;
-import sabina.webserver.SparkServerFactory;
+import sabina.server.Backend;
+import sabina.server.BackendFactory;
 
 /**
  * The main building block of a Sabina application is a set of routes. A route is
@@ -77,7 +76,7 @@ public final class Server {
     private String staticFileFolder;
     private String externalStaticFileFolder;
 
-    private SparkServer server;
+    private Backend server;
 
     /** TODO Only supports one matcher! */
     private final RouteMatcher routeMatcher = RouteMatcherFactory.get ();
@@ -164,7 +163,7 @@ public final class Server {
 
     public synchronized void start () {
         new Thread (() -> {
-            server = SparkServerFactory.create (hasMultipleHandlers ());
+            server = BackendFactory.create (hasMultipleHandlers ());
             server.startUp (
                 ipAddress,
                 port,
