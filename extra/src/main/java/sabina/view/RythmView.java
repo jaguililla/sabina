@@ -17,7 +17,7 @@ package sabina.view;
 import org.rythmengine.Rythm;
 
 public class RythmView {
-    public static String renderMustache (String aName, Object aModel) {
+    public static String renderRythm (String aName, Object aModel) {
         return Rythm.render (aName, aModel);
     }
 }

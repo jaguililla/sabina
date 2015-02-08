@@ -14,18 +14,20 @@
 
 package sabina.view;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.samskivert.mustache.Mustache.compiler;
 
-import com.samskivert.mustache.Mustache;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import com.samskivert.mustache.Template;
 
 public class MustacheView {
-    public static String renderMustache (String aName, Object aModel) {
-        String text = "One, two, {{three}}. Three sir!";
-        Template tmpl = Mustache.compiler ().compile (text);
-        Map<String, String> data = new HashMap<> ();
-        data.put ("three", "five");
-        return tmpl.execute (aModel);
+    public static String renderMustache (String templateName, Object model) {
+        InputStream resourceStream = Class.class.getResourceAsStream (templateName);
+        InputStreamReader resourceReader = new InputStreamReader (resourceStream);
+        BufferedReader reader = new BufferedReader (resourceReader);
+        Template template = compiler ().compile (reader);
+        return template.execute (model);
     }
 }
