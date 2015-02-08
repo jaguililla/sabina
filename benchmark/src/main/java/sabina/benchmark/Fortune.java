@@ -5,7 +5,7 @@ package sabina.benchmark;
  *
  * @author jam
  */
-public final class Fortune {
+final class Fortune {
     final int id;
     final String message;
 

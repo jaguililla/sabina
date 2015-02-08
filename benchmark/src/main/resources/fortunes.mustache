@@ -1,5 +1,3 @@
-@args List<Fortune> fortunes
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,12 +9,12 @@
         <th>id</th>
         <th>message</th>
     </tr>
-    @for(Fortune fortune: fortunes) {
+    {{#.}}
       <tr>
-          <td>@fortune.id</td>
-          <td>@fortune.message</td>
+          <td>{{id}}</td>
+          <td>{{message}}</td>
       </tr>
-    }
+    {{/.}}
 </table>
 </body>
 </html>

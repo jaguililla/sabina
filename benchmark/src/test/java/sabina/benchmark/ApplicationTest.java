@@ -1,12 +1,13 @@
 package sabina.benchmark;
 
 import static org.apache.http.client.fluent.Request.Get;
-import static org.junit.Assert.*;
+import static org.testng.AssertJUnit.*;
 import static sabina.benchmark.Application.main;
 import static sabina.Sabina.stop;
 import static sun.misc.IOUtils.readFully;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -16,15 +17,18 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@org.testng.annotations.Test
 public final class ApplicationTest {
     private static final String ENDPOINT = "http://localhost:8080";
     private static final Gson GSON = new Gson ();
 
-    @BeforeClass public static void setup () {
+    @org.testng.annotations.BeforeClass @BeforeClass
+    public static void setup () {
         main (null);
     }
 
-    @AfterClass public static void close () {
+    @org.testng.annotations.AfterClass @AfterClass
+    public static void close () {
         stop ();
     }
 
@@ -93,7 +97,7 @@ public final class ApplicationTest {
         checkResultItems (content, 1);
     }
 
-    @Test public void ten_query () throws IOException {
+    @Test public void ten_queries () throws IOException {
         HttpResponse response = get (ENDPOINT + "/db?queries=10");
         String content = getContent (response);
 
@@ -109,19 +113,37 @@ public final class ApplicationTest {
         checkResultItems (content, 500);
     }
 
+    @Test public void fortunes () throws IOException {
+        HttpResponse response = get (ENDPOINT + "/fortunes");
+        String content = getContent (response);
+        String contentType = response.getEntity ().getContentType ().getValue ();
+
+        assertTrue (response.getFirstHeader ("Server") != null);
+        assertTrue (response.getFirstHeader ("Date") != null);
+        assertTrue (content.contains ("&lt;script&gt;alert(&quot;This should not be displayed"));
+        assertTrue (content.contains ("フレームワークのベンチマーク"));
+        assertEquals ("text/html; charset=utf-8", contentType);
+    }
+
+    @Test public void updates () throws IOException {
+        // TODO
+    }
+
     private HttpResponse get (String uri) throws IOException {
         return Get (uri).execute ().returnResponse ();
     }
 
     private String getContent (HttpResponse aResponse) throws IOException {
-        return new String (readFully (aResponse.getEntity ().getContent (), -1, true));
+        InputStream in = aResponse.getEntity ().getContent ();
+        // TODO Replace readFully
+        return new String (readFully (in, -1, true));
     }
 
-    private void checkResponse (HttpResponse aRes, String aContent, String contentType) {
-        assertTrue (aRes.getFirstHeader ("Server") != null);
-        assertTrue (aRes.getFirstHeader ("Date") != null);
-        assertEquals (aContent.length (), aRes.getEntity ().getContentLength ());
-        assertEquals (contentType, aRes.getEntity ().getContentType ().getValue ());
+    private void checkResponse (HttpResponse res, String content, String contentType) {
+        assertTrue (res.getFirstHeader ("Server") != null);
+        assertTrue (res.getFirstHeader ("Date") != null);
+        assertEquals (content.length (), res.getEntity ().getContentLength ());
+        assertEquals (contentType, res.getEntity ().getContentType ().getValue ());
     }
 
     private void checkResultItems (String result, int size) {

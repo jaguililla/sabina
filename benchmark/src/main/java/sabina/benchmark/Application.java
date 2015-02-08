@@ -3,12 +3,11 @@ package sabina.benchmark;
 import static java.lang.Integer.parseInt;
 import static sabina.Sabina.*;
 import static sabina.content.JsonContent.toJson;
-import static sabina.view.FreeMarkerView.renderFreeMarker;
+import static sabina.view.MustacheView.renderMustache;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import sabina.Exchange;
 import sabina.Request;
-import sabina.view.RythmView;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,24 +20,25 @@ import javax.sql.DataSource;
 
 /**
  * When it is implemented, add this to benchmark_config
- * "fortune_url": "/fortune",
- * "update_url": "/update",
+ * "fortune_url": "/fortunes",
+ * "update_url": "/updates",
  */
 final class Application {
-    private static final Properties CONFIG = loadConfig ();
-    private static final DataSource DS = createSessionFactory ();
+    private static final Properties SETTINGS = loadConfiguration ();
+    private static final DataSource DATA_SOURCE = createSessionFactory ();
     private static final String SELECT_WORLD = "select * from world where id = ?";
+    private static final String UPDATE_WORLD = "update world set randomNumber = ? where id = ?";
     private static final String SELECT_FORTUNES = "select * from fortune";
 
     private static final int DB_ROWS = 10000;
     private static final String MESSAGE = "Hello, World!";
     private static final String CONTENT_TYPE_TEXT = "text/plain";
 
-    private static Properties loadConfig () {
+    private static Properties loadConfiguration () {
         try {
-            Properties config = new Properties ();
-            config.load (Class.class.getResourceAsStream ("/server.properties"));
-            return config;
+            Properties settings = new Properties ();
+            settings.load (Class.class.getResourceAsStream ("/server.properties"));
+            return settings;
         }
         catch (Exception ex) {
             throw new RuntimeException (ex);
@@ -47,13 +47,13 @@ final class Application {
 
     private static DataSource createSessionFactory () {
         try {
-            ComboPooledDataSource cpds = new ComboPooledDataSource ();
-            cpds.setJdbcUrl (CONFIG.getProperty ("mysql.uri"));
-            cpds.setMinPoolSize (32);
-            cpds.setMaxPoolSize (256);
-            cpds.setCheckoutTimeout (1800);
-            cpds.setMaxStatements (50);
-            return cpds;
+            ComboPooledDataSource dataSource = new ComboPooledDataSource ();
+            dataSource.setJdbcUrl (SETTINGS.getProperty ("mysql.uri"));
+            dataSource.setMinPoolSize (32);
+            dataSource.setMaxPoolSize (256);
+            dataSource.setCheckoutTimeout (1800);
+            dataSource.setMaxStatements (50);
+            return dataSource;
         }
         catch (Exception ex) {
             throw new RuntimeException (ex);
@@ -62,11 +62,11 @@ final class Application {
 
     private static int getQueries (final Request request) {
         try {
-            String param = request.queryParams ("queries");
-            if (param == null)
+            String parameter = request.queryParams ("queries");
+            if (parameter == null)
                 return 1;
 
-            int queries = parseInt (param);
+            int queries = parseInt (parameter);
             if (queries < 1)
                 return 1;
             if (queries > 500)
@@ -88,15 +88,15 @@ final class Application {
         final int queries = getQueries (it.request);
         final World[] worlds = new World[queries];
 
-        try (final Connection con = DS.getConnection ()) {
+        try (final Connection con = DATA_SOURCE.getConnection ()) {
             final Random random = ThreadLocalRandom.current ();
             final PreparedStatement stmt = con.prepareStatement (SELECT_WORLD);
 
-            for (int i = 0; i < queries; i++) {
+            for (int ii = 0; ii < queries; ii++) {
                 stmt.setInt (1, random.nextInt (DB_ROWS) + 1);
                 final ResultSet rs = stmt.executeQuery ();
                 while (rs.next ())
-                    worlds[i] = new World (rs.getInt (1), rs.getInt (2));
+                    worlds[ii] = new World (rs.getInt (1), rs.getInt (2));
             }
         }
         catch (SQLException e) {
@@ -110,7 +110,7 @@ final class Application {
     private static Object getFortunes (Exchange it) {
         final List<Fortune> fortunes = new ArrayList<> ();
 
-        try (final Connection con = DS.getConnection ()) {
+        try (final Connection con = DATA_SOURCE.getConnection ()) {
             final ResultSet rs = con.prepareStatement (SELECT_FORTUNES).executeQuery ();
             while (rs.next ())
                 fortunes.add (new Fortune (rs.getInt (1), rs.getString (2)));
@@ -122,39 +122,39 @@ final class Application {
         fortunes.add (new Fortune (42, "Additional fortune added at request time."));
         fortunes.sort ((a, b) -> a.message.compareTo (b.message));
 
-        it.response.type ("text/html");
-        String template =
-            "@args List<Fortune> fortunes\n" +
-            "\n" +
-            "<!DOCTYPE html>\n" +
-            "<html>\n" +
-            "<head>\n" +
-            "    <title>Fortunes</title>\n" +
-            "</head>\n" +
-            "<body>\n" +
-            "<table>\n" +
-            "    <tr>\n" +
-            "        <th>id</th>\n" +
-            "        <th>message</th>\n" +
-            "    </tr>\n" +
-            "    @for(Fortune fortune: fortunes) {\n" +
-            "      <tr>\n" +
-            "          <td>@fortune.id</td>\n" +
-            "          <td>@fortune.message</td>\n" +
-            "      </tr>\n" +
-            "    }\n" +
-            "</table>\n" +
-            "</body>\n" +
-            "</html>";
-        return RythmView.renderMustache (template, fortunes);
-//        return RythmView.renderMustache ("/sabina/view/fortunes.html", fortunes);
-//        Map<String, Object> model = new HashMap<> ();
-//        model.put ("fortunes", fortunes);
-//        return renderFreeMarker ("fortunes.ftl", model);
+        it.response.type ("text/html; charset=utf-8");
+        return renderMustache ("/fortunes.mustache", fortunes);
     }
 
-    private static Object getUpdate (Exchange it) {
-        throw new UnsupportedOperationException ();
+    private static Object getUpdates (Exchange it) {
+        final int queries = getQueries (it.request);
+        final World[] worlds = new World[queries];
+
+        try (final Connection con = DATA_SOURCE.getConnection ()) {
+            con.setAutoCommit (false);
+            final Random random = ThreadLocalRandom.current ();
+            final PreparedStatement stmtSelect = con.prepareStatement (SELECT_WORLD);
+            final PreparedStatement stmtUpdate = con.prepareStatement (UPDATE_WORLD);
+
+            for (int ii = 0; ii < queries; ii++) {
+                stmtSelect.setInt (1, random.nextInt (DB_ROWS) + 1);
+                final ResultSet rs = stmtSelect.executeQuery ();
+                while (rs.next ()) {
+                    worlds[ii] = new World (rs.getInt (1), rs.getInt (2));
+                    stmtUpdate.setInt (1, random.nextInt (DB_ROWS) + 1);
+                    stmtUpdate.setInt (2, worlds[ii].id);
+                    stmtUpdate.addBatch ();
+                }
+            }
+            stmtUpdate.executeBatch ();
+            con.commit ();
+        }
+        catch (SQLException e) {
+            e.printStackTrace ();
+        }
+
+        it.response.type ("application/json");
+        return toJson (it.request.queryParams ("queries") == null? worlds[0] : worlds);
     }
 
     private static Object getPlaintext (Exchange it) {
@@ -172,11 +172,11 @@ final class Application {
         get ("/db", Application::getDb);
         get ("/queries", Application::getDb);
         get ("/fortunes", Application::getFortunes);
-        get ("/update", Application::getUpdate);
+        get ("/updates", Application::getUpdates);
         get ("/plaintext", Application::getPlaintext);
         after (Application::addCommonHeaders);
 
-        setIpAddress (CONFIG.getProperty ("web.host"));
-        start (parseInt (CONFIG.getProperty ("web.port")));
+        setIpAddress (SETTINGS.getProperty ("web.host"));
+        start (parseInt (SETTINGS.getProperty ("web.port")));
     }
 }
