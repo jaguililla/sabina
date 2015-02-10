@@ -27,7 +27,7 @@ class SimpleSecureExample {
     public static void main (String[] args) {
         get ("/hello", it -> "Hello Secure World!");
 
-        post ("/hello", it -> "Hello Secure World: " + it.requestBody ());
+        post ("/hello", it -> "Hello Secure World: " + it.body ());
 
         get ("/private", it -> {
             it.status (401);

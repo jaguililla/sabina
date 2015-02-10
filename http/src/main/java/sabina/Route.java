@@ -29,7 +29,7 @@ import java.util.function.Function;
  */
 public final class Route extends Action {
     /** This is just a "type alias". */
-    public static interface Handler extends Function<Exchange, Object> {}
+    public static interface Handler extends Function<Request, Object> {}
 
     private static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
@@ -65,11 +65,10 @@ public final class Route extends Action {
      * Invoked when a req is made on this route's corresponding path e.g. '/hello'.
      *
      * @param req The request object providing information about the HTTP request.
-     * @param res The response object providing functionality for modifying the response.
      *
      * @return The content to be set in the response.
      */
-    public Object handle (final Request req, final Response res) {
-        return handler.apply (new Exchange (req, res));
+    public Object handle (final Request req) {
+        return handler.apply (req);
     }
 }

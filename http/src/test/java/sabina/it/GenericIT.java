@@ -71,13 +71,13 @@ import sabina.util.TestUtil;
         get ("/", it -> "Hello Root!");
 
         post ("/poster", it -> {
-            String body = it.requestBody ();
+            String body = it.body ();
             it.status (201); // created
             return "Body was: " + body;
         });
 
         patch ("/patcher", it -> {
-            String body = it.requestBody ();
+            String body = it.body ();
             it.status (200);
             return "Body was: " + body;
         });
@@ -165,7 +165,7 @@ import sabina.util.TestUtil;
 
     private static void registerEchoRoute (final String routePart) {
         get ("/tworoutes/" + routePart + "/:param", it ->
-            routePart + " route: " + it.request.params (":param")
+            routePart + " route: " + it.params (":param")
         );
     }
 

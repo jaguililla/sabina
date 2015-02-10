@@ -205,7 +205,7 @@ public final class Server {
      * @param aHandler        The handler
      */
     public synchronized <T extends Exception> Server exception(
-        Class<T> exceptionClass, BiConsumer<T, Exchange> aHandler) {
+        Class<T> exceptionClass, BiConsumer<T, Request> aHandler) {
 
         Fault wrapper = new Fault<> (exceptionClass, aHandler);
         map (exceptionClass, wrapper);

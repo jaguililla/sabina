@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.io.CharStreams;
@@ -44,8 +45,9 @@ public class Request {
         return routePart.equals ("*");
     }
 
-    public static Request create (RouteMatch match, HttpServletRequest request) {
-        return new Request (match, request);
+    public static Request create (
+        RouteMatch match, HttpServletRequest request, HttpServletResponse response) {
+        return new Request (match, request, response);
     }
 
     public static List<String> convertRouteToList (String route) {
@@ -57,6 +59,8 @@ public class Request {
 
         return path;
     }
+
+    public final Response response;
 
     private Map<String, String> params;
     private List<String> splat;
@@ -95,9 +99,19 @@ public class Request {
     //    request.referrer          # the referrer of the client or '/'
 
     /**
-     * Used by wrapper.
+     * Implemented only for RequestWrapper.
      */
-    protected Request () { super (); }
+    protected Request () {
+        response = null;
+    }
+
+    /**
+     * Used by wrapper.
+     * @param response
+     */
+    protected Request (HttpServletResponse response) { super ();
+        this.response = new Response (response);
+    }
 
     /**
      * Constructor
@@ -105,8 +119,9 @@ public class Request {
      * @param match   the route match
      * @param request the servlet request
      */
-    Request (RouteMatch match, HttpServletRequest request) {
+    Request (RouteMatch match, HttpServletRequest request, HttpServletResponse response) {
         this.servletRequest = request;
+        this.response = new Response (response);
 
         List<String> requestList = convertRouteToList (match.getRequestURI ());
         List<String> matchedList = convertRouteToList (match.getMatchUri ());
@@ -471,4 +486,87 @@ public class Request {
         }
         return Collections.unmodifiableList (splat);
     }
+
+    /*
+     * Response delegates
+     */
+    public void body (final String body) { response.body (body); }
+    public void redirect (final String location) { response.redirect (location); }
+    public void type (final String contentType) { response.type (contentType); }
+    public HttpServletResponse responseRaw () { return response.raw (); }
+    public String responseBody () { return response.body (); }
+    public void status (final int statusCode) { response.status (statusCode); }
+    public void removeCookie (final String name) { response.removeCookie (name); }
+    public void header (final String name, final String value) { response.header (name, value); }
+    public void cookie (final String name, final String value) { response.cookie (name, value); }
+
+    public void cookie (final String name, final String value, final int maxAge) {
+        response.cookie (name, value, maxAge);
+    }
+
+    public void cookie (
+        final String path,
+        final String name,
+        final String value,
+        final int maxAge,
+        final boolean secured) {
+
+        response.cookie (path, name, value, maxAge, secured);
+    }
+
+    public void cookie (
+        final String name, final String value, final int maxAge, final boolean secured) {
+
+        response.cookie (name, value, maxAge, secured);
+    }
+
+    public void redirect (final String location, final int httpStatusCode) {
+        response.redirect (location, httpStatusCode);
+    }
+
+    /**
+     * Immediately stops a request within a filter or route
+     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * re-throw otherwise halt will not work.
+     */
+    public void halt () { throw new HaltException (); }
+
+    /**
+     * Immediately stops a request within a filter or route with specified status code
+     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * re-throw otherwise halt will not work.
+     *
+     * @param status the status code.
+     */
+    public void halt (final int status) { throw new HaltException (status); }
+
+    /**
+     * Immediately stops a request within a filter or route with specified body content
+     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * re-throw otherwise halt will not work.
+     *
+     * @param body The body content.
+     */
+    public void halt (final String body) { throw new HaltException (body); }
+
+    /**
+     * Immediately stops a request within a filter or route with specified status code and body
+     * content.
+     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * re-throw otherwise halt will not work.
+     *
+     * @param status The status code.
+     * @param body The body content.
+     */
+    public void halt (final int status, final String body) {
+        throw new HaltException (status, body);
+    }
+
+    /*
+     * TODO Implement these methods!
+     */
+    public void pass () {}
+    public void redirect () {}
+    public void template (final String template, final Object params) {}
+    public void template (final String template, final String layout, final Object params) {}
 }

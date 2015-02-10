@@ -25,7 +25,7 @@ class SimpleExample {
     public static void main (String[] args) {
         get ("/hello", it -> "Hello World!");
 
-        post ("/hello", it -> "Hello World: " + it.requestBody ());
+        post ("/hello", it -> "Hello World: " + it.body ());
 
         get ("/private", it -> {
             it.status (401);

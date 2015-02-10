@@ -187,13 +187,12 @@ class MatcherFilter implements Filter {
             String result = null;
             if (aTarget instanceof Route) {
                 Route route = ((Route)aTarget);
-                Request request = Request.create (aMatch, aHttpReq);
-                Response response = Response.create (aHttpRes);
+                Request request = Request.create (aMatch, aHttpReq, aHttpRes);
 
                 aReq.setDelegate (request);
-                aRes.setDelegate (response);
+                aRes.setDelegate (request.response);
 
-                Object element = route.handle (aReq, aRes);
+                Object element = route.handle (aReq);
                 result = element != null? element.toString () : null;
             }
             if (result != null) {
@@ -226,16 +225,15 @@ class MatcherFilter implements Filter {
         for (RouteMatch filterMatch : matchSet) {
             Object filterTarget = filterMatch.getTarget ();
             if (filterTarget instanceof sabina.Filter) {
-                Request request = Request.create (filterMatch, httpRequest);
-                Response response = Response.create (httpResponse);
+                Request request = Request.create (filterMatch, httpRequest, httpResponse);
 
                 req.setDelegate (request);
-                res.setDelegate (response);
+                res.setDelegate (request.response);
 
                 sabina.Filter filter = (sabina.Filter)filterTarget;
-                filter.handle (req, res);
+                filter.handle (req);
 
-                String bodyAfterFilter = response.body ();
+                String bodyAfterFilter = request.response.body ();
                 if (bodyAfterFilter != null) {
                     bodyContent = bodyAfterFilter;
                 }

@@ -21,14 +21,14 @@ import java.util.function.BiConsumer;
 public final class Fault<T extends Exception> {
     /** Holds the type of exception that this filter will handle */
     private final Class<T> exceptionClass;
-    private final BiConsumer<T, Exchange> handler;
+    private final BiConsumer<T, Request> handler;
 
     /**
      * Initializes the filter with the provided exception type
      *
      * @param exception Type of exception
      */
-    Fault (final Class<T> exception, final BiConsumer<T, Exchange> handler) {
+    Fault (final Class<T> exception, final BiConsumer<T, Request> handler) {
         checkArgument (exception != null && handler != null);
 
         exceptionClass = exception;
@@ -40,9 +40,8 @@ public final class Fault<T extends Exception> {
      *
      * @param exception The exception that was thrown during routing
      * @param request The request object providing information about the HTTP request
-     * @param response The response object providing functionality for modifying the response
      */
-    void handle (final T exception, final Request request, final Response response) {
-        handler.accept (exception, new Exchange (request, response));
+    void handle (final T exception, final Request request) {
+        handler.accept (exception, request);
     }
 }

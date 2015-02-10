@@ -25,6 +25,8 @@ import sabina.Session;
 final class RequestWrapper extends Request {
     private Request delegate;
 
+    RequestWrapper () {super ();}
+
     public void setDelegate (Request delegate) {
         this.delegate = delegate;
     }

@@ -152,7 +152,7 @@ public final class Sabina {
     }
 
     public static <T extends Exception> Server exception(
-        Class<T> exceptionClass, BiConsumer<T, Exchange> aHandler) {
+        Class<T> exceptionClass, BiConsumer<T, Request> aHandler) {
 
         return server.exception (exceptionClass, aHandler);
     }

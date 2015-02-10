@@ -6,7 +6,6 @@ import static sabina.content.JsonContent.toJson;
 import static sabina.view.MustacheView.renderMustache;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import sabina.Exchange;
 import sabina.Request;
 
 import java.sql.Connection;
@@ -79,13 +78,13 @@ final class Application {
         }
     }
 
-    private static Object getJson (Exchange it) {
+    private static Object getJson (Request it) {
         it.response.type ("application/json");
         return toJson (new Message ());
     }
 
-    private static Object getDb (Exchange it) {
-        final int queries = getQueries (it.request);
+    private static Object getDb (Request it) {
+        final int queries = getQueries (it);
         final World[] worlds = new World[queries];
 
         try (final Connection con = DATA_SOURCE.getConnection ()) {
@@ -104,10 +103,10 @@ final class Application {
         }
 
         it.response.type ("application/json");
-        return toJson (it.request.queryParams ("queries") == null? worlds[0] : worlds);
+        return toJson (it.queryParams ("queries") == null? worlds[0] : worlds);
     }
 
-    private static Object getFortunes (Exchange it) {
+    private static Object getFortunes (Request it) {
         final List<Fortune> fortunes = new ArrayList<> ();
 
         try (final Connection con = DATA_SOURCE.getConnection ()) {
@@ -126,8 +125,8 @@ final class Application {
         return renderMustache ("/fortunes.mustache", fortunes);
     }
 
-    private static Object getUpdates (Exchange it) {
-        final int queries = getQueries (it.request);
+    private static Object getUpdates (Request it) {
+        final int queries = getQueries (it);
         final World[] worlds = new World[queries];
 
         try (final Connection con = DATA_SOURCE.getConnection ()) {
@@ -154,15 +153,15 @@ final class Application {
         }
 
         it.response.type ("application/json");
-        return toJson (it.request.queryParams ("queries") == null? worlds[0] : worlds);
+        return toJson (it.queryParams ("queries") == null? worlds[0] : worlds);
     }
 
-    private static Object getPlaintext (Exchange it) {
+    private static Object getPlaintext (Request it) {
         it.response.type (CONTENT_TYPE_TEXT);
         return MESSAGE;
     }
 
-    private static void addCommonHeaders (Exchange it) {
+    private static void addCommonHeaders (Request it) {
         it.header ("Server", "Undertow/1.1.2");
         it.response.raw ().addDateHeader ("Date", new Date ().getTime ());
     }
