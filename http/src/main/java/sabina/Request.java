@@ -64,7 +64,6 @@ public class Request {
 
     private Map<String, String> params;
     private List<String> splat;
-    private QueryParams queryMap;
 
     private HttpServletRequest servletRequest;
 
@@ -348,21 +347,6 @@ public class Request {
      */
     public HttpServletRequest raw () {
         return servletRequest;
-    }
-
-    public QueryParams queryMap () {
-        initQueryMap ();
-
-        return queryMap;
-    }
-
-    public QueryParams queryMap (String key) {
-        return queryMap ().get (key);
-    }
-
-    private void initQueryMap () {
-        if (queryMap == null)
-            queryMap = new QueryParams (raw ());
     }
 
     /**
