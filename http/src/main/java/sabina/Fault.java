@@ -19,19 +19,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.function.BiConsumer;
 
 public final class Fault<T extends Exception> {
-    /** Holds the type of exception that this filter will handle */
-    private final Class<T> exceptionClass;
     private final BiConsumer<T, Request> handler;
 
     /**
      * Initializes the filter with the provided exception type
-     *
-     * @param exception Type of exception
      */
-    Fault (final Class<T> exception, final BiConsumer<T, Request> handler) {
-        checkArgument (exception != null && handler != null);
+    Fault (final BiConsumer<T, Request> handler) {
+        checkArgument (handler != null);
 
-        exceptionClass = exception;
         this.handler = handler;
     }
 

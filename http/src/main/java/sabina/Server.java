@@ -207,7 +207,7 @@ public final class Server {
     public synchronized <T extends Exception> Server exception(
         Class<T> exceptionClass, BiConsumer<T, Request> aHandler) {
 
-        Fault wrapper = new Fault<> (exceptionClass, aHandler);
+        Fault wrapper = new Fault<> (aHandler);
         map (exceptionClass, wrapper);
         return this;
     }
