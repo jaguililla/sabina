@@ -28,6 +28,8 @@ import javax.servlet.Filter;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
 
 import sabina.*;
 import sabina.route.RouteMatch;
@@ -101,12 +103,9 @@ class MatcherFilter implements Filter {
         String acceptType = httpReq.getHeader (ACCEPT_TYPE_REQUEST_MIME_HEADER);
         String bodyContent = null;
 
-        RequestWrapper req = new RequestWrapper ();
-        ResponseWrapper res = new ResponseWrapper ();
-
         try {
             bodyContent =
-                onFilter (before, httpReq, httpRes, uri, acceptType, bodyContent, req, res);
+                onFilter (before, httpReq, httpRes, uri, acceptType, bodyContent);
 
             HttpMethod httpMethod = HttpMethod.valueOf (httpMethodStr);
 
@@ -126,11 +125,11 @@ class MatcherFilter implements Filter {
 
             if (target != null) {
                 bodyContent =
-                    handleTargetRoute (httpReq, httpRes, bodyContent, req, res, match, target);
+                    handleTargetRoute (httpReq, httpRes, bodyContent, match, target);
             }
 
             bodyContent =
-                onFilter (after, httpReq, httpRes, uri, acceptType, bodyContent, req, res);
+                onFilter (after, httpReq, httpRes, uri, acceptType, bodyContent);
         }
         catch (HaltException hEx) {
             LOG.fine ("halt performed");
@@ -140,15 +139,16 @@ class MatcherFilter implements Filter {
         }
 
         // If redirected and content is null set to empty string to not throw NotConsumedException
-        if (bodyContent == null && res.isRedirected())
-            bodyContent = "";
+//        if (bodyContent == null && res.isRedirected())
+//            bodyContent = "";
+        // TODO Check this scenario
 
         boolean consumed = bodyContent != null;
 
         if (!consumed && hasOtherHandlers) {
 //            throw new NotConsumedException ();
             handled = false;
-			if (BackendFactory.IMPL == 1)
+			if (BackendFactory.IMPL.equals ("undertow"))
 				httpRes.setStatus (SC_NOT_FOUND); // TODO Only for Undertow
             return;
         }
@@ -181,7 +181,7 @@ class MatcherFilter implements Filter {
 
     private String handleTargetRoute (
         HttpServletRequest aHttpReq, HttpServletResponse aHttpRes, String aBodyContent,
-        RequestWrapper aReq, ResponseWrapper aRes, RouteMatch aMatch, Object aTarget) {
+        RouteMatch aMatch, Object aTarget) {
 
         try {
             String result = null;
@@ -189,10 +189,7 @@ class MatcherFilter implements Filter {
                 Route route = ((Route)aTarget);
                 Request request = Request.create (aMatch, aHttpReq, aHttpRes);
 
-                aReq.setDelegate (request);
-                aRes.setDelegate (request.response);
-
-                Object element = route.handle (aReq);
+                Object element = route.handle (request);
                 result = element != null? element.toString () : null;
             }
             if (result != null) {
@@ -216,8 +213,7 @@ class MatcherFilter implements Filter {
      */
     private String onFilter (
         HttpMethod method, HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-        String uri, String acceptType, String bodyContent, RequestWrapper req,
-        ResponseWrapper res) {
+        String uri, String acceptType, String bodyContent) {
 
         List<RouteMatch> matchSet =
             routeMatcher.findTargetsForRequestedRoute (method, uri, acceptType);
@@ -227,11 +223,8 @@ class MatcherFilter implements Filter {
             if (filterTarget instanceof sabina.Filter) {
                 Request request = Request.create (filterMatch, httpRequest, httpResponse);
 
-                req.setDelegate (request);
-                res.setDelegate (request.response);
-
                 sabina.Filter filter = (sabina.Filter)filterTarget;
-                filter.handle (req);
+                filter.handle (request);
 
                 String bodyAfterFilter = request.response.body ();
                 if (bodyAfterFilter != null) {
