@@ -28,6 +28,7 @@ import java.util.function.Function;
  * @author Per Wendel
  */
 public final class Route extends Action {
+    /** This is just a "type alias". */
     public static interface Handler extends Function<Exchange, Object> {}
 
     private static final String DEFAULT_ACCEPT_TYPE = "*/*";
@@ -68,7 +69,7 @@ public final class Route extends Action {
      *
      * @return The content to be set in the response.
      */
-    public Object handle (Request req, Response res) {
+    public Object handle (final Request req, final Response res) {
         return handler.apply (new Exchange (req, res));
     }
 }

@@ -27,6 +27,7 @@ import java.util.function.Consumer;
  * @author Per Wendel
  */
 public final class Filter extends Action {
+    /** This is just a "type alias". */
     public static interface Handler extends Consumer<Exchange> {}
 
     public static final String ALL_PATHS = "+/*paths";
@@ -68,7 +69,7 @@ public final class Filter extends Action {
      * @param req The request object providing information about the HTTP request.
      * @param res The response object providing functionality for modifying the response.
      */
-    public void handle (Request req, Response res) {
+    public void handle (final Request req, final Response res) {
         handler.accept (new Exchange (req, res));
     }
 }
