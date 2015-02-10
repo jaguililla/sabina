@@ -14,11 +14,14 @@
 
 package sabina.server;
 
+import static java.lang.System.getProperty;
+
 /**
  * @author Per Wendel
  */
 public final class BackendFactory {
-    public static final int IMPL = 1;
+    public static final String IMPL =
+        getProperty ("sabina.backend") == null? "undertow" : getProperty ("sabina.backend");
 
     private BackendFactory () {
         throw new IllegalStateException ();
@@ -40,9 +43,9 @@ public final class BackendFactory {
 
     public static Backend create (boolean hasMultipleHandler) {
         switch (IMPL) {
-            case 0:
+            case "jetty":
                 return createJetty (hasMultipleHandler);
-            case 1:
+            case "undertow":
                 return createUndertow (hasMultipleHandler);
             default:
                 throw new IllegalStateException ();
