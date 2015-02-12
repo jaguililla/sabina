@@ -28,8 +28,6 @@ import javax.servlet.Filter;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
 
 import sabina.*;
 import sabina.route.RouteMatch;
@@ -142,13 +140,14 @@ class MatcherFilter implements Filter {
 //        if (bodyContent == null && res.isRedirected())
 //            bodyContent = "";
         // TODO Check this scenario
+        // TODO add header to know if has been redirected (ie: __REDIRECTED__)
 
         boolean consumed = bodyContent != null;
 
         if (!consumed && hasOtherHandlers) {
 //            throw new NotConsumedException ();
             handled = false;
-			if (BackendFactory.IMPL.equals ("undertow"))
+			if (BackendFactory.backend ().equals ("undertow"))
 				httpRes.setStatus (SC_NOT_FOUND); // TODO Only for Undertow
             return;
         }

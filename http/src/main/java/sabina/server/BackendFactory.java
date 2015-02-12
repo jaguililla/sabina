@@ -20,8 +20,9 @@ import static java.lang.System.getProperty;
  * @author Per Wendel
  */
 public final class BackendFactory {
-    public static final String IMPL =
-        getProperty ("sabina.backend") == null? "undertow" : getProperty ("sabina.backend");
+    public static String backend () {
+        return getProperty ("sabina.backend") == null? "undertow" : getProperty ("sabina.backend");
+    }
 
     private BackendFactory () {
         throw new IllegalStateException ();
@@ -42,7 +43,7 @@ public final class BackendFactory {
     }
 
     public static Backend create (boolean hasMultipleHandler) {
-        switch (IMPL) {
+        switch (backend ()) {
             case "jetty":
                 return createJetty (hasMultipleHandler);
             case "undertow":
