@@ -12,9 +12,11 @@
  * and limitations under the License.
  */
 
-package sabina.it;
+package sabina.it.undertow;
 
 import static sabina.Sabina.*;
+import static sabina.util.TestUtil.resetBackend;
+import static sabina.util.TestUtil.setBackend;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -30,6 +32,7 @@ import sabina.util.TestUtil;
     private static TestUtil testUtil = new TestUtil ();
 
     @BeforeClass public static void setup () throws InterruptedException {
+        setBackend ("undertow");
 
         post ("assertNoCookies", it -> {
             if (!it.cookies ().isEmpty ()) {
@@ -61,6 +64,7 @@ import sabina.util.TestUtil;
 
         start (testUtil.getPort ());
         testUtil.waitForStartup ();
+        resetBackend ();
     }
 
     @AfterClass public static void cleanup () {

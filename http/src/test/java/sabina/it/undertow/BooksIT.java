@@ -12,11 +12,11 @@
  * and limitations under the License.
  */
 
-package sabina.it;
+package sabina.it.undertow;
 
 import static org.testng.Assert.*;
 import static sabina.Sabina.*;
-import static sabina.util.TestUtil.UrlResponse;
+import static sabina.util.TestUtil.*;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -25,6 +25,7 @@ import java.util.Map;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import sabina.it.Book;
 import sabina.util.TestUtil;
 
 @Test public class BooksIT {
@@ -42,6 +43,8 @@ import sabina.util.TestUtil;
     private static Map<String, Book> books = new HashMap<> ();
 
     @BeforeClass public static void setup () throws InterruptedException {
+        setBackend ("undertow");
+
         before (it -> it.header ("FOZ", "BAZ"));
 
         post ("/books", it1 -> {
@@ -116,6 +119,7 @@ import sabina.util.TestUtil;
 
         start (testUtil.getPort ());
         testUtil.waitForStartup ();
+        resetBackend ();
     }
 
     @AfterClass public static void cleanup () throws InterruptedException {

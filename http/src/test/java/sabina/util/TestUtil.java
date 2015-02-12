@@ -16,6 +16,7 @@ package sabina.util;
 
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
+import static java.lang.System.setProperty;
 import static org.apache.http.conn.socket.PlainConnectionSocketFactory.INSTANCE;
 import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
 
@@ -63,6 +64,16 @@ public class TestUtil {
         public Map<String, String> headers;
         public String body;
         public int status;
+    }
+
+    public static void setBackend (String backendName) {
+        String backend = getProperty ("sabina.backend");
+        if (backend == null || backend.equals ("_"))
+            setProperty ("sabina.backend", backendName);
+    }
+
+    public static void resetBackend () {
+        setProperty ("sabina.backend", "_");
     }
 
     private int port;
