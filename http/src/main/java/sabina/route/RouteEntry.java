@@ -26,7 +26,7 @@ import sabina.HttpMethod;
 /**
  * @author Per Wendel
  */
-class RouteEntry {
+final class RouteEntry {
     HttpMethod httpMethod;
     String path;
     String acceptedType;

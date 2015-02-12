@@ -38,7 +38,7 @@ import java.util.*;
  * <p>Modified by Alex Soto <asotobu@gmail.com> to coform naming conventions and removing
  * unnecessary dependencies.
  */
-class MimeParse {
+final class MimeParse {
     /** Constant for no mime type. */
     public static final String NO_MIME_TYPE = "";
 

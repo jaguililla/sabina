@@ -27,7 +27,7 @@ import sabina.HttpMethod;
  *
  * @author Per Wendel
  */
-class SimpleRouteMatcher implements RouteMatcher {
+final class SimpleRouteMatcher implements RouteMatcher {
 
     private static final Logger LOG = getLogger (SimpleRouteMatcher.class.getName ());
     private static final char SINGLE_QUOTE = '\'';

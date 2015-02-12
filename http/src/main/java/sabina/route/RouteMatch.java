@@ -17,7 +17,7 @@ package sabina.route;
 /**
  * @author Per Wendel
  */
-public class RouteMatch {
+public final class RouteMatch {
     private final Object target;
     private final String matchUri;
     private final String requestURI;
