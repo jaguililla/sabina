@@ -4,12 +4,12 @@ import static org.apache.http.client.fluent.Request.Get;
 import static org.testng.AssertJUnit.*;
 import static sabina.benchmark.Application.main;
 import static sabina.Sabina.stop;
-import static sun.misc.IOUtils.readFully;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import com.google.gson.Gson;
 import org.apache.http.HttpResponse;
@@ -19,7 +19,7 @@ import org.junit.Test;
 
 @org.testng.annotations.Test (enabled = false)
 public final class ApplicationTest {
-    private static final String ENDPOINT = "http://localhost:8080";
+    private static final String ENDPOINT = "http://localhost:5050";
     private static final Gson GSON = new Gson ();
 
     @org.testng.annotations.BeforeClass @BeforeClass
@@ -133,10 +133,9 @@ public final class ApplicationTest {
         return Get (uri).execute ().returnResponse ();
     }
 
-    private String getContent (HttpResponse aResponse) throws IOException {
-        InputStream in = aResponse.getEntity ().getContent ();
-        // TODO Replace readFully
-        return new String (readFully (in, -1, true));
+    private String getContent (HttpResponse response) throws IOException {
+        InputStream in = response.getEntity ().getContent ();
+        return new Scanner (in).useDelimiter ("\\A").next ();
     }
 
     private void checkResponse (HttpResponse res, String content, String contentType) {
