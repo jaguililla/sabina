@@ -39,11 +39,6 @@ public class Response {
     private HttpServletResponse response;
     private String body;
 
-    protected Response() {
-        // Used by wrapper
-        super ();
-    }
-
     Response(HttpServletResponse response) {
         this.response = response;
     }

@@ -10,6 +10,9 @@ package sabina;
 
 import java.util.function.BiConsumer;
 
+/**
+ * Static methods to handle the default server (singleton server)
+ */
 public final class Sabina {
     private static Server server = new Server ();
 

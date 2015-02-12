@@ -98,13 +98,6 @@ public class Request {
     //    request.referrer          # the referrer of the client or '/'
 
     /**
-     * Implemented only for RequestWrapper.
-     */
-    protected Request () {
-        response = null;
-    }
-
-    /**
      * Used by wrapper.
      * @param response
      */
