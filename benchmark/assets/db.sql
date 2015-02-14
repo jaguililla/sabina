@@ -1,4 +1,4 @@
-# create Techempower benchmark user
+# create benchmark user
 GRANT ALL ON *.* TO 'benchmarkdbuser'@'%' IDENTIFIED BY 'benchmarkdbpass';
 GRANT ALL ON *.* TO 'benchmarkdbuser'@'localhost' IDENTIFIED BY 'benchmarkdbpass';
 
