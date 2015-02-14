@@ -15,7 +15,6 @@
 description = 'A Sinatra inspired java web framework (core)'
 
 dependencies {
-    compile 'org.springframework:spring-core:4.0.6.RELEASE' // Only for Jetty
     compile 'com.google.guava:guava:18.0'
 
     // SERVER DEPENDENCIES
