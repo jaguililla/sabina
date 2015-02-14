@@ -18,25 +18,30 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.sql.DataSource;
 
 /**
- * When it is implemented, add this to benchmark_config
- * "fortune_url": "/fortunes",
- * "update_url": "/updates",
+ * .
  */
 final class Application {
+    private static final String SETTINGS_RESOURCE = "/server.properties";
     private static final Properties SETTINGS = loadConfiguration ();
+
+    private static final String JDBC_URL = SETTINGS.getProperty ("mysql.uri")
+        .replace ("${db.host}", "localhost"); // TODO Move this to Gradle build
     private static final DataSource DATA_SOURCE = createSessionFactory ();
+    private static final int DB_ROWS = 10000;
+
     private static final String SELECT_WORLD = "select * from world where id = ?";
     private static final String UPDATE_WORLD = "update world set randomNumber = ? where id = ?";
     private static final String SELECT_FORTUNES = "select * from fortune";
 
-    private static final int DB_ROWS = 10000;
     private static final String MESSAGE = "Hello, World!";
     private static final String CONTENT_TYPE_TEXT = "text/plain";
+    private static final String CONTENT_TYPE_JSON = "application/json";
+    private static final String QUERIES_PARAM = "queries";
 
     private static Properties loadConfiguration () {
         try {
             Properties settings = new Properties ();
-            settings.load (Class.class.getResourceAsStream ("/server.properties"));
+            settings.load (Class.class.getResourceAsStream (SETTINGS_RESOURCE));
             return settings;
         }
         catch (Exception ex) {
@@ -47,11 +52,11 @@ final class Application {
     private static DataSource createSessionFactory () {
         try {
             ComboPooledDataSource dataSource = new ComboPooledDataSource ();
-            dataSource.setJdbcUrl (SETTINGS.getProperty ("mysql.uri"));
             dataSource.setMinPoolSize (32);
             dataSource.setMaxPoolSize (256);
             dataSource.setCheckoutTimeout (1800);
             dataSource.setMaxStatements (50);
+            dataSource.setJdbcUrl (JDBC_URL);
             return dataSource;
         }
         catch (Exception ex) {
@@ -61,7 +66,7 @@ final class Application {
 
     private static int getQueries (final Request request) {
         try {
-            String parameter = request.queryParams ("queries");
+            String parameter = request.queryParams (QUERIES_PARAM);
             if (parameter == null)
                 return 1;
 
@@ -79,7 +84,7 @@ final class Application {
     }
 
     private static Object getJson (Request it) {
-        it.response.type ("application/json");
+        it.response.type (CONTENT_TYPE_JSON);
         return toJson (new Message ());
     }
 
@@ -102,8 +107,8 @@ final class Application {
             e.printStackTrace ();
         }
 
-        it.response.type ("application/json");
-        return toJson (it.queryParams ("queries") == null? worlds[0] : worlds);
+        it.response.type (CONTENT_TYPE_JSON);
+        return toJson (it.queryParams (QUERIES_PARAM) == null? worlds[0] : worlds);
     }
 
     private static Object getFortunes (Request it) {
@@ -152,8 +157,8 @@ final class Application {
             e.printStackTrace ();
         }
 
-        it.response.type ("application/json");
-        return toJson (it.queryParams ("queries") == null? worlds[0] : worlds);
+        it.response.type (CONTENT_TYPE_JSON);
+        return toJson (it.queryParams (QUERIES_PARAM) == null? worlds[0] : worlds);
     }
 
     private static Object getPlaintext (Request it) {
@@ -169,9 +174,9 @@ final class Application {
     public static void main (String[] args) {
         get ("/json", Application::getJson);
         get ("/db", Application::getDb);
-        get ("/queries", Application::getDb);
-        get ("/fortunes", Application::getFortunes);
-        get ("/updates", Application::getUpdates);
+        get ("/query", Application::getDb);
+        get ("/fortune", Application::getFortunes);
+        get ("/update", Application::getUpdates);
         get ("/plaintext", Application::getPlaintext);
         after (Application::addCommonHeaders);
 

@@ -21,5 +21,4 @@ dependencies {
     compile 'mysql:mysql-connector-java:5.1.28'
 
     testCompile 'org.apache.httpcomponents:fluent-hc:4.4'
-    testCompile 'com.h2database:h2:1.4.185'
 }

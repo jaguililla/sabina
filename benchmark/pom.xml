@@ -21,7 +21,6 @@
         <maven.compiler.debug>false</maven.compiler.debug>
 
         <db.host>localhost</db.host>
-        <web.port>8080</web.port>
 
         <sabina-version>1.0.0</sabina-version>
         <mysql-connector-version>5.1.28</mysql-connector-version>
