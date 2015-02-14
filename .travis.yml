@@ -2,6 +2,6 @@ language: java
 jdk: oraclejdk8
 
 before_script:
-  - mysql -u root < benchmark/assets/db.sql
+  - mysql -u root < ${TRAVIS_BUILD_DIR}/benchmark/assets/db.sql
 
 after_success: gradle/wrapper clean check jacocoTestReport coveralls
