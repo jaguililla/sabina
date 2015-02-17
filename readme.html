@@ -70,13 +70,13 @@
 </div>
 <div class="container">
 
-<h2>Getting started</h2><p>Add the Sabina maven dependency</p>
+<h2>Getting started</h2><p>First, setup the <a href="https://bintray.com/jamming/maven/Sabina">JCenter</a> respository.</p><p>Then, add the Sabina maven dependency:</p>
 <pre><code class="xml">&lt;dependency&gt;
   &lt;groupId&gt;sabina&lt;/groupId&gt;
   &lt;artifactId&gt;http&lt;/artifactId&gt;
   &lt;version&gt;1.0.0&lt;/version&gt;
 &lt;/dependency&gt;
-</code></pre><p>Start coding:</p>
+</code></pre><p>And start coding:</p>
 <pre><code class="java">import static sabina.Sabina.*;
 
 public class HiWorld {
@@ -149,11 +149,6 @@ request.session();             // Session management
 request.splat();               // Splat (*) parameters
 request.url();                 // &quot;http://example.com/foo&quot;
 request.userAgent();           // User agent
-</code></pre><h2>Query maps</h2><p>Query maps allows you to group parameters to a map by their prefix. This allows you to group<br/>two parameters like <code>user[name]</code> and <code>user[age]</code> to a <code>user</code> map.</p>
-<pre><code class="java">request.queryMap ().get (&quot;user&quot;, &quot;name&quot;).value ();
-request.queryMap ().get (&quot;user&quot;).get (&quot;name&quot;).value ();
-request.queryMap (&quot;user&quot;).get (&quot;age&quot;).integerValue ();
-request.queryMap (&quot;user&quot;).toMap ();
 </code></pre><h2>Response</h2><p>In the handle method response information and functionality is provided by the response<br/>parameter:</p>
 <pre><code class="java">response.body (&quot;Hello&quot;);           // Sets content to Hello
 response.header (&quot;FOO&quot;, &quot;bar&quot;);    // Sets header FOO with value bar
@@ -220,29 +215,13 @@ exception (NotFoundException.class, (e, request, response) -&gt; {
 <pre><code class="java">staticFileLocation (&quot;/public&quot;); // Static resources
 </code></pre><p>Note that the public directory name is not included in the URL. A file <code>/public/css/style.css</code><br/>is made available as <code>http://&lt;host&gt;:&lt;port&gt;/css/style.css</code></p><p>You can also assign an external folder (not in the classpath) serving static files with the<br/><code>externalStaticFileLocation</code> method.</p>
 <pre><code class="java">externalStaticFileLocation (&quot;/var/www/public&quot;); // Static files
-</code></pre><h2>Content Serialization</h2><p>Mapped routes that transforms the output from the handle method. This is done by extending the<br/>ResponseTransformer and pass this to the mapping method.</p><p>Example Of a route transforming output to JSON using Gson:</p>
-<pre><code class="java">import com.google.gson.Gson;
-
-public class JsonTransformer implements ResponseTransformer {
-    private Gson gson = new Gson ();
-
-    @Override public String render (Object model) {
-        return gson.toJson (model);
-    }
-}
-</code></pre><p>and how it is used (MyMessage is a bean with one member 'message'):</p>
-<pre><code class="java">get (&quot;/hello&quot;, &quot;application/json&quot;, it -&gt; {
-    return new MyMessage (&quot;Hello World&quot;);
-}, new JsonTransformer ());
-</code></pre><h2>Views / Templates - TemplateEngine</h2><p>A TemplateViewRoute is built up by a path (for url-matching) and the template engine holding<br/>the implementation of the 'render' method.</p><p>Instead of returning the result of calling toString() as body the TemplateViewRoute returns<br/>the result of calling render method.</p><p>The primary purpose of this kind of Route is to provide a way to create generic and reusable<br/>components for rendering output using a Template Engine.</p><p>Available TemplateEngine implementations:</p><h2>Mustache</h2><p>Renders objects to HTML using the Mustache template engine.</p><p>Maven dependency:</p>
-<pre><code class="xml">&lt;dependency&gt;
-  &lt;groupId&gt;sabina&lt;/groupId&gt;
-  &lt;artifactId&gt;extra&lt;/artifactId&gt;
-  &lt;version&gt;1.0.0&lt;/version&gt;
-&lt;/dependency&gt;&lt;/pre&gt;
-</code></pre><p>Source: <a href="https://github.com/perwendel/sabina-template-engines/tree/master/sabina-template-mustache">sabina-template-mustache</a><br/>Code example: <a href="https://github.com/perwendel/sabina-template-engines/blob/master/sabina-template-mustache/src/test/java/sabina/template/mustache/MustacheTemplateExample.java">sabina-template-mustache example</a></p><h2>Port</h2><p>By default, Sabina runs on port 4567. If you want to set another port use setPort.<br/>This has to be done before using routes and filters:</p>
+</code></pre><h2>Content Serialization</h2><p>To be documented...</p><h2>Views / Templates - TemplateEngine</h2><p>To be documented...</p><h2>Mustache</h2><p>To be documented...</p><h2>Port</h2><p>By default, Sabina runs on port 4567. If you want to set another port use setPort.<br/>This has to be done before using routes and filters:</p>
 <pre><code class="java">setPort (9090); // Sabina will run on port 9090
-</code></pre><h2>Embedded Web Server</h2><p>Standalone Sabina runs on an embedded Jetty web server.</p><h2>Javadoc</h2><p>Javadoc is available at <a href="https://there4.co/sabina">there4.co/sabina</a></p><h2>Examples</h2><p>Examples can be found on the project's page at <a href="http://github.com/jamming/sabina">Github</a></p>
+</code></pre><h2>Embedded Web Server</h2><p>Standalone Sabina runs on an embedded Undertow web server (by default) or a Jetty container<br/>depending on the <code>sabina.backend</code> system variable. Start with:</p>
+<ul>
+  <li><code>-Dsabina.backend=undertow</code> to run Undertow.</li>
+  <li><code>-Dsabina.backend=jetty</code> to start up Jetty.</li>
+</ul><h2>Javadoc</h2><p>Javadoc is available at <a href="https://there4.co/sabina/reference.html">there4.co/sabina</a></p><h2>Examples</h2><p>Examples can be found on the project's page at <a href="http://github.com/jamming/sabina">Github</a></p>
       </div>
       <div id="push"></div>
     </div>
