@@ -32,13 +32,18 @@
 
   <h2>Add the dependency</h2>
 
-  <p>Gradle</p>
+  <p>
+    First, you need to set up the <a href="https://bintray.com/bintray/jcenter">JCenter repository
+    </a>. Then you can add the dependency:
+  </p>
+
+  <h4>Gradle</h4>
 
 <pre><code class="groovy">dependencies {
     compile 'sabina:http:1.0.0'
 }</code></pre>
 
-  <p>Maven</p>
+  <h4>Maven</h4>
 
 <pre><code class="xml">&lt;dependency&gt;
     &lt;groupId&gt;sabina&lt;/groupId&gt;

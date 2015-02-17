@@ -8,7 +8,9 @@ status=published
 Getting started
 ---------------
 
-Add the Sabina maven dependency
+First, setup the [JCenter](https://bintray.com/jamming/maven/Sabina) respository.
+
+Then, add the Sabina maven dependency:
 
 ```xml
 <dependency>
@@ -18,7 +20,7 @@ Add the Sabina maven dependency
 </dependency>
 ```
 
-Start coding:
+And start coding:
 
 ```java
 import static sabina.Sabina.*;
@@ -132,20 +134,6 @@ request.session();             // Session management
 request.splat();               // Splat (*) parameters
 request.url();                 // "http://example.com/foo"
 request.userAgent();           // User agent
-```
-
-
-Query maps
-----------
-
-Query maps allows you to group parameters to a map by their prefix. This allows you to group
-two parameters like `user[name]` and `user[age]` to a `user` map.
-
-```java
-request.queryMap ().get ("user", "name").value ();
-request.queryMap ().get ("user").get ("name").value ();
-request.queryMap ("user").get ("age").integerValue ();
-request.queryMap ("user").toMap ();
 ```
 
 
@@ -327,67 +315,19 @@ externalStaticFileLocation ("/var/www/public"); // Static files
 Content Serialization
 ---------------------
 
-Mapped routes that transforms the output from the handle method. This is done by extending the
-ResponseTransformer and pass this to the mapping method.
-
-Example Of a route transforming output to JSON using Gson:
-
-```java
-import com.google.gson.Gson;
-
-public class JsonTransformer implements ResponseTransformer {
-    private Gson gson = new Gson ();
-
-    @Override public String render (Object model) {
-        return gson.toJson (model);
-    }
-}
-```
-
-and how it is used (MyMessage is a bean with one member 'message'):
-
-```java
-get ("/hello", "application/json", it -> {
-    return new MyMessage ("Hello World");
-}, new JsonTransformer ());
-```
+To be documented...
 
 
 Views / Templates - TemplateEngine
 ----------------------------------
 
-A TemplateViewRoute is built up by a path (for url-matching) and the template engine holding
-the implementation of the 'render' method.
-
-Instead of returning the result of calling toString() as body the TemplateViewRoute returns
-the result of calling render method.
-
-The primary purpose of this kind of Route is to provide a way to create generic and reusable
-components for rendering output using a Template Engine.
-
-Available TemplateEngine implementations:
+To be documented...
 
 
 Mustache
 --------
 
-Renders objects to HTML using the Mustache template engine.
-
-Maven dependency:
-
-```xml
-<dependency>
-  <groupId>sabina</groupId>
-  <artifactId>extra</artifactId>
-  <version>1.0.0</version>
-</dependency></pre>
-```
-
-Source: [sabina-template-mustache][msrc]
-Code example: [sabina-template-mustache example][mex]
-
-[msrc]: https://github.com/perwendel/sabina-template-engines/tree/master/sabina-template-mustache
-[mex]: https://github.com/perwendel/sabina-template-engines/blob/master/sabina-template-mustache/src/test/java/sabina/template/mustache/MustacheTemplateExample.java
+To be documented...
 
 
 Port
@@ -404,13 +344,17 @@ setPort (9090); // Sabina will run on port 9090
 Embedded Web Server
 -------------------
 
-Standalone Sabina runs on an embedded Jetty web server.
+Standalone Sabina runs on an embedded Undertow web server (by default) or a Jetty container
+depending on the `sabina.backend` system variable. Start with:
+
+* `-Dsabina.backend=undertow` to run Undertow.
+* `-Dsabina.backend=jetty` to start up Jetty.
 
 
 Javadoc
 -------
 
-Javadoc is available at [there4.co/sabina](https://there4.co/sabina)
+Javadoc is available at [there4.co/sabina](https://there4.co/sabina/reference.html)
 
 
 Examples

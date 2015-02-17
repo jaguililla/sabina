@@ -33,3 +33,13 @@ Command:
     git add gradle.properties && git commit -m "Release 1.0.0" && git tag "1.0.0" && \
     vim gradle.properties && \
     git add gradle.properties && git commit -m "New snapshot" && git push origin master --tags
+
+Contribute
+==========
+
+* The code should be formatted accordingly to the format provided in `assets/*-formatter.xml`
+  directory.
+
+* For a Pull Request to be accepted:
+  * It has to pass all existing tests.
+  * The coverage of the new code should be at least 70%

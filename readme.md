@@ -26,7 +26,7 @@ dependencies {
 </dependency>
 ```
 
-API Docs: [Core](http://there4.co/sabina/http/) [Extra](http://there4.co/sabina/http/)
+API Docs: [HTTP](http://there4.co/sabina/http/) [Extra](http://there4.co/sabina/extra/)
 
 [JCenter]: https://bintray.com/jamming/maven/Sabina
 
@@ -48,7 +48,7 @@ View at: http://localhost:4567/hello
 
 You can also check out the javadoc. After getting the source from github run:
 
-    ./gradlew javadoc site
+    ./gradle/wrapper javadoc site
 
 The result is put in `/build/docs/javadoc`
 
@@ -67,9 +67,6 @@ Check out and try the examples in the source code.
 
 Simple example showing some basic functionality ([SimpleExample.java][Simple])
 [Simple]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/SimpleExample.java
-
-A simple CRUD example showing howto create, get, update and delete book resources ([Books.java][Books])
-[Books]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/Books.java
 
 Example showing a very simple (and stupid) authentication filter that is executed before all
 other resources ([FilterExample.java][Filter])
@@ -90,6 +87,9 @@ Example showing how to render a view from a template ([FreeMarkerExample.java][F
 Example of using Transformer. ([TransformerExample.java][Transformer])
 [Transformer]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/TransformerExample.java
 
+You can also check the ([integration tests])
+[integration tests]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/it/undertow
+
 
 LICENSE
 -------
@@ -105,29 +105,3 @@ Unless required by applicable law or agreed to in writing, software distributed 
 License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 either express or implied. See the License for the specific language governing permissions
 and limitations under the License.
-
-
-TODO
-----
-
-* Add social buttons to site
-* Fix documentation site styles and pages
-* Add go to there4.co button in site
-* Add Travis links, huboard, issues, etc. (in reference documentation)
-
-* Add optimize 'profile'
-
-* Integrate with:
-  * http://jackson.codehaus.org
-  * http://metrics.codahale.com
-  * http://www.jdbi.org
-  * http://flywaydb.org
-  * http://pholser.github.io/jopt-simple (expose a common set of options for all microservices)
-  * http://redis.io
-* Helper for multiline strings
-* Helper for JDBC
-* Swagger code generator
-
-* Example project (command to fetch and start, deployment heroku, building executable WAR)
-* Deploy GH pages in Travis: after_success: ./gradlew cobertura coveralls jbake publishGhPages
-* Enable benchmarks tests when DB is started in tests

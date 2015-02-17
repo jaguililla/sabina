@@ -18,15 +18,6 @@ with minimal effort. (It’s a totally different paradigm when compared to the o
 annotations for accomplishing pretty trivial stuff seen in JAX-RS).
 
 
-Why not use Sinatra?
---------------------
-
-If you're an experienced Ruby developer or in languages with similar syntax you should
-definitely use Sinatra. However, if you're a Java developer and want to get the benefits you
-get from Sinatra but you don't want or have the time (money) to learn a new language, Sabina is
-a really good alternative!
-
-
 Why not go with JAX-RS?
 -----------------------
 
