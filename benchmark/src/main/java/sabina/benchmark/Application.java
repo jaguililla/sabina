@@ -180,7 +180,7 @@ final class Application {
         get ("/plaintext", Application::getPlaintext);
         after (Application::addCommonHeaders);
 
-        setIpAddress (SETTINGS.getProperty ("web.host"));
+        host (SETTINGS.getProperty ("web.host"));
         start (parseInt (SETTINGS.getProperty ("web.port")));
     }
 }

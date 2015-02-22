@@ -118,19 +118,19 @@ public final class Sabina {
         return server.trace (path, contentType, handler);
     }
 
-    public static void setIpAddress (String ipAddress) {
-        server.setIpAddress (ipAddress);
+    public static void host (String host) {
+        server.host (host);
     }
 
-    public static void setPort (int port) {
-        server.setPort (port);
+    public static void port (int port) {
+        server.port (port);
     }
 
-    public static void setSecure (
+    public static void secure (
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword) {
 
-        server.setSecure (keystoreFile, keystorePassword, truststoreFile, truststorePassword);
+        server.secure (keystoreFile, keystorePassword, truststoreFile, truststorePassword);
     }
 
     public static void staticFileLocation (String folder) {
@@ -142,7 +142,7 @@ public final class Sabina {
     }
 
     public static void start (int port) {
-        server.setPort (port);
+        server.port (port);
         server.start ();
     }
 
@@ -161,6 +161,6 @@ public final class Sabina {
     }
 
     private Sabina () {
-        throw new IllegalArgumentException ();
+        throw new IllegalStateException ();
     }
 }

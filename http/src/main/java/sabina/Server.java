@@ -14,13 +14,11 @@
 
 package sabina;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.logging.Logger.getLogger;
-import static sabina.HttpMethod.after;
-import static sabina.HttpMethod.before;
 import static sabina.HttpMethod.*;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
@@ -42,19 +40,19 @@ import sabina.server.BackendFactory;
  * Example:
  * <p>
  * <pre>
- *   serve (
- *     get("/hello", it -&gt; "Hello World!")
- *   );
+ *   get("/hello", it -&gt; "Hello World!");
  * </pre>
  * <p>
+ *
+ * <p>TODO Register custom 404 pages and so on
  *
  * @author Per Wendel
  */
 public final class Server {
     private static final Logger LOG = getLogger (Server.class.getName ());
 
-    public static final int DEFAULT_PORT = 4567;
-    public static final String DEFAULT_IP = "0.0.0.0";
+    private static final int DEFAULT_PORT = 4567;
+    private static final String DEFAULT_HOST = "0.0.0.0";
 
     public static Server server (int port) {
         return new Server (port);
@@ -66,7 +64,7 @@ public final class Server {
     }
 
     private int port = DEFAULT_PORT;
-    private String ipAddress = DEFAULT_IP;
+    private String ipAddress = DEFAULT_HOST;
 
     private String keystoreFile;
     private String keystorePassword;
@@ -78,7 +76,6 @@ public final class Server {
 
     private Backend server;
 
-    /** TODO Only supports one matcher! */
     private final RouteMatcher routeMatcher = RouteMatcherFactory.get ();
     /** Holds a map of Exception classes and associated handlers. */
     private final Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<> ();
@@ -88,16 +85,16 @@ public final class Server {
     }
 
     public Server (int port) {
-        setPort (port);
+        port (port);
     }
 
     /**
      * Set the IP address that Sabina should listen on. If not called the default
      * address is '0.0.0.0'. This has to be called before any route mapping is done.
      *
-     * @param ipAddress The ipAddress.
+     * @param ipAddress The ip.
      */
-    public synchronized void setIpAddress (String ipAddress) {
+    public synchronized void host (String ipAddress) {
         this.ipAddress = ipAddress;
     }
 
@@ -108,7 +105,7 @@ public final class Server {
      *
      * @param port The port number
      */
-    public synchronized void setPort (int port) {
+    public synchronized void port (int port) {
         this.port = port;
     }
 
@@ -128,7 +125,7 @@ public final class Server {
      * keystore
      * @param truststorePassword the trust store password
      */
-    public synchronized void setSecure (
+    public synchronized void secure (
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword) {
 
@@ -188,11 +185,11 @@ public final class Server {
             server.shutDown ();
     }
 
-    protected synchronized Server addRoute (Action action) {
+    synchronized Server addRoute (Action action) {
 //        LOG.fine (">>> " + action);
         System.out.println (">>> " + action);
 
-        routeMatcher.parseValidateAddRoute (
+        routeMatcher.processRoute (
             action.method + " '" + action.path + "'", action.acceptType, action);
 
         return this;
@@ -219,7 +216,7 @@ public final class Server {
      * @param exceptionClass Type of exception
      * @param handler        Handler to map to exception
      */
-    public void map(Class<? extends Exception> exceptionClass, Fault handler) {
+    void map(Class<? extends Exception> exceptionClass, Fault handler) {
         exceptionMap.put(exceptionClass, handler);
     }
 
@@ -229,12 +226,14 @@ public final class Server {
      * @param exceptionClass Type of exception
      * @return Associated handler
      */
-    public Fault getHandler(Class<? extends Exception> exceptionClass) {
+    @SuppressWarnings ("unchecked")
+    Fault getHandler(Class<? extends Exception> exceptionClass) {
         // If the exception map does not contain the provided exception class, it might
         // still be that a superclass of the exception class is.
         if (!exceptionMap.containsKey(exceptionClass)) {
 
-            Class<?> superclass = exceptionClass.getSuperclass();
+            Class<? extends Exception> superclass =
+                (Class<? extends Exception>)exceptionClass.getSuperclass();
             do {
                 // Is the superclass mapped?
                 if (exceptionMap.containsKey(superclass)) {
@@ -246,7 +245,7 @@ public final class Server {
                 }
 
                 // Iteratively walk through the exception class's superclasses
-                superclass = superclass.getSuperclass();
+                superclass = (Class<? extends Exception>)superclass.getSuperclass();
             } while (superclass != null);
 
             // No handler found either for the superclasses of the exception class
