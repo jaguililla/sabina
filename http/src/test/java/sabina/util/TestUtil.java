@@ -58,7 +58,7 @@ import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 
 public class TestUtil {
-    public static final int PORT = 4567;
+    private static final int PORT = 4567;
 
     public static class UrlResponse {
         public Map<String, String> headers;
@@ -84,7 +84,7 @@ public class TestUtil {
         this (PORT);
     }
 
-    public TestUtil (int aPort) {
+    private TestUtil (int aPort) {
         this.port = aPort;
 
         SSLConnectionSocketFactory sslConnectionSocketFactory =
@@ -304,7 +304,7 @@ public class TestUtil {
      *
      * @return Base directory for files.
      */
-    public static String getBase () {
+    private static String getBase () {
         return new File ("./src").exists ()? "./src" : "./http/src";
     }
 
@@ -334,7 +334,7 @@ public class TestUtil {
      *
      * @return truststore location as string
      */
-    public static String getTrustStoreLocation () {
+    private static String getTrustStoreLocation () {
         String trustStoreLoc = getProperty ("javax.net.ssl.trustStore");
         return trustStoreLoc == null? getKeyStoreLocation () : trustStoreLoc;
     }
@@ -345,12 +345,12 @@ public class TestUtil {
      *
      * @return truststore password as string
      */
-    public static String getTrustStorePassword () {
+    private static String getTrustStorePassword () {
         String password = getProperty ("javax.net.ssl.trustStorePassword");
         return password == null? getKeystorePassword () : password;
     }
 
-    public static void sleep (long time) {
+    private static void sleep (long time) {
         try {
             Thread.sleep (time);
         }
@@ -363,11 +363,11 @@ public class TestUtil {
         waitForStartup ("localhost", getPort ());
     }
 
-    public static void waitForStartup (String aHost, int aPort) {
+    private static void waitForStartup (String aHost, int aPort) {
         waitForStartup (aHost, aPort, 5, 100);
     }
 
-    public static void waitForStartup (
+    private static void waitForStartup (
         String aHost, int aPort, long aInterval, int aAttempts) {
 
         for (int ii = 0; ii < aAttempts; ii++)
@@ -385,11 +385,11 @@ public class TestUtil {
         waitForShutdown ("localhost", getPort ());
     }
 
-    public static void waitForShutdown (String aHost, int aPort) {
+    private static void waitForShutdown (String aHost, int aPort) {
         waitForShutdown (aHost, aPort, 5, 100);
     }
 
-    public static void waitForShutdown (
+    private static void waitForShutdown (
         String aHost, int aPort, long aInterval, int aAttempts) {
 
         for (int ii = 0; ii < aAttempts; ii++)

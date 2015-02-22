@@ -15,10 +15,14 @@
 package sabina.route;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.logging.Logger.getLogger;
+import static java.util.stream.Collectors.toList;
+import static sabina.route.MimeParse.bestMatch;
 
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import sabina.HttpMethod;
 
@@ -28,11 +32,10 @@ import sabina.HttpMethod;
  * @author Per Wendel
  */
 final class SimpleRouteMatcher implements RouteMatcher {
-
     private static final Logger LOG = getLogger (SimpleRouteMatcher.class.getName ());
     private static final char SINGLE_QUOTE = '\'';
 
-    private List<RouteEntry> routes = new ArrayList<> ();
+    private final List<RouteEntry> routes = new ArrayList<> ();
 
     SimpleRouteMatcher () {
         LOG.fine ("RouteMatcher created");
@@ -45,7 +48,7 @@ final class SimpleRouteMatcher implements RouteMatcher {
      * @param acceptType the accept type
      * @param target the invocation target
      */
-    public void parseValidateAddRoute (String route, String acceptType, Object target) {
+    @Override public void processRoute (String route, String acceptType, Object target) {
         try {
             int singleQuoteIndex = route.indexOf (SINGLE_QUOTE);
             String httpMethod =
@@ -85,10 +88,11 @@ final class SimpleRouteMatcher implements RouteMatcher {
      *
      * @return the target
      */
-    public RouteMatch findTargetForRequestedRoute (
+    @Override public RouteMatch findTarget (
         HttpMethod httpMethod, String path, String acceptType) {
-        List<RouteEntry> routeEntries = this.findTargetsForRequestedRoute (httpMethod, path);
-        RouteEntry entry = findTargetWithGivenAcceptType (routeEntries, acceptType);
+
+        final List<RouteEntry> routeEntries = this.findTargetsForRequestedRoute (httpMethod, path);
+        final RouteEntry entry = findTargetWithGivenAcceptType (routeEntries, acceptType);
         return entry != null?
             new RouteMatch (entry.target, entry.path, path) : null;
     }
@@ -102,19 +106,20 @@ final class SimpleRouteMatcher implements RouteMatcher {
      *
      * @return the targets
      */
-    public List<RouteMatch> findTargetsForRequestedRoute (
-        HttpMethod httpMethod, String path, String acceptType) {
-        List<RouteMatch> matchSet = new ArrayList<> ();
-        List<RouteEntry> routeEntries = findTargetsForRequestedRoute (httpMethod, path);
+    @Override public List<RouteMatch> findTargets (
+        final HttpMethod httpMethod,
+        final String path,
+        final String acceptType) {
+
+        final List<RouteMatch> matchSet = new ArrayList<> ();
+        final List<RouteEntry> routeEntries = findTargetsForRequestedRoute (httpMethod, path);
 
         for (RouteEntry routeEntry : routeEntries) {
             if (acceptType != null) {
-                String bestMatch =
-                    MimeParse.bestMatch (Arrays.asList (routeEntry.acceptedType), acceptType);
+                String bestMatch = bestMatch (asList (routeEntry.acceptedType), acceptType);
 
-                if (routeWithGivenAcceptType (bestMatch)) {
+                if (routeWithGivenAcceptType (bestMatch))
                     matchSet.add (new RouteMatch (routeEntry.target, routeEntry.path, path));
-                }
             }
             else {
                 matchSet.add (new RouteMatch (routeEntry.target, routeEntry.path, path));
@@ -123,10 +128,6 @@ final class SimpleRouteMatcher implements RouteMatcher {
 
         return matchSet;
     }
-
-    //////////////////////////////////////////////////
-    // PRIVATE METHODS
-    //////////////////////////////////////////////////
 
     private void addRoute (HttpMethod method, String url, String acceptedType, Object target) {
         RouteEntry entry = new RouteEntry ();
@@ -143,11 +144,9 @@ final class SimpleRouteMatcher implements RouteMatcher {
     private Map<String, RouteEntry> getAcceptedMimeTypes (List<RouteEntry> routes) {
         Map<String, RouteEntry> acceptedTypes = new HashMap<> ();
 
-        for (RouteEntry routeEntry : routes) {
-            if (!acceptedTypes.containsKey (routeEntry.acceptedType)) {
-                acceptedTypes.put (routeEntry.acceptedType, routeEntry);
-            }
-        }
+        routes.stream ()
+            .filter (routeEntry -> !acceptedTypes.containsKey (routeEntry.acceptedType))
+            .forEach (routeEntry -> acceptedTypes.put (routeEntry.acceptedType, routeEntry));
 
         return acceptedTypes;
     }
@@ -159,33 +158,24 @@ final class SimpleRouteMatcher implements RouteMatcher {
     private List<RouteEntry> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path) {
 
-        List<RouteEntry> matchSet = new ArrayList<> ();
-        for (RouteEntry entry : routes) {
-            if (entry.matches (httpMethod, path)) {
-                matchSet.add (entry);
-            }
-        }
-        return matchSet;
+        return routes.stream ()
+            .filter (entry -> entry.matches (httpMethod, path))
+            .collect (toList ());
     }
 
     // TODO: I believe this feature has impacted performance. Optimization?
     private RouteEntry findTargetWithGivenAcceptType (
-        List<RouteEntry> routeMatches, String acceptType) {
-        if (acceptType != null && routeMatches.size () > 0) {
-            Map<String, RouteEntry> acceptedMimeTypes = getAcceptedMimeTypes (routeMatches);
-            String bestMatch = MimeParse.bestMatch (acceptedMimeTypes.keySet (), acceptType);
+        final List<RouteEntry> routeMatches, final String acceptType) {
 
-            if (routeWithGivenAcceptType (bestMatch)) {
-                return acceptedMimeTypes.get (bestMatch);
-            }
-            else {
-                return null;
-            }
+        if (acceptType != null && routeMatches.size () > 0) {
+            final Map<String, RouteEntry> acceptedMimeTypes = getAcceptedMimeTypes (routeMatches);
+            final String bestMatch = bestMatch (acceptedMimeTypes.keySet (), acceptType);
+
+            return routeWithGivenAcceptType (bestMatch)? acceptedMimeTypes.get (bestMatch) : null;
         }
         else {
-            if (routeMatches.size () > 0) {
+            if (routeMatches.size () > 0)
                 return routeMatches.get (0);
-            }
         }
 
         return null;

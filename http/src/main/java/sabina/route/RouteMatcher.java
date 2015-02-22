@@ -31,7 +31,7 @@ public interface RouteMatcher {
      * @param acceptType .
      * @param target .
      */
-    void parseValidateAddRoute (String route, String acceptType, Object target);
+    void processRoute (String route, String acceptType, Object target);
 
     /**
      * Finds the target route for the requested route path and accept type
@@ -42,8 +42,7 @@ public interface RouteMatcher {
      *
      * @return .
      */
-    RouteMatch findTargetForRequestedRoute (HttpMethod httpMethod, String path, String acceptType);
+    RouteMatch findTarget (HttpMethod httpMethod, String path, String acceptType);
 
-    List<RouteMatch> findTargetsForRequestedRoute (
-        HttpMethod httpMethod, String path, String acceptType);
+    List<RouteMatch> findTargets (HttpMethod httpMethod, String path, String acceptType);
 }

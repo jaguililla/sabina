@@ -14,16 +14,16 @@
 
 package sabina;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
+import static sabina.util.Checks.checkArgument;
+import static sabina.util.Strings.isNullOrEmpty;
 
 /**
  * Functionality used in both Route and Filter.
  *
  * @author Per Wendel
  */
-public abstract class Action {
+abstract class Action {
     final String path;
     final String acceptType;
     final HttpMethod method;

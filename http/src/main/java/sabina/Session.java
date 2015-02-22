@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
  * Provides session information.
  */
 public final class Session {
-    private HttpSession session;
+    private final HttpSession session;
 
     /**
      * Creates a session with the <code>HttpSession</code>.
@@ -33,7 +33,7 @@ public final class Session {
      *
      * @throws IllegalArgumentException If the session is null.
      */
-    Session (HttpSession session) {
+    Session (final HttpSession session) {
         if (session == null)
             throw new IllegalArgumentException ("Session cannot be null");
 

@@ -64,7 +64,7 @@ import sabina.util.TestUtil;
         // note that the keystore stuff is retrieved from TestUtil which
         // respects JVM params for keystore, password
         // but offers a default included store if not.
-        setSecure (getKeyStoreLocation (), getKeystorePassword (), null, null);
+        secure (getKeyStoreLocation (), getKeystorePassword (), null, null);
         start (testUtil.getPort ());
 
         testUtil.waitForStartup ();

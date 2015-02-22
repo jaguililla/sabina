@@ -14,7 +14,7 @@
 
 package sabina;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static sabina.util.Checks.checkArgument;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 /**
@@ -32,15 +32,15 @@ public final class HaltException extends RuntimeException {
         this (SC_OK, null);
     }
 
-    HaltException (int statusCode) {
+    HaltException (final int statusCode) {
         this (statusCode, null);
     }
 
-    HaltException (String body) {
+    HaltException (final String body) {
         this (SC_OK, body);
     }
 
-    HaltException (int statusCode, String body) {
+    HaltException (final int statusCode, final String body) {
         checkArgument (statusCode >= 100, "Invalid HTTP error code: " + statusCode);
         this.statusCode = statusCode;
         this.body = body;

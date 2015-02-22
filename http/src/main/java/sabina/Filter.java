@@ -14,8 +14,8 @@
 
 package sabina;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static sabina.util.Checks.checkArgument;
+import static sabina.util.Strings.isNullOrEmpty;
 
 import java.util.function.Consumer;
 

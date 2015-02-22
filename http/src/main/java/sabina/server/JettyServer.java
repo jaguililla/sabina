@@ -33,8 +33,6 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
@@ -44,8 +42,6 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  * @author Per Wendel
  */
 class JettyHandler extends SessionHandler {
-    private static final Logger LOG = Log.getLogger (JettyHandler.class);
-
     private MatcherFilter filter;
 
     public JettyHandler (MatcherFilter filter) {
@@ -59,7 +55,6 @@ class JettyHandler extends SessionHandler {
         HttpServletResponse response)
         throws IOException, ServletException {
 
-        LOG.debug ("jettyhandler, handle();");
         filter.doFilter (request, response, null);
         baseRequest.setHandled (filter.handled);
     }

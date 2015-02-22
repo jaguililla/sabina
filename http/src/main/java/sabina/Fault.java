@@ -14,7 +14,7 @@
 
 package sabina;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static sabina.util.Checks.checkArgument;
 
 import java.util.function.BiConsumer;
 

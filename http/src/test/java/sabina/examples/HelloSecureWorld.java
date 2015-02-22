@@ -23,7 +23,7 @@ class HelloSecureWorld {
     public static void main (String[] args) {
         get ("/hello", it -> "Hello Secure World!");
 
-        setSecure (args[0], args[1], null, null);
+        secure (args[0], args[1], null, null);
         start ();
     }
 }

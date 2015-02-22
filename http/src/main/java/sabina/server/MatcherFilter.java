@@ -14,12 +14,13 @@
 
 package sabina.server;
 
+import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
+import static java.util.logging.Level.FINE;
 import static java.util.logging.Logger.getLogger;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static sabina.HttpMethod.after;
-import static sabina.HttpMethod.before;
+import static sabina.HttpMethod.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,7 +40,7 @@ import sabina.route.RouteMatcherFactory;
  *
  * @author Per Wendel
  */
-class MatcherFilter implements Filter {
+final class MatcherFilter implements Filter {
     private static final Logger LOG = getLogger (MatcherFilter.class.getName ());
 
     private static final String
@@ -88,51 +89,49 @@ class MatcherFilter implements Filter {
     }
 
     @Override public void doFilter (
-        ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
-        throws IOException, ServletException {
+        final ServletRequest servletRequest,
+        final ServletResponse servletResponse,
+        final FilterChain chain) throws IOException, ServletException {
 
-        long t = currentTimeMillis ();
+        boolean loggable = LOG.isLoggable (FINE);
+        long t = loggable? currentTimeMillis () : 0;
 
-        HttpServletRequest httpReq = (HttpServletRequest)servletRequest;
-        HttpServletResponse httpRes = (HttpServletResponse)servletResponse;
+        final HttpServletRequest httpReq = (HttpServletRequest)servletRequest;
+        final HttpServletResponse httpRes = (HttpServletResponse)servletResponse;
 
-        String uri = httpReq.getRequestURI ();
-        String httpMethodStr = httpReq.getMethod ().toLowerCase ();
-        String acceptType = httpReq.getHeader (ACCEPT_TYPE_REQUEST_MIME_HEADER);
+        final String uri = httpReq.getRequestURI ();
+        final String httpMethodStr = httpReq.getMethod ().toLowerCase ();
+        final String acceptType = httpReq.getHeader (ACCEPT_TYPE_REQUEST_MIME_HEADER);
+
         String bodyContent = null;
 
         try {
-            bodyContent =
-                onFilter (before, httpReq, httpRes, uri, acceptType, bodyContent);
+            bodyContent = onFilter (before, httpReq, httpRes, uri, acceptType, bodyContent);
 
-            HttpMethod httpMethod = HttpMethod.valueOf (httpMethodStr);
-
-            RouteMatch match =
-                routeMatcher.findTargetForRequestedRoute (httpMethod, uri, acceptType);
+            final HttpMethod httpMethod = HttpMethod.valueOf (httpMethodStr);
+            RouteMatch match = routeMatcher.findTarget (httpMethod, uri, acceptType);
 
             Object target = null;
             if (match != null) {
                 target = match.getTarget ();
             }
-            else if (httpMethod == HttpMethod.head && bodyContent == null) {
+            else if (httpMethod == head && bodyContent == null) {
                 // See if get is mapped to provide default head mapping
-                RouteMatch requestedRouteTarget =
-                    routeMatcher.findTargetForRequestedRoute (HttpMethod.get, uri, acceptType);
+                RouteMatch requestedRouteTarget = routeMatcher.findTarget (get, uri, acceptType);
                 bodyContent = requestedRouteTarget != null? "" : null;
             }
 
             if (target != null) {
-                bodyContent =
-                    handleTargetRoute (httpReq, httpRes, bodyContent, match, target);
+                bodyContent = handleTargetRoute (httpReq, httpRes, bodyContent, match, target);
             }
 
-            bodyContent =
-                onFilter (after, httpReq, httpRes, uri, acceptType, bodyContent);
+            bodyContent = onFilter (after, httpReq, httpRes, uri, acceptType, bodyContent);
         }
-        catch (HaltException hEx) {
-            LOG.fine ("halt performed");
-            httpRes.setStatus (hEx.statusCode);
-            String haltBody = hEx.body;
+        catch (HaltException e) {
+            if (loggable)
+                LOG.fine ("halt performed");
+            httpRes.setStatus (e.statusCode);
+            String haltBody = e.body;
             bodyContent = (haltBody != null)? haltBody : "";
         }
 
@@ -145,7 +144,6 @@ class MatcherFilter implements Filter {
         boolean consumed = bodyContent != null;
 
         if (!consumed && hasOtherHandlers) {
-//            throw new NotConsumedException ();
             handled = false;
 			if (BackendFactory.backend ().equals ("undertow"))
 				httpRes.setStatus (SC_NOT_FOUND); // TODO Only for Undertow
@@ -153,8 +151,8 @@ class MatcherFilter implements Filter {
         }
 
         if (!consumed && !isServletContext) {
-            httpRes.setStatus (HttpServletResponse.SC_NOT_FOUND);
-            bodyContent = String.format (NOT_FOUND, uri);
+            httpRes.setStatus (SC_NOT_FOUND);
+            bodyContent = format (NOT_FOUND, uri);
             consumed = true;
         }
 
@@ -174,8 +172,10 @@ class MatcherFilter implements Filter {
         handled = true;
 
         // TODO Merge logs and take care of method flow to log always
-        LOG.fine ("httpMethod:" + httpMethodStr + ", uri: " + uri);
-        LOG.fine ("Time for request: " + (currentTimeMillis () - t));
+        if (loggable) {
+            LOG.fine ("httpMethod:" + httpMethodStr + ", uri: " + uri);
+            LOG.fine ("Time for request: " + (currentTimeMillis () - t));
+        }
     }
 
     private String handleTargetRoute (
@@ -211,26 +211,28 @@ class MatcherFilter implements Filter {
      * After and before are the same method except for HttpMethod.after|before
      */
     private String onFilter (
-        HttpMethod method, HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-        String uri, String acceptType, String bodyContent) {
+        final HttpMethod method,
+        final HttpServletRequest httpRequest,
+        final HttpServletResponse httpResponse,
+        final String uri,
+        final String acceptType,
+        String bodyContent) {
 
-        List<RouteMatch> matchSet =
-            routeMatcher.findTargetsForRequestedRoute (method, uri, acceptType);
+        final List<RouteMatch> matchSet = routeMatcher.findTargets (method, uri, acceptType);
 
         for (RouteMatch filterMatch : matchSet) {
-            Object filterTarget = filterMatch.getTarget ();
+            final Object filterTarget = filterMatch.getTarget ();
             if (filterTarget instanceof sabina.Filter) {
-                Request request = Request.create (filterMatch, httpRequest, httpResponse);
-
-                sabina.Filter filter = (sabina.Filter)filterTarget;
+                final Request request = Request.create (filterMatch, httpRequest, httpResponse);
+                final sabina.Filter filter = (sabina.Filter)filterTarget;
                 filter.handle (request);
 
-                String bodyAfterFilter = request.response.body ();
-                if (bodyAfterFilter != null) {
+                final String bodyAfterFilter = request.response.body ();
+                if (bodyAfterFilter != null)
                     bodyContent = bodyAfterFilter;
-                }
             }
         }
+
         return bodyContent;
     }
 

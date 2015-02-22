@@ -34,7 +34,7 @@ public class RequestTest {
     private static final String THE_SERVLET_PATH = "/the/servlet/path";
     private static final String THE_CONTEXT_PATH = "/the/context/path";
 
-    RouteMatch match = new RouteMatch (null, "/hi", "/hi");
+    private RouteMatch match = new RouteMatch (null, "/hi", "/hi");
 
     @Test public void queryParamShouldReturnsParametersFromQueryString () {
         Map<String, String[]> params = new HashMap<> ();

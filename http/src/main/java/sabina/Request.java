@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.google.common.io.CharStreams;
 import sabina.route.RouteMatch;
 
 /**
@@ -33,24 +32,19 @@ import sabina.route.RouteMatch;
  *
  * @author Per Wendel
  */
-public class Request {
+public final class Request {
     private static final Logger LOG = getLogger(Request.class.getName ());
     private static final String USER_AGENT = "user-agent";
 
-    private static boolean isParam (String routePart) {
-        return routePart.startsWith (":");
-    }
-
-    private static boolean isSplat (String routePart) {
-        return routePart.equals ("*");
-    }
-
     public static Request create (
-        RouteMatch match, HttpServletRequest request, HttpServletResponse response) {
+        final RouteMatch match,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
+
         return new Request (match, request, response);
     }
 
-    public static List<String> convertRouteToList (String route) {
+    public static List<String> convertRouteToList (final String route) {
         String[] pathArray = route.split ("/");
         List<String> path = new ArrayList<> ();
         for (String p : pathArray)
@@ -61,28 +55,16 @@ public class Request {
     }
 
     public final Response response;
-
-    private Map<String, String> params;
-    private List<String> splat;
-
-    private HttpServletRequest servletRequest;
-
-    private Session session = null;
+    private final Map<String, String> params;
+    private final List<String> splat;
+    private final HttpServletRequest servletRequest;
 
     /* Lazy loaded stuff */
+    private Session session = null;
     private String body = null;
+    private Set<String> headers;
 
-    private Set<String> headers = null;
-
-    //    request.body              # request body sent by the client (see below), DONE
-    //    request.scheme            # "http"                                DONE
-    //    request.path_info         # "/foo",                               DONE
-    //    request.port              # 80                                    DONE
-    //    request.request_method    # "GET",                                DONE
-    //    request.query_string      # "",                                   DONE
-    //    request.content_length    # length of request.body,               DONE
     //    request.media_type        # media type of request.body            DONE, content type?
-    //    request.host              # "example.com"                         DONE
     //    request["SOME_HEADER"]    # value of SOME_HEADER header,          DONE
     //    request.user_agent        # user agent (used by :agent condition) DONE
     //    request.url               # "http://example.com/example/foo"      DONE
@@ -91,19 +73,10 @@ public class Request {
     //    request.get?              # true (similar methods for other verbs)
     //    request.secure?           # false (would be true over ssl)
     //    request.forwarded?        # true (if running behind a reverse proxy)
-    //    request.cookies           # hash of browser cookies,              DONE
     //    request.xhr?              # is this an ajax request?
     //    request.script_name       # "/example"
     //    request.form_data?        # false
     //    request.referrer          # the referrer of the client or '/'
-
-    /**
-     * Used by wrapper.
-     * @param response
-     */
-    protected Request (HttpServletResponse response) { super ();
-        this.response = new Response (response);
-    }
 
     /**
      * Constructor
@@ -111,7 +84,11 @@ public class Request {
      * @param match   the route match
      * @param request the servlet request
      */
-    Request (RouteMatch match, HttpServletRequest request, HttpServletResponse response) {
+    Request (
+        final RouteMatch match,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
+
         this.servletRequest = request;
         this.response = new Response (response);
 
@@ -138,7 +115,7 @@ public class Request {
      * @param param The param.
      * @return Null if the given param is null or not found.
      */
-    public String params (String param) {
+    public String params (final String param) {
         if (param == null)
             return null;
 
@@ -156,6 +133,7 @@ public class Request {
 
     /**
      * @return request method e.g. GET, POST, PUT, ...
+    //    request.request_method    # "GET",                                DONE
      */
     public String requestMethod () {
         return servletRequest.getMethod ();
@@ -163,6 +141,7 @@ public class Request {
 
     /**
      * @return the scheme
+    //    request.scheme            # "http"                                DONE
      */
     public String scheme () {
         return servletRequest.getScheme ();
@@ -170,6 +149,7 @@ public class Request {
 
     /**
      * @return the host
+    //    request.host              # "example.com"                         DONE
      */
     public String host () {
         return servletRequest.getHeader ("host");
@@ -192,6 +172,7 @@ public class Request {
     /**
      * @return the path info
      * Example return: "/example/foo"
+    //    request.path_info         # "/foo",                               DONE
      */
     public String pathInfo () {
         return servletRequest.getPathInfo ();
@@ -240,7 +221,7 @@ public class Request {
             try (InputStreamReader input =
                 new InputStreamReader (servletRequest.getInputStream ())) {
 
-                body = CharStreams.toString (input);
+                body = new Scanner (input).useDelimiter ("\\A").next ();
             }
             catch (Exception e) {
                 LOG.warning ("Exception when reading body: " + e.getMessage ());
@@ -251,6 +232,7 @@ public class Request {
 
     /**
      * @return the length of request.body
+    //    request.content_length    # length of request.body,               DONE
      */
     public int contentLength () {
         return servletRequest.getContentLength ();
@@ -299,6 +281,7 @@ public class Request {
 
     /**
      * @return the query string
+    //    request.query_string      # "",                                   DONE
      */
     public String queryString () {
         return servletRequest.getQueryString ();
@@ -376,6 +359,7 @@ public class Request {
 
     /**
      * @return request cookies (or empty Map if cookies dosn't present)
+    //    request.cookies           # hash of browser cookies,              DONE
      */
     public Map<String, String> cookies () {
         Map<String, String> result = new HashMap<> ();
@@ -425,7 +409,7 @@ public class Request {
 
         for (int i = 0; (i < request.size ()) && (i < matched.size ()); i++) {
             String matchedPart = matched.get (i);
-            if (isParam (matchedPart)) {
+            if (matchedPart.startsWith (":")) {
                 LOG.fine ("matchedPart: "
                     + matchedPart
                     + " = "
@@ -449,7 +433,7 @@ public class Request {
         for (int i = 0; (i < nbrOfRequestParts) && (i < nbrOfMatchedParts); i++) {
             String matchedPart = matched.get(i);
 
-            if (isSplat(matchedPart)) {
+            if (matchedPart.equals ("*")) {
 
                 StringBuilder splatParam = new StringBuilder(request.get(i));
                 if (!sameLength && (i == (nbrOfMatchedParts - 1))) {
@@ -543,7 +527,6 @@ public class Request {
      * TODO Implement these methods!
      */
     public void pass () {}
-    public void redirect () {}
     public void template (final String template, final Object params) {}
     public void template (final String template, final String layout, final Object params) {}
 }

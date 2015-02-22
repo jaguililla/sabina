@@ -39,7 +39,8 @@ import sabina.util.TestUtil;
         stop ();
         testUtil.waitForShutdown ();
         if (tmpExternalFile != null)
-            tmpExternalFile.delete ();
+            if (!tmpExternalFile.delete ())
+                throw new IllegalStateException ();
     }
 
     @BeforeClass public static void setup () throws IOException, InterruptedException {
@@ -55,8 +56,33 @@ import sabina.util.TestUtil;
         before ("/protected/*", it -> it.halt (401, "Go Away!"));
 
         before ("/protected/*", "application/json", it ->
-                it.halt (401, "{\"message\": \"Go Away!\"}")
+            it.halt (401, "{\"message\": \"Go Away!\"}")
         );
+
+        get ("/request/data", it -> {
+            it.body (it.url ());
+
+            it.cookie ("method", it.requestMethod ());
+            it.cookie ("host", it.ip ());
+            it.cookie ("uri", it.uri ());
+            it.cookie ("params", String.valueOf (it.params ().size ()));
+
+            it.header ("agent", it.userAgent ());
+            it.header ("protocol", it.protocol ());
+            it.header ("scheme", it.scheme ());
+            it.header ("host", it.host ());
+            it.header ("query", it.queryString ());
+            it.header ("port", String.valueOf (it.port ()));
+
+            return it.body () + " !!!";
+        });
+
+        exception (
+            UnsupportedOperationException.class,
+            (ex, req) -> req.header ("error", ex.getMessage ())
+        );
+
+        get ("/exception", it -> { throw new UnsupportedOperationException (); });
 
         get ("/hi", "application/json", it -> "{\"message\": \"Hello World\"}");
 
@@ -65,7 +91,7 @@ import sabina.util.TestUtil;
         get ("/param/:param", it -> "echo: " + it.params (":param"));
 
         get ("/paramandwild/:param/stuff/*", it ->
-                "paramandwild: " + it.params (":param") + it.splat ()[0]
+            "paramandwild: " + it.params (":param") + it.splat ()[0]
         );
 
         get ("/paramwithmaj/:paramWithMaj", it -> "echo: " + it.params (":paramWithMaj"));
@@ -225,5 +251,36 @@ import sabina.util.TestUtil;
         UrlResponse response = testUtil.doMethod ("GET", "/externalFile.html");
         assertEquals (200, response.status);
         assertEquals ("Content of external file", response.body);
+    }
+
+    // TODO Check with asserts
+    public void requestData () throws Exception {
+        UrlResponse response = testUtil.doMethod ("GET", "/request/data");
+        System.out.println (response.headers.get ("user agent"));
+        System.out.println (response.body);
+
+//        it.body (it.url ());
+//
+//        it.cookie ("method", it.requestMethod ());
+//        it.cookie ("host", it.host ());
+//        it.cookie ("uri", it.uri ());
+//        it.cookie ("params", String.valueOf (it.params ().size ()));
+//
+//        it.header ("agent", it.userAgent ());
+//        it.header ("protocol", it.protocol ());
+//        it.header ("scheme", it.scheme ());
+//        it.header ("host", it.host ());
+//        it.header ("query", it.queryString ());
+//        it.header ("port", String.valueOf (it.port ()));
+//
+//        return it.body () + " !!!";
+        assertEquals (200, response.status);
+    }
+
+    // TODO Check with asserts
+    public void handleException () {
+        UrlResponse response = testUtil.doMethod ("GET", "/request/data");
+//        assertEquals ("true", response.headers.get ("error"));
+//        assertEquals (500, response.status);
     }
 }

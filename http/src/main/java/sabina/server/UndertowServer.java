@@ -37,7 +37,6 @@ import javax.servlet.ServletException;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.resource.*;
-import io.undertow.server.handlers.resource.Resource;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.servlet.api.FilterInfo;
@@ -77,7 +76,7 @@ class MatcherFilterInfo extends FilterInfo implements Cloneable {
  */
 class ChainResourceManager implements ResourceManager {
 
-    List<ResourceManager> managers = new ArrayList<> ();
+    private List<ResourceManager> managers = new ArrayList<> ();
 
     ChainResourceManager (String aStaticPath, String aFilesPath) {
         if (aStaticPath != null)

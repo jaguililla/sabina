@@ -14,9 +14,9 @@
 
 package sabina.route;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Float.parseFloat;
 import static java.lang.String.format;
+import static sabina.util.Strings.isNullOrEmpty;
 
 import java.util.*;
 
@@ -68,7 +68,7 @@ final class MimeParse {
      *
      * <p>('application', 'xhtml', {'q', '0.5'})
      */
-    protected static ParseResults parseMimeType (String mimeType) {
+    static ParseResults parseMimeType (String mimeType) {
         String[] parts = mimeType.split (";");
         ParseResults results = new ParseResults ();
         results.params = new HashMap<> ();
@@ -149,7 +149,7 @@ final class MimeParse {
      * @param mimeType .
      * @param parsedRanges .
      */
-    protected static FitnessAndQuality fitnessAndQualityParsed (
+    static FitnessAndQuality fitnessAndQualityParsed (
         String mimeType, Collection<ParseResults> parsedRanges) {
 
         int bestFitness = -1;

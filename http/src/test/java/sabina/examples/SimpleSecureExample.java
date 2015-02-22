@@ -54,7 +54,7 @@ class SimpleSecureExample {
 
         get ("/", it -> "root");
 
-        setSecure (args[0], args[1], null, null);
+        secure (args[0], args[1], null, null);
         start (5678);
     }
 }
