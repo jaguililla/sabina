@@ -84,9 +84,6 @@ Example showing how to define content depending on accept type ([JsonAcceptTypeE
 Example showing how to render a view from a template ([FreeMarkerExample.java][FreeMarker])
 [FreeMarker]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/FreeMarkerExample.java
 
-Example of using Transformer. ([TransformerExample.java][Transformer])
-[Transformer]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/examples/TransformerExample.java
-
 You can also check the ([integration tests])
 [integration tests]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/it/undertow
 
