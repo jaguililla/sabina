@@ -18,6 +18,6 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
 
     // SERVER DEPENDENCIES
-    compile 'org.eclipse.jetty:jetty-webapp:9.2.7.v20150116'
+    compile 'org.eclipse.jetty:jetty-webapp:9.2.8.v20150217'
     compile 'io.undertow:undertow-servlet:1.1.2.Final'
 }

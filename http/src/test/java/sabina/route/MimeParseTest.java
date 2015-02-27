@@ -1,7 +1,7 @@
 package sabina.route;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.testng.Assert.assertEquals;
 import static sabina.route.MimeParse.*;
 
 import java.util.Collection;
@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 
 /**
  * TODO Review ignored tests
+ * TODO Change assert parameter's order (to TestNG)
  */
 @Test public class MimeParseTest {
     @Test (enabled = false) public void testParseMediaRange() {
