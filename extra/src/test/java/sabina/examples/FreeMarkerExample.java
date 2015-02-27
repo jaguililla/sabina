@@ -26,7 +26,7 @@ class FreeMarkerExample {
             Map<String, Object> attributes = new HashMap<> ();
             attributes.put ("message", "Hello World");
 
-            // The hello.ftl file is located in directory: src/test/resources/sabina/view
+            // The hello.ftl file is located in directory: src/test/resources
             return renderFreeMarker ("hello.ftl", attributes);
         });
 

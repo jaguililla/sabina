@@ -18,14 +18,14 @@ dependencies {
     compile project(':http')
 
     // TEMPLATE DEPENDENCIES
-    compile 'org.freemarker:freemarker:2.3.20'
-    compile 'com.samskivert:jmustache:1.9'
-    compile 'org.rythmengine:rythm-engine:1.0'
+    compile 'org.freemarker:freemarker:2.3.21'
+    compile 'com.samskivert:jmustache:1.10'
+    compile 'org.rythmengine:rythm-engine:1.0.1'
 
     // CONTENT TYPES DEPENDENCIES
-    compile 'com.google.code.gson:gson:2.2.4'
-    compile 'org.yaml:snakeyaml:1.13'
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'org.yaml:snakeyaml:1.15'
 
     // SECURITY
-    compile 'org.scribe:scribe:1.3.5'
+    compile 'org.scribe:scribe:1.3.7'
 }

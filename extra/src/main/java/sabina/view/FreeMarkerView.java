@@ -14,6 +14,8 @@
 
 package sabina.view;
 
+import static freemarker.template.Configuration.VERSION_2_3_21;
+
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -25,8 +27,8 @@ public class FreeMarkerView {
     private static Configuration configuration = createFreemarkerConfiguration ();
 
     private static Configuration createFreemarkerConfiguration () {
-        Configuration retVal = new Configuration ();
-        retVal.setClassForTemplateLoading (FreeMarkerView.class, "");
+        Configuration retVal = new Configuration (VERSION_2_3_21);
+        retVal.setClassForTemplateLoading (FreeMarkerView.class, "/");
         return retVal;
     }
 
