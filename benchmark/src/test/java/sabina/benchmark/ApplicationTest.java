@@ -13,26 +13,27 @@ import java.util.Scanner;
 
 import com.google.gson.Gson;
 import org.apache.http.HttpResponse;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-@org.testng.annotations.Test
-public final class ApplicationTest {
+/**
+ * TODO Change assert's order
+ */
+@Test public final class ApplicationTest {
     private static final String ENDPOINT = "http://localhost:5050";
     private static final Gson GSON = new Gson ();
 
-    @org.testng.annotations.BeforeClass @BeforeClass
-    public static void setup () {
+    @BeforeClass public static void setup () {
         main (null);
     }
 
-    @org.testng.annotations.AfterClass @AfterClass
-    public static void close () {
+    @AfterClass public static void close () {
         stop ();
     }
 
-    @Test public void json () throws IOException {
+    @Test(threadPoolSize = 10, invocationCount = 100)
+    public void json () throws IOException {
         HttpResponse response = get (ENDPOINT + "/json");
         String content = getContent (response);
 
@@ -40,7 +41,7 @@ public final class ApplicationTest {
         assertEquals ("Hello, World!", GSON.fromJson (content, Map.class).get ("message"));
     }
 
-    @Test public void plaintext () throws IOException {
+    public void plaintext () throws IOException {
         HttpResponse response = get (ENDPOINT + "/plaintext");
         String content = getContent (response);
 
@@ -48,7 +49,7 @@ public final class ApplicationTest {
         assertEquals ("Hello, World!", content);
     }
 
-    @Test public void no_query_parameter () throws IOException {
+    public void no_query_parameter () throws IOException {
         HttpResponse response = get (ENDPOINT + "/db");
         String content = getContent (response);
 
@@ -57,35 +58,35 @@ public final class ApplicationTest {
         assertTrue (resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber"));
     }
 
-    @Test public void empty_query_parameter () throws IOException {
+    public void empty_query_parameter () throws IOException {
         checkDbRequest ("/query?queries", 1);
     }
 
-    @Test public void text_query_parameter () throws IOException {
+    public void text_query_parameter () throws IOException {
         checkDbRequest ("/query?queries=text", 1);
     }
 
-    @Test public void zero_queries () throws IOException {
+    public void zero_queries () throws IOException {
         checkDbRequest ("/query?queries=0", 1);
     }
 
-    @Test public void one_thousand_queries () throws IOException {
+    public void one_thousand_queries () throws IOException {
         checkDbRequest ("/query?queries=1000", 500);
     }
 
-    @Test public void one_query () throws IOException {
+    public void one_query () throws IOException {
         checkDbRequest ("/query?queries=1", 1);
     }
 
-    @Test public void ten_queries () throws IOException {
+    public void ten_queries () throws IOException {
         checkDbRequest ("/query?queries=10", 10);
     }
 
-    @Test public void five_hundred_queries () throws IOException {
+    public void five_hundred_queries () throws IOException {
         checkDbRequest ("/query?queries=500", 500);
     }
 
-    @Test public void fortunes () throws IOException {
+    public void fortunes () throws IOException {
         HttpResponse response = get (ENDPOINT + "/fortune");
         String content = getContent (response);
         String contentType = response.getEntity ().getContentType ().getValue ();
@@ -94,10 +95,10 @@ public final class ApplicationTest {
         assertTrue (response.getFirstHeader ("Date") != null);
         assertTrue (content.contains ("&lt;script&gt;alert(&quot;This should not be displayed"));
         assertTrue (content.contains ("フレームワークのベンチマーク"));
-        assertEquals ("text/html; charset=utf-8", contentType);
+        assertEquals ("text/html; charset=utf-8", contentType.toLowerCase ());
     }
 
-    @Test public void no_updates_parameter () throws IOException {
+    public void no_updates_parameter () throws IOException {
         HttpResponse response = get (ENDPOINT + "/update");
         String content = getContent (response);
 
@@ -106,31 +107,31 @@ public final class ApplicationTest {
         assertTrue (resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber"));
     }
 
-    @Test public void empty_updates_parameter () throws IOException {
+    public void empty_updates_parameter () throws IOException {
         checkDbRequest ("/update?queries", 1);
     }
 
-    @Test public void text_updates_parameter () throws IOException {
+    public void text_updates_parameter () throws IOException {
         checkDbRequest ("/update?queries=text", 1);
     }
 
-    @Test public void zero_updates () throws IOException {
+    public void zero_updates () throws IOException {
         checkDbRequest ("/update?queries=0", 1);
     }
 
-    @Test public void one_thousand_updates () throws IOException {
+    public void one_thousand_updates () throws IOException {
         checkDbRequest ("/update?queries=1000", 500);
     }
 
-    @Test public void one_update () throws IOException {
+    public void one_update () throws IOException {
         checkDbRequest ("/update?queries=1", 1);
     }
 
-    @Test public void ten_updates () throws IOException {
+    public void ten_updates () throws IOException {
         checkDbRequest ("/update?queries=10", 10);
     }
 
-    @Test public void five_hundred_updates () throws IOException {
+    public void five_hundred_updates () throws IOException {
         checkDbRequest ("/update?queries=500", 500);
     }
 

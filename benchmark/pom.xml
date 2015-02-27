@@ -7,7 +7,7 @@
 
     <groupId>sabina</groupId>
     <artifactId>sabina</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>Sabina benchmark project</name>
 
@@ -22,8 +22,7 @@
 
         <db.host>localhost</db.host>
 
-        <sabina-version>1.0.0</sabina-version>
-        <mysql-connector-version>5.1.28</mysql-connector-version>
+        <sabina-version>1.1.0</sabina-version>
     </properties>
 
     <repositories>
@@ -77,19 +76,19 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql-connector-version}</version>
+            <version>5.1.28</version>
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.21</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>fluent-hc</artifactId>
-            <version>4.4</version>
+            <version>4.3.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
