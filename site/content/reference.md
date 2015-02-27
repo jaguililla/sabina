@@ -37,9 +37,9 @@ Command:
 Contribute
 ==========
 
-* The code should be formatted accordingly to the format provided in `assets/*-formatter.xml`
-  directory.
+* The code should be formatted accordingly to the format provided in my `dotfiles` Github project.
 
 * For a Pull Request to be accepted:
   * It has to pass all existing tests.
   * The coverage of the new code should be at least 70%
+  * All public and protected methods and field must be documented using Javadoc

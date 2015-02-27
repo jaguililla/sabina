@@ -1,24 +1,10 @@
 /*
- * Copyright © 2014 Juan José Aguililla. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language governing permissions
- * and limitations under the License.
+ * Copyright (c) 2015. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
-
-plugins {
-    id 'me.champeau.jbake' version '0.2'
-    id 'org.ajoberstar.github-pages' version '1.1.0-milestone.1'
-    id "com.github.kt3k.coveralls" version "2.3.1"
-}
-
-//apply from: 'gradle/modular.gradle'
 
 /*
  * Some properties are defined in 'gradle.properties'
@@ -33,8 +19,6 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
-
-    apply plugin: 'com.github.kt3k.coveralls'
 
     group = 'sabina'
     version = projectVersion
@@ -106,33 +90,6 @@ subprojects {
 }
 
 defaultTasks 'check'
-
-jbake {
-    input = file("$project.projectDir/site")
-    output = file("$buildDir/site")
-}
-
-task site (dependsOn: 'jbake') {
-    copy {
-        from 'http/build/docs/javadoc/'
-        into "$buildDir/site/http/"
-        include ('**')
-    }
-    copy {
-        from 'extra/build/docs/javadoc/'
-        into "$buildDir/site/extra/"
-        include ('**')
-    }
-}
-
-githubPages {
-    repoUri = 'https://github.com/jamming/sabina.git'
-    pages {
-        from (file ("$buildDir/site")) {
-            into '.'
-        }
-    }
-}
 
 wrapper {
     gradleVersion = '2.3'
