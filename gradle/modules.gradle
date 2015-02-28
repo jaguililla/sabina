@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2015. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
- * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
- * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
- * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
- * Vestibulum commodo. Ut rhoncus gravida arcu.
+ * Copyright © 2015 Juan José Aguililla. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
 
-/*
- * Some properties are defined in 'gradle.properties'
- */
 subprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
@@ -20,18 +23,21 @@ subprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
 
-    group = 'sabina'
+/*
+ * These properties are defined in 'gradle.properties'
+ */
+    group = projectGroup
     version = projectVersion
-    description = 'A Sinatra inspired Java web framework'
+    description = projectDescription
 
-    // TODO To be completed
-//    processResources {
-//        filesMatching('**/config.properties') {
-//            filter {
-//                it.replace('localhost', project.property('myhost'))
-//            }
+// TODO To be completed
+//processResources {
+//    filesMatching('**/config.properties') {
+//        filter {
+//            it.replace('localhost', project.property('myhost'))
 //        }
 //    }
+//}
 
     repositories {
         jcenter ()
@@ -41,14 +47,8 @@ subprojects {
         deployerJars
     }
 
-    dependencies {
-        testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
-        testCompile 'org.testng:testng:6.8.21'
-    }
-
     test {
         useTestNG ()
-        include 'sabina/**'
     }
 
     jacocoTestReport {
@@ -58,7 +58,7 @@ subprojects {
         }
     }
 
-    task sourceJar(type: Jar) {
+    task sourceJar (type: Jar) {
         from sourceSets.main.allJava
     }
 
@@ -74,25 +74,17 @@ subprojects {
         }
         repositories {
             maven {
-                url 'https://api.bintray.com/maven/jamming/maven/Sabina'
+                url bintrayUrl
                 credentials {
                     // Set 'bintrayKey' in '~/.gradle/gradle.properties'
                     def hasBintrayKey = project.hasProperty ("${project.name}BintrayKey")
                     def bintrayKey = hasBintrayKey?
                         project.property ("${project.name}BintrayKey") : "UNDEFINED"
 
-                    username 'jamming'
+                    username bintrayUser
                     password bintrayKey
                 }
             }
         }
     }
-}
-
-defaultTasks 'check'
-
-wrapper {
-    gradleVersion = '2.3'
-    jarFile = "${project.projectDir}/" + wrapperPath + '/wrapper.jar'
-    scriptFile = "${project.projectDir}/" + wrapperPath + '/wrapper'
 }
