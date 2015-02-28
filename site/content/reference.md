@@ -24,6 +24,7 @@ Steps:
 * Commit and tag the release
 * Update version in gradle.properties
 * Commit and push
+* Confirm publishing of artifacts within Bintray (this is a manual step)
 
 Command:
 
