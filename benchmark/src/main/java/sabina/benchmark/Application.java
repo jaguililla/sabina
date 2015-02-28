@@ -1,6 +1,21 @@
+/*
+ * Copyright © 2015 Juan José Aguililla. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
+
 package sabina.benchmark;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.System.getProperty;
 import static sabina.Sabina.*;
 import static sabina.content.JsonContent.toJson;
 import static sabina.view.MustacheView.renderMustache;
@@ -29,6 +44,7 @@ final class Application {
     private static final DataSource DATA_SOURCE = createSessionFactory ();
     private static final int DB_ROWS = 10000;
 
+    private static final boolean BATCH_UPDATES = getProperty ("sabina.benchmark.batch") != null;
     private static final String SELECT_WORLD = "select * from world where id = ?";
     private static final String UPDATE_WORLD = "update world set randomNumber = ? where id = ?";
     private static final String SELECT_FORTUNES = "select * from fortune";
@@ -135,7 +151,9 @@ final class Application {
         final World[] worlds = new World[queries];
 
         try (final Connection con = DATA_SOURCE.getConnection ()) {
-            con.setAutoCommit (false);
+            if (BATCH_UPDATES)
+                con.setAutoCommit (false);
+
             final Random random = ThreadLocalRandom.current ();
             final PreparedStatement stmtSelect = con.prepareStatement (SELECT_WORLD);
             final PreparedStatement stmtUpdate = con.prepareStatement (UPDATE_WORLD);
@@ -147,11 +165,20 @@ final class Application {
                     worlds[ii] = new World (rs.getInt (1), rs.getInt (2));
                     stmtUpdate.setInt (1, random.nextInt (DB_ROWS) + 1);
                     stmtUpdate.setInt (2, worlds[ii].id);
-                    stmtUpdate.addBatch ();
+
+                    if (BATCH_UPDATES) {
+                        stmtUpdate.addBatch ();
+                    }
+                    else {
+                        stmtUpdate.executeUpdate ();
+                    }
                 }
             }
-            stmtUpdate.executeBatch ();
-            con.commit ();
+
+            if (BATCH_UPDATES) {
+                stmtUpdate.executeBatch ();
+                con.commit ();
+            }
         }
         catch (SQLException e) {
             e.printStackTrace ();
