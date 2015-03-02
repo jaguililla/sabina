@@ -46,7 +46,7 @@ import org.testng.annotations.Test;
         stop ();
     }
 
-    @Test(threadPoolSize = 10, invocationCount = 100)
+    @Test(threadPoolSize = 10, invocationCount = 10)
     public void json () throws IOException {
         HttpResponse response = get (ENDPOINT + "/json");
         String content = getContent (response);

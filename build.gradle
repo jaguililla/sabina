@@ -12,16 +12,32 @@
  * and limitations under the License.
  */
 
+buildscript {
+    repositories {
+        jcenter ()
+    }
+
+    dependencies {
+        classpath 'org.freemarker:freemarker:2.3.19'
+        classpath 'org.pegdown:pegdown:1.4.2'
+        classpath 'org.asciidoctor:asciidoctorj:1.5.2'
+    }
+}
+
 plugins {
     id 'me.champeau.jbake' version '0.2'
     id 'org.ajoberstar.github-pages' version '1.1.0-milestone.1'
     id "com.github.kt3k.coveralls" version "2.3.1"
 }
 
-apply from: 'gradle/base.gradle'
-apply from: 'gradle/modules.gradle'
+//apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/wrapper.gradle'
+apply from: 'gradle/wrapper.gradle'
 
 subprojects {
+//    apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/java.gradle'
+//    apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/bintray.gradle'
+    apply from: '/home/jam/Projects/jamming/sabina/gradle/java.gradle'
+    apply from: '/home/jam/Projects/jamming/sabina/gradle/bintray.gradle'
     apply plugin: 'com.github.kt3k.coveralls'
 
     dependencies {
@@ -31,27 +47,24 @@ subprojects {
 }
 
 jbake {
-    input = file("$project.projectDir/site")
-    output = file("$buildDir/site")
+    input = file("$project.projectDir/$project.projectSite")
+    output = file("$buildDir/$project.projectSite")
 }
 
 task site (dependsOn: 'jbake') {
-    copy {
-        from 'http/build/docs/javadoc/'
-        into "$buildDir/site/http/"
-        include ('**')
-    }
-    copy {
-        from 'extra/build/docs/javadoc/'
-        into "$buildDir/site/extra/"
-        include ('**')
+    subprojects.each { module ->
+        copy {
+            from "$module.name/build/docs/javadoc/"
+            into "$buildDir/$project.projectSite/$module.name/"
+            include ('**')
+        }
     }
 }
 
 githubPages {
-    repoUri = 'https://github.com/jamming/sabina.git'
+    repoUri = githubRepository
     pages {
-        from (file ("$buildDir/site")) {
+        from (file ("$buildDir/$project.projectSite")) {
             into '.'
         }
     }

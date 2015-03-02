@@ -208,6 +208,7 @@ final class Application {
         after (Application::addCommonHeaders);
 
         host (SETTINGS.getProperty ("web.host"));
-        start (parseInt (SETTINGS.getProperty ("web.port")));
+        port (SETTINGS.getProperty ("web.port"));
+        start ();
     }
 }

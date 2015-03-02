@@ -132,6 +132,10 @@ public final class Sabina {
         server.port (port);
     }
 
+    public static void port (String port) {
+        server.port (port);
+    }
+
     public static void secure (
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword) {

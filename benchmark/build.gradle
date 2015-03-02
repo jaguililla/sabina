@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-description = 'A Sinatra inspired java web framework (benchmark)'
+description = "Sinatra web framework's benchmark"
 
 dependencies {
     compile project(':extra')
@@ -21,4 +21,8 @@ dependencies {
     compile 'mysql:mysql-connector-java:5.1.28'
 
     testCompile 'org.apache.httpcomponents:fluent-hc:4.4'
+}
+
+javadoc {
+    failOnError = false
 }

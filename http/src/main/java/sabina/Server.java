@@ -14,6 +14,7 @@
 
 package sabina;
 
+import static java.lang.Integer.parseInt;
 import static java.util.logging.Logger.getLogger;
 import static sabina.HttpMethod.*;
 
@@ -30,19 +31,19 @@ import sabina.server.BackendFactory;
 /**
  * The main building block of a Sabina application is a set of routes. A route is
  * made up of three simple pieces:
- * <p>
+ *
  * <ul>
  * <li>A verb (get, post, put, delete, head, trace, connect, options)</li>
  * <li>A path (/hello, /users/:name)</li>
  * <li>A callback ( handle(Request request, Response response) )</li>
  * </ul>
- * <p>
+ *
  * Example:
- * <p>
+ *
  * <pre>
  *   get("/hello", it -&gt; "Hello World!");
  * </pre>
- * <p>
+ *
  *
  * <p>TODO Register custom 404 pages and so on
  *
@@ -94,7 +95,7 @@ public final class Server {
      *
      * @param ipAddress The ip.
      */
-    public synchronized void host (String ipAddress) {
+    public void host (String ipAddress) {
         this.ipAddress = ipAddress;
     }
 
@@ -105,8 +106,12 @@ public final class Server {
      *
      * @param port The port number
      */
-    public synchronized void port (int port) {
+    public void port (int port) {
         this.port = port;
+    }
+
+    public void port (String port) {
+        port (parseInt (port));
     }
 
     /**
@@ -125,7 +130,7 @@ public final class Server {
      * keystore
      * @param truststorePassword the trust store password
      */
-    public synchronized void secure (
+    public void secure (
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword) {
 
@@ -144,7 +149,7 @@ public final class Server {
      *
      * @param folder the folder in classpath.
      */
-    public synchronized void staticFileLocation (String folder) {
+    public void staticFileLocation (String folder) {
         staticFileFolder = folder.startsWith ("/")? folder.substring (1) : folder;
     }
 
@@ -154,11 +159,11 @@ public final class Server {
      *
      * @param externalFolder the external folder serving static files.
      */
-    public synchronized void externalStaticFileLocation (String externalFolder) {
+    public void externalStaticFileLocation (String externalFolder) {
         externalStaticFileFolder = externalFolder;
     }
 
-    public synchronized void start () {
+    public void start () {
         new Thread (() -> {
             server = BackendFactory.create (hasMultipleHandlers ());
             server.startUp (
@@ -180,12 +185,12 @@ public final class Server {
     /**
      * Stops the Sabina server and clears all routes
      */
-    public synchronized void stop () {
+    public void stop () {
         if (server != null)
             server.shutDown ();
     }
 
-    synchronized Server addRoute (Action action) {
+    Server addRoute (Action action) {
 //        LOG.fine (">>> " + action);
         System.out.println (">>> " + action);
 
@@ -196,12 +201,14 @@ public final class Server {
     }
 
     /**
-     * Maps an exception handler to be executed when an exception occurs during routing
+     * Maps an exception handler to be executed when an exception occurs during routing.
      *
-     * @param exceptionClass the exception class
-     * @param aHandler        The handler
+     * @param exceptionClass the exception class.
+     * @param aHandler        The handler.
+     * @param <T> Exception type.
+     * @return The server whith the added exception handler.
      */
-    public synchronized <T extends Exception> Server exception(
+    public <T extends Exception> Server exception(
         Class<T> exceptionClass, BiConsumer<T, Request> aHandler) {
 
         Fault wrapper = new Fault<> (aHandler);
@@ -255,7 +262,7 @@ public final class Server {
         }
 
         // Direct map
-        return exceptionMap.get(exceptionClass);
+        return exceptionMap.get (exceptionClass);
     }
 
     /**

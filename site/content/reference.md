@@ -28,9 +28,10 @@ Steps:
 
 Command:
 
+    rm -rf build/ && \
     git add . && git commit && \
     vim gradle.properties && \
-    gw clean check site publish publishGhPages && \
+    gw clean check javadoc site publish publishGhPages && \
     git add gradle.properties && git commit -m "Release 1.0.0" && git tag "1.0.0" && \
     vim gradle.properties && \
     git add gradle.properties && git commit -m "New snapshot" && git push origin master --tags
