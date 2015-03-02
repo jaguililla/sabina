@@ -31,13 +31,10 @@ plugins {
 }
 
 apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/wrapper.gradle'
-//apply from: 'gradle/wrapper.gradle'
 
 subprojects {
     apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/java.gradle'
     apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/bintray.gradle'
-//    apply from: '/home/jam/Projects/jamming/sabina/gradle/java.gradle'
-//    apply from: '/home/jam/Projects/jamming/sabina/gradle/bintray.gradle'
     apply plugin: 'com.github.kt3k.coveralls'
 
     dependencies {
@@ -51,6 +48,7 @@ jbake {
     output = file("$buildDir/$project.projectSite")
 }
 
+// TODO Include coverage, checkstyle and so on
 task site (dependsOn: 'jbake') {
     subprojects.each { module ->
         copy {

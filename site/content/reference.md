@@ -30,8 +30,8 @@ Command:
 
     rm -rf build/ && \
     git add . && git commit && \
-    vim gradle.properties && \
-    gw clean check javadoc site publish publishGhPages && \
+    sed -i s/-SNAPSHOT//g gradle.properties && \
+    gw --recompile-scripts --no-daemon clean check javadoc jacoco site publish publishGhPages && \
     git add gradle.properties && git commit -m "Release 1.0.0" && git tag "1.0.0" && \
     vim gradle.properties && \
     git add gradle.properties && git commit -m "New snapshot" && git push origin master --tags
