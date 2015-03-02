@@ -30,14 +30,14 @@ plugins {
     id "com.github.kt3k.coveralls" version "2.3.1"
 }
 
-//apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/wrapper.gradle'
-apply from: 'gradle/wrapper.gradle'
+apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/wrapper.gradle'
+//apply from: 'gradle/wrapper.gradle'
 
 subprojects {
-//    apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/java.gradle'
-//    apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/bintray.gradle'
-    apply from: '/home/jam/Projects/jamming/sabina/gradle/java.gradle'
-    apply from: '/home/jam/Projects/jamming/sabina/gradle/bintray.gradle'
+    apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/java.gradle'
+    apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/bintray.gradle'
+//    apply from: '/home/jam/Projects/jamming/sabina/gradle/java.gradle'
+//    apply from: '/home/jam/Projects/jamming/sabina/gradle/bintray.gradle'
     apply plugin: 'com.github.kt3k.coveralls'
 
     dependencies {
