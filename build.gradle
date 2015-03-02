@@ -34,8 +34,8 @@ apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/wr
 
 subprojects {
     apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/java.gradle'
+    // TODO Fix benchmark deployment to bintray (could it be a pom.xml problem?)
     apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/bintray.gradle'
-    apply plugin: 'com.github.kt3k.coveralls'
 
     dependencies {
         testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
