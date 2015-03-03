@@ -36,7 +36,7 @@
 
         <db.host>localhost</db.host>
 
-        <sabina-version>1.1.0</sabina-version>
+        <sabina-version>1.1.1</sabina-version>
     </properties>
 
     <repositories>

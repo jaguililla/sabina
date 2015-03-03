@@ -30,8 +30,16 @@ API Docs: [HTTP](http://there4.co/sabina/http/) [Extra](http://there4.co/sabina/
 
 [JCenter]: https://bintray.com/jamming/maven/Sabina
 
+The Mission
+-----------
 
-Getting started
+* Small
+* Hackable
+* Simple
+* Extensible
+
+
+Getting Started
 ---------------
 
 ```java
@@ -88,7 +96,7 @@ You can also check the ([integration tests])
 [integration tests]: //github.com/jamming/sabina/tree/master/http/src/test/java/sabina/it/undertow
 
 
-LICENSE
+License
 -------
 
 Copyright © 2014 Juan José Aguililla. All rights reserved.

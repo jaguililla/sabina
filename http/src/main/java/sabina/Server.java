@@ -44,7 +44,6 @@ import sabina.server.BackendFactory;
  *   get("/hello", it -&gt; "Hello World!");
  * </pre>
  *
- *
  * <p>TODO Register custom 404 pages and so on
  *
  * @author Per Wendel

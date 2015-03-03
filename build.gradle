@@ -60,7 +60,7 @@ task site (dependsOn: 'jbake') {
 }
 
 githubPages {
-    repoUri = githubRepository
+    repoUri = githubUrl
     pages {
         from (file ("$buildDir/$project.projectSite")) {
             into '.'
