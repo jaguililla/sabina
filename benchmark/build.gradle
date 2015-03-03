@@ -26,3 +26,42 @@ dependencies {
 javadoc {
     failOnError = false
 }
+
+check << {
+    stressTestReport ()
+}
+
+def stressTestReport () {
+    def file = "$buildDir/test-results/TEST-sabina.benchmark.ApplicationTest.xml"
+    def parser = new groovy.util.XmlSlurper()
+    def testsuite = parser.parse (file)
+
+    testsuite.testcase
+        .collect {                                        // Collect values
+        [
+            it.@classname.text() + '.' + it.@name.text(),
+            it.@time.text() as double
+        ]
+    }
+    .groupBy { it[0] }                                    // Group by test name
+        .collect {
+        [
+            it.key,
+            it.value.collect { it[1] }
+        ]
+    }
+    .collect {
+        [
+            it[0],
+            it[1],
+            it[1].size (),
+            it[1].max (),
+            it[1].min (),
+            it[1].sum (),
+            it[1].sum () / it[1].size ()
+        ]
+    }
+    .each {
+        println ("${it[0].padLeft 60} : ${it[2]}, ${it[3].toString().padRight (5, '0')}, ${it[4].toString().padRight (5, '0')}, ${it[5]}, ${it[6]}")
+    }
+}

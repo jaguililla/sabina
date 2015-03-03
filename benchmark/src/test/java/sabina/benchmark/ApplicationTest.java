@@ -32,9 +32,15 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * TODO Change assert's order
+ * <p>TODO
+ * Write article about stress test with TestNG (scenarios, combine different tests in scenarios,
+ * adding random pauses...)
+ *
+ * <p>TODO Change assert's order
  */
-@Test public final class ApplicationTest {
+public final class ApplicationTest {
+    private static final int THREADS = 32, EXECUTIONS = 64, WARM_UP = 16;
+
     private static final String ENDPOINT = "http://localhost:5050";
     private static final Gson GSON = new Gson ();
 
@@ -42,11 +48,35 @@ import org.testng.annotations.Test;
         main (null);
     }
 
+    @BeforeClass public void warm_up () throws IOException {
+        for (int ii = 0; ii < WARM_UP; ii++) {
+            json ();
+            plaintext ();
+            no_query_parameter ();
+            empty_query_parameter ();
+            text_query_parameter ();
+            zero_queries ();
+            one_thousand_queries ();
+            one_query ();
+            ten_queries ();
+            five_hundred_queries ();
+            fortunes ();
+            no_updates_parameter ();
+            empty_updates_parameter ();
+            text_updates_parameter ();
+            zero_updates ();
+            one_thousand_updates ();
+            one_update ();
+            ten_updates ();
+            five_hundred_updates ();
+        }
+    }
+
     @AfterClass public static void close () {
         stop ();
     }
 
-    @Test(threadPoolSize = 10, invocationCount = 10)
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void json () throws IOException {
         HttpResponse response = get (ENDPOINT + "/json");
         String content = getContent (response);
@@ -55,6 +85,7 @@ import org.testng.annotations.Test;
         assertEquals ("Hello, World!", GSON.fromJson (content, Map.class).get ("message"));
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void plaintext () throws IOException {
         HttpResponse response = get (ENDPOINT + "/plaintext");
         String content = getContent (response);
@@ -63,6 +94,7 @@ import org.testng.annotations.Test;
         assertEquals ("Hello, World!", content);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void no_query_parameter () throws IOException {
         HttpResponse response = get (ENDPOINT + "/db");
         String content = getContent (response);
@@ -72,34 +104,42 @@ import org.testng.annotations.Test;
         assertTrue (resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber"));
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void empty_query_parameter () throws IOException {
         checkDbRequest ("/query?queries", 1);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void text_query_parameter () throws IOException {
         checkDbRequest ("/query?queries=text", 1);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void zero_queries () throws IOException {
         checkDbRequest ("/query?queries=0", 1);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_thousand_queries () throws IOException {
         checkDbRequest ("/query?queries=1000", 500);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_query () throws IOException {
         checkDbRequest ("/query?queries=1", 1);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void ten_queries () throws IOException {
         checkDbRequest ("/query?queries=10", 10);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void five_hundred_queries () throws IOException {
         checkDbRequest ("/query?queries=500", 500);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void fortunes () throws IOException {
         HttpResponse response = get (ENDPOINT + "/fortune");
         String content = getContent (response);
@@ -112,6 +152,7 @@ import org.testng.annotations.Test;
         assertEquals ("text/html; charset=utf-8", contentType.toLowerCase ());
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void no_updates_parameter () throws IOException {
         HttpResponse response = get (ENDPOINT + "/update");
         String content = getContent (response);
@@ -121,30 +162,37 @@ import org.testng.annotations.Test;
         assertTrue (resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber"));
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void empty_updates_parameter () throws IOException {
         checkDbRequest ("/update?queries", 1);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void text_updates_parameter () throws IOException {
         checkDbRequest ("/update?queries=text", 1);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void zero_updates () throws IOException {
         checkDbRequest ("/update?queries=0", 1);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_thousand_updates () throws IOException {
         checkDbRequest ("/update?queries=1000", 500);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_update () throws IOException {
         checkDbRequest ("/update?queries=1", 1);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void ten_updates () throws IOException {
         checkDbRequest ("/update?queries=10", 10);
     }
 
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void five_hundred_updates () throws IOException {
         checkDbRequest ("/update?queries=500", 500);
     }
