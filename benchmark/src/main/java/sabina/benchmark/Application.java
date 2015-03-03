@@ -23,11 +23,9 @@ import static sabina.view.MustacheView.renderMustache;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import sabina.Request;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.sql.DataSource;
@@ -44,7 +42,7 @@ final class Application {
     private static final DataSource DATA_SOURCE = createSessionFactory ();
     private static final int DB_ROWS = 10000;
 
-    private static final boolean BATCH_UPDATES = getProperty ("sabina.benchmark.batch") != null;
+    private static final boolean AUTOCOMMIT = getProperty ("sabina.benchmark.autocommit") != null;
     private static final String SELECT_WORLD = "select * from world where id = ?";
     private static final String UPDATE_WORLD = "update world set randomNumber = ? where id = ?";
     private static final String SELECT_FORTUNES = "select * from fortune";
@@ -151,8 +149,7 @@ final class Application {
         final World[] worlds = new World[queries];
 
         try (final Connection con = DATA_SOURCE.getConnection ()) {
-            if (BATCH_UPDATES)
-                con.setAutoCommit (false);
+            con.setAutoCommit (AUTOCOMMIT);
 
             final Random random = ThreadLocalRandom.current ();
             final PreparedStatement stmtSelect = con.prepareStatement (SELECT_WORLD);
@@ -166,17 +163,30 @@ final class Application {
                     stmtUpdate.setInt (1, random.nextInt (DB_ROWS) + 1);
                     stmtUpdate.setInt (2, worlds[ii].id);
 
-                    if (BATCH_UPDATES) {
-                        stmtUpdate.addBatch ();
+                    if (AUTOCOMMIT) {
+                        stmtUpdate.executeUpdate ();
                     }
                     else {
-                        stmtUpdate.executeUpdate ();
+                        stmtUpdate.addBatch ();
                     }
                 }
             }
 
-            if (BATCH_UPDATES) {
-                stmtUpdate.executeBatch ();
+            if (!AUTOCOMMIT) {
+                int count = 0;
+                boolean retrying;
+
+                do {
+                    try {
+                        stmtUpdate.executeBatch ();
+                        retrying = false;
+                    }
+                    catch (BatchUpdateException e) {
+                        retrying = true;
+                    }
+                }
+                while (count++ < 10 && retrying);
+
                 con.commit ();
             }
         }
