@@ -39,7 +39,7 @@ def stressTestReport () {
     testsuite.testcase
         .collect {                                        // Collect values
         [
-            it.@classname.text() + '.' + it.@name.text(),
+            it.@classname.text() + '  ' + it.@name.text(),
             it.@time.text() as double
         ]
     }
@@ -53,7 +53,6 @@ def stressTestReport () {
     .collect {
         [
             it[0],
-            it[1],
             it[1].size (),
             it[1].max (),
             it[1].min (),
@@ -62,6 +61,13 @@ def stressTestReport () {
         ]
     }
     .each {
-        println ("${it[0].padLeft 60} : ${it[2]}, ${it[3].toString().padRight (5, '0')}, ${it[4].toString().padRight (5, '0')}, ${it[5]}, ${it[6]}")
+        println (
+            "${it[0].padRight 60} : " +
+            "${it[1].toString ().padLeft 4}  " +
+            "${it[2].toString ().padRight (5, '0')}  " +
+            "${it[3].toString ().padRight (5, '0')}  " +
+            "${it[4].toString ().padRight (5, '0')}  " +
+            "${it[5].toString ().padRight (5, '0')}"
+        )
     }
 }

@@ -48,7 +48,7 @@ jbake {
     output = file("$buildDir/$project.projectSite")
 }
 
-// TODO Include coverage, checkstyle and so on
+// TODO Include coverage, checkstyle, tests and so on
 task site (dependsOn: 'jbake') {
     subprojects.each { module ->
         copy {
