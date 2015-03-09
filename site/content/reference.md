@@ -28,7 +28,7 @@ Steps:
 
 Command:
 
-    rm -rf build/ && \
+    rm -rf build/ .gradle/ && \
     git add . && git commit && \
     sed -i s/-SNAPSHOT// gradle.properties && \
     gw --recompile-scripts --no-daemon clean check javadoc jacoco site publish publishGhPages && \
