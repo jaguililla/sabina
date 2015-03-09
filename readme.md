@@ -30,14 +30,6 @@ API Docs: [HTTP](http://there4.co/sabina/http/) [Extra](http://there4.co/sabina/
 
 [JCenter]: https://bintray.com/jamming/maven/Sabina
 
-The Mission
------------
-
-* Small
-* Hackable
-* Simple
-* Extensible
-
 
 Getting Started
 ---------------
@@ -59,6 +51,18 @@ You can also check out the javadoc. After getting the source from github run:
     ./gradle/wrapper javadoc site
 
 The result is put in `/build/docs/javadoc`
+
+
+The Mission
+-----------
+
+The purpose of the project is to provide a micro Web framework with the following priorities (in
+order):
+
+* Simple to use
+* Easily hackable
+* Extensible to different backends
+* Be small
 
 
 IDE Settings

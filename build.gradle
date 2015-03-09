@@ -34,7 +34,6 @@ apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/wr
 
 subprojects {
     apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/java.gradle'
-    // TODO Fix benchmark deployment to bintray (could it be a pom.xml problem?)
     apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/bintray.gradle'
 
     dependencies {
@@ -43,17 +42,28 @@ subprojects {
     }
 }
 
+def projectSite = 'site' //getProperty ("projectSite", "site")
+
 jbake {
-    input = file("$project.projectDir/$project.projectSite")
-    output = file("$buildDir/$project.projectSite")
+    input = file("$project.projectDir/$projectSite")
+    output = file("$buildDir/$projectSite")
 }
 
-// TODO Include coverage, checkstyle, tests and so on
 task site (dependsOn: 'jbake') {
     subprojects.each { module ->
         copy {
             from "$module.name/build/docs/javadoc/"
-            into "$buildDir/$project.projectSite/$module.name/"
+            into "$buildDir/$projectSite/$module.name/javadoc"
+            include ('**')
+        }
+        copy {
+            from "$module.name/build/reports/jacoco/test/html/"
+            into "$buildDir/$projectSite/$module.name/jacoco"
+            include ('**')
+        }
+        copy {
+            from "$module.name/build/reports/tests/"
+            into "$buildDir/$projectSite/$module.name/tests"
             include ('**')
         }
     }
@@ -62,7 +72,7 @@ task site (dependsOn: 'jbake') {
 githubPages {
     repoUri = githubUrl
     pages {
-        from (file ("$buildDir/$project.projectSite")) {
+        from (file ("$buildDir/$projectSite")) {
             into '.'
         }
     }
