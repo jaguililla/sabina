@@ -23,6 +23,7 @@ dependencies {
     testCompile 'org.apache.httpcomponents:fluent-hc:4.4'
 }
 
+// TODO Generate all documented class members, ignoring scope
 javadoc {
     failOnError = false
 }
@@ -57,17 +58,13 @@ def stressTestReport () {
             it[1].max (),
             it[1].min (),
             it[1].sum (),
-            it[1].sum () / it[1].size ()
+            it[1].sum () / it[1].size (),
+            1 / (it[1].sum () / it[1].size ())
         ]
     }
     .each {
-        println (
-            "${it[0].padRight 60} : " +
-            "${it[1].toString ().padLeft 4}  " +
-            "${it[2].toString ().padRight (5, '0')}  " +
-            "${it[3].toString ().padRight (5, '0')}  " +
-            "${it[4].toString ().padRight (5, '0')}  " +
-            "${it[5].toString ().padRight (5, '0')}"
+        printf (
+            "\t%-60s : %4d  %1.3f  %1.3f  %6.3f  %6.3f  %7.3f%n", it[0], it[1], it[2], it[3], it[4], it[5], it[6]
         )
     }
 }
