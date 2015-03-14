@@ -1,5 +1,5 @@
 /*
- * Copyright © 2014 Juan José Aguililla. All rights reserved.
+ * Copyright © 2015 Juan José Aguililla. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -14,12 +14,16 @@
 
 package sabina.content;
 
-import com.google.gson.Gson;
+import javax.xml.bind.JAXBException;
 
-public class JsonContent {
-    private static final Gson GSON = new Gson ();
+import org.testng.annotations.Test;
 
-    public static String toJson (Object model) {
-        return GSON.toJson (model);
+@Test public class XmlContentTest {
+    public void serialize_person () throws JAXBException {
+        String xml = XmlContent.toXml (new Person ("John", "Doe", 45));
+        assert xml.contains ("<age>45</age>")
+            && xml.contains ("<name>John</name>")
+            && xml.contains ("<surname>Doe</surname>")
+            && !xml.contains ("<?xml");
     }
 }

@@ -14,8 +14,32 @@
 
 package sabina.content;
 
+import static javax.xml.bind.Marshaller.*;
+
+import java.io.StringWriter;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 /**
- * TODO Use JAXB bundled in the JRE @XmlRootElement
+ * .
  */
 public class XmlContent {
+    /**
+     * .
+     * @param model .
+     * @return .
+     * @throws JAXBException
+     */
+    public static String toXml (Object model) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(model.getClass());
+        Marshaller marshaller = context.createMarshaller();
+
+        marshaller.setProperty (JAXB_FORMATTED_OUTPUT, true);
+        marshaller.setProperty (JAXB_FRAGMENT, true);
+        StringWriter writer = new StringWriter ();
+        marshaller.marshal (model, writer);
+
+        return writer.toString ();
+    }
 }
