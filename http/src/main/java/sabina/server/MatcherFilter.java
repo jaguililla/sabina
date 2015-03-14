@@ -60,7 +60,6 @@ final class MatcherFilter implements Filter {
      * TODO Needed by Undertow to instantiate the filter
      */
     public MatcherFilter () {
-        super ();
         routeMatcher = null;
         isServletContext = false;
         hasOtherHandlers = false;
@@ -100,6 +99,7 @@ final class MatcherFilter implements Filter {
         final HttpServletResponse httpRes = (HttpServletResponse)servletResponse;
 
         final String uri = httpReq.getRequestURI ();
+        // TODO Change enum to uppercase and remove 'toLowerCase'
         final String httpMethodStr = httpReq.getMethod ().toLowerCase ();
         final String acceptType = httpReq.getHeader (ACCEPT_TYPE_REQUEST_MIME_HEADER);
 
@@ -178,15 +178,17 @@ final class MatcherFilter implements Filter {
         }
     }
 
+    @SuppressWarnings ("unchecked")
     private String handleTargetRoute (
         HttpServletRequest aHttpReq, HttpServletResponse aHttpRes, String aBodyContent,
         RouteMatch aMatch, Object aTarget) {
 
+        Request request = null;
         try {
             String result = null;
             if (aTarget instanceof Route) {
                 Route route = ((Route)aTarget);
-                Request request = Request.create (aMatch, aHttpReq, aHttpRes);
+                request = Request.create (aMatch, aHttpReq, aHttpRes);
 
                 Object element = route.handle (request);
                 result = element != null? element.toString () : null;
@@ -199,9 +201,15 @@ final class MatcherFilter implements Filter {
             throw hEx;
         }
         catch (Exception e) {
-            LOG.severe (e.getMessage ());
-            aHttpRes.setStatus (SC_INTERNAL_SERVER_ERROR);
-            aBodyContent = INTERNAL_ERROR;
+            Fault<Exception> handler = (Fault<Exception>)routeMatcher.findHandler (e.getClass ());
+            if (handler != null && request != null) {
+                handler.handle (e, request);
+            }
+            else {
+                LOG.severe (e.getMessage ());
+                aHttpRes.setStatus (SC_INTERNAL_SERVER_ERROR);
+                aBodyContent = INTERNAL_ERROR;
+            }
         }
 
         return aBodyContent;

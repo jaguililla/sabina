@@ -18,9 +18,8 @@ import static java.lang.Integer.parseInt;
 import static java.util.logging.Logger.getLogger;
 import static sabina.HttpMethod.*;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import sabina.route.RouteMatcher;
@@ -33,7 +32,7 @@ import sabina.server.BackendFactory;
  * made up of three simple pieces:
  *
  * <ul>
- * <li>A verb (get, post, put, delete, head, trace, connect, options)</li>
+ * <li>A verb (get, post, put, delete, head, trace, options)</li>
  * <li>A path (/hello, /users/:name)</li>
  * <li>A callback ( handle(Request request, Response response) )</li>
  * </ul>
@@ -77,8 +76,6 @@ public final class Server {
     private Backend server;
 
     private final RouteMatcher routeMatcher = RouteMatcherFactory.get ();
-    /** Holds a map of Exception classes and associated handlers. */
-    private final Map<Class<? extends Exception>, Fault> exceptionMap = new HashMap<> ();
 
     public Server () {
         super ();
@@ -190,7 +187,6 @@ public final class Server {
     }
 
     Server addRoute (Action action) {
-//        LOG.fine (">>> " + action);
         System.out.println (">>> " + action);
 
         routeMatcher.processRoute (
@@ -210,68 +206,9 @@ public final class Server {
     public <T extends Exception> Server exception(
         Class<T> exceptionClass, BiConsumer<T, Request> aHandler) {
 
-        Fault wrapper = new Fault<> (aHandler);
-        map (exceptionClass, wrapper);
+        Fault wrapper = new Fault<> (exceptionClass, aHandler);
+        routeMatcher.processFault (wrapper);
         return this;
-    }
-
-    /**
-     * Maps the given handler to the provided exception type. If a handler was already registered to the same type, the
-     * handler is overwritten.
-     *
-     * @param exceptionClass Type of exception
-     * @param handler        Handler to map to exception
-     */
-    void map(Class<? extends Exception> exceptionClass, Fault handler) {
-        exceptionMap.put(exceptionClass, handler);
-    }
-
-    /**
-     * Returns the handler associated with the provided exception class
-     *
-     * @param exceptionClass Type of exception
-     * @return Associated handler
-     */
-    @SuppressWarnings ("unchecked")
-    Fault getHandler(Class<? extends Exception> exceptionClass) {
-        // If the exception map does not contain the provided exception class, it might
-        // still be that a superclass of the exception class is.
-        if (!exceptionMap.containsKey(exceptionClass)) {
-
-            Class<? extends Exception> superclass =
-                (Class<? extends Exception>)exceptionClass.getSuperclass();
-            do {
-                // Is the superclass mapped?
-                if (exceptionMap.containsKey(superclass)) {
-                    // Use the handler for the mapped superclass, and cache handler
-                    // for this exception class
-                    Fault handler = exceptionMap.get(superclass);
-                    exceptionMap.put(exceptionClass, handler);
-                    return handler;
-                }
-
-                // Iteratively walk through the exception class's superclasses
-                superclass = (Class<? extends Exception>)superclass.getSuperclass();
-            } while (superclass != null);
-
-            // No handler found either for the superclasses of the exception class
-            // We cache the null value to prevent future
-            exceptionMap.put(exceptionClass, null);
-            return null;
-        }
-
-        // Direct map
-        return exceptionMap.get (exceptionClass);
-    }
-
-    /**
-     * Returns the handler associated with the provided exception class
-     *
-     * @param exception Exception that occurred
-     * @return Associated handler
-     */
-    public Fault getHandler(Exception exception) {
-        return getHandler (exception.getClass ());
     }
 
     /*
@@ -304,10 +241,6 @@ public final class Server {
     /*
      * Routes
      */
-    public Server connect (String path, Route.Handler handler) {
-        return addRoute (new Route (connect, path, handler));
-    }
-
     public Server delete (String path, Route.Handler handler) {
         return addRoute (new Route (delete, path, handler));
     }
@@ -318,6 +251,17 @@ public final class Server {
 
     public Server head (String path, Route.Handler handler) {
         return addRoute (new Route (head, path, handler));
+    }
+
+    private Route.Handler wrap (Consumer<Request> handler) {
+        return request -> {
+            handler.accept (request);
+            return null;
+        };
+    }
+
+    public Server head (String path, Consumer<Request> handler) {
+        return head (path, wrap (handler));
     }
 
     public Server options (String path, Route.Handler handler) {
@@ -338,10 +282,6 @@ public final class Server {
 
     public Server trace (String path, Route.Handler handler) {
         return addRoute (new Route (trace, path, handler));
-    }
-
-    public Server connect (String path, String contentType, Route.Handler handler) {
-        return addRoute (new Route (connect, path, contentType, handler));
     }
 
     public Server delete (String path, String contentType, Route.Handler handler) {

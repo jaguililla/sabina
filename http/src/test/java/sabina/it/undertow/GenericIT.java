@@ -17,6 +17,7 @@ package sabina.it.undertow;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static sabina.Sabina.*;
 import static sabina.util.TestUtil.*;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import sabina.Request;
 import sabina.util.TestUtil;
 
 @Test public class GenericIT {
@@ -60,7 +62,7 @@ import sabina.util.TestUtil;
         );
 
         get ("/request/data", it -> {
-            it.body (it.url ());
+            it.response.body (it.url ());
 
             it.cookie ("method", it.requestMethod ());
             it.cookie ("host", it.ip ());
@@ -74,15 +76,15 @@ import sabina.util.TestUtil;
             it.header ("query", it.queryString ());
             it.header ("port", String.valueOf (it.port ()));
 
-            return it.body () + " !!!";
+            return it.response.body () + "!!!";
         });
 
         exception (
             UnsupportedOperationException.class,
-            (ex, req) -> req.header ("error", ex.getMessage ())
+            (ex, req) -> req.response.header ("error", ex.getMessage ())
         );
 
-        get ("/exception", it -> { throw new UnsupportedOperationException (); });
+        get ("/exception", it -> { throw new UnsupportedOperationException ("error message"); });
 
         get ("/hi", "application/json", it -> "{\"message\": \"Hello World\"}");
 
@@ -100,17 +102,28 @@ import sabina.util.TestUtil;
 
         post ("/poster", it -> {
             String body = it.body ();
-            it.status (201); // created
+            it.response.status (201); // created
             return "Body was: " + body;
         });
 
         patch ("/patcher", it -> {
             String body = it.body ();
-            it.status (200);
+            it.response.status (200);
             return "Body was: " + body;
         });
 
-        after ("/hi", it -> it.header ("after", "foobar"));
+        delete ("/method", Request::requestMethod);
+        options ("/method", Request::requestMethod);
+        get ("/method", Request::requestMethod);
+        patch ("/method", Request::requestMethod);
+        post ("/method", Request::requestMethod);
+        put ("/method", Request::requestMethod);
+        trace ("/method", Request::requestMethod);
+        head ("/method", it -> {
+            it.header ("header", it.requestMethod ());
+        });
+
+        after ("/hi", it -> it.response.header ("after", "foobar"));
 
         staticFileLocation ("/public");
         externalStaticFileLocation (getProperty ("java.io.tmpdir"));
@@ -256,31 +269,49 @@ import sabina.util.TestUtil;
     // TODO Check with asserts
     public void requestData () throws Exception {
         UrlResponse response = testUtil.doMethod ("GET", "/request/data");
-        System.out.println (response.headers.get ("user agent"));
-        System.out.println (response.body);
 
-//        it.body (it.url ());
-//
-//        it.cookie ("method", it.requestMethod ());
-//        it.cookie ("host", it.host ());
-//        it.cookie ("uri", it.uri ());
-//        it.cookie ("params", String.valueOf (it.params ().size ()));
-//
-//        it.header ("agent", it.userAgent ());
-//        it.header ("protocol", it.protocol ());
-//        it.header ("scheme", it.scheme ());
-//        it.header ("host", it.host ());
-//        it.header ("query", it.queryString ());
-//        it.header ("port", String.valueOf (it.port ()));
-//
-//        return it.body () + " !!!";
+//        assertEquals ("error message", response.cookies.get ("method"));
+//        assertEquals ("error message", response.cookies.get ("host"));
+//        assertEquals ("error message", response.cookies.get ("uri"));
+//        assertEquals ("error message", response.cookies.get ("params"));
+
+//        assertEquals ("Apache-HttpClient/4.3.3 (java 1.5)", response.headers.get ("agent"));
+//        assertEquals ("HTTP/1.1", response.headers.get ("protocol"));
+//        assertEquals ("http", response.headers.get ("scheme"));
+//        assertEquals ("localhost:4567", response.headers.get ("host"));
+//        assertEquals ("error message", response.headers.get ("query"));
+//        assertEquals ("4567", response.headers.get ("port"));
+
+//        assertEquals (response.body, "http://localhost:4567/request/data!!!");
         assertEquals (200, response.status);
     }
 
-    // TODO Check with asserts
     public void handleException () {
-        UrlResponse response = testUtil.doMethod ("GET", "/request/data");
-//        assertEquals ("true", response.headers.get ("error"));
-//        assertEquals (500, response.status);
+        UrlResponse response = testUtil.doMethod ("GET", "/exception");
+        assertEquals ("error message", response.headers.get ("error"));
+    }
+
+    public void methods () {
+        checkMethod ("HEAD", "header"); // Head does not support body message
+        checkMethod ("DELETE");
+        checkMethod ("OPTIONS");
+        checkMethod ("GET");
+        checkMethod ("PATCH");
+        checkMethod ("POST");
+        checkMethod ("PUT");
+        checkMethod ("TRACE");
+    }
+
+    private void checkMethod (String methodName) {
+        checkMethod (methodName, null);
+    }
+
+    private void checkMethod (String methodName, String headerName) {
+        UrlResponse res = testUtil.doMethod (methodName, "/method");
+
+        assertNotNull (res);
+        assertNotNull (res.body);
+        assertEquals (headerName == null? res.body : res.headers.get (headerName), methodName);
+//        assertEquals (200, res.status);
     }
 }

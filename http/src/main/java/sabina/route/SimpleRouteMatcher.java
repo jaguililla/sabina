@@ -22,8 +22,8 @@ import static sabina.route.MimeParse.bestMatch;
 
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
+import sabina.Fault;
 import sabina.HttpMethod;
 
 /**
@@ -36,6 +36,9 @@ final class SimpleRouteMatcher implements RouteMatcher {
     private static final char SINGLE_QUOTE = '\'';
 
     private final List<RouteEntry> routes = new ArrayList<> ();
+
+    /** Holds a map of Exception classes and associated handlers. */
+    private final Map<Class<? extends Exception>, Fault<?>> exceptionMap = new HashMap<> ();
 
     SimpleRouteMatcher () {
         LOG.fine ("RouteMatcher created");
@@ -127,6 +130,55 @@ final class SimpleRouteMatcher implements RouteMatcher {
         }
 
         return matchSet;
+    }
+
+    /**
+     * Returns the handler associated with the provided exception class
+     *
+     * @param exceptionClass Type of exception
+     * @return Associated handler
+     */
+    @SuppressWarnings ("unchecked")
+    @Override
+    public Fault<? extends Exception> findHandler(Class<? extends Exception> exceptionClass) {
+        // If the exception map does not contain the provided exception class, it might
+        // still be that a superclass of the exception class is.
+        if (!exceptionMap.containsKey(exceptionClass)) {
+
+            Class<? extends Exception> superclass =
+                (Class<? extends Exception>)exceptionClass.getSuperclass();
+            do {
+                // Is the superclass mapped?
+                if (exceptionMap.containsKey(superclass)) {
+                    // Use the handler for the mapped superclass, and cache handler
+                    // for this exception class
+                    Fault handler = exceptionMap.get(superclass);
+                    exceptionMap.put(exceptionClass, handler);
+                    return handler;
+                }
+
+                // Iteratively walk through the exception class's superclasses
+                superclass = (Class<? extends Exception>)superclass.getSuperclass();
+            } while (superclass != null);
+
+            // No handler found either for the superclasses of the exception class
+            // We cache the null value to prevent future
+            exceptionMap.put(exceptionClass, null);
+            return null;
+        }
+
+        // Direct map
+        return exceptionMap.get (exceptionClass);
+    }
+
+    /**
+     * Maps the given handler to the provided exception type. If a handler was already registered to the same type, the
+     * handler is overwritten.
+     *
+     * @param handler        Handler to map to exception
+     */
+    @Override public <T extends Exception> void processFault (final Fault<T> handler) {
+        exceptionMap.put(handler.exception, handler);
     }
 
     private void addRoute (HttpMethod method, String url, String acceptedType, Object target) {

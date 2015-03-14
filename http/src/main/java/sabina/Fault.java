@@ -19,15 +19,20 @@ import static sabina.util.Checks.checkArgument;
 import java.util.function.BiConsumer;
 
 public final class Fault<T extends Exception> {
-    private final BiConsumer<T, Request> handler;
+    public final Class<T> exception;
+    public final BiConsumer<T, Request> handler;
 
     /**
-     * Initializes the filter with the provided exception type
+     * Initializes the filter with the provided exception type.
+     *
+     * @param exception .
+     * @param handler .
      */
-    Fault (final BiConsumer<T, Request> handler) {
+    Fault (final Class<T> exception, final BiConsumer<T, Request> handler) {
         checkArgument (handler != null);
 
         this.handler = handler;
+        this.exception = exception;
     }
 
     /**
@@ -36,7 +41,7 @@ public final class Fault<T extends Exception> {
      * @param exception The exception that was thrown during routing
      * @param request The request object providing information about the HTTP request
      */
-    void handle (final T exception, final Request request) {
+    public void handle (final T exception, final Request request) {
         handler.accept (exception, request);
     }
 }

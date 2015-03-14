@@ -15,6 +15,7 @@
 package sabina;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Static methods to handle the default server (singleton server)
@@ -52,10 +53,6 @@ public final class Sabina {
     /*
      * Routes
      */
-    public static Server connect (String path, Route.Handler handler) {
-        return server.connect (path, handler);
-    }
-
     public static Server delete (String path, Route.Handler handler) {
         return server.delete (path, handler);
     }
@@ -65,6 +62,10 @@ public final class Sabina {
     }
 
     public static Server head (String path, Route.Handler handler) {
+        return server.head (path, handler);
+    }
+
+    public static Server head (String path, Consumer<Request> handler) {
         return server.head (path, handler);
     }
 
@@ -86,10 +87,6 @@ public final class Sabina {
 
     public static Server trace (String path, Route.Handler handler) {
         return server.trace (path, handler);
-    }
-
-    public static Server connect (String path, String contentType, Route.Handler handler) {
-        return server.connect (path, contentType, handler);
     }
 
     public static Server delete (String path, String contentType, Route.Handler handler) {

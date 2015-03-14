@@ -17,6 +17,8 @@ package sabina.util;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static java.lang.System.setProperty;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.http.client.config.CookieSpecs.BEST_MATCH;
 import static org.apache.http.conn.socket.PlainConnectionSocketFactory.INSTANCE;
 import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
 
@@ -35,6 +37,9 @@ import javax.net.ssl.TrustManagerFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -44,12 +49,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.UnsupportedSchemeException;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
@@ -62,6 +70,7 @@ public class TestUtil {
 
     public static class UrlResponse {
         public Map<String, String> headers;
+        public Map<String, String> cookies;
         public String body;
         public int status;
     }
@@ -79,6 +88,7 @@ public class TestUtil {
     private int port;
 
     private CloseableHttpClient httpClient;
+    private CookieStore cookieStore;
 
     public TestUtil () {
         this (PORT);
@@ -100,6 +110,11 @@ public class TestUtil {
             new BasicHttpClientConnectionManager (socketFactoryRegistry,
                 new ManagedHttpClientConnectionFactory ());
 
+        RequestConfig globalConfig = RequestConfig.custom().setCookieSpec (CookieSpecs.NETSCAPE).build ();
+        cookieStore = new BasicCookieStore ();
+        HttpClientContext context = HttpClientContext.create();
+        context.setCookieStore(cookieStore);
+
         this.httpClient = HttpClients.custom ()
             .setSchemePortResolver (h -> {
                 Args.notNull (h, "HTTP host");
@@ -120,6 +135,7 @@ public class TestUtil {
                 }
             })
             .setConnectionManager (connManager)
+            .setDefaultRequestConfig (globalConfig)
             .build ();
     }
 
@@ -171,6 +187,7 @@ public class TestUtil {
                 headers.put (header.getName (), header.getValue ());
 
             urlResponse.headers = headers;
+//            cookieStore.getCookies ().stream ().collect (toMap (Cookie::getName, Cookie::getValue));
             return urlResponse;
         }
         catch (Exception e) {
@@ -210,9 +227,7 @@ public class TestUtil {
 
             if (requestMethod.equals ("GET")) {
                 HttpGet httpGet = new HttpGet (uri);
-
                 httpGet.setHeader ("Accept", acceptType);
-
                 return httpGet;
             }
 

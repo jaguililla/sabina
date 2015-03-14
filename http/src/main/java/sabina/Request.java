@@ -79,10 +79,11 @@ public final class Request {
     //    request.referrer          # the referrer of the client or '/'
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param match   the route match
-     * @param request the servlet request
+     * @param match   the route match.
+     * @param request the servlet request.
+     * @param response .
      */
     Request (
         final RouteMatch match,

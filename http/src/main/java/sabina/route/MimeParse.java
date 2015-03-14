@@ -33,9 +33,9 @@ import java.util.*;
  *
  * <p>http://code.google.com/p/mimeparse/
  *
- * <p>Ported by Tom Zellman <tzellman@gmail.com>.
+ * <p>Ported by Tom Zellman (tzellman@gmail.com).
  *
- * <p>Modified by Alex Soto <asotobu@gmail.com> to coform naming conventions and removing
+ * <p>Modified by Alex Soto (asotobu@gmail.com) to coform naming conventions and removing
  * unnecessary dependencies.
  */
 final class MimeParse {
@@ -67,6 +67,9 @@ final class MimeParse {
      * <p>For example, the media range 'application/xhtml;q=0.5' would get parsed into:
      *
      * <p>('application', 'xhtml', {'q', '0.5'})
+     *
+     * @param mimeType .
+     * @return .
      */
     static ParseResults parseMimeType (String mimeType) {
         String[] parts = mimeType.split (";");
@@ -104,6 +107,7 @@ final class MimeParse {
      * dictionary, filling it in with a proper default if necessary.
      *
      * @param range .
+     * @return .
      */
     static ParseResults parseMediaRange (String range) {
         ParseResults results = parseMimeType (range);
@@ -148,6 +152,7 @@ final class MimeParse {
      *
      * @param mimeType .
      * @param parsedRanges .
+     * @return .
      */
     static FitnessAndQuality fitnessAndQualityParsed (
         String mimeType, Collection<ParseResults> parsedRanges) {

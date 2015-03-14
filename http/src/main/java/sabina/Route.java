@@ -38,7 +38,9 @@ public final class Route extends Action {
     /**
      * Constructor.
      *
+     * @param method .
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
+     * @param handler .
      */
     Route (final HttpMethod method, final String path, final Handler handler) {
         this (method, path, DEFAULT_ACCEPT_TYPE, handler);
@@ -47,8 +49,10 @@ public final class Route extends Action {
     /**
      * Constructor.
      *
+     * @param method .
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      * @param acceptType The accept type which is used for matching.
+     * @param handler .
      */
     Route (
         final HttpMethod method,

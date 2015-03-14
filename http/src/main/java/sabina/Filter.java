@@ -37,6 +37,8 @@ public final class Filter extends Action {
 
     /**
      * Constructs a filter that matches on everything.
+     * @param method .
+     * @param handler .
      */
     Filter (final HttpMethod method, final Handler handler) {
         this (method, ALL_PATHS, handler);
@@ -45,7 +47,9 @@ public final class Filter extends Action {
     /**
      * Constructor.
      *
+     * @param method .
      * @param path The filter path which is used for matching. (e.g. /hello, users/:name).
+     * @param handler .
      */
     Filter (final HttpMethod method, final String path, final Handler handler) {
         this (method, path, DEFAULT_CONTENT_TYPE, handler);

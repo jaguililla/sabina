@@ -16,6 +16,7 @@ package sabina.route;
 
 import java.util.List;
 
+import sabina.Fault;
 import sabina.HttpMethod;
 
 /**
@@ -33,6 +34,8 @@ public interface RouteMatcher {
      */
     void processRoute (String route, String acceptType, Object target);
 
+    <T extends Exception> void processFault (Fault<T> handler);
+
     /**
      * Finds the target route for the requested route path and accept type
      *
@@ -45,4 +48,6 @@ public interface RouteMatcher {
     RouteMatch findTarget (HttpMethod httpMethod, String path, String acceptType);
 
     List<RouteMatch> findTargets (HttpMethod httpMethod, String path, String acceptType);
+
+    Fault<? extends Exception> findHandler(Class<? extends Exception> exceptionClass);
 }
