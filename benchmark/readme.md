@@ -13,7 +13,7 @@ OSIV pattern created with Sabina filters.
 
 ## Infrastructure Software Versions
 
-* [Sabina 1.0](http://there4.co/)
+* [Sabina 1.1.1](http://there4.co/sabina)
 
 
 ## Different test setups
@@ -28,13 +28,22 @@ OSIV pattern created with Sabina filters.
 
 ### JSON Encoding Test
 
-http://localhost:8080/json
+http://localhost:5050/json
 
 ### Data-Store/Database Mapping Test
 
-http://localhost:8080/db?queries=5
+http://localhost:5050/db?queries=5
 
 ### Plain Text Test
 
-http://localhost:8080/plaintext
+http://localhost:5050/plaintext
+
+### Fortunes
+
+http://localhost:5050/fortune
+
+### Database updates
+
+http://localhost:5050/update
+
 
