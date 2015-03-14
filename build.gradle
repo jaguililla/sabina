@@ -42,7 +42,7 @@ subprojects {
     }
 }
 
-def projectSite = 'site' //getProperty ("projectSite", "site")
+def projectSite = 'site'
 
 jbake {
     input = file("$project.projectDir/$projectSite")

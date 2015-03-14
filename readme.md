@@ -10,11 +10,11 @@
 Sabina - a Sinatra inspired web framework
 =========================================
 
-Sabina 1.0.0 is now available on [JCenter]!!!
+Sabina 1.1.1 is now available on [JCenter]!!!
 
 ```groovy
 dependencies {
-  compile 'sabina:http:1.0.0'
+  compile 'sabina:http:1.1.1'
 }
 ```
 
@@ -22,7 +22,7 @@ dependencies {
 <dependency>
   <groupId>sabina</groupId>
   <artifactId>http</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.1</version>
 </dependency>
 ```
 
