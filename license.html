@@ -68,57 +68,6 @@
 
       <ul class="nav navbar-nav navbar-right">
         <li><a href="http://there4.co">there4.co</a></li>
-        <li class="dropdown">
-          <a
-            href="#"
-            class="dropdown-toggle"
-            data-toggle="dropdown"
-            role="button"
-            aria-expanded="false">
-
-            Share it <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            <li>
-              <div id="fb-root"></div>
-              <script>
-                (function(d, s, id) {
-                  var js, fjs = d.getElementsByTagName(s)[0];
-                  if (d.getElementById(id)) return;
-                  js = d.createElement(s); js.id = id;
-                  js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-                  fjs.parentNode.insertBefore(js, fjs);
-                }(document, 'script', 'facebook-jssdk'));
-              </script>
-            </li>
-            <li>
-              <a
-                href="https://twitter.com/share"
-                class="twitter-share-button"
-                data-via="jaguililla"
-                data-count="none">
-
-                Tweet
-              </a>
-              <script>
-                !function(d,s,id){
-                var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
-                if(!d.getElementById(id)){js=d.createElement(s);
-                js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
-                fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-              </script>
-            </li>
-            <li>
-              <script src="//platform.linkedin.com/in.js" type="text/javascript">
-                lang: en_US
-              </script>
-              <script type="IN/Share"></script>
-            </li>
-            <li>
-              <div class="g-plus" data-action="share" data-annotation="none"></div>
-            </li>
-          </ul>
-        </li>
       </ul>
     </div>
   </div>
@@ -143,6 +92,43 @@
           | Baked with <a href="http://jbake.org">JBake v2.3.0</a>
           | Founded by <a href="//www.linkedin.com/in/jaguililla">Juanjo Aguililla</a>
           | Based in <a href="//www.sparkjava.com">Spark</a>
+        </p>
+        <p>
+
+        <div id="fb-root"></div>
+        <script>
+        (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+      </script>
+
+        <a
+          href="https://twitter.com/share"
+          class="twitter-share-button"
+          data-via="jaguililla"
+          data-count="none">
+
+          Tweet
+        </a>
+        <script>
+        !function(d,s,id){
+        var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+        if(!d.getElementById(id)){js=d.createElement(s);
+        js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
+        fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+      </script>
+
+        <script src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
+        <script type="IN/Share"></script>
+
+        <div class="g-plus" data-action="share" data-annotation="none"></div>
+
+
+
         </p>
       </div>
     </footer>
