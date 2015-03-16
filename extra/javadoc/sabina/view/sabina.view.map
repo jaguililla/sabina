@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./MustacheView.html" title="sabina.view.MustacheView" alt="" coords="16,17,113,41"/>
+<area shape="rect" id="node1" href="./MustacheView.html" title="&lt;TABLE&gt;" alt="" coords="5,5,124,53"/>
+<area shape="rect" id="node2_1" href="./RythmView.html" title="sabina.view.RythmView" alt="" coords="159,17,239,41"/>
+<area shape="rect" id="node2" href="./RythmView.html" title="&lt;TABLE&gt;" alt="" coords="149,5,250,53"/>
+<area shape="rect" id="node3_2" href="./FreeMarkerView.html" title="sabina.view.FreeMarkerView" alt="" coords="285,17,393,41"/>
+<area shape="rect" id="node3" href="./FreeMarkerView.html" title="&lt;TABLE&gt;" alt="" coords="275,5,404,53"/>
+</map>

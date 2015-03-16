@@ -65,6 +65,65 @@
         <li><a href="license.html">License</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="http://there4.co">there4.co</a></li>
+        <li class="dropdown">
+          <a
+            href="#"
+            class="dropdown-toggle"
+            data-toggle="dropdown"
+            role="button"
+            aria-expanded="false">
+
+            Share it <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <div id="fb-root"></div>
+              <script>
+                (function(d, s, id) {
+                  var js, fjs = d.getElementsByTagName(s)[0];
+                  if (d.getElementById(id)) return;
+                  js = d.createElement(s); js.id = id;
+                  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+                  fjs.parentNode.insertBefore(js, fjs);
+                }(document, 'script', 'facebook-jssdk'));
+              </script>
+            </li>
+            <li>
+              <a
+                href="https://twitter.com/share"
+                class="twitter-share-button"
+                data-via="jaguililla"
+                data-count="none">
+
+                Tweet
+              </a>
+              <script>
+                !function(d,s,id){
+                var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+                if(!d.getElementById(id)){js=d.createElement(s);
+                js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
+                fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+              </script>
+            </li>
+            <li>
+              <script src="//platform.linkedin.com/in.js" type="text/javascript">
+                lang: en_US
+              </script>
+              <script type="IN/Share"></script>
+            </li>
+            <li>
+              <!-- Place this tag in your head or just before your close body tag. -->
+              <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+              <!-- Place this tag where you want the share button to render. -->
+              <div class="g-plus" data-action="share"></div>
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
@@ -74,6 +133,12 @@
 <ul>
   <li><a href="http/index.html">HTTP Javadoc</a></li>
   <li><a href="extra/index.html">Extra Javadoc</a></li>
+</ul><h1>Tools used</h1>
+<ul>
+  <li><a href="https://travis-ci.org/jamming/sabina">Travis</a> for continuous integration</li>
+  <li><a href="https://coveralls.io/r/jamming/sabina">Coveralls</a> for test coverage</li>
+  <li><a href="https://huboard.com/jamming/sabina">Huboard</a> for planning</li>
+  <li><a href="https://github.com/jamming/sabina/issues">Issues</a> for tasks tracking</li>
 </ul><h1>Release process</h1><p>Steps:</p>
 <ul>
   <li>Commit and push all changes</li>
@@ -85,7 +150,7 @@
   <li>Commit and push</li>
   <li>Confirm publishing of artifacts within Bintray (this is a manual step)</li>
 </ul><p>Command:</p>
-<pre><code>rm -rf build/ &amp;&amp; \
+<pre><code>rm -rf build/ .gradle/ &amp;&amp; \
 git add . &amp;&amp; git commit &amp;&amp; \
 sed -i s/-SNAPSHOT// gradle.properties &amp;&amp; \
 gw --recompile-scripts --no-daemon clean check javadoc jacoco site publish publishGhPages &amp;&amp; \
@@ -99,6 +164,27 @@ git add gradle.properties &amp;&amp; git commit -m &quot;New snapshot&quot; &amp
   <li>It has to pass all existing tests.</li>
   <li>The coverage of the new code should be at least 70%</li>
   <li>All public and protected methods and field must be documented using Javadoc</li>
+  <li><p>Commit format: the preferred commit format (through it is not enforced) would have:</p>
+  <ul>
+    <li>type: can be any of: feat, fix, refactor, doc, test (lowercased)</li>
+    <li>module: any module of the application, or tha application itself (in lowercase)</li>
+    <li>title:</li>
+    <li>Description: a more complete description of the issue</li>
+    <li>issue #id:</li>
+  </ul>
+  <pre><code>type(module): title
+
+Description
+
+issue #id
+</code></pre></li>
+  <li><p>Bug format: when filing bugs please use the given, when, then format. This is only a good<br/> practise, bugs will be welcomed anyway! Ie:</p>
+  <pre><code>Given a condition
+And another condition
+When an action is taken
+And other after the first
+Then something happened
+</code></pre></li>
 </ul>
       </div>
       <div id="push"></div>
@@ -118,6 +204,8 @@ git add gradle.properties &amp;&amp; git commit -m &quot;New snapshot&quot; &amp
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+    <!-- For Google plus link. -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
   </body>
 </html>
 

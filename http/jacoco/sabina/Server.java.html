@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Server.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">http</a> &gt; <a href="index.source.html" class="el_package">sabina</a> &gt; <span class="el_source">Server.java</span></div><h1>Server.java</h1><pre class="source lang-java linenums">/*
+ * Copyright © 2014 Juan José Aguililla. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
+
+package sabina;
+
+import static java.lang.Integer.parseInt;
+import static java.util.logging.Logger.getLogger;
+import static sabina.HttpMethod.*;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
+
+import sabina.route.RouteMatcher;
+import sabina.route.RouteMatcherFactory;
+import sabina.server.Backend;
+import sabina.server.BackendFactory;
+
+/**
+ * The main building block of a Sabina application is a set of routes. A route is
+ * made up of three simple pieces:
+ *
+ * &lt;ul&gt;
+ * &lt;li&gt;A verb (get, post, put, delete, head, trace, options)&lt;/li&gt;
+ * &lt;li&gt;A path (/hello, /users/:name)&lt;/li&gt;
+ * &lt;li&gt;A callback ( handle(Request request, Response response) )&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * Example:
+ *
+ * &lt;pre&gt;
+ *   get(&quot;/hello&quot;, it -&amp;gt; &quot;Hello World!&quot;);
+ * &lt;/pre&gt;
+ *
+ * &lt;p&gt;TODO Register custom 404 pages and so on
+ *
+ * @author Per Wendel
+ */
+public final class Server {
+<span class="fc" id="L51">    private static final Logger LOG = getLogger (Server.class.getName ());</span>
+
+    private static final int DEFAULT_PORT = 4567;
+    private static final String DEFAULT_HOST = &quot;0.0.0.0&quot;;
+
+    public static Server server (int port) {
+<span class="nc" id="L57">        return new Server (port);</span>
+    }
+
+    public static Server server (String [] aArgs) {
+        // TODO Parse args to parameters
+<span class="nc" id="L62">        return new Server ();</span>
+    }
+
+<span class="pc" id="L65">    private int port = DEFAULT_PORT;</span>
+<span class="pc" id="L66">    private String ipAddress = DEFAULT_HOST;</span>
+
+    private String keystoreFile;
+    private String keystorePassword;
+    private String truststoreFile;
+    private String truststorePassword;
+
+    private String staticFileFolder;
+    private String externalStaticFileFolder;
+
+    private Backend server;
+
+<span class="pc" id="L78">    private final RouteMatcher routeMatcher = RouteMatcherFactory.get ();</span>
+
+    public Server () {
+<span class="fc" id="L81">        super ();</span>
+<span class="fc" id="L82">    }</span>
+
+<span class="nc" id="L84">    public Server (int port) {</span>
+<span class="nc" id="L85">        port (port);</span>
+<span class="nc" id="L86">    }</span>
+
+    /**
+     * Set the IP address that Sabina should listen on. If not called the default
+     * address is '0.0.0.0'. This has to be called before any route mapping is done.
+     *
+     * @param ipAddress The ip.
+     */
+    public void host (String ipAddress) {
+<span class="nc" id="L95">        this.ipAddress = ipAddress;</span>
+<span class="nc" id="L96">    }</span>
+
+    /**
+     * Set the port that Sabina should listen on. If not called the default port
+     * is 4567. This has to be called before any route mapping is done.
+     * If provided port = 0 then the an arbitrary available port will be used.
+     *
+     * @param port The port number
+     */
+    public void port (int port) {
+<span class="fc" id="L106">        this.port = port;</span>
+<span class="fc" id="L107">    }</span>
+
+    public void port (String port) {
+<span class="nc" id="L110">        port (parseInt (port));</span>
+<span class="nc" id="L111">    }</span>
+
+    /**
+     * Set the connection to be secure, using the specified keystore and
+     * truststore. This has to be called before any route mapping is done. You
+     * have to supply a keystore file, truststore file is optional (keystore
+     * will be reused).
+     * &lt;p&gt;
+     * This method is only relevant when using embedded Jetty servers. It should
+     * not be used if you are using Servlets, where you will need to secure the
+     * connection in the servlet container
+     *
+     * @param keystoreFile The keystore file location as string
+     * @param keystorePassword the password for the keystore
+     * @param truststoreFile the truststore file location as string, leave null to reuse
+     * keystore
+     * @param truststorePassword the trust store password
+     */
+    public void secure (
+        String keystoreFile, String keystorePassword,
+        String truststoreFile, String truststorePassword) {
+
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (keystoreFile == null)</span>
+<span class="nc" id="L134">            throw new IllegalArgumentException (&quot;Must provide a keystore to run secured&quot;);</span>
+
+<span class="fc" id="L136">        this.keystoreFile = keystoreFile;</span>
+<span class="fc" id="L137">        this.keystorePassword = keystorePassword;</span>
+<span class="fc" id="L138">        this.truststoreFile = truststoreFile;</span>
+<span class="fc" id="L139">        this.truststorePassword = truststorePassword;</span>
+<span class="fc" id="L140">    }</span>
+
+    /**
+     * Sets the folder in classpath serving static files. &lt;b&gt;Observe: this method
+     * must be called before all other methods.&lt;/b&gt;
+     *
+     * @param folder the folder in classpath.
+     */
+    public void staticFileLocation (String folder) {
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        staticFileFolder = folder.startsWith (&quot;/&quot;)? folder.substring (1) : folder;</span>
+<span class="fc" id="L150">    }</span>
+
+    /**
+     * Sets the external folder serving static files. &lt;b&gt;Observe: this method
+     * must be called before all other methods.&lt;/b&gt;
+     *
+     * @param externalFolder the external folder serving static files.
+     */
+    public void externalStaticFileLocation (String externalFolder) {
+<span class="fc" id="L159">        externalStaticFileFolder = externalFolder;</span>
+<span class="fc" id="L160">    }</span>
+
+    public void start () {
+<span class="fc" id="L163">        new Thread (() -&gt; {</span>
+            server = BackendFactory.create (hasMultipleHandlers ());
+            server.startUp (
+                ipAddress,
+                port,
+                keystoreFile,
+                keystorePassword,
+                truststoreFile,
+                truststorePassword,
+                staticFileFolder,
+                externalStaticFileFolder);
+<span class="fc" id="L174">        }).start ();</span>
+<span class="fc" id="L175">    }</span>
+
+    private boolean hasMultipleHandlers () {
+<span class="pc bpc" id="L178" title="1 of 4 branches missed.">        return staticFileFolder != null || externalStaticFileFolder != null;</span>
+    }
+
+    /**
+     * Stops the Sabina server and clears all routes
+     */
+    public void stop () {
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        if (server != null)</span>
+<span class="fc" id="L186">            server.shutDown ();</span>
+<span class="fc" id="L187">    }</span>
+
+    Server addRoute (Action action) {
+<span class="fc" id="L190">        System.out.println (&quot;&gt;&gt;&gt; &quot; + action);</span>
+
+<span class="fc" id="L192">        routeMatcher.processRoute (</span>
+            action.method + &quot; '&quot; + action.path + &quot;'&quot;, action.acceptType, action);
+
+<span class="fc" id="L195">        return this;</span>
+    }
+
+    /**
+     * Maps an exception handler to be executed when an exception occurs during routing.
+     *
+     * @param exceptionClass the exception class.
+     * @param aHandler        The handler.
+     * @param &lt;T&gt; Exception type.
+     * @return The server whith the added exception handler.
+     */
+    public &lt;T extends Exception&gt; Server exception(
+        Class&lt;T&gt; exceptionClass, BiConsumer&lt;T, Request&gt; aHandler) {
+
+<span class="fc" id="L209">        Fault wrapper = new Fault&lt;&gt; (exceptionClass, aHandler);</span>
+<span class="fc" id="L210">        routeMatcher.processFault (wrapper);</span>
+<span class="fc" id="L211">        return this;</span>
+    }
+
+    /*
+     * Filters
+     */
+    public Server after (Filter.Handler handler) {
+<span class="fc" id="L218">        return addRoute (new Filter (after, handler));</span>
+    }
+
+    public Server before (Filter.Handler handler) {
+<span class="fc" id="L222">        return addRoute (new Filter (before, handler));</span>
+    }
+
+    public Server after (String path, Filter.Handler handler) {
+<span class="fc" id="L226">        return addRoute (new Filter (after, path, handler));</span>
+    }
+
+    public Server before (String path, Filter.Handler handler) {
+<span class="fc" id="L230">        return addRoute (new Filter (before, path, handler));</span>
+    }
+
+    public Server after (String path, String contentType, Filter.Handler handler) {
+<span class="nc" id="L234">        return addRoute (new Filter (after, path, contentType, handler));</span>
+    }
+
+    public Server before (String path, String contentType, Filter.Handler handler) {
+<span class="fc" id="L238">        return addRoute (new Filter (before, path, contentType, handler));</span>
+    }
+
+    /*
+     * Routes
+     */
+    public Server delete (String path, Route.Handler handler) {
+<span class="fc" id="L245">        return addRoute (new Route (delete, path, handler));</span>
+    }
+
+    public Server get (String path, Route.Handler handler) {
+<span class="fc" id="L249">        return addRoute (new Route (get, path, handler));</span>
+    }
+
+    public Server head (String path, Route.Handler handler) {
+<span class="fc" id="L253">        return addRoute (new Route (head, path, handler));</span>
+    }
+
+    private Route.Handler wrap (Consumer&lt;Request&gt; handler) {
+<span class="fc" id="L257">        return request -&gt; {</span>
+            handler.accept (request);
+            return null;
+        };
+    }
+
+    public Server head (String path, Consumer&lt;Request&gt; handler) {
+<span class="fc" id="L264">        return head (path, wrap (handler));</span>
+    }
+
+    public Server options (String path, Route.Handler handler) {
+<span class="fc" id="L268">        return addRoute (new Route (options, path, handler));</span>
+    }
+
+    public Server patch (String path, Route.Handler handler) {
+<span class="fc" id="L272">        return addRoute (new Route (patch, path, handler));</span>
+    }
+
+    public Server post (String path, Route.Handler handler) {
+<span class="fc" id="L276">        return addRoute (new Route (post, path, handler));</span>
+    }
+
+    public Server put (String path, Route.Handler handler) {
+<span class="fc" id="L280">        return addRoute (new Route (put, path, handler));</span>
+    }
+
+    public Server trace (String path, Route.Handler handler) {
+<span class="fc" id="L284">        return addRoute (new Route (trace, path, handler));</span>
+    }
+
+    public Server delete (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L288">        return addRoute (new Route (delete, path, contentType, handler));</span>
+    }
+
+    public Server get (String path, String contentType, Route.Handler handler) {
+<span class="fc" id="L292">        return addRoute (new Route (get, path, contentType, handler));</span>
+    }
+
+    public Server head (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L296">        return addRoute (new Route (head, path, contentType, handler));</span>
+    }
+
+    public Server options (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L300">        return addRoute (new Route (options, path, contentType, handler));</span>
+    }
+
+    public Server patch (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L304">        return addRoute (new Route (patch, path, contentType, handler));</span>
+    }
+
+    public Server post (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L308">        return addRoute (new Route (post, path, contentType, handler));</span>
+    }
+
+    public Server put (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L312">        return addRoute (new Route (put, path, contentType, handler));</span>
+    }
+
+    public Server trace (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L316">        return addRoute (new Route (trace, path, contentType, handler));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

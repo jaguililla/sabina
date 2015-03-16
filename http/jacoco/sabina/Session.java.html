@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Session.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">http</a> &gt; <a href="index.source.html" class="el_package">sabina</a> &gt; <span class="el_source">Session.java</span></div><h1>Session.java</h1><pre class="source lang-java linenums">/*
+ * Copyright © 2011 Per Wendel. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
+
+package sabina;
+
+import java.util.Enumeration;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.servlet.http.HttpSession;
+
+/**
+ * Provides session information.
+ */
+public final class Session {
+    private final HttpSession session;
+
+    /**
+     * Creates a session with the &lt;code&gt;HttpSession&lt;/code&gt;.
+     *
+     * @param session Session implementation.
+     *
+     * @throws IllegalArgumentException If the session is null.
+     */
+<span class="nc" id="L36">    Session (final HttpSession session) {</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (session == null)</span>
+<span class="nc" id="L38">            throw new IllegalArgumentException (&quot;Session cannot be null&quot;);</span>
+
+<span class="nc" id="L40">        this.session = session;</span>
+<span class="nc" id="L41">    }</span>
+
+    /**
+     * @return The raw &lt;code&gt;HttpSession&lt;/code&gt; object handed in by the servlet container.
+     */
+    public HttpSession raw () {
+<span class="nc" id="L47">        return session;</span>
+    }
+
+    /**
+     * Returns the object bound with the specified name in this session, or null if no object
+     * is bound under the name.
+     *
+     * @param name A string specifying the name of the object.
+     * @param &lt;T&gt;  The type parameter.
+     * @return The object with the specified name.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;) public &lt;T&gt; T attribute (String name) {
+<span class="nc" id="L59">        return (T)session.getAttribute (name);</span>
+    }
+
+    /**
+     * Binds an object to this session, using the name specified.
+     *
+     * @param name The name to which the object is bound; cannot be null.
+     * @param value The object to be bound.
+     */
+    public void attribute (String name, Object value) {
+<span class="nc" id="L69">        session.setAttribute (name, value);</span>
+<span class="nc" id="L70">    }</span>
+
+    /**
+     * @return An &lt;code&gt;Enumeration&lt;/code&gt; of &lt;code&gt;String&lt;/code&gt; objects containing the names
+     * of all the objects bound to this session.
+     */
+    public Set&lt;String&gt; attributes () {
+<span class="nc" id="L77">        TreeSet&lt;String&gt; attributes = new TreeSet&lt;&gt; ();</span>
+<span class="nc" id="L78">        Enumeration&lt;String&gt; enumeration = session.getAttributeNames ();</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        while (enumeration.hasMoreElements ())</span>
+<span class="nc" id="L80">            attributes.add (enumeration.nextElement ());</span>
+
+<span class="nc" id="L82">        return attributes;</span>
+    }
+
+    /**
+     * @return The time when this session was created, measured in milliseconds since midnight
+     * January 1, 1970 GMT.
+     */
+    public long creationTime () {
+<span class="nc" id="L90">        return session.getCreationTime ();</span>
+    }
+
+    /**
+     * @return A string containing the unique identifier assigned to this session.
+     */
+    public String id () {
+<span class="nc" id="L97">        return session.getId ();</span>
+    }
+
+    /**
+     * @return The last time the client sent a request associated with this session, as the
+     * number of milliseconds since midnight January 1, 1970 GMT, and marked by the time the
+     * container received the request.
+     */
+    public long lastAccessedTime () {
+<span class="nc" id="L106">        return session.getLastAccessedTime ();</span>
+    }
+
+    /**
+     * @return The maximum time interval, in seconds, that the container will keep this session
+     * open between client accesses.
+     */
+    public int maxInactiveInterval () {
+<span class="nc" id="L114">        return session.getMaxInactiveInterval ();</span>
+    }
+
+    /**
+     * Specifies the time, in seconds, between client requests the web container will
+     * invalidate this session.
+     *
+     * @param interval The interval.
+     */
+    public void maxInactiveInterval (int interval) {
+<span class="nc" id="L124">        session.setMaxInactiveInterval (interval);</span>
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Invalidates this session then unbinds any objects bound to it.
+     */
+    public void invalidate () {
+<span class="nc" id="L131">        session.invalidate ();</span>
+<span class="nc" id="L132">    }</span>
+
+    /**
+     * @return True if the client does not yet know about the session or if the client chooses
+     * not to join the session.
+     */
+    public boolean isNew () {
+<span class="nc" id="L139">        return session.isNew ();</span>
+    }
+
+    /**
+     * Removes the object bound with the specified name from this session.
+     *
+     * @param name The name of the object to remove from this session.
+     */
+    public void removeAttribute (String name) {
+<span class="nc" id="L148">        session.removeAttribute (name);</span>
+<span class="nc" id="L149">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

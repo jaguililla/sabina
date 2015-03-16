@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Sabina.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">http</a> &gt; <a href="index.source.html" class="el_package">sabina</a> &gt; <span class="el_source">Sabina.java</span></div><h1>Sabina.java</h1><pre class="source lang-java linenums">/*
+ * Copyright © 2015 Juan José Aguililla. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
+
+package sabina;
+
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+/**
+ * Static methods to handle the default server (singleton server)
+ */
+public final class Sabina {
+<span class="fc" id="L24">    private static Server server = new Server ();</span>
+
+    /*
+     * Filters
+     */
+    public static Server after (Filter.Handler handler) {
+<span class="fc" id="L30">        return server.after (handler);</span>
+    }
+
+    public static Server before (Filter.Handler handler) {
+<span class="fc" id="L34">        return server.before (handler);</span>
+    }
+
+    public static Server after (String path, Filter.Handler handler) {
+<span class="fc" id="L38">        return server.after (path, handler);</span>
+    }
+
+    public static Server before (String path, Filter.Handler handler) {
+<span class="fc" id="L42">        return server.before (path, handler);</span>
+    }
+
+    public static Server after (String path, String contentType, Filter.Handler handler) {
+<span class="nc" id="L46">        return server.after (path, contentType, handler);</span>
+    }
+
+    public static Server before (String path, String contentType, Filter.Handler handler) {
+<span class="fc" id="L50">        return server.before (path, contentType, handler);</span>
+    }
+
+    /*
+     * Routes
+     */
+    public static Server delete (String path, Route.Handler handler) {
+<span class="fc" id="L57">        return server.delete (path, handler);</span>
+    }
+
+    public static Server get (String path, Route.Handler handler) {
+<span class="fc" id="L61">        return server.get (path, handler);</span>
+    }
+
+    public static Server head (String path, Route.Handler handler) {
+<span class="nc" id="L65">        return server.head (path, handler);</span>
+    }
+
+    public static Server head (String path, Consumer&lt;Request&gt; handler) {
+<span class="fc" id="L69">        return server.head (path, handler);</span>
+    }
+
+    public static Server options (String path, Route.Handler handler) {
+<span class="fc" id="L73">        return server.options (path, handler);</span>
+    }
+
+    public static Server patch (String path, Route.Handler handler) {
+<span class="fc" id="L77">        return server.patch (path, handler);</span>
+    }
+
+    public static Server post (String path, Route.Handler handler) {
+<span class="fc" id="L81">        return server.post (path, handler);</span>
+    }
+
+    public static Server put (String path, Route.Handler handler) {
+<span class="fc" id="L85">        return server.put (path, handler);</span>
+    }
+
+    public static Server trace (String path, Route.Handler handler) {
+<span class="fc" id="L89">        return server.trace (path, handler);</span>
+    }
+
+    public static Server delete (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L93">        return server.delete (path, contentType, handler);</span>
+    }
+
+    public static Server get (String path, String contentType, Route.Handler handler) {
+<span class="fc" id="L97">        return server.get (path, contentType, handler);</span>
+    }
+
+    public static Server head (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L101">        return server.head (path, contentType, handler);</span>
+    }
+
+    public static Server options (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L105">        return server.options (path, contentType, handler);</span>
+    }
+
+    public static Server patch (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L109">        return server.patch (path, contentType, handler);</span>
+    }
+
+    public static Server post (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L113">        return server.post (path, contentType, handler);</span>
+    }
+
+    public static Server put (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L117">        return server.put (path, contentType, handler);</span>
+    }
+
+    public static Server trace (String path, String contentType, Route.Handler handler) {
+<span class="nc" id="L121">        return server.trace (path, contentType, handler);</span>
+    }
+
+    public static void host (String host) {
+<span class="nc" id="L125">        server.host (host);</span>
+<span class="nc" id="L126">    }</span>
+
+    public static void port (int port) {
+<span class="nc" id="L129">        server.port (port);</span>
+<span class="nc" id="L130">    }</span>
+
+    public static void port (String port) {
+<span class="nc" id="L133">        server.port (port);</span>
+<span class="nc" id="L134">    }</span>
+
+    public static void secure (
+        String keystoreFile, String keystorePassword,
+        String truststoreFile, String truststorePassword) {
+
+<span class="fc" id="L140">        server.secure (keystoreFile, keystorePassword, truststoreFile, truststorePassword);</span>
+<span class="fc" id="L141">    }</span>
+
+    public static void staticFileLocation (String folder) {
+<span class="fc" id="L144">        server.staticFileLocation (folder);</span>
+<span class="fc" id="L145">    }</span>
+
+    public static void externalStaticFileLocation (String externalFolder) {
+<span class="fc" id="L148">        server.externalStaticFileLocation (externalFolder);</span>
+<span class="fc" id="L149">    }</span>
+
+    public static void start (int port) {
+<span class="fc" id="L152">        server.port (port);</span>
+<span class="fc" id="L153">        server.start ();</span>
+<span class="fc" id="L154">    }</span>
+
+    public static void start () {
+<span class="nc" id="L157">        server.start ();</span>
+<span class="nc" id="L158">    }</span>
+
+    public static void stop () {
+<span class="fc" id="L161">        server.stop ();</span>
+<span class="fc" id="L162">    }</span>
+
+    public static &lt;T extends Exception&gt; Server exception(
+        Class&lt;T&gt; exceptionClass, BiConsumer&lt;T, Request&gt; aHandler) {
+
+<span class="fc" id="L167">        return server.exception (exceptionClass, aHandler);</span>
+    }
+
+<span class="nc" id="L170">    private Sabina () {</span>
+<span class="nc" id="L171">        throw new IllegalStateException ();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

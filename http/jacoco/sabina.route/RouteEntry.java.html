@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RouteEntry.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">http</a> &gt; <a href="index.source.html" class="el_package">sabina.route</a> &gt; <span class="el_source">RouteEntry.java</span></div><h1>RouteEntry.java</h1><pre class="source lang-java linenums">/*
+ * Copyright © 2011 Per Wendel. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
+
+package sabina.route;
+
+import static sabina.Filter.ALL_PATHS;
+import static sabina.HttpMethod.after;
+import static sabina.HttpMethod.before;
+import static sabina.Request.convertRouteToList;
+
+import java.util.List;
+
+import sabina.HttpMethod;
+
+/**
+ * @author Per Wendel
+ */
+<span class="fc" id="L29">final class RouteEntry {</span>
+    HttpMethod httpMethod;
+    String path;
+    String acceptedType;
+    Object target;
+
+    boolean matches (HttpMethod httpMethod, String path) {
+<span class="fc bfc" id="L36" title="All 6 branches covered.">        return</span>
+            ( (httpMethod == before || httpMethod == after)
+                &amp;&amp; (this.httpMethod == httpMethod)
+<span class="fc bfc" id="L39" title="All 4 branches covered.">                &amp;&amp; this.path.equals (ALL_PATHS) )</span>
+            || ( this.httpMethod == httpMethod
+<span class="fc bfc" id="L41" title="All 2 branches covered.">                &amp;&amp; matchPath (path) );</span>
+    }
+
+    private boolean matchPath (String path) {
+<span class="fc bfc" id="L45" title="All 6 branches covered.">        if (!this.path.endsWith (&quot;*&quot;) &amp;&amp; ((path.endsWith (&quot;/&quot;) &amp;&amp; !this.path.endsWith (&quot;/&quot;))</span>
+<span class="fc bfc" id="L46" title="All 4 branches covered.">            || (this.path.endsWith (&quot;/&quot;) &amp;&amp; !path.endsWith (&quot;/&quot;)))) {</span>
+            // One and not both ends with slash
+<span class="fc" id="L48">            return false;</span>
+        }
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (this.path.equals (path)) {</span>
+            // Paths are the same
+<span class="fc" id="L52">            return true;</span>
+        }
+
+        // check params
+<span class="fc" id="L56">        List&lt;String&gt; thisPathList = convertRouteToList (this.path);</span>
+<span class="fc" id="L57">        List&lt;String&gt; pathList = convertRouteToList (path);</span>
+
+<span class="fc" id="L59">        int thisPathSize = thisPathList.size ();</span>
+<span class="fc" id="L60">        int pathSize = pathList.size ();</span>
+
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (thisPathSize == pathSize) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            for (int i = 0; i &lt; thisPathSize; i++) {</span>
+<span class="fc" id="L64">                String thisPathPart = thisPathList.get (i);</span>
+<span class="fc" id="L65">                String pathPart = pathList.get (i);</span>
+
+<span class="fc bfc" id="L67" title="All 4 branches covered.">                if ((i == thisPathSize - 1) &amp;&amp; (thisPathPart.equals (&quot;*&quot;) &amp;&amp; this.path</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">                    .endsWith (&quot;*&quot;))) {</span>
+                    // wildcard match
+<span class="fc" id="L70">                    return true;</span>
+                }
+
+<span class="fc bfc" id="L73" title="All 2 branches covered.">                if ((!thisPathPart.startsWith (&quot;:&quot;))</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                    &amp;&amp; !thisPathPart.equals (pathPart)</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">                    &amp;&amp; !thisPathPart.equals (&quot;*&quot;)) {</span>
+<span class="fc" id="L76">                    return false;</span>
+                }
+            }
+            // All parts matched
+<span class="fc" id="L80">            return true;</span>
+        }
+        else {
+            // Number of &quot;path parts&quot; not the same
+            // check wild card:
+<span class="fc bfc" id="L85" title="All 2 branches covered.">            if (this.path.endsWith (&quot;*&quot;)) {</span>
+<span class="pc bpc" id="L86" title="1 of 4 branches missed.">                if (pathSize == (thisPathSize - 1) &amp;&amp; (path.endsWith (&quot;/&quot;))) {</span>
+                    // Hack for making wildcards work with trailing slash
+<span class="nc" id="L88">                    pathList.add (&quot;&quot;);</span>
+<span class="nc" id="L89">                    pathList.add (&quot;&quot;);</span>
+<span class="nc" id="L90">                    pathSize += 2;</span>
+                }
+
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                if (thisPathSize &lt; pathSize) {</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">                    for (int i = 0; i &lt; thisPathSize; i++) {</span>
+<span class="fc" id="L95">                        String thisPathPart = thisPathList.get (i);</span>
+<span class="fc" id="L96">                        String pathPart = pathList.get (i);</span>
+<span class="pc bpc" id="L97" title="3 of 4 branches missed.">                        if (thisPathPart.equals (&quot;*&quot;) &amp;&amp; (i == thisPathSize - 1) &amp;&amp; this.path</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                            .endsWith (&quot;*&quot;)) {</span>
+                            // wildcard match
+<span class="nc" id="L100">                            return true;</span>
+                        }
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                        if (!thisPathPart.startsWith (&quot;:&quot;)</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">                            &amp;&amp; !thisPathPart.equals (pathPart)</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">                            &amp;&amp; !thisPathPart.equals (&quot;*&quot;)) {</span>
+<span class="fc" id="L105">                            return false;</span>
+                        }
+                    }
+                    // All parts matched
+<span class="nc" id="L109">                    return true;</span>
+                }
+                // End check wild card
+            }
+<span class="fc" id="L113">            return false;</span>
+        }
+    }
+
+    public String toString () {
+<span class="fc" id="L118">        return httpMethod.name () + &quot;, &quot; + path + &quot;, &quot; + target;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>

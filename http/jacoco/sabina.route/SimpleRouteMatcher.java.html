@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SimpleRouteMatcher.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">http</a> &gt; <a href="index.source.html" class="el_package">sabina.route</a> &gt; <span class="el_source">SimpleRouteMatcher.java</span></div><h1>SimpleRouteMatcher.java</h1><pre class="source lang-java linenums">/*
+ * Copyright © 2011 Per Wendel. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
+
+package sabina.route;
+
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static java.util.logging.Logger.getLogger;
+import static java.util.stream.Collectors.toList;
+import static sabina.route.MimeParse.bestMatch;
+
+import java.util.*;
+import java.util.logging.Logger;
+
+import sabina.Fault;
+import sabina.HttpMethod;
+
+/**
+ * Simple route matcher that is supposed to work exactly as Sinatra's
+ *
+ * @author Per Wendel
+ */
+final class SimpleRouteMatcher implements RouteMatcher {
+<span class="fc" id="L35">    private static final Logger LOG = getLogger (SimpleRouteMatcher.class.getName ());</span>
+    private static final char SINGLE_QUOTE = '\'';
+
+<span class="fc" id="L38">    private final List&lt;RouteEntry&gt; routes = new ArrayList&lt;&gt; ();</span>
+
+    /** Holds a map of Exception classes and associated handlers. */
+<span class="fc" id="L41">    private final Map&lt;Class&lt;? extends Exception&gt;, Fault&lt;?&gt;&gt; exceptionMap = new HashMap&lt;&gt; ();</span>
+
+<span class="fc" id="L43">    SimpleRouteMatcher () {</span>
+<span class="fc" id="L44">        LOG.fine (&quot;RouteMatcher created&quot;);</span>
+<span class="fc" id="L45">    }</span>
+
+    /**
+     * Parse and validates a route and adds it
+     *
+     * @param route the route path
+     * @param acceptType the accept type
+     * @param target the invocation target
+     */
+    @Override public void processRoute (String route, String acceptType, Object target) {
+        try {
+<span class="fc" id="L56">            int singleQuoteIndex = route.indexOf (SINGLE_QUOTE);</span>
+<span class="fc" id="L57">            String httpMethod =</span>
+<span class="fc" id="L58">                route.substring (0, singleQuoteIndex).trim ().toLowerCase (); // NOSONAR</span>
+<span class="fc" id="L59">            String url =</span>
+<span class="fc" id="L60">                route.substring (singleQuoteIndex + 1, route.length () - 1).trim (); // NOSONAR</span>
+
+            // Use special enum stuff to get from value
+            HttpMethod method;
+            try {
+<span class="fc" id="L65">                method = HttpMethod.valueOf (httpMethod);</span>
+            }
+<span class="nc" id="L67">            catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L68">                LOG.severe (</span>
+                    &quot;The @Route value: &quot;
+                        + route
+                        + &quot; has an invalid HTTP method part: &quot;
+                        + httpMethod
+                        + &quot;.&quot;);
+<span class="nc" id="L74">                return;</span>
+<span class="fc" id="L75">            }</span>
+<span class="fc" id="L76">            addRoute (method, url, acceptType, target);</span>
+        }
+<span class="nc" id="L78">        catch (Exception e) {</span>
+<span class="nc" id="L79">            String msg = e.getMessage ();</span>
+<span class="nc" id="L80">            LOG.severe (</span>
+<span class="nc" id="L81">                format (&quot;The @Route value: %s is not in the correct format: %s&quot;, route, msg));</span>
+<span class="fc" id="L82">        }</span>
+<span class="fc" id="L83">    }</span>
+
+    /**
+     * finds target for a requested route
+     *
+     * @param httpMethod the http method
+     * @param path the path
+     * @param acceptType the accept type
+     *
+     * @return the target
+     */
+    @Override public RouteMatch findTarget (
+        HttpMethod httpMethod, String path, String acceptType) {
+
+<span class="fc" id="L97">        final List&lt;RouteEntry&gt; routeEntries = this.findTargetsForRequestedRoute (httpMethod, path);</span>
+<span class="fc" id="L98">        final RouteEntry entry = findTargetWithGivenAcceptType (routeEntries, acceptType);</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        return entry != null?</span>
+            new RouteMatch (entry.target, entry.path, path) : null;
+    }
+
+    /**
+     * Finds multiple targets for a requested route.
+     *
+     * @param httpMethod the http method
+     * @param path the route path
+     * @param acceptType the accept type
+     *
+     * @return the targets
+     */
+    @Override public List&lt;RouteMatch&gt; findTargets (
+        final HttpMethod httpMethod,
+        final String path,
+        final String acceptType) {
+
+<span class="fc" id="L117">        final List&lt;RouteMatch&gt; matchSet = new ArrayList&lt;&gt; ();</span>
+<span class="fc" id="L118">        final List&lt;RouteEntry&gt; routeEntries = findTargetsForRequestedRoute (httpMethod, path);</span>
+
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        for (RouteEntry routeEntry : routeEntries) {</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if (acceptType != null) {</span>
+<span class="fc" id="L122">                String bestMatch = bestMatch (asList (routeEntry.acceptedType), acceptType);</span>
+
+<span class="fc bfc" id="L124" title="All 2 branches covered.">                if (routeWithGivenAcceptType (bestMatch))</span>
+<span class="fc" id="L125">                    matchSet.add (new RouteMatch (routeEntry.target, routeEntry.path, path));</span>
+<span class="fc" id="L126">            }</span>
+            else {
+<span class="fc" id="L128">                matchSet.add (new RouteMatch (routeEntry.target, routeEntry.path, path));</span>
+            }
+<span class="fc" id="L130">        }</span>
+
+<span class="fc" id="L132">        return matchSet;</span>
+    }
+
+    /**
+     * Returns the handler associated with the provided exception class
+     *
+     * @param exceptionClass Type of exception
+     * @return Associated handler
+     */
+    @SuppressWarnings (&quot;unchecked&quot;)
+    @Override
+    public Fault&lt;? extends Exception&gt; findHandler(Class&lt;? extends Exception&gt; exceptionClass) {
+        // If the exception map does not contain the provided exception class, it might
+        // still be that a superclass of the exception class is.
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">        if (!exceptionMap.containsKey(exceptionClass)) {</span>
+
+<span class="nc" id="L148">            Class&lt;? extends Exception&gt; superclass =</span>
+<span class="nc" id="L149">                (Class&lt;? extends Exception&gt;)exceptionClass.getSuperclass();</span>
+            do {
+                // Is the superclass mapped?
+<span class="nc bnc" id="L152" title="All 2 branches missed.">                if (exceptionMap.containsKey(superclass)) {</span>
+                    // Use the handler for the mapped superclass, and cache handler
+                    // for this exception class
+<span class="nc" id="L155">                    Fault handler = exceptionMap.get(superclass);</span>
+<span class="nc" id="L156">                    exceptionMap.put(exceptionClass, handler);</span>
+<span class="nc" id="L157">                    return handler;</span>
+                }
+
+                // Iteratively walk through the exception class's superclasses
+<span class="nc" id="L161">                superclass = (Class&lt;? extends Exception&gt;)superclass.getSuperclass();</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">            } while (superclass != null);</span>
+
+            // No handler found either for the superclasses of the exception class
+            // We cache the null value to prevent future
+<span class="nc" id="L166">            exceptionMap.put(exceptionClass, null);</span>
+<span class="nc" id="L167">            return null;</span>
+        }
+
+        // Direct map
+<span class="fc" id="L171">        return exceptionMap.get (exceptionClass);</span>
+    }
+
+    /**
+     * Maps the given handler to the provided exception type. If a handler was already registered to the same type, the
+     * handler is overwritten.
+     *
+     * @param handler        Handler to map to exception
+     */
+    @Override public &lt;T extends Exception&gt; void processFault (final Fault&lt;T&gt; handler) {
+<span class="fc" id="L181">        exceptionMap.put(handler.exception, handler);</span>
+<span class="fc" id="L182">    }</span>
+
+    private void addRoute (HttpMethod method, String url, String acceptedType, Object target) {
+<span class="fc" id="L185">        RouteEntry entry = new RouteEntry ();</span>
+<span class="fc" id="L186">        entry.httpMethod = method;</span>
+<span class="fc" id="L187">        entry.path = url;</span>
+<span class="fc" id="L188">        entry.target = target;</span>
+<span class="fc" id="L189">        entry.acceptedType = acceptedType;</span>
+<span class="fc" id="L190">        LOG.fine (&quot;Adds route: &quot; + entry);</span>
+        // Adds to end of list
+<span class="fc" id="L192">        routes.add (entry);</span>
+<span class="fc" id="L193">    }</span>
+
+    //can be cached? I don't think so.
+    private Map&lt;String, RouteEntry&gt; getAcceptedMimeTypes (List&lt;RouteEntry&gt; routes) {
+<span class="fc" id="L197">        Map&lt;String, RouteEntry&gt; acceptedTypes = new HashMap&lt;&gt; ();</span>
+
+<span class="fc" id="L199">        routes.stream ()</span>
+<span class="fc" id="L200">            .filter (routeEntry -&gt; !acceptedTypes.containsKey (routeEntry.acceptedType))</span>
+<span class="fc" id="L201">            .forEach (routeEntry -&gt; acceptedTypes.put (routeEntry.acceptedType, routeEntry));</span>
+
+<span class="fc" id="L203">        return acceptedTypes;</span>
+    }
+
+    private boolean routeWithGivenAcceptType (String bestMatch) {
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        return !MimeParse.NO_MIME_TYPE.equals (bestMatch);</span>
+    }
+
+    private List&lt;RouteEntry&gt; findTargetsForRequestedRoute (
+        HttpMethod httpMethod, String path) {
+
+<span class="fc" id="L213">        return routes.stream ()</span>
+<span class="fc" id="L214">            .filter (entry -&gt; entry.matches (httpMethod, path))</span>
+<span class="fc" id="L215">            .collect (toList ());</span>
+    }
+
+    // TODO: I believe this feature has impacted performance. Optimization?
+    private RouteEntry findTargetWithGivenAcceptType (
+        final List&lt;RouteEntry&gt; routeMatches, final String acceptType) {
+
+<span class="fc bfc" id="L222" title="All 4 branches covered.">        if (acceptType != null &amp;&amp; routeMatches.size () &gt; 0) {</span>
+<span class="fc" id="L223">            final Map&lt;String, RouteEntry&gt; acceptedMimeTypes = getAcceptedMimeTypes (routeMatches);</span>
+<span class="fc" id="L224">            final String bestMatch = bestMatch (acceptedMimeTypes.keySet (), acceptType);</span>
+
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">            return routeWithGivenAcceptType (bestMatch)? acceptedMimeTypes.get (bestMatch) : null;</span>
+        }
+        else {
+<span class="fc bfc" id="L229" title="All 2 branches covered.">            if (routeMatches.size () &gt; 0)</span>
+<span class="fc" id="L230">                return routeMatches.get (0);</span>
+        }
+
+<span class="fc" id="L233">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.1.201405082137</span></div></body></html>
