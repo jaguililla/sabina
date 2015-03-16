@@ -86,7 +86,7 @@
                   var js, fjs = d.getElementsByTagName(s)[0];
                   if (d.getElementById(id)) return;
                   js = d.createElement(s); js.id = id;
-                  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+                  js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
                   fjs.parentNode.insertBefore(js, fjs);
                 }(document, 'script', 'facebook-jssdk'));
               </script>
@@ -115,11 +115,7 @@
               <script type="IN/Share"></script>
             </li>
             <li>
-              <!-- Place this tag in your head or just before your close body tag. -->
-              <script src="https://apis.google.com/js/platform.js" async defer></script>
-
-              <!-- Place this tag where you want the share button to render. -->
-              <div class="g-plus" data-action="share"></div>
+              <div class="g-plus" data-action="share" data-annotation="none"></div>
             </li>
           </ul>
         </li>
