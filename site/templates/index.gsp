@@ -27,6 +27,25 @@
             style="max-width:100%;">
         </a>
       </p>
+      <p>
+        <a
+          class="github-button"
+          href="https://github.com/jamming/sabina"
+          data-icon="octicon-star"
+          data-count-href="/jamming/sabina/stargazers"
+          data-count-api="/repos/jamming/sabina#stargazers_count">Star</a>
+        <a
+          class="github-button"
+          href="https://github.com/jamming/sabina/fork"
+          data-icon="octicon-git-branch"
+          data-count-href="/jamming/sabina/network"
+          data-count-api="/repos/jamming/sabina#forks_count">Fork</a>
+        <a
+          class="github-button"
+          href="https://github.com/jamming/sabina/issues"
+          data-icon="octicon-issue-opened"
+          data-count-api="/repos/jamming/sabina#open_issues_count">Issue</a>
+      </p>
     </div>
   </div>
 

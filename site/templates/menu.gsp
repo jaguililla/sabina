@@ -32,6 +32,30 @@
         <li><a href="${root}reference.html">Reference</a></li>
         <li><a href="${root}license.html">License</a></li>
         <li><a href="${root}contact.html">Contact</a></li>
+        <li><a href="http://there4.co">there4.co</a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <!-- Ugly hack for Twitter to display nicely... in Bootstrap :O -->
+        <li style="margin-top: 12px; margin-left: 5px">
+          <a
+            href="https://twitter.com/share"
+            class="twitter-share-button"
+            data-text="Check Sabina... a framework you can hack!"
+            data-via="jaguililla"
+            data-count="none"
+            data-dnt="true">
+
+            Tweet
+          </a>
+          <script>
+            !function(d,s,id){
+            var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+            if(!d.getElementById(id)){js=d.createElement(s);
+            js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
+            fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+          </script>
+        </li>
       </ul>
     </div>
   </div>
