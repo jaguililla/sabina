@@ -29,7 +29,7 @@ public class XmlContent {
      * .
      * @param model .
      * @return .
-     * @throws JAXBException
+     * @throws JAXBException .
      */
     public static String toXml (Object model) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(model.getClass());
