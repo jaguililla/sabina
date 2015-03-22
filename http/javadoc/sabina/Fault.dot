@@ -10,7 +10,7 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// sabina.Fault<T extends java.lang.Exception>
-	c331 [label=<<table title="sabina.Fault" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./Fault.html">
+	c341 [label=<<table title="sabina.Fault" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./Fault.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> Fault&lt;T extends Exception&gt; </td></tr>
 		</table></td></tr>

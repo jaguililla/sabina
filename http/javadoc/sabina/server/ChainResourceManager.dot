@@ -10,15 +10,15 @@ digraph G {
 	nodesep=0.25;
 	ranksep=0.5;
 	// sabina.server.ChainResourceManager
-	c275 [label=<<table title="sabina.server.ChainResourceManager" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./ChainResourceManager.html">
+	c284 [label=<<table title="sabina.server.ChainResourceManager" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" bgcolor="lemonChiffon" href="./ChainResourceManager.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> ChainResourceManager </td></tr>
 		</table></td></tr>
 		</table>>, URL="./ChainResourceManager.html", fontname="Helvetica", fontcolor="black", fontsize=9.0];
 	//sabina.server.ChainResourceManager implements io.undertow.server.handlers.resource.ResourceManager
-	c289:p -> c275:p [dir=back,arrowtail=empty,style=dashed];
+	c298:p -> c284:p [dir=back,arrowtail=empty,style=dashed];
 	// io.undertow.server.handlers.resource.ResourceManager
-	c289 [label=<<table title="io.undertow.server.handlers.resource.ResourceManager" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p">
+	c298 [label=<<table title="io.undertow.server.handlers.resource.ResourceManager" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> &#171;interface&#187; </td></tr>
 <tr><td align="center" balign="center"> ResourceManager </td></tr>

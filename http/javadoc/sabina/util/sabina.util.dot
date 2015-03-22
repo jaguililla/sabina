@@ -9,14 +9,20 @@ digraph G {
 	node [fontname="Helvetica",fontsize=10,shape=plaintext];
 	nodesep=0.25;
 	ranksep=0.5;
+	// sabina.util.Io
+	c45 [label=<<table title="sabina.util.Io" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Io.html">
+		<tr><td><table border="0" cellspacing="0" cellpadding="1">
+<tr><td align="center" balign="center"> Io </td></tr>
+		</table></td></tr>
+		</table>>, URL="./Io.html", fontname="Helvetica", fontcolor="black", fontsize=9.0];
 	// sabina.util.Checks
-	c44 [label=<<table title="sabina.util.Checks" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Checks.html">
+	c46 [label=<<table title="sabina.util.Checks" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Checks.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> Checks </td></tr>
 		</table></td></tr>
 		</table>>, URL="./Checks.html", fontname="Helvetica", fontcolor="black", fontsize=9.0];
 	// sabina.util.Strings
-	c45 [label=<<table title="sabina.util.Strings" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Strings.html">
+	c47 [label=<<table title="sabina.util.Strings" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="./Strings.html">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> Strings </td></tr>
 		</table></td></tr>

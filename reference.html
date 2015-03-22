@@ -68,7 +68,8 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li style="margin-top: 12px"> <!-- Hack for Twitter to display nicely... in Bootstrap :O -->
+        <!-- Ugly hack for Twitter to display nicely... in Bootstrap :O -->
+        <li style="margin-top: 12px; margin-left: 5px">
           <a
             href="https://twitter.com/share"
             class="twitter-share-button"
@@ -86,15 +87,6 @@
             js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
             fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
           </script>
-        </li>
-        <li>
-          <div class="g-plus" data-action="share" data-annotation="none"></div>
-        </li>
-        <li>
-          <script src="https://platform.linkedin.com/in.js" type="text/javascript">
-            lang: en_US
-          </script>
-          <script type="IN/Share"></script>
         </li>
       </ul>
     </div>
@@ -115,7 +107,6 @@
 </ul><h1>Release process</h1><p>Steps:</p>
 <ul>
   <li>Commit and push all changes</li>
-  <li>Check build is okey</li>
   <li>Change version in gradle.properties</li>
   <li>Build and deploy (binary and documentation)</li>
   <li>Commit and tag the release</li>
@@ -123,11 +114,11 @@
   <li>Commit and push</li>
   <li>Confirm publishing of artifacts within Bintray (this is a manual step)</li>
 </ul><p>Command:</p>
-<pre><code>rm -rf build/ .gradle/ &amp;&amp; \
-git add . &amp;&amp; git commit &amp;&amp; \
+<pre><code>git add . &amp;&amp; git commit &amp;&amp; \
 sed -i s/-SNAPSHOT// gradle.properties &amp;&amp; \
-gw --recompile-scripts --no-daemon clean check javadoc jacoco site publish publishGhPages &amp;&amp; \
-git add gradle.properties &amp;&amp; git commit -m &quot;Release 1.0.0&quot; &amp;&amp; git tag &quot;1.0.0&quot; &amp;&amp; \
+gw wipe bundle jacoco site publish publishGhPages &amp;&amp; \
+git add gradle.properties &amp;&amp; git commit -m &quot;Release 1.2.0&quot; &amp;&amp; \
+git tag &quot;1.2.0&quot; &amp;&amp; \
 vim gradle.properties &amp;&amp; \
 git add gradle.properties &amp;&amp; git commit -m &quot;New snapshot&quot; &amp;&amp; git push origin master --tags
 </code></pre><h1>Contribute</h1>
@@ -173,7 +164,6 @@ Then something happened
         </p>
         <p>
           <div id="fb-root"></div>
-
           <script>
             (function(d, s, id) {
               var js, fjs = d.getElementsByTagName(s)[0];
@@ -183,6 +173,29 @@ Then something happened
               fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));
           </script>
+
+          <script src="https://platform.linkedin.com/in.js" type="text/javascript">
+            lang: en_US
+          </script>
+          <script type="IN/Share"></script>
+
+          <a
+            href="https://twitter.com/share"
+            class="twitter-share-button"
+            data-via="jaguililla"
+            data-count="none">
+
+            Tweet
+          </a>
+          <script>
+            !function(d,s,id){
+            var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+            if(!d.getElementById(id)){js=d.createElement(s);
+            js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
+            fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+          </script>
+
+          <div class="g-plus" data-action="share" data-annotation="none"></div>
         </p>
       </div>
     </footer>

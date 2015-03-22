@@ -68,7 +68,8 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li style="margin-top: 12px"> <!-- Hack for Twitter to display nicely... in Bootstrap :O -->
+        <!-- Ugly hack for Twitter to display nicely... in Bootstrap :O -->
+        <li style="margin-top: 12px; margin-left: 5px">
           <a
             href="https://twitter.com/share"
             class="twitter-share-button"
@@ -87,15 +88,6 @@
             fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
           </script>
         </li>
-        <li>
-          <div class="g-plus" data-action="share" data-annotation="none"></div>
-        </li>
-        <li>
-          <script src="https://platform.linkedin.com/in.js" type="text/javascript">
-            lang: en_US
-          </script>
-          <script type="IN/Share"></script>
-        </li>
       </ul>
     </div>
   </div>
@@ -106,7 +98,7 @@
 <pre><code class="xml">&lt;dependency&gt;
   &lt;groupId&gt;sabina&lt;/groupId&gt;
   &lt;artifactId&gt;http&lt;/artifactId&gt;
-  &lt;version&gt;1.0.0&lt;/version&gt;
+  &lt;version&gt;1.2.0&lt;/version&gt;
 &lt;/dependency&gt;
 </code></pre><p>And start coding:</p>
 <pre><code class="java">import static sabina.Sabina.*;
@@ -268,7 +260,6 @@ exception (NotFoundException.class, (e, request, response) -&gt; {
         </p>
         <p>
           <div id="fb-root"></div>
-
           <script>
             (function(d, s, id) {
               var js, fjs = d.getElementsByTagName(s)[0];
@@ -278,6 +269,29 @@ exception (NotFoundException.class, (e, request, response) -&gt; {
               fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));
           </script>
+
+          <script src="https://platform.linkedin.com/in.js" type="text/javascript">
+            lang: en_US
+          </script>
+          <script type="IN/Share"></script>
+
+          <a
+            href="https://twitter.com/share"
+            class="twitter-share-button"
+            data-via="jaguililla"
+            data-count="none">
+
+            Tweet
+          </a>
+          <script>
+            !function(d,s,id){
+            var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+            if(!d.getElementById(id)){js=d.createElement(s);
+            js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
+            fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+          </script>
+
+          <div class="g-plus" data-action="share" data-annotation="none"></div>
         </p>
       </div>
     </footer>
