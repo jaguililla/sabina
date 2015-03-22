@@ -15,7 +15,7 @@
 package sabina.it;
 
 /**
- * TODO .
+ * Book domain class used in tests.
  *
  * @author jam
  */
