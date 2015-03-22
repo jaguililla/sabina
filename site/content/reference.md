@@ -27,7 +27,6 @@ Release process
 Steps:
 
 * Commit and push all changes
-* Check build is okey
 * Change version in gradle.properties
 * Build and deploy (binary and documentation)
 * Commit and tag the release
@@ -37,11 +36,11 @@ Steps:
 
 Command:
 
-    rm -rf build/ .gradle/ && \
     git add . && git commit && \
     sed -i s/-SNAPSHOT// gradle.properties && \
-    gw --recompile-scripts --no-daemon clean check javadoc jacoco site publish publishGhPages && \
-    git add gradle.properties && git commit -m "Release 1.0.0" && git tag "1.0.0" && \
+    gw wipe bundle jacoco site publish publishGhPages && \
+    git add gradle.properties && git commit -m "Release ${config.projectVersion}" && \
+    git tag "${config.projectVersion}" && \
     vim gradle.properties && \
     git add gradle.properties && git commit -m "New snapshot" && git push origin master --tags
 
