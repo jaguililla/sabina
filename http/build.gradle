@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-description = 'A Sinatra inspired java web framework (core)'
+description = 'A Sinatra inspired java web framework (http)'
 
 dependencies {
     compile 'com.google.guava:guava:18.0'
