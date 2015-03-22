@@ -12,4 +12,8 @@
  * and limitations under the License.
  */
 
-include 'http', 'amqp', 'extra', 'benchmark'
+description = 'A Sinatra inspired java web framework (amqp)'
+
+dependencies {
+    compile 'com.rabbitmq:amqp-client:3.5.0'
+}
