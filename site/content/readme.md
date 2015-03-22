@@ -16,7 +16,7 @@ Then, add the Sabina maven dependency:
 <dependency>
   <groupId>sabina</groupId>
   <artifactId>http</artifactId>
-  <version>1.0.0</version>
+  <version>${config.projectVersion}</version>
 </dependency>
 ```
 

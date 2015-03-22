@@ -59,7 +59,7 @@
   <h4>Gradle</h4>
 
 <pre><code class="groovy">dependencies {
-    compile 'sabina:http:1.0.0'
+    compile 'sabina:http:${config.projectVersion}'
 }</code></pre>
 
   <h4>Maven</h4>
@@ -67,7 +67,7 @@
 <pre><code class="xml">&lt;dependency&gt;
     &lt;groupId&gt;sabina&lt;/groupId&gt;
     &lt;artifactId&gt;http&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0&lt;/version&gt;
+    &lt;version&gt;${config.projectVersion}&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 
   <h2>Write the code</h2>
