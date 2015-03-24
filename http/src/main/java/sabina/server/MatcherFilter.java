@@ -162,10 +162,6 @@ final class MatcherFilter implements Filter {
             }
             httpRes.getOutputStream ().write (bodyContent.getBytes ("utf-8"));
         }
-        else if (chain != null) {
-            if (!httpRes.isCommitted ())
-                chain.doFilter (httpReq, httpRes);
-        }
 
         // TODO this is an instance variable take care of multi-threading!
         handled = true;
