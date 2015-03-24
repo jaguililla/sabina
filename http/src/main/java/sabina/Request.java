@@ -153,7 +153,7 @@ public final class Request {
     //    request.host              # "example.com"                         DONE
      */
     public String host () {
-        return servletRequest.getHeader ("host");
+        return servletRequest.getServerName ();
     }
 
     /**
