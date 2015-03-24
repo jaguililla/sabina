@@ -29,7 +29,6 @@ import sabina.util.TestUtil;
  * @author jam
  */
 public class Session {
-
     private static TestUtil testUtil = new TestUtil ();
 
     public static void setup () throws InterruptedException {

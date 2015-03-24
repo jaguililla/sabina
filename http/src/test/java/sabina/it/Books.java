@@ -18,17 +18,13 @@ import static org.testng.Assert.*;
 import static sabina.Sabina.*;
 import static sabina.util.TestUtil.*;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
 import sabina.util.TestUtil;
 
 public class Books {
-    private static final String AUTHOR = "FOO", TITLE = "BAR", NEW_TITLE = "SABINA";
-
     private static TestUtil testUtil = new TestUtil ();
-    private static String sid = "1";
     private static int id = 1;
 
     /**
@@ -36,40 +32,43 @@ public class Books {
      */
     private static Map<String, Book> books = new HashMap<> ();
 
-    public static void setup () throws InterruptedException {
-        before (it -> it.header ("FOZ", "BAZ"));
+    static {
+        books.put ("100", new Book ("Miguel_de_Cervantes", "Quixote"));
+        books.put ("101", new Book ("William_Shakespeare", "Hamlet"));
+        books.put ("102", new Book ("Homer", "The_Odyssey"));
+    }
 
-        post ("/books", it1 -> {
-            String author = it1.queryParams ("author");
-            String title = it1.queryParams ("title");
+    public static void setup () {
+        post ("/books", it -> {
+            String author = it.queryParams ("author");
+            String title = it.queryParams ("title");
             Book book = new Book (author, title);
 
             books.put (String.valueOf (id), book);
 
-            it1.status (201); // 201 Created
+            it.status (201); // 201 Created
             return id++;
         });
 
-        // Gets the book resource for the provided id
-        get ("/books/:id", it1 -> {
-            Book book = books.get (it1.params (":id"));
+        get ("/books/:id", it -> {
+            Book book = books.get (it.params (":id"));
             if (book != null) {
                 return "Title: " + book.getTitle () + ", Author: " + book.getAuthor ();
             }
             else {
-                it1.status (404); // 404 Not found
+                it.status (404); // 404 Not found
                 return "Book not found";
             }
         });
 
         // Updates the book resource for the provided id with new information
         // author and title are sent as query parameters e.g. /books/<id>?author=Foo&title=Bar
-        put ("/books/:id", it1 -> {
-            String id1 = it1.params (":id");
+        put ("/books/:id", it -> {
+            String id1 = it.params (":id");
             Book book = books.get (id1);
             if (book != null) {
-                String newAuthor = it1.queryParams ("author");
-                String newTitle = it1.queryParams ("title");
+                String newAuthor = it.queryParams ("author");
+                String newTitle = it.queryParams ("title");
                 if (newAuthor != null)
                     book.setAuthor (newAuthor);
 
@@ -79,26 +78,25 @@ public class Books {
                 return "Book with id '" + id1 + "' updated";
             }
             else {
-                it1.status (404); // 404 Not found
+                it.status (404); // 404 Not found
                 return "Book not found";
             }
         });
 
-        // Deletes the book resource for the provided id
-        delete ("/books/:id", it1 -> {
-            String id1 = it1.params (":id");
+        delete ("/books/:id", it -> {
+            String id1 = it.params (":id");
             Book book = books.remove (id1);
             if (book != null) {
                 return "Book with id '" + id1 + "' deleted";
             }
             else {
-                it1.status (404); // 404 Not found
+                it.status (404); // 404 Not found
                 return "Book not found";
             }
         });
 
         // Gets all available book resources (id's)
-        get ("/books", it1 -> {
+        get ("/books", it -> {
             String ids = "";
 
             for (String id1 : books.keySet ())
@@ -106,86 +104,49 @@ public class Books {
 
             return ids;
         });
-
-        after (it -> it.header ("FOO", "BAR"));
     }
 
-    public void createBook () throws FileNotFoundException {
-        UrlResponse res =
-            testUtil.doPost ("/books?author=" + AUTHOR + "&title=" + TITLE);
-        sid = res.body.trim ();
-
-        assertNotNull (res);
-        assertNotNull (res.body);
+    public static void createBook () {
+        UrlResponse res = testUtil.doPost ("/books?author=Vladimir_Nabokov&title=Lolita");
         assertTrue (Integer.valueOf (res.body) > 0);
         assertEquals (201, res.status);
     }
 
-    public void listBooks () throws FileNotFoundException {
-        createBook ();
+    public static void listBooks () {
         UrlResponse res = testUtil.doGet ("/books");
-
-        assertNotNull (res);
-        assertNotNull (res.body.trim ());
-        assertTrue (res.body.trim ().length () > 0);
-        assertTrue (res.body.contains ("2"));
+        assertTrue (res.body.contains ("100") && res.body.contains ("101"));
         assertEquals (200, res.status);
     }
 
-    public void getBook () throws FileNotFoundException {
-        // ensure there is a book
-        createBook ();
-        UrlResponse res = testUtil.doGet ("/books/" + sid);
-
-        assertNotNull (res);
-        assertNotNull (res.body);
-        assertTrue (res.body.contains (AUTHOR));
-        assertTrue (res.body.contains (TITLE));
+    public static void getBook () {
+        UrlResponse res = testUtil.doGet ("/books/101");
+        assertTrue (res.body.contains ("William_Shakespeare"));
+        assertTrue (res.body.contains ("Hamlet"));
         assertEquals (200, res.status);
-
-        // verify response header set by filters:
-        assertTrue (res.headers.get ("FOO").equals ("BAR"));
-        assertTrue (res.headers.get ("FOZ").equals ("BAZ"));
     }
 
-    public void updateBook () throws FileNotFoundException {
-        createBook ();
-        UrlResponse res = testUtil.doPut ("/books/" + sid + "?title=" + NEW_TITLE);
-
-        assertNotNull (res);
-        assertNotNull (res.body);
-        assertTrue (res.body.contains (sid));
+    public static void updateBook () {
+        UrlResponse res = testUtil.doPut ("/books/100?title=Don_Quixote");
+        assertTrue (res.body.contains ("100"));
         assertTrue (res.body.contains ("updated"));
         assertEquals (200, res.status);
-    }
 
-    public void getUpdatedBook () throws FileNotFoundException {
-        updateBook ();
-        UrlResponse res = testUtil.doGet ("/books/" + sid);
-
-        assertNotNull (res);
-        assertNotNull (res.body);
-        assertTrue (res.body.contains (AUTHOR));
-        assertTrue (res.body.contains (NEW_TITLE));
+        res = testUtil.doGet ("/books/100");
+        assertTrue (res.body.contains ("Miguel_de_Cervantes"));
+        assertTrue (res.body.contains ("Don_Quixote"));
         assertEquals (200, res.status);
     }
 
-    public void deleteBook () throws FileNotFoundException {
-        UrlResponse res = testUtil.doDelete ("/books/" + sid);
-
-        assertNotNull (res);
-        assertNotNull (res.body);
-        assertTrue (res.body.contains (sid));
+    public static void deleteBook () {
+        UrlResponse res = testUtil.doDelete ("/books/102");
+        assertTrue (res.body.contains ("102"));
         assertTrue (res.body.contains ("deleted"));
         assertEquals (200, res.status);
+        books.put ("102", new Book ("Homer", "The_Odyssey")); // Restore book for next tests
     }
 
-    public void bookNotFound () throws FileNotFoundException {
-        UrlResponse res = testUtil.doGet ("/books/" + 9999);
-
-        assertNotNull (res);
-        assertNotNull (res.body);
-        assertTrue (res.body.contains ("not found"));
-        assertEquals (404, res.status);
+    public static void bookNotFound () {
+        UrlResponse res = testUtil.doGet ("/books/9999");
+        testUtil.assertResponseContains (res, "not found", 404);
     }
 }

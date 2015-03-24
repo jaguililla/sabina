@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.http.client.config.CookieSpecs.BEST_MATCH;
 import static org.apache.http.conn.socket.PlainConnectionSocketFactory.INSTANCE;
 import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -416,5 +417,15 @@ public class TestUtil {
                 out.println (">>> Waiting " + (ii * aInterval) + " ms to SHUTDOWN");
                 return;
             }
+    }
+
+    public void assertResponseContains (UrlResponse response, String body, int code) {
+        assertEquals (code, response.status);
+        assert response.body.contains (body);
+    }
+
+    public void assertResponseEquals (UrlResponse response, String body, int code) {
+        assertEquals (code, response.status);
+        assertEquals (body, response.body);
     }
 }
