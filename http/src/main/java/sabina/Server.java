@@ -206,7 +206,7 @@ public final class Server {
     public <T extends Exception> Server exception(
         Class<T> exceptionClass, BiConsumer<T, Request> aHandler) {
 
-        Fault wrapper = new Fault<> (exceptionClass, aHandler);
+        Fault<?> wrapper = new Fault<> (exceptionClass, aHandler);
         routeMatcher.processFault (wrapper);
         return this;
     }
