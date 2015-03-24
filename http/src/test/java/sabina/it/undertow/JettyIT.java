@@ -16,6 +16,7 @@ package sabina.it.undertow;
 
 import static sabina.Sabina.start;
 import static sabina.Sabina.stop;
+import static sabina.it.Books.testUtil;
 import static sabina.util.TestUtil.resetBackend;
 import static sabina.util.TestUtil.setBackend;
 
@@ -25,18 +26,19 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import sabina.it.Books;
+import sabina.it.Cookies;
 import sabina.it.Generic;
-import sabina.util.TestUtil;
+import sabina.it.Session;
 
 @Test public class JettyIT {
-    private static TestUtil testUtil = new TestUtil ();
-
     @BeforeClass public static void setup () throws IOException {
         setBackend ("jetty");
 
         Books.setup ();
+        Cookies.setup ();
         Generic.setupFile ();
         Generic.setup ();
+        Session.setup ();
 
         start (testUtil.getPort ());
         testUtil.waitForStartup ();
@@ -55,6 +57,10 @@ import sabina.util.TestUtil;
     public void updateBook () { Books.updateBook (); }
     public void deleteBook () { Books.deleteBook (); }
     public void bookNotFound () { Books.bookNotFound (); }
+
+    public void emptyCookies () { Cookies.emptyCookies (); }
+    public void createCookie () { Cookies.createCookie (); }
+    public void removeCookie () { Cookies.removeCookie (); }
 
     public void filtersShouldBeAcceptTypeAware () { Generic.filtersShouldBeAcceptTypeAware (); }
     public void routesShouldBeAcceptTypeAware () { Generic.routesShouldBeAcceptTypeAware (); }
@@ -78,4 +84,6 @@ import sabina.util.TestUtil;
     public void requestData () { Generic.requestData (); }
     public void handleException () { Generic.handleException (); }
     public void methods () { Generic.methods (); }
+
+    public void attribute () { Session.attribute (); }
 }

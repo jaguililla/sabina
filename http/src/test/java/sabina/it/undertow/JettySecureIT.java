@@ -14,23 +14,25 @@
 
 package sabina.it.undertow;
 
-import static sabina.Sabina.*;
+import static sabina.Sabina.start;
+import static sabina.Sabina.stop;
 import static sabina.it.Secure.testUtil;
-import static sabina.util.TestUtil.*;
+import static sabina.util.TestUtil.resetBackend;
+import static sabina.util.TestUtil.setBackend;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import sabina.it.Secure;
 
-@Test public class UndertowSecureIT {
+@Test public class JettySecureIT {
     @AfterClass public static void cleanup () {
         stop ();
         testUtil.waitForShutdown ();
     }
 
     @BeforeClass public static void setup () {
-        setBackend ("undertow");
+        setBackend ("jetty");
 
         Secure.setup ();
 
@@ -39,15 +41,15 @@ import sabina.it.Secure;
         resetBackend ();
     }
 
-    public void getHi () { Secure.getHi (); }
-    public void hiHead () { Secure.hiHead (); }
-    public void getHiAfterFilter () { Secure.getHiAfterFilter (); }
-    public void getRoot () { Secure.getRoot (); }
-    public void echoParam1 () { Secure.echoParam1 (); }
-    public void echoParam2 () { Secure.echoParam2 (); }
-    public void echoParamWithMaj () { Secure.echoParamWithMaj (); }
-    public void unauthorized () { Secure.unauthorized (); }
-    public void notFound () { Secure.notFound (); }
-    public void postOk () { Secure.postOk (); }
-    public void patchOk () { Secure.patchOk (); }
+    @Test (enabled = false) public void getHi () { Secure.getHi (); }
+    @Test (enabled = false) public void hiHead () { Secure.hiHead (); }
+    @Test (enabled = false) public void getHiAfterFilter () { Secure.getHiAfterFilter (); }
+    @Test (enabled = false) public void getRoot () { Secure.getRoot (); }
+    @Test (enabled = false) public void echoParam1 () { Secure.echoParam1 (); }
+    @Test (enabled = false) public void echoParam2 () { Secure.echoParam2 (); }
+    @Test (enabled = false) public void echoParamWithMaj () { Secure.echoParamWithMaj (); }
+    @Test (enabled = false) public void unauthorized () { Secure.unauthorized (); }
+    @Test (enabled = false) public void notFound () { Secure.notFound (); }
+    @Test (enabled = false) public void postOk () { Secure.postOk (); }
+    @Test (enabled = false) public void patchOk () { Secure.patchOk (); }
 }

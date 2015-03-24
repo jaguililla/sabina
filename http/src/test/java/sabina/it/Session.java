@@ -15,7 +15,6 @@
 package sabina.it;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import static sabina.Sabina.*;
 import static sabina.util.TestUtil.*;
 
@@ -29,36 +28,31 @@ import sabina.util.TestUtil;
  * @author jam
  */
 public class Session {
-    private static TestUtil testUtil = new TestUtil ();
+    public static TestUtil testUtil = new TestUtil ();
 
-    public static void setup () throws InterruptedException {
+    public static void setup () {
         put ("/session/:key/:value", it -> {
             it.session ().attribute (it.params (":key"), it.params (":value"));
-            return null;
+            return ""; // TODO Returning null is like not found (404)
         });
 
-        get ("/session/:key/", it -> it.session ().attribute (it.splat ()[0]));
-        delete ("/session/:key/", it -> {
+        get ("/session/:key", it -> it.session ().attribute (it.params (":key")));
+
+        delete ("/session/:key", it -> {
             it.session ().removeAttribute (it.params (":key"));
-            return null;
+            return ""; // TODO Returning null is like not found (404)
         });
 
-        get ("/session/", it ->
-                it.session ().attributes ().stream ().collect (Collectors.joining ())
+        get ("/session", it ->
+            it.session ().attributes ().stream ().collect (Collectors.joining ())
         );
     }
 
-    public void attribute () {
+    public static void attribute () {
         UrlResponse res = testUtil.doPut ("/session/foo/bar");
-
-        assertNotNull (res);
         assertEquals (200, res.status);
 
         res = testUtil.doGet ("/session/foo");
-
-        assertNotNull (res);
-        assertNotNull (res.body);
-        assertEquals (res.body, "bar");
-        assertEquals (200, res.status);
+        testUtil.assertResponseEquals (res, "bar", 200);
     }
 }

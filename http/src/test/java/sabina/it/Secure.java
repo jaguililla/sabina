@@ -23,8 +23,7 @@ import static sabina.util.TestUtil.*;
 import sabina.util.TestUtil;
 
 public class Secure {
-
-    private static TestUtil testUtil = new TestUtil ();
+    public static TestUtil testUtil = new TestUtil (4568);
 
     public static void setup () {
         before ("/protected/*", it -> it.halt (401, "Go Away!"));

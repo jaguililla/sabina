@@ -95,7 +95,7 @@ public class TestUtil {
         this (PORT);
     }
 
-    private TestUtil (int aPort) {
+    public TestUtil (int aPort) {
         this.port = aPort;
 
         SSLConnectionSocketFactory sslConnectionSocketFactory =

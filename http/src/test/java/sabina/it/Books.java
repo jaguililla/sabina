@@ -24,7 +24,7 @@ import java.util.Map;
 import sabina.util.TestUtil;
 
 public class Books {
-    private static TestUtil testUtil = new TestUtil ();
+    public static TestUtil testUtil = new TestUtil ();
     private static int id = 1;
 
     /**
