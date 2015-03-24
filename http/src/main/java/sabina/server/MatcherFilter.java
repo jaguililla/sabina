@@ -52,7 +52,8 @@ final class MatcherFilter implements Filter {
                 "</body></html>";
 
     public final RouteMatcher routeMatcher;
-    public final boolean isServletContext, hasOtherHandlers;
+    public final boolean hasOtherHandlers;
+    public final String backend;
 
     boolean handled;
 
@@ -61,7 +62,7 @@ final class MatcherFilter implements Filter {
      */
     public MatcherFilter () {
         routeMatcher = null;
-        isServletContext = false;
+        backend = "undertow";
         hasOtherHandlers = false;
     }
 
@@ -69,22 +70,20 @@ final class MatcherFilter implements Filter {
      * Constructor.
      *
      * @param routeMatcher The route matcher
-     * @param isServletContext If true, chain.doFilter will be invoked if request is not
-     * consumed by Sabina.
      * @param hasOtherHandlers If true, do nothing if request is not consumed by Sabina in
      * order
      * to let others handlers process the request.
      */
     public MatcherFilter (
-        RouteMatcher routeMatcher, boolean isServletContext, boolean hasOtherHandlers) {
+        RouteMatcher routeMatcher, String backend, boolean hasOtherHandlers) {
 
         this.routeMatcher = routeMatcher;
-        this.isServletContext = isServletContext;
+        this.backend = backend;
         this.hasOtherHandlers = hasOtherHandlers;
     }
 
-    public MatcherFilter (boolean isServletContext, boolean hasOtherHandlers) {
-        this (RouteMatcherFactory.get (), isServletContext, hasOtherHandlers);
+    public MatcherFilter (String backend, boolean hasOtherHandlers) {
+        this (RouteMatcherFactory.get (), backend, hasOtherHandlers);
     }
 
     @Override public void doFilter (
@@ -145,12 +144,12 @@ final class MatcherFilter implements Filter {
 
         if (!consumed && hasOtherHandlers) {
             handled = false;
-			if (BackendFactory.backend ().equals ("undertow"))
+			if (backend.equals ("undertow"))
 				httpRes.setStatus (SC_NOT_FOUND); // TODO Only for Undertow
             return;
         }
 
-        if (!consumed && !isServletContext) {
+        if (!consumed) {
             httpRes.setStatus (SC_NOT_FOUND);
             bodyContent = format (NOT_FOUND, uri);
             consumed = true;

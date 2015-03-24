@@ -29,17 +29,15 @@ public final class BackendFactory {
     }
 
     private static Backend createJetty (boolean hasMultipleHandler) {
-        return new JettyServer (createFilter (hasMultipleHandler));
+        return new JettyServer (createFilter ("jetty", hasMultipleHandler));
     }
 
-    private static MatcherFilter createFilter (boolean hasMultipleHandler) {
-        MatcherFilter matcherFilter = new MatcherFilter (false, hasMultipleHandler);
-        matcherFilter.init (null); // init is empty (left here in case is implemented)
-        return matcherFilter;
+    private static MatcherFilter createFilter (String backend, boolean hasMultipleHandler) {
+        return new MatcherFilter (backend, hasMultipleHandler);
     }
 
     private static Backend createUndertow (boolean hasMultipleHandler) {
-        return new UndertowServer (createFilter (hasMultipleHandler));
+        return new UndertowServer (createFilter ("undertow", hasMultipleHandler));
     }
 
     public static Backend create (boolean hasMultipleHandler) {

@@ -62,7 +62,7 @@ class MatcherFilterInfo extends FilterInfo implements Cloneable {
             @Override public MatcherFilter getInstance () {
                 return new MatcherFilter (
                     matcherFilter.routeMatcher,
-                    matcherFilter.isServletContext,
+                    matcherFilter.backend,
                     matcherFilter.hasOtherHandlers);
             }
 
