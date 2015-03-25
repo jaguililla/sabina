@@ -46,11 +46,11 @@ subprojects {
 }
 
 /*
- * TODO Make Jacoco report aggregate all modules. Check:
+ * TODO It only takes care of HTTP module. Make Jacoco report aggregate all modules. Check:
  * https://github.com/ben-manes/caffeine/blob/master/build.gradle
  * https://www.gradle.org/docs/current/userguide/jacoco_plugin.html
  */
 coveralls {
     sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
-    jacocoReportPath = "${projectDir}/http/build/reports/jacoco/jacocoTestReport.xml"
+    jacocoReportPath = "${projectDir}/http/build/reports/jacoco/test/jacocoTestReport.xml"
 }
