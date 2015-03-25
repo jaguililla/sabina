@@ -15,11 +15,13 @@
 package sabina;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.String.format;
+import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
 import static sabina.HttpMethod.*;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
 import sabina.route.RouteMatcher;
@@ -57,11 +59,6 @@ public final class Server {
         return new Server (port);
     }
 
-    public static Server server (String [] aArgs) {
-        // TODO Parse args to parameters
-        return new Server ();
-    }
-
     private int port = DEFAULT_PORT;
     private String ipAddress = DEFAULT_HOST;
 
@@ -73,9 +70,10 @@ public final class Server {
     private String staticFileFolder;
     private String externalStaticFileFolder;
 
-    private Backend server;
+    private String backend = getProperty ("sabina.backend", "undertow");
 
-    private final RouteMatcher routeMatcher = RouteMatcherFactory.get ();
+    private Backend server;
+    private RouteMatcher routeMatcher = RouteMatcherFactory.create ();
 
     public Server () {
         super ();
@@ -83,6 +81,11 @@ public final class Server {
 
     public Server (int port) {
         port (port);
+    }
+
+    public Server (String backend, int port) {
+        port (port);
+        backend (backend);
     }
 
     /**
@@ -108,6 +111,22 @@ public final class Server {
 
     public void port (String port) {
         port (parseInt (port));
+    }
+
+    public String backend () {
+        return backend;
+    }
+
+    /**
+     * Sets the backend used by this server. After start it would throw an exception.
+     *
+     * @param backend .
+     */
+    public void backend (String backend) {
+        if (isRunning ())
+            throw new IllegalArgumentException ("Can not change the backend of a running server");
+
+        this.backend = backend;
     }
 
     /**
@@ -139,6 +158,10 @@ public final class Server {
         this.truststorePassword = truststorePassword;
     }
 
+    public void secure (String keystoreFile, String keystorePassword) {
+        secure (keystoreFile, keystorePassword, null, null);
+    }
+
     /**
      * Sets the folder in classpath serving static files. <b>Observe: this method
      * must be called before all other methods.</b>
@@ -159,9 +182,14 @@ public final class Server {
         externalStaticFileFolder = externalFolder;
     }
 
+    public void filesLocation (String folder, String externalFolder) {
+        staticFileLocation (folder);
+        externalStaticFileLocation (externalFolder);
+    }
+
     public void start () {
         new Thread (() -> {
-            server = BackendFactory.create (hasMultipleHandlers ());
+            server = BackendFactory.create (backend, routeMatcher, hasMultipleHandlers ());
             server.startUp (
                 ipAddress,
                 port,
@@ -172,6 +200,7 @@ public final class Server {
                 staticFileFolder,
                 externalStaticFileFolder);
         }).start ();
+        LOG.info (format ("Server started at: %s:%s with %s backend", ipAddress, port, backend));
     }
 
     private boolean hasMultipleHandlers () {
@@ -184,11 +213,21 @@ public final class Server {
     public void stop () {
         if (server != null)
             server.shutDown ();
+        server = null;
+    }
+
+    public boolean isRunning () {
+        return server != null;
+    }
+
+    public void reset () {
+        if (isRunning ())
+            throw new IllegalArgumentException ("Can not reset running server");
+
+        routeMatcher = RouteMatcherFactory.create ();
     }
 
     Server addRoute (Action action) {
-        System.out.println (">>> " + action);
-
         routeMatcher.processRoute (
             action.method + " '" + action.path + "'", action.acceptType, action);
 
@@ -245,22 +284,23 @@ public final class Server {
         return addRoute (new Route (delete, path, handler));
     }
 
+    public Server delete (String path, Route.VoidHandler handler) {
+        return delete (path, wrap (handler));
+    }
+
     public Server get (String path, Route.Handler handler) {
         return addRoute (new Route (get, path, handler));
+    }
+
+    public Server get (String path, Route.VoidHandler handler) {
+        return get (path, wrap (handler));
     }
 
     public Server head (String path, Route.Handler handler) {
         return addRoute (new Route (head, path, handler));
     }
 
-    private Route.Handler wrap (Consumer<Request> handler) {
-        return request -> {
-            handler.accept (request);
-            return null;
-        };
-    }
-
-    public Server head (String path, Consumer<Request> handler) {
+    public Server head (String path, Route.VoidHandler handler) {
         return head (path, wrap (handler));
     }
 
@@ -268,51 +308,125 @@ public final class Server {
         return addRoute (new Route (options, path, handler));
     }
 
+    public Server options (String path, Route.VoidHandler handler) {
+        return options (path, wrap (handler));
+    }
+
     public Server patch (String path, Route.Handler handler) {
         return addRoute (new Route (patch, path, handler));
+    }
+
+    public Server patch (String path, Route.VoidHandler handler) {
+        return patch (path, wrap (handler));
     }
 
     public Server post (String path, Route.Handler handler) {
         return addRoute (new Route (post, path, handler));
     }
 
+    public Server post (String path, Route.VoidHandler handler) {
+        return post (path, wrap (handler));
+    }
+
     public Server put (String path, Route.Handler handler) {
         return addRoute (new Route (put, path, handler));
+    }
+
+    public Server put (String path, Route.VoidHandler handler) {
+        return put (path, wrap (handler));
     }
 
     public Server trace (String path, Route.Handler handler) {
         return addRoute (new Route (trace, path, handler));
     }
 
+    public Server trace (String path, Route.VoidHandler handler) {
+        return trace (path, wrap (handler));
+    }
+
     public Server delete (String path, String contentType, Route.Handler handler) {
         return addRoute (new Route (delete, path, contentType, handler));
+    }
+
+    public Server delete (String path, String contentType, Route.VoidHandler handler) {
+        return delete (path, contentType, wrap (handler));
     }
 
     public Server get (String path, String contentType, Route.Handler handler) {
         return addRoute (new Route (get, path, contentType, handler));
     }
 
+    public Server get (String path, String contentType, Route.VoidHandler handler) {
+        return get (path, contentType, wrap (handler));
+    }
+
     public Server head (String path, String contentType, Route.Handler handler) {
         return addRoute (new Route (head, path, contentType, handler));
+    }
+
+    public Server head (String path, String contentType, Route.VoidHandler handler) {
+        return head (path, contentType, wrap (handler));
     }
 
     public Server options (String path, String contentType, Route.Handler handler) {
         return addRoute (new Route (options, path, contentType, handler));
     }
 
+    public Server options (String path, String contentType, Route.VoidHandler handler) {
+        return options (path, contentType, wrap (handler));
+    }
+
     public Server patch (String path, String contentType, Route.Handler handler) {
         return addRoute (new Route (patch, path, contentType, handler));
+    }
+
+    public Server patch (String path, String contentType, Route.VoidHandler handler) {
+        return patch (path, contentType, wrap (handler));
     }
 
     public Server post (String path, String contentType, Route.Handler handler) {
         return addRoute (new Route (post, path, contentType, handler));
     }
 
+    public Server post (String path, String contentType, Route.VoidHandler handler) {
+        return post (path, contentType, wrap (handler));
+    }
+
     public Server put (String path, String contentType, Route.Handler handler) {
         return addRoute (new Route (put, path, contentType, handler));
+    }
+
+    public Server put (String path, String contentType, Route.VoidHandler handler) {
+        return put (path, contentType, wrap (handler));
     }
 
     public Server trace (String path, String contentType, Route.Handler handler) {
         return addRoute (new Route (trace, path, contentType, handler));
     }
+
+    public Server trace (String path, String contentType, Route.VoidHandler handler) {
+        return trace (path, contentType, wrap (handler));
+    }
+
+    private Route.Handler wrap (Route.VoidHandler handler) {
+        return request -> {
+            handler.accept (request);
+            return "";
+        };
+    }
+
+    /*
+     * TODO Use to next two functions to ease usage (lambdas in a form: (req, res) -> "")
+     */
+    private Route.Handler wrap (BiFunction<Request, Response, Object> handler) {
+        return request -> handler.apply (request, request.response);
+    }
+
+    private Route.Handler wrap (BiConsumer<Request, Response> handler) {
+        return request -> {
+            handler.accept (request, request.response);
+            return ""; // TODO Returning null is like not found (404)
+        };
+    }
+
 }

@@ -14,38 +14,35 @@
 
 package sabina.server;
 
-import static java.lang.System.getProperty;
+import sabina.route.RouteMatcher;
 
 /**
  * @author Per Wendel
  */
 public final class BackendFactory {
-    public static String backend () {
-        return getProperty ("sabina.backend") == null? "undertow" : getProperty ("sabina.backend");
-    }
-
     private BackendFactory () {
         throw new IllegalStateException ();
     }
 
-    private static Backend createJetty (boolean hasMultipleHandler) {
-        return new JettyServer (createFilter ("jetty", hasMultipleHandler));
+    private static Backend createJetty (RouteMatcher matcher, boolean hasMultipleHandler) {
+        return new JettyServer (createFilter ("jetty", matcher, hasMultipleHandler));
     }
 
-    private static MatcherFilter createFilter (String backend, boolean hasMultipleHandler) {
-        return new MatcherFilter (backend, hasMultipleHandler);
+    private static MatcherFilter createFilter (
+        String backend, RouteMatcher matcher, boolean hasMultipleHandler) {
+        return new MatcherFilter (matcher, backend, hasMultipleHandler);
     }
 
-    private static Backend createUndertow (boolean hasMultipleHandler) {
-        return new UndertowServer (createFilter ("undertow", hasMultipleHandler));
+    private static Backend createUndertow (RouteMatcher matcher, boolean hasMultipleHandler) {
+        return new UndertowServer (createFilter ("undertow", matcher, hasMultipleHandler));
     }
 
-    public static Backend create (boolean hasMultipleHandler) {
-        switch (backend ()) {
+    public static Backend create (String backend, RouteMatcher matcher, boolean multipleHandlers) {
+        switch (backend) {
             case "jetty":
-                return createJetty (hasMultipleHandler);
+                return createJetty (matcher, multipleHandlers);
             case "undertow":
-                return createUndertow (hasMultipleHandler);
+                return createUndertow (matcher, multipleHandlers);
             default:
                 throw new IllegalStateException ();
         }

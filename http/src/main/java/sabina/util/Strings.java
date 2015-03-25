@@ -14,6 +14,11 @@
 
 package sabina.util;
 
+import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
+
+import java.io.UnsupportedEncodingException;
+
 /**
  * TODO .
  *
@@ -22,6 +27,32 @@ package sabina.util;
 public class Strings {
     public static boolean isNullOrEmpty (String str) {
         return com.google.common.base.Strings.isNullOrEmpty (str);
+    }
+
+    public static String encode (final byte[] body, final String encoding) {
+        return ofNullable(encoding).map(enc -> {
+            try {
+                return body == null? "" : new String(body, enc);
+            }
+            catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }).orElse(new String(body));
+    }
+
+    public static byte[] decode (final String text, final String encoding) {
+        if (text == null)
+            return new byte[0];
+
+        if (encoding == null)
+            return text.getBytes();
+
+        try {
+            return text.getBytes(encoding);
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(format("Error decoding '%s' with '%s'", text, encoding), e);
+        }
     }
 
     private Strings () {

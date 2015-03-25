@@ -41,7 +41,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  *
  * @author Per Wendel
  */
-class JettyHandler extends SessionHandler {
+final class JettyHandler extends SessionHandler {
     private MatcherFilter filter;
 
     public JettyHandler (MatcherFilter filter) {
@@ -65,7 +65,7 @@ class JettyHandler extends SessionHandler {
  *
  * @author Per Wendel
  */
-class JettyServer implements Backend {
+final class JettyServer implements Backend {
 
     private static final String NAME = "Sabina";
     private Handler handler;

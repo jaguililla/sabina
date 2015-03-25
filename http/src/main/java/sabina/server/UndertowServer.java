@@ -43,7 +43,7 @@ import io.undertow.servlet.api.FilterInfo;
 import io.undertow.servlet.api.InstanceFactory;
 import io.undertow.servlet.api.InstanceHandle;
 
-class MatcherFilterInfo extends FilterInfo implements Cloneable {
+final class MatcherFilterInfo extends FilterInfo implements Cloneable {
     private final MatcherFilter matcherFilter;
 
     public MatcherFilterInfo (final String name, final MatcherFilter aMatcher) {
@@ -74,7 +74,7 @@ class MatcherFilterInfo extends FilterInfo implements Cloneable {
 /**
  * TODO Change by version with two resourceManagers (better performance ?)
  */
-class ChainResourceManager implements ResourceManager {
+final class ChainResourceManager implements ResourceManager {
 
     private List<ResourceManager> managers = new ArrayList<> ();
 
@@ -123,7 +123,7 @@ class ChainResourceManager implements ResourceManager {
     }
 }
 
-class UndertowServer implements Backend {
+final class UndertowServer implements Backend {
     private final MatcherFilter filter;
     private Undertow server;
 

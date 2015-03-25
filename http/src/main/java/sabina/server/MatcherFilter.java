@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import sabina.*;
 import sabina.route.RouteMatch;
 import sabina.route.RouteMatcher;
-import sabina.route.RouteMatcherFactory;
 
 /**
  * Filter for matching of filters and routes.
@@ -58,7 +57,7 @@ final class MatcherFilter implements Filter {
     boolean handled;
 
     /**
-     * TODO Needed by Undertow to instantiate the filter
+     * TODO Needed by Undertow to instantiate the filter.
      */
     public MatcherFilter () {
         routeMatcher = null;
@@ -69,9 +68,9 @@ final class MatcherFilter implements Filter {
     /**
      * Constructor.
      *
-     * @param routeMatcher The route matcher
-     * @param hasOtherHandlers If true, do nothing if request is not consumed by Sabina in
-     * order
+     * @param routeMatcher The route matcher.
+     * @param backend TODO .
+     * @param hasOtherHandlers If true, do nothing if request is not consumed by Sabina in order
      * to let others handlers process the request.
      */
     public MatcherFilter (
@@ -80,10 +79,6 @@ final class MatcherFilter implements Filter {
         this.routeMatcher = routeMatcher;
         this.backend = backend;
         this.hasOtherHandlers = hasOtherHandlers;
-    }
-
-    public MatcherFilter (String backend, boolean hasOtherHandlers) {
-        this (RouteMatcherFactory.get (), backend, hasOtherHandlers);
     }
 
     @Override public void doFilter (

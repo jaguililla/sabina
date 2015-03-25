@@ -15,7 +15,6 @@
 package sabina;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Static methods to handle the default server (singleton server)
@@ -57,7 +56,15 @@ public final class Sabina {
         return server.delete (path, handler);
     }
 
+    public static Server delete (String path, Route.VoidHandler handler) {
+        return server.delete (path, handler);
+    }
+
     public static Server get (String path, Route.Handler handler) {
+        return server.get (path, handler);
+    }
+
+    public static Server get (String path, Route.VoidHandler handler) {
         return server.get (path, handler);
     }
 
@@ -65,7 +72,7 @@ public final class Sabina {
         return server.head (path, handler);
     }
 
-    public static Server head (String path, Consumer<Request> handler) {
+    public static Server head (String path, Route.VoidHandler handler) {
         return server.head (path, handler);
     }
 
@@ -73,7 +80,15 @@ public final class Sabina {
         return server.options (path, handler);
     }
 
+    public static Server options (String path, Route.VoidHandler handler) {
+        return server.options (path, handler);
+    }
+
     public static Server patch (String path, Route.Handler handler) {
+        return server.patch (path, handler);
+    }
+
+    public static Server patch (String path, Route.VoidHandler handler) {
         return server.patch (path, handler);
     }
 
@@ -81,7 +96,15 @@ public final class Sabina {
         return server.post (path, handler);
     }
 
+    public static Server post (String path, Route.VoidHandler handler) {
+        return server.post (path, handler);
+    }
+
     public static Server put (String path, Route.Handler handler) {
+        return server.put (path, handler);
+    }
+
+    public static Server put (String path, Route.VoidHandler handler) {
         return server.put (path, handler);
     }
 
@@ -89,7 +112,15 @@ public final class Sabina {
         return server.trace (path, handler);
     }
 
+    public static Server trace (String path, Route.VoidHandler handler) {
+        return server.trace (path, handler);
+    }
+
     public static Server delete (String path, String contentType, Route.Handler handler) {
+        return server.delete (path, contentType, handler);
+    }
+
+    public static Server delete (String path, String contentType, Route.VoidHandler handler) {
         return server.delete (path, contentType, handler);
     }
 
@@ -97,7 +128,15 @@ public final class Sabina {
         return server.get (path, contentType, handler);
     }
 
+    public static Server get (String path, String contentType, Route.VoidHandler handler) {
+        return server.get (path, contentType, handler);
+    }
+
     public static Server head (String path, String contentType, Route.Handler handler) {
+        return server.head (path, contentType, handler);
+    }
+
+    public static Server head (String path, String contentType, Route.VoidHandler handler) {
         return server.head (path, contentType, handler);
     }
 
@@ -105,7 +144,15 @@ public final class Sabina {
         return server.options (path, contentType, handler);
     }
 
+    public static Server options (String path, String contentType, Route.VoidHandler handler) {
+        return server.options (path, contentType, handler);
+    }
+
     public static Server patch (String path, String contentType, Route.Handler handler) {
+        return server.patch (path, contentType, handler);
+    }
+
+    public static Server patch (String path, String contentType, Route.VoidHandler handler) {
         return server.patch (path, contentType, handler);
     }
 
@@ -113,11 +160,23 @@ public final class Sabina {
         return server.post (path, contentType, handler);
     }
 
+    public static Server post (String path, String contentType, Route.VoidHandler handler) {
+        return server.post (path, contentType, handler);
+    }
+
     public static Server put (String path, String contentType, Route.Handler handler) {
         return server.put (path, contentType, handler);
     }
 
+    public static Server put (String path, String contentType, Route.VoidHandler handler) {
+        return server.put (path, contentType, handler);
+    }
+
     public static Server trace (String path, String contentType, Route.Handler handler) {
+        return server.trace (path, contentType, handler);
+    }
+
+    public static Server trace (String path, String contentType, Route.VoidHandler handler) {
         return server.trace (path, contentType, handler);
     }
 
@@ -140,12 +199,20 @@ public final class Sabina {
         server.secure (keystoreFile, keystorePassword, truststoreFile, truststorePassword);
     }
 
+    public static void secure (String keystoreFile, String keystorePassword) {
+        server.secure (keystoreFile, keystorePassword);
+    }
+
     public static void staticFileLocation (String folder) {
         server.staticFileLocation (folder);
     }
 
     public static void externalStaticFileLocation (String externalFolder) {
         server.externalStaticFileLocation (externalFolder);
+    }
+
+    public static void filesLocation (String folder, String externalFolder) {
+        server.filesLocation (folder, externalFolder);
     }
 
     public static void start (int port) {
@@ -165,6 +232,31 @@ public final class Sabina {
         Class<T> exceptionClass, BiConsumer<T, Request> aHandler) {
 
         return server.exception (exceptionClass, aHandler);
+    }
+
+    public static void reset () {
+        server.reset ();
+    }
+
+    /**
+     * Shortcut for one handler server (proxies, etc.)
+     *
+     * @param handler .
+     */
+    public static void serve (Route.Handler handler) {
+        // TODO Change 'get' for 'any' (first create the method ;)
+        serve ("/", handler);
+    }
+
+    /**
+     * Shortcut for one handler server (proxies, etc.)
+     *
+     * @param path .
+     * @param handler .
+     */
+    public static void serve (String path, Route.Handler handler) {
+        // TODO Change 'get' for 'any' (first create the method ;)
+        get (path, handler).start ();
     }
 
     private Sabina () {

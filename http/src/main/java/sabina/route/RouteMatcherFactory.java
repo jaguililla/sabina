@@ -20,13 +20,11 @@ package sabina.route;
  * @author Per Wendel
  */
 public final class RouteMatcherFactory {
-    private static RouteMatcher routeMatcher;
-
     private RouteMatcherFactory () {
         throw new IllegalStateException ();
     }
 
-    public static synchronized RouteMatcher get () {
-        return routeMatcher == null? routeMatcher = new SimpleRouteMatcher () : routeMatcher;
+    public static synchronized RouteMatcher create () {
+        return new SimpleRouteMatcher ();
     }
 }

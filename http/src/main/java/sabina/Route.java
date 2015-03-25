@@ -17,6 +17,7 @@ package sabina;
 import static sabina.util.Checks.checkArgument;
 import static sabina.util.Strings.isNullOrEmpty;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -30,6 +31,8 @@ import java.util.function.Function;
 public final class Route extends Action {
     /** This is just a "type alias". */
     public static interface Handler extends Function<Request, Object> {}
+    /** This is just a "type alias". */
+    public static interface VoidHandler extends Consumer<Request> {}
 
     private static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
