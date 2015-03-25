@@ -30,6 +30,8 @@ plugins {
     id "com.github.kt3k.coveralls" version "2.3.1"
 }
 
+apply plugin: 'jacoco'
+
 apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/wrapper.gradle'
 apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/site.gradle'
 
@@ -41,4 +43,14 @@ subprojects {
         testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
         testCompile 'org.testng:testng:6.8.21'
     }
+}
+
+/*
+ * TODO Make Jacoco report aggregate all modules. Check:
+ * https://github.com/ben-manes/caffeine/blob/master/build.gradle
+ * https://www.gradle.org/docs/current/userguide/jacoco_plugin.html
+ */
+coveralls {
+    sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${projectDir}/http/build/reports/jacoco/jacocoTestReport.xml"
 }
