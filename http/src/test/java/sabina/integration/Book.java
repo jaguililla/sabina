@@ -12,24 +12,24 @@
  * and limitations under the License.
  */
 
-package sabina.it;
+package sabina.integration;
 
 /**
  * Book domain class used in tests.
  *
  * @author jam
  */
-public class Book {
+final class Book {
     private String author;
     private String title;
 
-    public Book (String author, String title) {
+    Book (String author, String title) {
         this.author = author;
         this.title = title;
     }
 
-    public String getAuthor () { return author; }
-    public String getTitle () { return title; }
-    public void setAuthor (String author) { this.author = author; }
-    public void setTitle (String title) { this.title = title; }
+    String getAuthor () { return author; }
+    String getTitle () { return title; }
+    void setAuthor (String author) { this.author = author; }
+    void setTitle (String title) { this.title = title; }
 }

@@ -12,47 +12,43 @@
  * and limitations under the License.
  */
 
-package sabina.it;
+package sabina.integration;
 
 import static org.testng.Assert.assertEquals;
-import static sabina.Sabina.*;
-import static sabina.util.TestUtil.*;
+import static sabina.integration.TestScenario.*;
 
 import java.util.stream.Collectors;
 
-import sabina.util.TestUtil;
+import sabina.Route.*;
+import sabina.Server;
 
 /**
  * TODO .
  *
  * @author jam
  */
-public class Session {
-    public static TestUtil testUtil = new TestUtil ();
-
-    public static void setup () {
-        put ("/session/:key/:value", it -> {
+final class Session {
+    static void setup (Server s) {
+        s.put ("/session/:key/:value", it -> {
             it.session ().attribute (it.params (":key"), it.params (":value"));
-            return ""; // TODO Returning null is like not found (404)
         });
 
-        get ("/session/:key", it -> it.session ().attribute (it.params (":key")));
+        s.get ("/session/:key", (Handler)it -> it.session ().attribute (it.params (":key")));
 
-        delete ("/session/:key", it -> {
+        s.delete ("/session/:key", it -> {
             it.session ().removeAttribute (it.params (":key"));
-            return ""; // TODO Returning null is like not found (404)
         });
 
-        get ("/session", it ->
-            it.session ().attributes ().stream ().collect (Collectors.joining ())
+        s.get ("/session", (Handler)it ->
+                it.session ().attributes ().stream ().collect (Collectors.joining ())
         );
     }
 
-    public static void attribute () {
-        UrlResponse res = testUtil.doPut ("/session/foo/bar");
+    static void attribute (TestScenario testScenario) {
+        UrlResponse res = testScenario.doPut ("/session/foo/bar");
         assertEquals (200, res.status);
 
-        res = testUtil.doGet ("/session/foo");
-        testUtil.assertResponseEquals (res, "bar", 200);
+        res = testScenario.doGet ("/session/foo");
+        testScenario.assertResponseEquals (res, "bar", 200);
     }
 }

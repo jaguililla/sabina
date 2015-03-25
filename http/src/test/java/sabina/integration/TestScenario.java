@@ -12,13 +12,11 @@
  * and limitations under the License.
  */
 
-package sabina.util;
+package sabina.integration;
 
+import static java.lang.String.format;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
-import static java.lang.System.setProperty;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.http.client.config.CookieSpecs.BEST_MATCH;
 import static org.apache.http.conn.socket.PlainConnectionSocketFactory.INSTANCE;
 import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
 import static org.testng.Assert.assertEquals;
@@ -56,7 +54,6 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.UnsupportedSchemeException;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -66,37 +63,26 @@ import org.apache.http.impl.conn.ManagedHttpClientConnectionFactory;
 import org.apache.http.util.Args;
 import org.apache.http.util.EntityUtils;
 
-public class TestUtil {
-    private static final int PORT = 4567;
-
-    public static class UrlResponse {
+final class TestScenario {
+    static class UrlResponse {
         public Map<String, String> headers;
         public Map<String, String> cookies;
         public String body;
         public int status;
     }
 
-    public static void setBackend (String backendName) {
-        String backend = getProperty ("sabina.backend");
-        if (backend == null || backend.equals ("_"))
-            setProperty ("sabina.backend", backendName);
-    }
+    final int port;
+    final String backend;
+    final boolean secure, externalFiles;
 
-    public static void resetBackend () {
-        setProperty ("sabina.backend", "_");
-    }
+    private final CloseableHttpClient httpClient;
+    private final CookieStore cookieStore;
 
-    private int port;
-
-    private CloseableHttpClient httpClient;
-    private CookieStore cookieStore;
-
-    public TestUtil () {
-        this (PORT);
-    }
-
-    public TestUtil (int aPort) {
-        this.port = aPort;
+    TestScenario (String backend, int port, boolean secure, boolean externalFiles) {
+        this.port = port;
+        this.backend = backend;
+        this.secure = secure;
+        this.externalFiles = externalFiles;
 
         SSLConnectionSocketFactory sslConnectionSocketFactory =
             new SSLConnectionSocketFactory (getSslFactory (), ALLOW_ALL_HOSTNAME_VERIFIER);
@@ -140,47 +126,30 @@ public class TestUtil {
             .build ();
     }
 
-    public UrlResponse doMethodSecure (String requestMethod, String path) {
-        return doMethod (requestMethod, path, null, true, "text/html");
+    UrlResponse doMethod (String requestMethod, String path) {
+        return doMethod (requestMethod, path, null, secure, "text/html");
     }
 
-    public UrlResponse doMethodSecure (String requestMethod, String path, String body) {
-        return doMethod (requestMethod, path, body, true, "text/html");
+    UrlResponse doMethod (String requestMethod, String path, String body) {
+        return doMethod (requestMethod, path, body, secure, "text/html");
     }
 
-    public UrlResponse doMethod (String requestMethod, String path) {
-        return doMethod (requestMethod, path, null, false, "text/html");
-    }
-
-    public UrlResponse doMethod (String requestMethod, String path, String body) {
-        return doMethod (requestMethod, path, body, false, "text/html");
-    }
-
-    public UrlResponse doMethod (
-        String requestMethod, String path, String body, String acceptType) {
-        return doMethod (requestMethod, path, body, false, acceptType);
+    UrlResponse doMethod (String requestMethod, String path, String body, String acceptType) {
+        return doMethod (requestMethod, path, body, secure, acceptType);
     }
 
     private UrlResponse doMethod (
-        String requestMethod,
-        String path,
-        String body,
-        boolean secureConnection,
-        String acceptType) {
+        String method, String path, String body, boolean secure, String acceptType) {
 
         try {
-            HttpUriRequest httpRequest =
-                getHttpRequest (requestMethod, path, body, secureConnection, acceptType);
+            HttpUriRequest httpRequest = getHttpRequest (method, path, body, secure, acceptType);
             HttpResponse httpResponse = httpClient.execute (httpRequest);
 
             UrlResponse urlResponse = new UrlResponse ();
             urlResponse.status = httpResponse.getStatusLine ().getStatusCode ();
 
             HttpEntity entity = httpResponse.getEntity ();
-            if (entity != null)
-                urlResponse.body = EntityUtils.toString (entity);
-            else
-                urlResponse.body = "";
+            urlResponse.body = entity != null? EntityUtils.toString (entity) : "";
 
             Map<String, String> headers = new HashMap<> ();
             Header[] allHeaders = httpResponse.getAllHeaders ();
@@ -196,87 +165,68 @@ public class TestUtil {
         }
     }
 
-    public UrlResponse doPost (String aPath) {
-        return doMethod ("POST", aPath, "");
-    }
-
-    public UrlResponse doGet (String aPath) {
-        return doMethod ("GET", aPath, "");
-    }
-
-    public UrlResponse doPut (String aPath) {
-        return doMethod ("PUT", aPath, "");
-    }
-
-    public UrlResponse doDelete (String aPath) {
-        return doMethod ("DELETE", aPath, "");
-    }
+    UrlResponse doPost (String aPath) { return doMethod ("POST", aPath, ""); }
+    UrlResponse doGet (String aPath) { return doMethod ("GET", aPath, ""); }
+    UrlResponse doPut (String aPath) { return doMethod ("PUT", aPath, ""); }
+    UrlResponse doDelete (String aPath) { return doMethod ("DELETE", aPath, ""); }
 
     private HttpUriRequest getHttpRequest (
-        String requestMethod,
-        String path,
-        String body,
-        boolean secureConnection,
-        String acceptType) {
+        String method, String path, String body, boolean secure, String acceptType) {
 
         if (body == null)
             body = "";
 
         try {
-            String protocol = secureConnection? "https" : "http";
+            String protocol = secure? "https" : "http";
             String uri = protocol + "://localhost:" + port + path;
 
-            if (requestMethod.equals ("GET")) {
+            if (method.equals ("GET")) {
                 HttpGet httpGet = new HttpGet (uri);
                 httpGet.setHeader ("Accept", acceptType);
                 return httpGet;
             }
 
-            if (requestMethod.equals ("POST")) {
+            if (method.equals ("POST")) {
                 HttpPost httpPost = new HttpPost (uri);
                 httpPost.setHeader ("Accept", acceptType);
                 httpPost.setEntity (new StringEntity (body));
                 return httpPost;
             }
 
-            if (requestMethod.equals ("PATCH")) {
+            if (method.equals ("PATCH")) {
                 HttpPatch httpPatch = new HttpPatch (uri);
                 httpPatch.setHeader ("Accept", acceptType);
                 httpPatch.setEntity (new StringEntity (body));
                 return httpPatch;
             }
 
-            if (requestMethod.equals ("DELETE")) {
+            if (method.equals ("DELETE")) {
                 HttpDelete httpDelete = new HttpDelete (uri);
                 httpDelete.setHeader ("Accept", acceptType);
                 return httpDelete;
             }
 
-            if (requestMethod.equals ("PUT")) {
+            if (method.equals ("PUT")) {
                 HttpPut httpPut = new HttpPut (uri);
                 httpPut.setHeader ("Accept", acceptType);
                 httpPut.setEntity (new StringEntity (body));
                 return httpPut;
             }
 
-            if (requestMethod.equals ("HEAD"))
+            if (method.equals ("HEAD"))
                 return new HttpHead (uri);
 
-            if (requestMethod.equals ("TRACE"))
+            if (method.equals ("TRACE"))
                 return new HttpTrace (uri);
 
-            if (requestMethod.equals ("OPTIONS"))
+            if (method.equals ("OPTIONS"))
                 return new HttpOptions (uri);
 
-            throw new IllegalArgumentException ("Unknown method " + requestMethod);
+            throw new IllegalArgumentException ("Unknown method " + method);
         }
         catch (UnsupportedEncodingException e) {
             throw new RuntimeException (e);
         }
-    }
-
-    public int getPort () {
-        return port;
     }
 
     /**
@@ -329,7 +279,7 @@ public class TestUtil {
      *
      * @return Keystore location as string
      */
-    public static String getKeyStoreLocation () {
+    static String getKeyStoreLocation () {
         String keyStoreLoc = getProperty ("javax.net.ssl.keyStore");
         return keyStoreLoc == null? getBase () + "/test/resources/keystore.jks" : keyStoreLoc;
     }
@@ -339,7 +289,7 @@ public class TestUtil {
      *
      * @return Keystore password as string
      */
-    public static String getKeystorePassword () {
+    static String getKeystorePassword () {
         String password = getProperty ("javax.net.ssl.keyStorePassword");
         return password == null? "password" : password;
     }
@@ -350,7 +300,7 @@ public class TestUtil {
      *
      * @return truststore location as string
      */
-    private static String getTrustStoreLocation () {
+    static String getTrustStoreLocation () {
         String trustStoreLoc = getProperty ("javax.net.ssl.trustStore");
         return trustStoreLoc == null? getKeyStoreLocation () : trustStoreLoc;
     }
@@ -361,7 +311,7 @@ public class TestUtil {
      *
      * @return truststore password as string
      */
-    private static String getTrustStorePassword () {
+    static String getTrustStorePassword () {
         String password = getProperty ("javax.net.ssl.trustStorePassword");
         return password == null? getKeystorePassword () : password;
     }
@@ -375,30 +325,29 @@ public class TestUtil {
         }
     }
 
-    public void waitForStartup () {
-        waitForStartup ("localhost", getPort ());
+    void waitForStartup () {
+        waitForStartup ("localhost", port);
     }
 
-    private static void waitForStartup (String aHost, int aPort) {
-        waitForStartup (aHost, aPort, 5, 100);
+    private static void waitForStartup (String host, int port) {
+        waitForStartup (host, port, 5, 100);
     }
 
-    private static void waitForStartup (
-        String aHost, int aPort, long aInterval, int aAttempts) {
-
-        for (int ii = 0; ii < aAttempts; ii++)
+    private static void waitForStartup (String host, int port, long interval, int attempts) {
+        for (int ii = 0; ii < attempts; ii++) {
             try {
-                new Socket (aHost, aPort);
-                out.println (">>> Waiting " + (ii * aInterval) + " ms to STARTUP");
+                new Socket (host, port);
+                out.println (">>> Waiting " + (ii * interval) + " ms to STARTUP");
                 return;
             }
             catch (IOException e) {
-                sleep (aInterval);
+                sleep (interval);
             }
+        }
     }
 
-    public void waitForShutdown () {
-        waitForShutdown ("localhost", getPort ());
+    void waitForShutdown () {
+        waitForShutdown ("localhost", port);
     }
 
     private static void waitForShutdown (String aHost, int aPort) {
@@ -419,13 +368,18 @@ public class TestUtil {
             }
     }
 
-    public void assertResponseContains (UrlResponse response, String body, int code) {
+    void assertResponseContains (UrlResponse response, String body, int code) {
         assertEquals (code, response.status);
         assert response.body.contains (body);
     }
 
-    public void assertResponseEquals (UrlResponse response, String body, int code) {
+    void assertResponseEquals (UrlResponse response, String body, int code) {
         assertEquals (code, response.status);
         assertEquals (body, response.body);
+    }
+
+    @Override public String toString () {
+        return format ("%s: %s %s <%s>",
+            backend, secure? "SECURE" : "PLAIN", externalFiles? "FS" : "MEM", port);
     }
 }

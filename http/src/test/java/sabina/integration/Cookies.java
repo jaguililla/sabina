@@ -12,68 +12,60 @@
  * and limitations under the License.
  */
 
-package sabina.it;
+package sabina.integration;
 
-import static sabina.Sabina.*;
-
-import sabina.util.TestUtil;
+import sabina.Server;
 
 /**
  * System tests for the Cookies support.
  *
  * @author dreambrother
  */
-public class Cookies {
-    public static TestUtil testUtil = new TestUtil ();
-
-    public static void setup () {
-        post ("assertNoCookies", it -> {
+final class Cookies {
+    public static void setup (Server s) {
+        s.post ("assertNoCookies", it -> {
             if (!it.cookies ().isEmpty ()) {
                 it.halt (500);
             }
-            return "";
         });
 
-        post ("setCookie", it -> {
+        s.post ("setCookie", it -> {
             it.cookie (it.queryParams ("cookieName"), it.queryParams ("cookieValue"));
-            return "";
         });
 
-        post ("assertHasCookie", it -> {
+        s.post ("assertHasCookie", it -> {
             String cookieValue = it.cookie (it.queryParams ("cookieName"));
             if (!it.queryParams ("cookieValue").equals (cookieValue))
                 it.halt (500);
-            return "";
         });
 
-        post ("removeCookie", it -> {
+        s.post ("removeCookie", it -> {
             String cookieName = it.queryParams ("cookieName");
             String cookieValue = it.cookie (cookieName);
             if (!it.queryParams ("cookieValue").equals (cookieValue))
                 it.halt (500);
             it.removeCookie (cookieName);
-            return "";
         });
     }
 
-    public static void emptyCookies () {
-        testUtil.doPost ("/assertNoCookies");
+    static void emptyCookies (TestScenario testScenario) {
+        testScenario.doPost ("/assertNoCookies");
     }
 
-    public static void createCookie () {
+    static void createCookie (TestScenario testScenario) {
         String cookieName = "testCookie";
         String cookieValue = "testCookieValue";
         String cookie = cookieName + "&cookieValue=" + cookieValue;
-        testUtil.doPost ("/setCookie?cookieName=" + cookie);
-        testUtil.doPost ("/assertHasCookie?cookieName=" + cookie);
+        testScenario.doPost ("/setCookie?cookieName=" + cookie);
+        testScenario.doPost ("/assertHasCookie?cookieName=" + cookie);
     }
 
-    public static void removeCookie () {
+    static void removeCookie (TestScenario testScenario) {
         String cookieName = "testCookie";
         String cookieValue = "testCookieValue";
         String cookie = cookieName + "&cookieValue=" + cookieValue;
-        testUtil.doPost ("/setCookie?cookieName=" + cookie);
-        testUtil.doPost ("/removeCookie?cookieName=" + cookie);
-        testUtil.doPost ("/assertNoCookies");
+        testScenario.doPost ("/setCookie?cookieName=" + cookie);
+        testScenario.doPost ("/removeCookie?cookieName=" + cookie);
+        testScenario.doPost ("/assertNoCookies");
     }
 }

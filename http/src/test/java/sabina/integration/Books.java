@@ -12,19 +12,17 @@
  * and limitations under the License.
  */
 
-package sabina.it;
+package sabina.integration;
 
 import static org.testng.Assert.*;
-import static sabina.Sabina.*;
-import static sabina.util.TestUtil.*;
+import static sabina.integration.TestScenario.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import sabina.util.TestUtil;
+import sabina.Server;
 
-public class Books {
-    public static TestUtil testUtil = new TestUtil ();
+final class Books {
     private static int id = 1;
 
     /**
@@ -38,8 +36,8 @@ public class Books {
         books.put ("102", new Book ("Homer", "The_Odyssey"));
     }
 
-    public static void setup () {
-        post ("/books", it -> {
+    static void setup (Server s) {
+        s.post ("/books", it -> {
             String author = it.queryParams ("author");
             String title = it.queryParams ("title");
             Book book = new Book (author, title);
@@ -50,7 +48,7 @@ public class Books {
             return id++;
         });
 
-        get ("/books/:id", it -> {
+        s.get ("/books/:id", it -> {
             Book book = books.get (it.params (":id"));
             if (book != null) {
                 return "Title: " + book.getTitle () + ", Author: " + book.getAuthor ();
@@ -63,7 +61,7 @@ public class Books {
 
         // Updates the book resource for the provided id with new information
         // author and title are sent as query parameters e.g. /books/<id>?author=Foo&title=Bar
-        put ("/books/:id", it -> {
+        s.put ("/books/:id", it -> {
             String id1 = it.params (":id");
             Book book = books.get (id1);
             if (book != null) {
@@ -83,7 +81,7 @@ public class Books {
             }
         });
 
-        delete ("/books/:id", it -> {
+        s.delete ("/books/:id", it -> {
             String id1 = it.params (":id");
             Book book = books.remove (id1);
             if (book != null) {
@@ -96,7 +94,7 @@ public class Books {
         });
 
         // Gets all available book resources (id's)
-        get ("/books", it -> {
+        s.get ("/books", it -> {
             String ids = "";
 
             for (String id1 : books.keySet ())
@@ -106,47 +104,47 @@ public class Books {
         });
     }
 
-    public static void createBook () {
-        UrlResponse res = testUtil.doPost ("/books?author=Vladimir_Nabokov&title=Lolita");
+    static void createBook (TestScenario testScenario) {
+        UrlResponse res = testScenario.doPost ("/books?author=Vladimir_Nabokov&title=Lolita");
         assertTrue (Integer.valueOf (res.body) > 0);
         assertEquals (201, res.status);
     }
 
-    public static void listBooks () {
-        UrlResponse res = testUtil.doGet ("/books");
+    static void listBooks (TestScenario testScenario) {
+        UrlResponse res = testScenario.doGet ("/books");
         assertTrue (res.body.contains ("100") && res.body.contains ("101"));
         assertEquals (200, res.status);
     }
 
-    public static void getBook () {
-        UrlResponse res = testUtil.doGet ("/books/101");
+    static void getBook (TestScenario testScenario) {
+        UrlResponse res = testScenario.doGet ("/books/101");
         assertTrue (res.body.contains ("William_Shakespeare"));
         assertTrue (res.body.contains ("Hamlet"));
         assertEquals (200, res.status);
     }
 
-    public static void updateBook () {
-        UrlResponse res = testUtil.doPut ("/books/100?title=Don_Quixote");
+    static void updateBook (TestScenario testScenario) {
+        UrlResponse res = testScenario.doPut ("/books/100?title=Don_Quixote");
         assertTrue (res.body.contains ("100"));
         assertTrue (res.body.contains ("updated"));
         assertEquals (200, res.status);
 
-        res = testUtil.doGet ("/books/100");
+        res = testScenario.doGet ("/books/100");
         assertTrue (res.body.contains ("Miguel_de_Cervantes"));
         assertTrue (res.body.contains ("Don_Quixote"));
         assertEquals (200, res.status);
     }
 
-    public static void deleteBook () {
-        UrlResponse res = testUtil.doDelete ("/books/102");
+    static void deleteBook (TestScenario testScenario) {
+        UrlResponse res = testScenario.doDelete ("/books/102");
         assertTrue (res.body.contains ("102"));
         assertTrue (res.body.contains ("deleted"));
         assertEquals (200, res.status);
         books.put ("102", new Book ("Homer", "The_Odyssey")); // Restore book for next tests
     }
 
-    public static void bookNotFound () {
-        UrlResponse res = testUtil.doGet ("/books/9999");
-        testUtil.assertResponseContains (res, "not found", 404);
+    static void bookNotFound (TestScenario testScenario) {
+        UrlResponse res = testScenario.doGet ("/books/9999");
+        testScenario.assertResponseContains (res, "not found", 404);
     }
 }
