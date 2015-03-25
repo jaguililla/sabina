@@ -23,7 +23,7 @@ import static sabina.Sabina.*;
  * @author Peter Nicholls, based on (practically identical to in fact) {@link
  *         SimpleExample} by Per Wendel
  */
-class SimpleSecureExample {
+final class SimpleSecureExample {
     public static void main (String[] args) {
         get ("/hello", it -> "Hello Secure World!");
 
@@ -38,23 +38,22 @@ class SimpleSecureExample {
 
         get ("/news/:section", it -> {
             it.type ("text/xml");
-            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><news>"
-                + it.params ("section") + "</news>";
+            return
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<news>" + it.params ("section") + "</news>";
         });
 
         get ("/protected", it -> {
             it.halt (403, "I don't think so!!!");
-            return null;
         });
 
         get ("/redirect", it -> {
             it.redirect ("/news/world");
-            return null;
         });
 
         get ("/", it -> "root");
 
-        secure (args[0], args[1], null, null);
+        secure (args[0], args[1]);
         start (5678);
     }
 }

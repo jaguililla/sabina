@@ -16,7 +16,12 @@ package sabina.examples;
 
 import static sabina.Sabina.*;
 
-class JsonAcceptTypeExample {
+/**
+ * Example to show that a route with an accept type only replies to that content type.
+ *
+ * @author Per Wendel
+ */
+final class JsonAcceptTypeExample {
     public static void main (String args[]) {
         /*
 		 * Running curl -i -H "Accept: application/json" http://localhost:4567/hello json

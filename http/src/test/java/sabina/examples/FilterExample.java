@@ -25,16 +25,16 @@ import java.util.Map;
  * <p>
  * When requesting the resource with e.g. http://localhost:4567/hello?user=some&password=guy
  * the filter will stop the execution and the client will get a 401 UNAUTHORIZED with the
- * content 'You are not welcome here'
+ * content 'You are not welcome here'.
  * <p>
  * When requesting the resource with e.g. http://localhost:4567/hello?user=foo&password=bar the
  * filter will accept the request and the request will continue to the /hello route.
  * <p>
- * Note: There is also an "after filter" that adds a header to the response
+ * Note: There is also an "after filter" that adds a header to the response.
  *
  * @author Per Wendel
  */
-class FilterExample {
+final class FilterExample {
     private static Map<String, String> usernamePasswords = new HashMap<> ();
 
     public static void main (String[] args) {

@@ -19,11 +19,11 @@ import static sabina.Sabina.*;
 /**
  * You'll need to provide a JKS keystore as arg 0 and its password as arg 1.
  */
-class HelloSecureWorld {
+final class HelloSecureWorld {
     public static void main (String[] args) {
         get ("/hello", it -> "Hello Secure World!");
 
-        secure (args[0], args[1], null, null);
+        secure (args[0], args[1]);
         start ();
     }
 }

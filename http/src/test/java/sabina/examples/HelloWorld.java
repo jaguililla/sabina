@@ -16,8 +16,13 @@ package sabina.examples;
 
 import static sabina.Sabina.*;
 
-class HelloWorld {
+/**
+ * The class name says everything.
+ *
+ * @author Per Wendel
+ */
+final class HelloWorld {
     public static void main (String[] args) {
-        get ("/hello", it -> "Hello World!").start ();
+        serve (it -> "Hello World!");
     }
 }

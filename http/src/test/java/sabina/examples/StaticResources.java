@@ -17,9 +17,11 @@ package sabina.examples;
 import static sabina.Sabina.*;
 
 /**
- * Example showing how serve static resources.
+ * Example showing how to serve static resources.
+ *
+ * @author Per Wendel
  */
-class StaticResources {
+final class StaticResources {
     public static void main (String[] args) {
         get ("/hello", it -> "Hello World!");
 

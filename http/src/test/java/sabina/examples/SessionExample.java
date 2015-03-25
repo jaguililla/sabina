@@ -17,11 +17,15 @@ package sabina.examples;
 import static java.lang.String.format;
 import static sabina.Sabina.*;
 
-class SessionExample {
+/**
+ * Demonstrate the use of sessions inside Sabina.
+ *
+ * @author Per Wendel
+ */
+final class SessionExample {
     private static final String SESSION_NAME = "username";
 
     public static void main (String[] args) {
-        // TODO Not working with Undertow (IllegalStateException)
         get ("/", it ->
             it.session ().<String>attribute (SESSION_NAME) == null?
                 "<html>" +
@@ -45,13 +49,11 @@ class SessionExample {
                 it.session ().attribute (SESSION_NAME, name);
 
             it.redirect ("/");
-            return "";
         });
 
         get ("/clear", it -> {
             it.session ().removeAttribute (SESSION_NAME);
             it.redirect ("/");
-            return "";
         });
 
         start ();

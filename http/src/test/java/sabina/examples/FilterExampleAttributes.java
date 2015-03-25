@@ -14,15 +14,16 @@
 
 package sabina.examples;
 
+import static java.lang.String.format;
 import static java.lang.System.out;
 import static sabina.Sabina.*;
 
 /**
- * Example showing the use of attributes
+ * Example showing the use of attributes.
  *
  * @author Per Wendel
  */
-class FilterExampleAttributes {
+final class FilterExampleAttributes {
     public static void main (String[] args) {
         get ("/hi", it -> {
             it.attribute ("foo", "bar");
@@ -36,14 +37,9 @@ class FilterExampleAttributes {
 
         after ("/hi", it -> {
             Object foo = it.attribute ("foo");
-            it.body (asXml ("foo", foo));
+            it.body (format ("<%s>%s</%s>", "foo", foo, "foo"));
         });
 
         start ();
-    }
-
-    private static String asXml (String name, Object value) {
-        return"<?xml version=\"1.0\" encoding=\"UTF-8\"?><"
-            + name + ">" + value + "</" + name + ">";
     }
 }

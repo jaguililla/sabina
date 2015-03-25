@@ -16,7 +16,13 @@ package sabina.examples;
 
 import static sabina.Sabina.*;
 
-class FilterExampleWildcard {
+/**
+ * Example showing the use of wildcards in paths. The filter will match any path starting with
+ * '/protected/'. And the remaining path will be available through the request parameter.
+ *
+ * @author Per Wendel
+ */
+final class FilterExampleWildcard {
     public static void main (String[] args) {
         before ("/protected/*", it -> it.halt (401, "Go Away!")).start ();
     }
