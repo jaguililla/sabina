@@ -46,9 +46,7 @@ subprojects {
 }
 
 /*
- * TODO It only takes care of HTTP module. Make Jacoco report aggregate all modules. Check:
- * https://github.com/ben-manes/caffeine/blob/master/build.gradle
- * https://www.gradle.org/docs/current/userguide/jacoco_plugin.html
+ * Only takes care of HTTP module. Check issue #26
  */
 coveralls {
     sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
