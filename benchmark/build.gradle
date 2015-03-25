@@ -14,7 +14,7 @@
 
 import static java.lang.System.*
 
-apply plugin:'application'
+apply plugin: 'application'
 
 description = "Sinatra web framework's benchmark"
 mainClassName = "sabina.benchmark.Application"
@@ -39,10 +39,13 @@ dependencies {
     testCompile 'org.apache.httpcomponents:fluent-hc:4.4'
 }
 
+project.ext ['sabinaBackend'] = getProperty('sabina.backend', 'undertow')
+project.ext ['sabinaBenchmarkRepository'] = getProperty ('sabina.benchmark.repository', 'mongodb')
+
 test {
     systemProperties = [
-        'sabina.backend': getProperty('sabina.backend', 'undertow'),
-        'sabina.benchmark.repository': getProperty ('sabina.benchmark.repository', 'mysql')
+        'sabina.backend': sabinaBackend,
+        'sabina.benchmark.repository': sabinaBenchmarkRepository
     ]
 }
 
@@ -55,10 +58,8 @@ def stressTestReport () {
     def parser = new groovy.util.XmlSlurper()
     def testsuite = parser.parse (file)
 
-    printf ("\n\t%s - %s%n",
-        getProperty('sabina.backend', 'undertow').toUpperCase (),
-        getProperty('sabina.benchmark.repository', 'mysql').toUpperCase ()
-    )
+    printf ("\n\t%s - %s%n", sabinaBackend.toUpperCase (), sabinaBenchmarkRepository.toUpperCase ())
+
     testsuite.testcase
         .collect {                                        // Collect values
         [

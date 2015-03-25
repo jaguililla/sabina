@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
  * <p>TODO Change assert's order
  */
 public final class ApplicationTest {
-    private static final int THREADS = 1, EXECUTIONS = 1, WARM_UP = 0;
+    private static final int THREADS = 8, EXECUTIONS = 75, WARM_UP = 5;
 
     private static final String ENDPOINT = "http://localhost:5050";
     private static final Gson GSON = new Gson ();
