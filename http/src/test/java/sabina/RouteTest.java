@@ -14,10 +14,41 @@
 
 package sabina;
 
+import static sabina.HttpMethod.after;
+
 import org.testng.annotations.Test;
 
 public class RouteTest {
-    @Test public void route () {
-        // TODO
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void routeWithNullMethod () {
+        new Route (null, "path", "type", it -> "");
+    }
+
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void routeWithNullPath () {
+        new Route (after, null, "type", it -> "");
+    }
+
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void routeWithNullAcceptType () {
+        new Route (after, "path", null, it -> "");
+    }
+
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void routeWithEmptyPath () {
+        new Route (after, "", "type", it -> "");
+    }
+
+    @Test (expectedExceptions = IllegalArgumentException.class)
+    public void routeWithEmptyAcceptType () {
+        new Route (after, "path", "", it -> "");
+    }
+
+    @Test public void testToString () throws Exception {
+        Route action = new Route (after, "path", "type", it -> "");
+        assert action.path.equals ("path");
+        assert action.acceptType.equals ("type");
+        assert action.method.equals (after);
+        assert action.toString ().equals ("after path [type]");
     }
 }

@@ -79,11 +79,8 @@ public final class Response {
         return this.body;
     }
 
-    /**
-     * @return the raw response object handed in by Jetty
-     */
-    public HttpServletResponse raw () {
-        return response;
+    public void addDateHeader (String name, long value) {
+        response.addDateHeader (name, value);
     }
 
     /**

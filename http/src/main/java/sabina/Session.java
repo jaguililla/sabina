@@ -41,13 +41,6 @@ public final class Session {
     }
 
     /**
-     * @return The raw <code>HttpSession</code> object handed in by the servlet container.
-     */
-    public HttpSession raw () {
-        return session;
-    }
-
-    /**
      * Returns the object bound with the specified name in this session, or null if no object
      * is bound under the name.
      *

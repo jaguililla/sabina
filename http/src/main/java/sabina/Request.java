@@ -93,8 +93,8 @@ public final class Request {
         this.servletRequest = request;
         this.response = new Response (response);
 
-        List<String> requestList = convertRouteToList (match.getRequestURI ());
-        List<String> matchedList = convertRouteToList (match.getMatchUri ());
+        List<String> requestList = convertRouteToList (match.requestURI);
+        List<String> matchedList = convertRouteToList (match.entry.path);
 
         params = getParams(requestList, matchedList);
         splat = getSplat(requestList, matchedList);
@@ -320,13 +320,6 @@ public final class Request {
     }
 
     /**
-     * @return the raw HttpServletRequest object handed in by Jetty
-     */
-    public HttpServletRequest raw () {
-        return servletRequest;
-    }
-
-    /**
      * Returns the current session associated with this request,
      * or if the request does not have a session, creates one.
      *
@@ -455,7 +448,7 @@ public final class Request {
     public void body (final String body) { response.body (body); }
     public void redirect (final String location) { response.redirect (location); }
     public void type (final String contentType) { response.type (contentType); }
-    public HttpServletResponse responseRaw () { return response.raw (); }
+//    public HttpServletResponse responseRaw () { return response.raw (); }
     public String responseBody () { return response.body (); }
     public void status (final int statusCode) { response.status (statusCode); }
     public void removeCookie (final String name) { response.removeCookie (name); }

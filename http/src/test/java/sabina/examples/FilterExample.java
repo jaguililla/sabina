@@ -19,6 +19,8 @@ import static sabina.Sabina.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import sabina.Route;
+
 /**
  * Example showing a very simple (and stupid) autentication filter that is executed before all
  * other resources.

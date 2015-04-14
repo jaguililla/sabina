@@ -14,21 +14,17 @@
 
 package sabina.route;
 
+import sabina.Route;
+
 /**
  * @author Per Wendel
  */
 public final class RouteMatch {
-    private final Object target;
-    private final String matchUri;
-    private final String requestURI;
+    public final Route entry;
+    public final String requestURI;
 
-    public RouteMatch (Object target, String matchUri, String requestUri) {
-        this.target = target;
-        this.matchUri = matchUri;
-        this.requestURI = requestUri;
+    public RouteMatch (Route entry, String path) {
+        this.entry = entry;
+        this.requestURI = path;
     }
-
-    public Object getTarget () { return target; }
-    public String getMatchUri () { return matchUri; }
-    public String getRequestURI () { return requestURI; }
 }

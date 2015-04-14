@@ -14,17 +14,20 @@
 
 package sabina.route;
 
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.logging.Logger.getLogger;
 import static java.util.stream.Collectors.toList;
+import static sabina.HttpMethod.*;
+import static sabina.Request.convertRouteToList;
 import static sabina.route.MimeParse.bestMatch;
+import static sabina.Route.*;
 
 import java.util.*;
 import java.util.logging.Logger;
 
 import sabina.Fault;
 import sabina.HttpMethod;
+import sabina.Route;
 
 /**
  * Simple route matcher that is supposed to work exactly as Sinatra's
@@ -33,9 +36,8 @@ import sabina.HttpMethod;
  */
 final class SimpleRouteMatcher implements RouteMatcher {
     private static final Logger LOG = getLogger (SimpleRouteMatcher.class.getName ());
-    private static final char SINGLE_QUOTE = '\'';
 
-    private final List<RouteEntry> routes = new ArrayList<> ();
+    private final List<Route> routes = new ArrayList<> ();
 
     /** Holds a map of Exception classes and associated handlers. */
     private final Map<Class<? extends Exception>, Fault<?>> exceptionMap = new HashMap<> ();
@@ -47,39 +49,11 @@ final class SimpleRouteMatcher implements RouteMatcher {
     /**
      * Parse and validates a route and adds it
      *
-     * @param route the route path
-     * @param acceptType the accept type
      * @param target the invocation target
      */
-    @Override public void processRoute (String route, String acceptType, Object target) {
-        try {
-            int singleQuoteIndex = route.indexOf (SINGLE_QUOTE);
-            String httpMethod =
-                route.substring (0, singleQuoteIndex).trim ().toLowerCase (); // NOSONAR
-            String url =
-                route.substring (singleQuoteIndex + 1, route.length () - 1).trim (); // NOSONAR
-
-            // Use special enum stuff to get from value
-            HttpMethod method;
-            try {
-                method = HttpMethod.valueOf (httpMethod);
-            }
-            catch (IllegalArgumentException e) {
-                LOG.severe (
-                    "The @Route value: "
-                        + route
-                        + " has an invalid HTTP method part: "
-                        + httpMethod
-                        + ".");
-                return;
-            }
-            addRoute (method, url, acceptType, target);
-        }
-        catch (Exception e) {
-            String msg = e.getMessage ();
-            LOG.severe (
-                format ("The @Route value: %s is not in the correct format: %s", route, msg));
-        }
+    @Override public void processRoute (Route target) {
+        LOG.fine ("Adds route: " + target);
+        routes.add (target);
     }
 
     /**
@@ -94,10 +68,9 @@ final class SimpleRouteMatcher implements RouteMatcher {
     @Override public RouteMatch findTarget (
         HttpMethod httpMethod, String path, String acceptType) {
 
-        final List<RouteEntry> routeEntries = this.findTargetsForRequestedRoute (httpMethod, path);
-        final RouteEntry entry = findTargetWithGivenAcceptType (routeEntries, acceptType);
-        return entry != null?
-            new RouteMatch (entry.target, entry.path, path) : null;
+        final List<Route> routeEntries = this.findTargetsForRequestedRoute (httpMethod, path);
+        final Route entry = findTargetWithGivenAcceptType (routeEntries, acceptType);
+        return entry != null? new RouteMatch (entry, path) : null;
     }
 
     /**
@@ -115,17 +88,17 @@ final class SimpleRouteMatcher implements RouteMatcher {
         final String acceptType) {
 
         final List<RouteMatch> matchSet = new ArrayList<> ();
-        final List<RouteEntry> routeEntries = findTargetsForRequestedRoute (httpMethod, path);
+        final List<Route> routeEntries = findTargetsForRequestedRoute (httpMethod, path);
 
-        for (RouteEntry routeEntry : routeEntries) {
+        for (Route routeEntry : routeEntries) {
             if (acceptType != null) {
-                String bestMatch = bestMatch (asList (routeEntry.acceptedType), acceptType);
+                String bestMatch = bestMatch (singletonList (routeEntry.acceptType), acceptType);
 
                 if (routeWithGivenAcceptType (bestMatch))
-                    matchSet.add (new RouteMatch (routeEntry.target, routeEntry.path, path));
+                    matchSet.add (new RouteMatch (routeEntry, path));
             }
             else {
-                matchSet.add (new RouteMatch (routeEntry.target, routeEntry.path, path));
+                matchSet.add (new RouteMatch (routeEntry, path));
             }
         }
 
@@ -181,24 +154,13 @@ final class SimpleRouteMatcher implements RouteMatcher {
         exceptionMap.put(handler.exception, handler);
     }
 
-    private void addRoute (HttpMethod method, String url, String acceptedType, Object target) {
-        RouteEntry entry = new RouteEntry ();
-        entry.httpMethod = method;
-        entry.path = url;
-        entry.target = target;
-        entry.acceptedType = acceptedType;
-        LOG.fine ("Adds route: " + entry);
-        // Adds to end of list
-        routes.add (entry);
-    }
-
     //can be cached? I don't think so.
-    private Map<String, RouteEntry> getAcceptedMimeTypes (List<RouteEntry> routes) {
-        Map<String, RouteEntry> acceptedTypes = new HashMap<> ();
+    private Map<String, Route> getAcceptedMimeTypes (List<Route> routes) {
+        Map<String, Route> acceptedTypes = new HashMap<> ();
 
         routes.stream ()
-            .filter (routeEntry -> !acceptedTypes.containsKey (routeEntry.acceptedType))
-            .forEach (routeEntry -> acceptedTypes.put (routeEntry.acceptedType, routeEntry));
+            .filter (routeEntry -> !acceptedTypes.containsKey (routeEntry.acceptType))
+            .forEach (routeEntry -> acceptedTypes.put (routeEntry.acceptType, routeEntry));
 
         return acceptedTypes;
     }
@@ -207,20 +169,20 @@ final class SimpleRouteMatcher implements RouteMatcher {
         return !MimeParse.NO_MIME_TYPE.equals (bestMatch);
     }
 
-    private List<RouteEntry> findTargetsForRequestedRoute (
+    private List<Route> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path) {
 
         return routes.stream ()
-            .filter (entry -> entry.matches (httpMethod, path))
+            .filter (entry -> matches (entry, httpMethod, path))
             .collect (toList ());
     }
 
     // TODO: I believe this feature has impacted performance. Optimization?
-    private RouteEntry findTargetWithGivenAcceptType (
-        final List<RouteEntry> routeMatches, final String acceptType) {
+    private Route findTargetWithGivenAcceptType (
+        final List<Route> routeMatches, final String acceptType) {
 
         if (acceptType != null && routeMatches.size () > 0) {
-            final Map<String, RouteEntry> acceptedMimeTypes = getAcceptedMimeTypes (routeMatches);
+            final Map<String, Route> acceptedMimeTypes = getAcceptedMimeTypes (routeMatches);
             final String bestMatch = bestMatch (acceptedMimeTypes.keySet (), acceptType);
 
             return routeWithGivenAcceptType (bestMatch)? acceptedMimeTypes.get (bestMatch) : null;
@@ -231,5 +193,87 @@ final class SimpleRouteMatcher implements RouteMatcher {
         }
 
         return null;
+    }
+
+    public boolean matches (Route route, HttpMethod httpMethod, String path) {
+        return
+            ( (httpMethod == before || httpMethod == after)
+                && (route.method == httpMethod)
+                && route.path.equals (ALL_PATHS) )
+                || ( route.method == httpMethod
+                && matchPath (route, path) );
+    }
+
+    private boolean matchPath (Route route, String path) {
+        if (!route.path.endsWith ("*") && ((path.endsWith ("/") && !route.path.endsWith ("/"))
+            || (route.path.endsWith ("/") && !path.endsWith ("/")))) {
+            // One and not both ends with slash
+            return false;
+        }
+        if (route.path.equals (path)) {
+            // Paths are the same
+            return true;
+        }
+
+        // check params
+        List<String> thisPathList = convertRouteToList (route.path);
+        List<String> pathList = convertRouteToList (path);
+
+        int thisPathSize = thisPathList.size ();
+        int pathSize = pathList.size ();
+
+        if (thisPathSize == pathSize) {
+            for (int i = 0; i < thisPathSize; i++) {
+                String thisPathPart = thisPathList.get (i);
+                String pathPart = pathList.get (i);
+
+                if ((i == thisPathSize - 1) && (thisPathPart.equals ("*") && route.path
+                    .endsWith ("*"))) {
+                    // wildcard match
+                    return true;
+                }
+
+                if ((!thisPathPart.startsWith (":"))
+                    && !thisPathPart.equals (pathPart)
+                    && !thisPathPart.equals ("*")) {
+                    return false;
+                }
+            }
+            // All parts matched
+            return true;
+        }
+        else {
+            // Number of "path parts" not the same
+            // check wild card:
+            if (route.path.endsWith ("*")) {
+                if (pathSize == (thisPathSize - 1) && (path.endsWith ("/"))) {
+                    // Hack for making wildcards work with trailing slash
+                    pathList.add ("");
+                    pathList.add ("");
+                    pathSize += 2;
+                }
+
+                if (thisPathSize < pathSize) {
+                    for (int i = 0; i < thisPathSize; i++) {
+                        String thisPathPart = thisPathList.get (i);
+                        String pathPart = pathList.get (i);
+                        if (thisPathPart.equals ("*") && (i == thisPathSize - 1) && route.path
+                            .endsWith ("*")) {
+                            // wildcard match
+                            return true;
+                        }
+                        if (!thisPathPart.startsWith (":")
+                            && !thisPathPart.equals (pathPart)
+                            && !thisPathPart.equals ("*")) {
+                            return false;
+                        }
+                    }
+                    // All parts matched
+                    return true;
+                }
+                // End check wild card
+            }
+            return false;
+        }
     }
 }

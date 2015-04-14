@@ -14,6 +14,9 @@
 
 package sabina;
 
+import static java.lang.String.format;
+import static sabina.HttpMethod.after;
+import static sabina.HttpMethod.before;
 import static sabina.util.Checks.checkArgument;
 import static sabina.util.Strings.isNullOrEmpty;
 
@@ -28,15 +31,31 @@ import java.util.function.Function;
  *
  * @author Per Wendel
  */
-public final class Route extends Action {
+public final class Route {
     /** This is just a "type alias". */
     public interface Handler extends Function<Request, Object> {}
     /** This is just a "type alias". */
     public interface VoidHandler extends Consumer<Request> {}
 
+    public static final String ALL_PATHS = "+/*paths";
     private static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
+    public final String path;
+    public final String acceptType;
+    public final HttpMethod method;
     private final Handler handler;
+
+    /**
+     * Constructor.
+     *
+     * TODO Maybe this is only intended for filters!!!
+     *
+     * @param method .
+     * @param handler .
+     */
+    Route (final HttpMethod method, final Handler handler) {
+        this (method, ALL_PATHS, handler);
+    }
 
     /**
      * Constructor.
@@ -46,7 +65,11 @@ public final class Route extends Action {
      * @param handler .
      */
     Route (final HttpMethod method, final String path, final Handler handler) {
-        this (method, path, DEFAULT_ACCEPT_TYPE, handler);
+        this (
+            method,
+            path,
+            method == after || method == before? "text/html" : DEFAULT_ACCEPT_TYPE,
+            handler);
     }
 
     /**
@@ -57,15 +80,23 @@ public final class Route extends Action {
      * @param acceptType The accept type which is used for matching.
      * @param handler .
      */
-    Route (
+    public Route (
         final HttpMethod method,
         final String path,
         final String acceptType,
         final Handler handler) {
 
-        super (method, path, isNullOrEmpty (acceptType)? DEFAULT_ACCEPT_TYPE : acceptType);
-        checkArgument (handler != null);
+        checkArgument (!isNullOrEmpty (path) && !isNullOrEmpty (acceptType));
+        checkArgument (handler != null && method != null);
+
+        this.path = path;
+        this.acceptType = acceptType;
+        this.method = method;
         this.handler = handler;
+    }
+
+    public boolean isFilter () {
+        return method == after || method == before;
     }
 
     /**
@@ -77,5 +108,9 @@ public final class Route extends Action {
      */
     public Object handle (final Request req) {
         return handler.apply (req);
+    }
+
+    @Override public String toString () {
+        return format ("%s %s [%s]", method, path, acceptType);
     }
 }

@@ -105,18 +105,14 @@ final class MatcherFilter implements Filter {
             final HttpMethod httpMethod = HttpMethod.valueOf (httpMethodStr);
             RouteMatch match = routeMatcher.findTarget (httpMethod, uri, acceptType);
 
-            Object target = null;
-            if (match != null) {
-                target = match.getTarget ();
-            }
-            else if (httpMethod == head && bodyContent == null) {
+            if (match == null && httpMethod == head && bodyContent == null) {
                 // See if get is mapped to provide default head mapping
                 RouteMatch requestedRouteTarget = routeMatcher.findTarget (get, uri, acceptType);
                 bodyContent = requestedRouteTarget != null? "" : null;
             }
 
-            if (target != null) {
-                bodyContent = handleTargetRoute (httpReq, httpRes, bodyContent, match, target);
+            if (match != null && match.entry != null) {
+                bodyContent = handleTargetRoute (httpReq, httpRes, bodyContent, match, match.entry);
             }
 
             bodyContent = onFilter (after, httpReq, httpRes, uri, acceptType, bodyContent);
@@ -171,16 +167,15 @@ final class MatcherFilter implements Filter {
     @SuppressWarnings ("unchecked")
     private String handleTargetRoute (
         HttpServletRequest aHttpReq, HttpServletResponse aHttpRes, String aBodyContent,
-        RouteMatch aMatch, Object aTarget) {
+        RouteMatch aMatch, Route aTarget) {
 
         Request request = null;
         try {
             String result = null;
-            if (aTarget instanceof Route) {
-                Route route = ((Route)aTarget);
+            if (!aTarget.isFilter ()) {
                 request = Request.create (aMatch, aHttpReq, aHttpRes);
 
-                Object element = route.handle (request);
+                Object element = aTarget.handle (request);
                 result = element != null? element.toString () : null;
             }
             if (result != null) {
@@ -219,16 +214,15 @@ final class MatcherFilter implements Filter {
         final List<RouteMatch> matchSet = routeMatcher.findTargets (method, uri, acceptType);
 
         for (RouteMatch filterMatch : matchSet) {
-            final Object filterTarget = filterMatch.getTarget ();
-            if (filterTarget instanceof sabina.Filter) {
-                final Request request = Request.create (filterMatch, httpRequest, httpResponse);
-                final sabina.Filter filter = (sabina.Filter)filterTarget;
-                filter.handle (request);
+            if (!filterMatch.entry.isFilter ())
+                continue;
 
-                final String bodyAfterFilter = request.response.body ();
-                if (bodyAfterFilter != null)
-                    bodyContent = bodyAfterFilter;
-            }
+            final Request request = Request.create (filterMatch, httpRequest, httpResponse);
+            filterMatch.entry.handle (request);
+
+            final String bodyAfterFilter = request.response.body ();
+            if (bodyAfterFilter != null)
+                bodyContent = bodyAfterFilter;
         }
 
         return bodyContent;

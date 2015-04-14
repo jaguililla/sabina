@@ -18,6 +18,11 @@ import static sabina.util.Checks.checkArgument;
 
 import java.util.function.BiConsumer;
 
+/**
+ * This class represents an error handler tied to an exception.
+ *
+ * @param <T> Exception to be handled by the fault callback.
+ */
 public final class Fault<T extends Exception> {
     public final Class<T> exception;
     public final BiConsumer<T, Request> handler;

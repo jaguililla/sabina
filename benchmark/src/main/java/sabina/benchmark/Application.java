@@ -111,7 +111,7 @@ final class Application {
 
     private static void addCommonHeaders (Request it) {
         it.header ("Server", "Undertow/1.1.2");
-        it.response.raw ().addDateHeader ("Date", new Date ().getTime ());
+        it.response.addDateHeader ("Date", new Date ().getTime ());
     }
 
     public static void main (String[] args) {

@@ -18,6 +18,7 @@ import java.util.List;
 
 import sabina.Fault;
 import sabina.HttpMethod;
+import sabina.Route;
 
 /**
  * Route matcher
@@ -28,11 +29,9 @@ public interface RouteMatcher {
     /**
      * Parses, validates and adds a route
      *
-     * @param route .
-     * @param acceptType .
      * @param target .
      */
-    void processRoute (String route, String acceptType, Object target);
+    void processRoute (Route target);
 
     <T extends Exception> void processFault (Fault<T> handler);
 

@@ -24,6 +24,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
+import sabina.Route.Handler;
+import sabina.Route.VoidHandler;
 import sabina.route.RouteMatcher;
 import sabina.route.RouteMatcherFactory;
 import sabina.server.Backend;
@@ -35,7 +37,7 @@ import sabina.server.BackendFactory;
  *
  * <ul>
  * <li>A verb (get, post, put, delete, head, trace, options)</li>
- * <li>A path (/hello, /users/:name)</li>
+ * <li>A p (/hello, /users/:name)</li>
  * <li>A callback ( handle(Request request, Response response) )</li>
  * </ul>
  *
@@ -163,10 +165,10 @@ public final class Server {
     }
 
     /**
-     * Sets the folder in classpath serving static files. <b>Observe: this method
+     * Sets the folder in classp serving static files. <b>Observe: this method
      * must be called before all other methods.</b>
      *
-     * @param folder the folder in classpath.
+     * @param folder the folder in classp.
      */
     public void resourcesLocation (String folder) {
         staticFileFolder = folder.startsWith ("/")? folder.substring (1) : folder;
@@ -227,25 +229,47 @@ public final class Server {
         routeMatcher = RouteMatcherFactory.create ();
     }
 
-    Server addRoute (Action action) {
-        routeMatcher.processRoute (
-            action.method + " '" + action.path + "'", action.acceptType, action);
-
+    Server addRoute (Route action) {
+        routeMatcher.processRoute (action);
         return this;
+    }
+
+    Server add (HttpMethod method, Handler h) {
+        return addRoute (new Route (method, h));
+    }
+
+    Server add (HttpMethod method, String p, Handler h) {
+        return addRoute (new Route (method, p, h));
+    }
+
+    Server add (HttpMethod method, String p, String ct, Handler h) {
+        return addRoute (new Route (method, p, ct, h));
+    }
+
+    Server add (HttpMethod method, VoidHandler h) {
+        return add (method, wrap (h));
+    }
+
+    Server add (HttpMethod method, String p, VoidHandler h) {
+        return add (method, p, wrap (h));
+    }
+
+    Server add (HttpMethod method, String p, String ct, VoidHandler h) {
+        return add (method, p, ct, wrap (h));
     }
 
     /**
      * Maps an exception handler to be executed when an exception occurs during routing.
      *
      * @param exceptionClass the exception class.
-     * @param aHandler        The handler.
+     * @param h The handler.
      * @param <T> Exception type.
-     * @return The server whith the added exception handler.
+     * @return The server whith the added exception h.
      */
     public <T extends Exception> Server exception(
-        Class<T> exceptionClass, BiConsumer<T, Request> aHandler) {
+        Class<T> exceptionClass, BiConsumer<T, Request> h) {
 
-        Fault<?> wrapper = new Fault<> (exceptionClass, aHandler);
+        Fault<?> wrapper = new Fault<> (exceptionClass, h);
         routeMatcher.processFault (wrapper);
         return this;
     }
@@ -253,164 +277,52 @@ public final class Server {
     /*
      * Filters
      */
-    public Server after (Filter.Handler handler) {
-        return addRoute (new Filter (after, handler));
-    }
-
-    public Server before (Filter.Handler handler) {
-        return addRoute (new Filter (before, handler));
-    }
-
-    public Server after (String path, Filter.Handler handler) {
-        return addRoute (new Filter (after, path, handler));
-    }
-
-    public Server before (String path, Filter.Handler handler) {
-        return addRoute (new Filter (before, path, handler));
-    }
-
-    public Server after (String path, String contentType, Filter.Handler handler) {
-        return addRoute (new Filter (after, path, contentType, handler));
-    }
-
-    public Server before (String path, String contentType, Filter.Handler handler) {
-        return addRoute (new Filter (before, path, contentType, handler));
-    }
+    public Server after (VoidHandler h) { return add (after, h); }
+    public Server before (VoidHandler h) { return add (before, h); }
+    public Server after (String p, VoidHandler h) { return add (after, p, h); }
+    public Server before (String p, VoidHandler h) { return add (before, p, h); }
+    public Server after (String p, String ct, VoidHandler h) { return add (after, p, ct, h); }
+    public Server before (String p, String ct, VoidHandler h) { return add (before, p, ct, h); }
 
     /*
      * Routes
      */
-    public Server delete (String path, Route.Handler handler) {
-        return addRoute (new Route (delete, path, handler));
-    }
+    public Server delete (String p, Handler h) { return add (delete, p, h); }
+    public Server delete (String p, VoidHandler h) { return delete (p, wrap (h)); }
+    public Server get (String p, Handler h) { return add (get, p, h); }
+    public Server get (String p, VoidHandler h) { return get (p, wrap (h)); }
+    public Server head (String p, Handler h) { return add (head, p, h); }
+    public Server head (String p, VoidHandler h) { return head (p, wrap (h)); }
+    public Server options (String p, Handler h) { return add (options, p, h); }
+    public Server options (String p, VoidHandler h) { return options (p, wrap (h)); }
+    public Server patch (String p, Handler h) { return add (patch, p, h); }
+    public Server patch (String p, VoidHandler h) { return patch (p, wrap (h)); }
+    public Server post (String p, Handler h) { return add (post, p, h); }
+    public Server post (String p, VoidHandler h) { return post (p, wrap (h)); }
+    public Server put (String p, Handler h) { return add (put, p, h); }
+    public Server put (String p, VoidHandler h) { return put (p, wrap (h)); }
+    public Server trace (String p, Handler h) { return add (trace, p, h); }
+    public Server trace (String p, VoidHandler h) { return trace (p, wrap (h)); }
+    public Server delete (String p, String ct, Handler h) { return add (delete, p, ct, h); }
+    public Server delete (String p, String ct, VoidHandler h) { return delete (p, ct, wrap (h)); }
+    public Server get (String p, String ct, Handler h) { return add (get, p, ct, h); }
+    public Server get (String p, String ct, VoidHandler h) { return get (p, ct, wrap (h)); }
+    public Server head (String p, String ct, Handler h) { return add (head, p, ct, h); }
+    public Server head (String p, String ct, VoidHandler h) { return head (p, ct, wrap (h)); }
+    public Server options (String p, String ct, Handler h) { return add (options, p, ct, h); }
+    public Server options (String p, String ct, VoidHandler h) { return options (p, ct, wrap (h)); }
+    public Server patch (String p, String ct, Handler h) { return add (patch, p, ct, h); }
+    public Server patch (String p, String ct, VoidHandler h) { return patch (p, ct, wrap (h)); }
+    public Server post (String p, String ct, Handler h) { return add (post, p, ct, h); }
+    public Server post (String p, String ct, VoidHandler h) { return post (p, ct, wrap (h)); }
+    public Server put (String p, String ct, Handler h) { return add (put, p, ct, h); }
+    public Server put (String p, String ct, VoidHandler h) { return put (p, ct, wrap (h)); }
+    public Server trace (String p, String ct, Handler h) { return add (trace, p, ct, h); }
+    public Server trace (String p, String ct, VoidHandler h) { return trace (p, ct, wrap (h)); }
 
-    public Server delete (String path, Route.VoidHandler handler) {
-        return delete (path, wrap (handler));
-    }
-
-    public Server get (String path, Route.Handler handler) {
-        return addRoute (new Route (get, path, handler));
-    }
-
-    public Server get (String path, Route.VoidHandler handler) {
-        return get (path, wrap (handler));
-    }
-
-    public Server head (String path, Route.Handler handler) {
-        return addRoute (new Route (head, path, handler));
-    }
-
-    public Server head (String path, Route.VoidHandler handler) {
-        return head (path, wrap (handler));
-    }
-
-    public Server options (String path, Route.Handler handler) {
-        return addRoute (new Route (options, path, handler));
-    }
-
-    public Server options (String path, Route.VoidHandler handler) {
-        return options (path, wrap (handler));
-    }
-
-    public Server patch (String path, Route.Handler handler) {
-        return addRoute (new Route (patch, path, handler));
-    }
-
-    public Server patch (String path, Route.VoidHandler handler) {
-        return patch (path, wrap (handler));
-    }
-
-    public Server post (String path, Route.Handler handler) {
-        return addRoute (new Route (post, path, handler));
-    }
-
-    public Server post (String path, Route.VoidHandler handler) {
-        return post (path, wrap (handler));
-    }
-
-    public Server put (String path, Route.Handler handler) {
-        return addRoute (new Route (put, path, handler));
-    }
-
-    public Server put (String path, Route.VoidHandler handler) {
-        return put (path, wrap (handler));
-    }
-
-    public Server trace (String path, Route.Handler handler) {
-        return addRoute (new Route (trace, path, handler));
-    }
-
-    public Server trace (String path, Route.VoidHandler handler) {
-        return trace (path, wrap (handler));
-    }
-
-    public Server delete (String path, String contentType, Route.Handler handler) {
-        return addRoute (new Route (delete, path, contentType, handler));
-    }
-
-    public Server delete (String path, String contentType, Route.VoidHandler handler) {
-        return delete (path, contentType, wrap (handler));
-    }
-
-    public Server get (String path, String contentType, Route.Handler handler) {
-        return addRoute (new Route (get, path, contentType, handler));
-    }
-
-    public Server get (String path, String contentType, Route.VoidHandler handler) {
-        return get (path, contentType, wrap (handler));
-    }
-
-    public Server head (String path, String contentType, Route.Handler handler) {
-        return addRoute (new Route (head, path, contentType, handler));
-    }
-
-    public Server head (String path, String contentType, Route.VoidHandler handler) {
-        return head (path, contentType, wrap (handler));
-    }
-
-    public Server options (String path, String contentType, Route.Handler handler) {
-        return addRoute (new Route (options, path, contentType, handler));
-    }
-
-    public Server options (String path, String contentType, Route.VoidHandler handler) {
-        return options (path, contentType, wrap (handler));
-    }
-
-    public Server patch (String path, String contentType, Route.Handler handler) {
-        return addRoute (new Route (patch, path, contentType, handler));
-    }
-
-    public Server patch (String path, String contentType, Route.VoidHandler handler) {
-        return patch (path, contentType, wrap (handler));
-    }
-
-    public Server post (String path, String contentType, Route.Handler handler) {
-        return addRoute (new Route (post, path, contentType, handler));
-    }
-
-    public Server post (String path, String contentType, Route.VoidHandler handler) {
-        return post (path, contentType, wrap (handler));
-    }
-
-    public Server put (String path, String contentType, Route.Handler handler) {
-        return addRoute (new Route (put, path, contentType, handler));
-    }
-
-    public Server put (String path, String contentType, Route.VoidHandler handler) {
-        return put (path, contentType, wrap (handler));
-    }
-
-    public Server trace (String path, String contentType, Route.Handler handler) {
-        return addRoute (new Route (trace, path, contentType, handler));
-    }
-
-    public Server trace (String path, String contentType, Route.VoidHandler handler) {
-        return trace (path, contentType, wrap (handler));
-    }
-
-    private Route.Handler wrap (Route.VoidHandler handler) {
+    private Handler wrap (VoidHandler h) {
         return request -> {
-            handler.accept (request);
+            h.accept (request);
             return "";
         };
     }
@@ -418,15 +330,14 @@ public final class Server {
     /*
      * TODO Use to next two functions to ease usage (lambdas in a form: (req, res) -> "")
      */
-    private Route.Handler wrap (BiFunction<Request, Response, Object> handler) {
-        return request -> handler.apply (request, request.response);
+    private Handler wrap (BiFunction<Request, Response, Object> h) {
+        return request -> h.apply (request, request.response);
     }
 
-    private Route.Handler wrap (BiConsumer<Request, Response> handler) {
+    private Handler wrap (BiConsumer<Request, Response> h) {
         return request -> {
-            handler.accept (request, request.response);
+            h.accept (request, request.response);
             return ""; // TODO Returning null is like not found (404)
         };
     }
-
 }

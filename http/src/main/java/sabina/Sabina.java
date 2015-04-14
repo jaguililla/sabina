@@ -16,248 +16,141 @@ package sabina;
 
 import java.util.function.BiConsumer;
 
+import sabina.Route.Handler;
+import sabina.Route.VoidHandler;
+
 /**
  * Static methods to handle the default server (singleton server)
  */
 public final class Sabina {
-    private static Server server = new Server ();
+    private static Server s = new Server ();
 
     /*
      * Filters
      */
-    public static Server after (Filter.Handler handler) {
-        return server.after (handler);
-    }
-
-    public static Server before (Filter.Handler handler) {
-        return server.before (handler);
-    }
-
-    public static Server after (String path, Filter.Handler handler) {
-        return server.after (path, handler);
-    }
-
-    public static Server before (String path, Filter.Handler handler) {
-        return server.before (path, handler);
-    }
-
-    public static Server after (String path, String contentType, Filter.Handler handler) {
-        return server.after (path, contentType, handler);
-    }
-
-    public static Server before (String path, String contentType, Filter.Handler handler) {
-        return server.before (path, contentType, handler);
-    }
+    public static Server after (VoidHandler h) { return s.after (h); }
+    public static Server before (VoidHandler h) { return s.before (h); }
+    public static Server after (String p, VoidHandler h) { return s.after (p, h); }
+    public static Server before (String p, VoidHandler h) { return s.before (p, h); }
+    public static Server after (String p, String ct, VoidHandler h) { return s.after (p, ct, h); }
+    public static Server before (String p, String ct, VoidHandler h) { return s.before (p, ct, h); }
 
     /*
      * Routes
      */
-    public static Server delete (String path, Route.Handler handler) {
-        return server.delete (path, handler);
-    }
-
-    public static Server delete (String path, Route.VoidHandler handler) {
-        return server.delete (path, handler);
-    }
-
-    public static Server get (String path, Route.Handler handler) {
-        return server.get (path, handler);
-    }
-
-    public static Server get (String path, Route.VoidHandler handler) {
-        return server.get (path, handler);
-    }
-
-    public static Server head (String path, Route.Handler handler) {
-        return server.head (path, handler);
-    }
-
-    public static Server head (String path, Route.VoidHandler handler) {
-        return server.head (path, handler);
-    }
-
-    public static Server options (String path, Route.Handler handler) {
-        return server.options (path, handler);
-    }
-
-    public static Server options (String path, Route.VoidHandler handler) {
-        return server.options (path, handler);
-    }
-
-    public static Server patch (String path, Route.Handler handler) {
-        return server.patch (path, handler);
-    }
-
-    public static Server patch (String path, Route.VoidHandler handler) {
-        return server.patch (path, handler);
-    }
-
-    public static Server post (String path, Route.Handler handler) {
-        return server.post (path, handler);
-    }
-
-    public static Server post (String path, Route.VoidHandler handler) {
-        return server.post (path, handler);
-    }
-
-    public static Server put (String path, Route.Handler handler) {
-        return server.put (path, handler);
-    }
-
-    public static Server put (String path, Route.VoidHandler handler) {
-        return server.put (path, handler);
-    }
-
-    public static Server trace (String path, Route.Handler handler) {
-        return server.trace (path, handler);
-    }
-
-    public static Server trace (String path, Route.VoidHandler handler) {
-        return server.trace (path, handler);
-    }
-
-    public static Server delete (String path, String contentType, Route.Handler handler) {
-        return server.delete (path, contentType, handler);
-    }
-
-    public static Server delete (String path, String contentType, Route.VoidHandler handler) {
-        return server.delete (path, contentType, handler);
-    }
-
-    public static Server get (String path, String contentType, Route.Handler handler) {
-        return server.get (path, contentType, handler);
-    }
-
-    public static Server get (String path, String contentType, Route.VoidHandler handler) {
-        return server.get (path, contentType, handler);
-    }
-
-    public static Server head (String path, String contentType, Route.Handler handler) {
-        return server.head (path, contentType, handler);
-    }
-
-    public static Server head (String path, String contentType, Route.VoidHandler handler) {
-        return server.head (path, contentType, handler);
-    }
-
-    public static Server options (String path, String contentType, Route.Handler handler) {
-        return server.options (path, contentType, handler);
-    }
-
-    public static Server options (String path, String contentType, Route.VoidHandler handler) {
-        return server.options (path, contentType, handler);
-    }
-
-    public static Server patch (String path, String contentType, Route.Handler handler) {
-        return server.patch (path, contentType, handler);
-    }
-
-    public static Server patch (String path, String contentType, Route.VoidHandler handler) {
-        return server.patch (path, contentType, handler);
-    }
-
-    public static Server post (String path, String contentType, Route.Handler handler) {
-        return server.post (path, contentType, handler);
-    }
-
-    public static Server post (String path, String contentType, Route.VoidHandler handler) {
-        return server.post (path, contentType, handler);
-    }
-
-    public static Server put (String path, String contentType, Route.Handler handler) {
-        return server.put (path, contentType, handler);
-    }
-
-    public static Server put (String path, String contentType, Route.VoidHandler handler) {
-        return server.put (path, contentType, handler);
-    }
-
-    public static Server trace (String path, String contentType, Route.Handler handler) {
-        return server.trace (path, contentType, handler);
-    }
-
-    public static Server trace (String path, String contentType, Route.VoidHandler handler) {
-        return server.trace (path, contentType, handler);
-    }
+    public static Server delete (String p, Handler h) { return s.delete (p, h); }
+    public static Server delete (String p, VoidHandler h) { return s.delete (p, h); }
+    public static Server get (String p, Handler h) { return s.get (p, h); }
+    public static Server get (String p, VoidHandler h) { return s.get (p, h); }
+    public static Server head (String p, Handler h) { return s.head (p, h); }
+    public static Server head (String p, VoidHandler h) { return s.head (p, h); }
+    public static Server options (String p, Handler h) { return s.options (p, h); }
+    public static Server options (String p, VoidHandler h) { return s.options (p, h); }
+    public static Server patch (String p, Handler h) { return s.patch (p, h); }
+    public static Server patch (String p, VoidHandler h) { return s.patch (p, h); }
+    public static Server post (String p, Handler h) { return s.post (p, h); }
+    public static Server post (String p, VoidHandler h) { return s.post (p, h); }
+    public static Server put (String p, Handler h) { return s.put (p, h); }
+    public static Server put (String p, VoidHandler h) { return s.put (p, h); }
+    public static Server trace (String p, Handler h) { return s.trace (p, h); }
+    public static Server trace (String p, VoidHandler h) { return s.trace (p, h); }
+    public static Server delete (String p, String ct, Handler h) { return s.delete (p, ct, h); }
+    public static Server delete (String p, String ct, VoidHandler h) { return s.delete (p, ct, h); }
+    public static Server get (String p, String ct, Handler h) { return s.get (p, ct, h); }
+    public static Server get (String p, String ct, VoidHandler h) { return s.get (p, ct, h); }
+    public static Server head (String p, String ct, Handler h) { return s.head (p, ct, h); }
+    public static Server head (String p, String ct, VoidHandler h) { return s.head (p, ct, h); }
+    public static Server options (String p, String ct, Handler h) { return s.options (p, ct, h); }
+    public static Server options (String p, String ct, VoidHandler h) { return s.options (p, ct, h); }
+    public static Server patch (String p, String ct, Handler h) { return s.patch (p, ct, h); }
+    public static Server patch (String p, String ct, VoidHandler h) { return s.patch (p, ct, h); }
+    public static Server post (String p, String ct, Handler h) { return s.post (p, ct, h); }
+    public static Server post (String p, String ct, VoidHandler h) { return s.post (p, ct, h); }
+    public static Server put (String p, String ct, Handler h) { return s.put (p, ct, h); }
+    public static Server put (String p, String ct, VoidHandler h) { return s.put (p, ct, h); }
+    public static Server trace (String p, String ct, Handler h) { return s.trace (p, ct, h); }
+    public static Server trace (String p, String ct, VoidHandler h) { return s.trace (p, ct, h); }
 
     public static void host (String host) {
-        server.host (host);
+        s.host (host);
     }
 
     public static void port (int port) {
-        server.port (port);
+        s.port (port);
     }
 
     public static void port (String port) {
-        server.port (port);
+        s.port (port);
     }
 
     public static void secure (
         String keystoreFile, String keystorePassword,
         String truststoreFile, String truststorePassword) {
 
-        server.secure (keystoreFile, keystorePassword, truststoreFile, truststorePassword);
+        s.secure (keystoreFile, keystorePassword, truststoreFile, truststorePassword);
     }
 
     public static void secure (String keystoreFile, String keystorePassword) {
-        server.secure (keystoreFile, keystorePassword);
+        s.secure (keystoreFile, keystorePassword);
     }
 
     public static void resourcesLocation (String folder) {
-        server.resourcesLocation (folder);
+        s.resourcesLocation (folder);
     }
 
     public static void filesLocation (String externalFolder) {
-        server.filesLocation (externalFolder);
+        s.filesLocation (externalFolder);
     }
 
     public static void filesLocation (String folder, String externalFolder) {
-        server.filesLocation (folder, externalFolder);
+        s.filesLocation (folder, externalFolder);
     }
 
     public static void start (int port) {
-        server.port (port);
-        server.start ();
+        s.port (port);
+        s.start ();
     }
 
     public static void start () {
-        server.start ();
+        s.start ();
     }
 
     public static void stop () {
-        server.stop ();
+        s.stop ();
     }
 
     public static <T extends Exception> Server exception(
-        Class<T> exceptionClass, BiConsumer<T, Request> aHandler) {
+        Class<T> exceptionClass, BiConsumer<T, Request> handler) {
 
-        return server.exception (exceptionClass, aHandler);
+        return s.exception (exceptionClass, handler);
     }
 
     public static void reset () {
-        server.reset ();
+        s.reset ();
     }
 
     /**
-     * Shortcut for one handler server (proxies, etc.)
+     * Shortcut for one h server (proxies, etc.)
      *
-     * @param handler .
+     * @param h .
      */
-    public static void serve (Route.Handler handler) {
+    public static void serve (Handler h) {
         // TODO Change 'get' for 'any' (first create the method ;)
-        serve ("/", handler);
+        serve ("/", h);
     }
 
     /**
-     * Shortcut for one handler server (proxies, etc.)
+     * Shortcut for one h server (proxies, etc.)
      *
-     * @param path .
-     * @param handler .
+     * @param p .
+     * @param h .
      */
-    public static void serve (String path, Route.Handler handler) {
+    public static void serve (String p, Handler h) {
         // TODO Change 'get' for 'any' (first create the method ;)
-        get (path, handler).start ();
+        get (p, h).start ();
     }
 
-    private Sabina () { throw new IllegalStateException (); }
+    private Sabina () {
+        throw new IllegalStateException ();
+    }
 }
