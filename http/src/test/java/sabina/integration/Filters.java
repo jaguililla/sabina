@@ -14,24 +14,23 @@
 
 package sabina.integration;
 
-import static org.testng.Assert.*;
-import static sabina.integration.TestScenario.*;
-import static java.lang.String.*;
+import static java.lang.String.format;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static sabina.integration.TestScenario.UrlResponse;
 
 import sabina.Request;
-import sabina.Route.VoidHandler;
 import sabina.Server;
 
-final class Generic {
+/**
+ * Routes, content types, methods...
+ *
+ * @author jam
+ */
+final class Filters {
     private static String part = "param";
 
     static void setup (Server s) {
-        s.before ("/protected/*", it -> it.halt (401, "Go Away!"));
-
-        s.before ("/protected/*", "application/json", it ->
-                it.halt (401, "{\"message\": \"Go Away!\"}")
-        );
-
         s.get ("/request/data", it -> {
             it.response.body (it.url ());
 
@@ -48,15 +47,6 @@ final class Generic {
             it.header ("port", String.valueOf (it.port ()));
 
             return it.response.body () + "!!!";
-        });
-
-        s.exception (
-            UnsupportedOperationException.class,
-            (ex, req) -> req.response.header ("error", ex.getMessage ())
-        );
-
-        s.get ("/exception", (VoidHandler)it -> {
-            throw new UnsupportedOperationException ("error message");
         });
 
         s.get ("/hi", "application/json", it -> "{\"message\": \"Hello World\"}");
@@ -107,8 +97,6 @@ final class Generic {
         s.get ("/tworoutes/" + part.toUpperCase () + "/:param", it ->
                 part.toUpperCase () + " route: " + it.params (":param")
         );
-
-        s.after ("/hi", it -> it.response.header ("after", "foobar"));
     }
 
     static void filtersShouldBeAcceptTypeAware (TestScenario testScenario) {
@@ -252,6 +240,7 @@ final class Generic {
         assertEquals ("error message", response.headers.get ("error"));
     }
 
+    // TODO Check why HEAD is returning 404
     static void methods (TestScenario testScenario) {
         checkMethod (testScenario, "HEAD", "header"); // Head does not support body message
         checkMethod (testScenario, "DELETE");

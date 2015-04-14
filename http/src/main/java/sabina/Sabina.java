@@ -203,12 +203,12 @@ public final class Sabina {
         server.secure (keystoreFile, keystorePassword);
     }
 
-    public static void staticFileLocation (String folder) {
-        server.staticFileLocation (folder);
+    public static void resourcesLocation (String folder) {
+        server.resourcesLocation (folder);
     }
 
-    public static void externalStaticFileLocation (String externalFolder) {
-        server.externalStaticFileLocation (externalFolder);
+    public static void filesLocation (String externalFolder) {
+        server.filesLocation (externalFolder);
     }
 
     public static void filesLocation (String folder, String externalFolder) {
@@ -259,7 +259,5 @@ public final class Sabina {
         get (path, handler).start ();
     }
 
-    private Sabina () {
-        throw new IllegalStateException ();
-    }
+    private Sabina () { throw new IllegalStateException (); }
 }

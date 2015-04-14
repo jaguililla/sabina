@@ -22,6 +22,11 @@ import java.util.Map;
 
 import sabina.Server;
 
+/**
+ * Simple CRUD example.
+ *
+ * @author Per Wendel
+ */
 final class Books {
     private static int id = 1;
 

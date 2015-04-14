@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  */
 public final class Filter extends Action {
     /** This is just a "type alias". */
-    public static interface Handler extends Consumer<Request> {}
+    public interface Handler extends Consumer<Request> {}
 
     public static final String ALL_PATHS = "+/*paths";
     private static final String DEFAULT_CONTENT_TYPE = "text/html";

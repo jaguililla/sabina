@@ -33,6 +33,10 @@ import sabina.Route.VoidHandler;
     @BeforeClass public static void setupFile () throws IOException { SabinaIT.setupFile (); }
 
     @BeforeClass public static void setup () {
+        get ("/reset/route", it -> "should not be executed");
+
+        reset ();
+
         before ("/protected/*", it -> it.halt (401, "Go Away!"));
 
         before ("/protected/*", "application/json", it ->
@@ -163,4 +167,14 @@ import sabina.Route.VoidHandler;
     public void requestData () { Generic.requestData (testScenario); }
     public void handleException () { Generic.handleException (testScenario); }
     public void methods () { Generic.methods (testScenario); }
+
+    public void routes_after_reset_are_not_available () {
+        UrlResponse response = testScenario.doGet ("/reset/route");
+        assert response.status == 404;
+    }
+
+    @Test (expectedExceptions = IllegalStateException.class)
+    public void reset_on_a_running_server_raises_an_error () {
+        reset ();
+    }
 }

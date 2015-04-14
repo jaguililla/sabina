@@ -168,7 +168,7 @@ public final class Server {
      *
      * @param folder the folder in classpath.
      */
-    public void staticFileLocation (String folder) {
+    public void resourcesLocation (String folder) {
         staticFileFolder = folder.startsWith ("/")? folder.substring (1) : folder;
     }
 
@@ -178,13 +178,13 @@ public final class Server {
      *
      * @param externalFolder the external folder serving static files.
      */
-    public void externalStaticFileLocation (String externalFolder) {
+    public void filesLocation (String externalFolder) {
         externalStaticFileFolder = externalFolder;
     }
 
     public void filesLocation (String folder, String externalFolder) {
-        staticFileLocation (folder);
-        externalStaticFileLocation (externalFolder);
+        resourcesLocation (folder);
+        filesLocation (externalFolder);
     }
 
     public void start () {
@@ -222,7 +222,7 @@ public final class Server {
 
     public void reset () {
         if (isRunning ())
-            throw new IllegalArgumentException ("Can not reset running server");
+            throw new IllegalStateException ("Can not reset running server");
 
         routeMatcher = RouteMatcherFactory.create ();
     }

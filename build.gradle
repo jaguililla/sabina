@@ -30,8 +30,6 @@ plugins {
     id "com.github.kt3k.coveralls" version "2.3.1"
 }
 
-apply plugin: 'jacoco'
-
 apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/wrapper.gradle'
 apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/site.gradle'
 
@@ -51,4 +49,19 @@ subprojects {
 coveralls {
     sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
     jacocoReportPath = "${projectDir}/http/build/reports/jacoco/test/jacocoTestReport.xml"
+}
+
+tasks.coveralls {
+    onlyIf { System.env.'CI' }
+}
+
+def projectSite = "site"
+
+githubPages {
+    repoUri = githubUrl
+    pages {
+        from (file ("$buildDir/$projectSite")) {
+            into '.'
+        }
+    }
 }
