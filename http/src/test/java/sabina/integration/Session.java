@@ -14,10 +14,9 @@
 
 package sabina.integration;
 
+import static java.util.stream.Collectors.joining;
 import static org.testng.Assert.assertEquals;
 import static sabina.integration.TestScenario.*;
-
-import java.util.stream.Collectors;
 
 import sabina.Route.*;
 import sabina.Server;
@@ -40,7 +39,7 @@ final class Session {
         });
 
         s.get ("/session", (Handler)it ->
-                it.session ().attributes ().stream ().collect (Collectors.joining ())
+            it.session ().attributes ().stream ().collect (joining ())
         );
     }
 

@@ -21,7 +21,7 @@ import com.google.common.base.Preconditions;
  *
  * @author jam
  */
-public class Checks {
+public final class Checks {
     public static void checkArgument (boolean condition) {
         Preconditions.checkArgument (condition);
     }

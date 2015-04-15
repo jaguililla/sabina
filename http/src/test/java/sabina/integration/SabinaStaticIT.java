@@ -15,10 +15,14 @@
 package sabina.integration;
 
 import static java.lang.System.getProperty;
+import static java.util.logging.Level.FINE;
 import static sabina.Sabina.*;
 import static sabina.integration.TestScenario.*;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
