@@ -126,6 +126,7 @@ final class ChainResourceManager implements ResourceManager {
 final class UndertowServer implements Backend {
     private final MatcherFilter filter;
     private Undertow server;
+    private DeploymentManager deploymentManager;
 
     public UndertowServer (MatcherFilter aFilter) {
         filter = aFilter;
@@ -138,8 +139,7 @@ final class UndertowServer implements Backend {
         String staticFilesFolder, String externalFilesFolder) {
 
         try {
-            DeploymentManager deploymentManager =
-                createDeploymentManager (staticFilesFolder, externalFilesFolder);
+            deploymentManager = createDeploymentManager (staticFilesFolder, externalFilesFolder);
             deploymentManager.deploy ();
 
             server = (keystoreFile == null)?
@@ -159,11 +159,14 @@ final class UndertowServer implements Backend {
     @Override public void shutDown () {
         try {
             if (server != null) {
+                deploymentManager.stop ();
+                deploymentManager = null;
                 server.stop ();
+                server = null;
             }
         }
         catch (Exception e) {
-            e.printStackTrace ();
+            e.printStackTrace (); // TODO Use log
             exit (100);
         }
     }
@@ -181,8 +184,7 @@ final class UndertowServer implements Backend {
         if (aStaticFilesRoute != null || aExternalFilesLocation != null)
             deployment.addInnerHandlerChainWrapper (
                 handler -> predicate (suffixes (".jpg", ".png", ".css", ".html", ".js"),
-                    resource (
-                        new ChainResourceManager (aStaticFilesRoute, aExternalFilesLocation)),
+                    resource (new ChainResourceManager (aStaticFilesRoute, aExternalFilesLocation)),
                     handler
                 )
             );

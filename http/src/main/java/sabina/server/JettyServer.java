@@ -121,29 +121,29 @@ final class JettyServer implements Backend {
         }
 
         try {
-            System.out.println ("=== " + NAME + " has ignited ..."); // NOSONAR
-            System.out.println (">>> Listening on " + host + ":" + port); // NOSONAR
+            System.out.println ("=== " + NAME + " has ignited ..."); // TODO Use logger
+            System.out.println (">>> Listening on " + host + ":" + port);
 
             server.start ();
             server.join ();
         }
         catch (Exception e) {
-            e.printStackTrace (); // NOSONAR
-            exit (100); // NOSONAR
+            e.printStackTrace ();
+            exit (100);
         }
     }
 
     public void shutDown () {
-        System.out.print (">>> " + NAME + " shutting down..."); // NOSONAR
+        System.out.print (">>> " + NAME + " shutting down...");
         try {
             if (server != null)
                 server.stop ();
         }
         catch (Exception e) {
-            e.printStackTrace (); // NOSONAR
-            exit (100); // NOSONAR
+            e.printStackTrace (); // TODO Use logger
+            exit (100);
         }
-        System.out.println ("done"); // NOSONAR
+        System.out.println ("done");
     }
 
     /**

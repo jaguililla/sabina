@@ -14,19 +14,20 @@
 
 package sabina.benchmark;
 
+import static com.mongodb.client.model.Filters.eq;
 import static java.lang.Integer.parseInt;
 import static sabina.benchmark.Application.DB_ROWS;
 
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 
 final class MongoDbRepository implements Repository {
+//    private static final boolean BULK = true; // TODO
     private static final String [] FORTUNES = {
         "fortune: No such file or directory",
         "A computer scientist is someone who fixes things that aren''t broken.",
@@ -42,35 +43,30 @@ final class MongoDbRepository implements Repository {
         "フレームワークのベンチマーク"
     };
 
-    private DBCollection worldCollection;
-    private DBCollection fortuneCollection;
+    private MongoCollection<Document> worldCollection;
+    private MongoCollection<Document> fortuneCollection;
 
     MongoDbRepository (Properties settings) {
-        try {
-            final int PORT = parseInt (settings.getProperty ("mongodb.port"));
-            final String HOST = settings.getProperty ("mongodb.host");
-            final String DATABASE = settings.getProperty ("mongodb.database");
-            final String WORLD = settings.getProperty ("mongodb.world.collection");
-            final String FORTUNE = settings.getProperty ("mongodb.fortune.collection");
+        final int PORT = parseInt (settings.getProperty ("mongodb.port"));
+        final String HOST = settings.getProperty ("mongodb.host");
+        final String DATABASE = settings.getProperty ("mongodb.database");
+        final String WORLD = settings.getProperty ("mongodb.world.collection");
+        final String FORTUNE = settings.getProperty ("mongodb.fortune.collection");
 
-            MongoClient mongoClient = new MongoClient (HOST, PORT);
-            DB db = mongoClient.getDB (DATABASE);
-            worldCollection = db.getCollection (WORLD);
-            fortuneCollection = db.getCollection (FORTUNE);
+        MongoClient mongoClient = new MongoClient (HOST, PORT);
+        MongoDatabase db = mongoClient.getDatabase (DATABASE);
+        worldCollection = db.getCollection (WORLD);
+        fortuneCollection = db.getCollection (FORTUNE);
 
-            loadData ();
-        }
-        catch (UnknownHostException e) {
-            throw new RuntimeException (e);
-        }
+        loadData ();
     }
 
     private void loadData () {
         if (fortuneCollection.count () == 0) {
             int id = 0;
             for (String fortune : FORTUNES) {
-                fortuneCollection.insert (
-                    new BasicDBObject ("_id", ++id).append ("message", fortune)
+                fortuneCollection.insertOne (
+                    new Document ("_id", ++id).append ("message", fortune)
                 );
             }
         }
@@ -79,8 +75,8 @@ final class MongoDbRepository implements Repository {
             final Random random = ThreadLocalRandom.current ();
             for (int ii = 1; ii <= DB_ROWS; ii++) {
                 int randomNumber = random.nextInt (DB_ROWS) + 1;
-                worldCollection.insert (
-                    new BasicDBObject ("_id", ii).append ("randomNumber", randomNumber)
+                worldCollection.insertOne (
+                    new Document ("_id", ii).append ("randomNumber", randomNumber)
                 );
             }
         }
@@ -89,8 +85,8 @@ final class MongoDbRepository implements Repository {
     @Override public List<Fortune> getFortunes () {
         List<Fortune> fortunes = new ArrayList<> ();
 
-        fortuneCollection.find ().forEach (dbo ->
-            fortunes.add (new Fortune ((Integer)dbo.get ("_id"), (String)dbo.get ("message")))
+        fortuneCollection.find ().forEach ((Block<Document>)doc ->
+            fortunes.add (new Fortune ((Integer)doc.get ("_id"), (String)doc.get ("message")))
         );
 
         return fortunes;
@@ -109,18 +105,16 @@ final class MongoDbRepository implements Repository {
     }
 
     private World findWorld (int id) {
-        return createWorld (worldCollection.findOne (id));
+        return createWorld (worldCollection.find(eq ("_id", id)).first ());
     }
 
-    private World createWorld (DBObject world) {
+    private World createWorld (Document world) {
         return new World ((Integer)world.get ("_id"), (Integer)world.get ("randomNumber"));
     }
 
     public World updateWorld (int id, int random) {
-        worldCollection.findAndModify (
-            new BasicDBObject ("_id", id),
-            new BasicDBObject ("$set", new BasicDBObject ().append ("randomNumber", random))
-        );
+        Document newWorld = new Document ("_id", id).append ("randomNumber", random);
+        worldCollection.replaceOne (eq ("_id", id), newWorld);
 
         return new World (id, random);
     }

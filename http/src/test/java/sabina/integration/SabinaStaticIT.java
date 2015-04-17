@@ -15,24 +15,29 @@
 package sabina.integration;
 
 import static java.lang.System.getProperty;
-import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.FINEST;
+import static java.util.logging.Logger.getLogger;
 import static sabina.Sabina.*;
 import static sabina.integration.TestScenario.*;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sabina.Request;
 import sabina.Route.VoidHandler;
 
 @Test public class SabinaStaticIT {
     private static TestScenario testScenario = new TestScenario ("undertow", 4567, true, true);
     private static String part = "param";
+
+    @BeforeClass public static void setupLogging () {
+        Logger rootLogger = getLogger ("");
+        Stream.of (rootLogger.getHandlers ()).forEach (it -> it.setLevel (FINEST));
+        rootLogger.setLevel (FINEST);
+    }
 
     @BeforeClass public static void setupFile () throws IOException { SabinaIT.setupFile (); }
 
@@ -64,6 +69,8 @@ import sabina.Route.VoidHandler;
 
             return it.response.body () + "!!!";
         });
+
+        get ("/error500", (VoidHandler)it -> { throw new IllegalStateException (); });
 
         exception (
             UnsupportedOperationException.class,
@@ -100,16 +107,42 @@ import sabina.Route.VoidHandler;
             return "Body was: " + body;
         });
 
-        delete ("/method", Request::requestMethod);
-        options ("/method", Request::requestMethod);
-        get ("/method", Request::requestMethod);
-        patch ("/method", Request::requestMethod);
-        post ("/method", Request::requestMethod);
-        put ("/method", Request::requestMethod);
-        trace ("/method", Request::requestMethod);
-        head ("/method", it -> {
-            it.header ("header", it.requestMethod ());
-        });
+        // Test all route methods
+        delete ("/routes/method", Routes::methodHandler);
+        options ("/routes/method", Routes::methodHandler);
+        get ("/routes/method", Routes::methodHandler);
+        patch ("/routes/method", Routes::methodHandler);
+        post ("/routes/method", Routes::methodHandler);
+        put ("/routes/method", Routes::methodHandler);
+        trace ("/routes/method", Routes::methodHandler);
+        head ("/routes/method", Routes::methodHandler);
+
+        delete ("/routes/method", Routes::voidMethodHandler);
+        options ("/routes/method", Routes::voidMethodHandler);
+        get ("/routes/method", Routes::voidMethodHandler);
+        patch ("/routes/method", Routes::voidMethodHandler);
+        post ("/routes/method", Routes::voidMethodHandler);
+        put ("/routes/method", Routes::voidMethodHandler);
+        trace ("/routes/method", Routes::voidMethodHandler);
+        head ("/routes/method", Routes::voidMethodHandler);
+
+        delete ("/routes/method", "application/json", Routes::ctMethodHandler);
+        options ("/routes/method", "application/json", Routes::ctMethodHandler);
+        get ("/routes/method", "application/json", Routes::ctMethodHandler);
+        patch ("/routes/method", "application/json", Routes::ctMethodHandler);
+        post ("/routes/method", "application/json", Routes::ctMethodHandler);
+        put ("/routes/method", "application/json", Routes::ctMethodHandler);
+        trace ("/routes/method", "application/json", Routes::ctMethodHandler);
+        head ("/routes/method", "application/json", Routes::ctMethodHandler);
+
+        delete ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
+        options ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
+        get ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
+        patch ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
+        post ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
+        put ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
+        trace ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
+        head ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
 
         get ("/halt", it -> {
             it.halt (500, "halted");
@@ -170,7 +203,7 @@ import sabina.Route.VoidHandler;
     public void halt () { Generic.halt (testScenario); }
     public void requestData () { Generic.requestData (testScenario); }
     public void handleException () { Generic.handleException (testScenario); }
-    public void methods () { Generic.methods (testScenario); }
+    public void methods () { Routes.methods (testScenario); }
 
     public void routes_after_reset_are_not_available () {
         UrlResponse response = testScenario.doGet ("/reset/route");
@@ -180,5 +213,11 @@ import sabina.Route.VoidHandler;
     @Test (expectedExceptions = IllegalStateException.class)
     public void reset_on_a_running_server_raises_an_error () {
         reset ();
+    }
+
+    public void uncaugh_exception_return_a_500_error () {
+        UrlResponse response = testScenario.doGet ("/error500");
+        assert response.body.equals ("<html><body><h2>500 Internal Error</h2></body></html>");
+        assert response.status == 500;
     }
 }

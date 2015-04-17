@@ -15,8 +15,8 @@
 package sabina;
 
 import static java.lang.String.format;
-import static sabina.HttpMethod.after;
-import static sabina.HttpMethod.before;
+import static sabina.HttpMethod.AFTER;
+import static sabina.HttpMethod.BEFORE;
 import static sabina.util.Checks.checkArgument;
 import static sabina.util.Strings.isNullOrEmpty;
 
@@ -68,7 +68,7 @@ public final class Route {
         this (
             method,
             path,
-            method == after || method == before? "text/html" : DEFAULT_ACCEPT_TYPE,
+            method == AFTER || method == BEFORE? "text/html" : DEFAULT_ACCEPT_TYPE,
             handler);
     }
 
@@ -96,7 +96,7 @@ public final class Route {
     }
 
     public boolean isFilter () {
-        return method == after || method == before;
+        return method == AFTER || method == BEFORE;
     }
 
     /**

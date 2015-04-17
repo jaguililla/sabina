@@ -85,16 +85,16 @@ final class Generic {
             return "Body was: " + body;
         });
 
-        s.delete ("/method", Request::requestMethod);
-        s.options ("/method", Request::requestMethod);
-        s.get ("/method", Request::requestMethod);
-        s.patch ("/method", Request::requestMethod);
-        s.post ("/method", Request::requestMethod);
-        s.put ("/method", Request::requestMethod);
-        s.trace ("/method", Request::requestMethod);
-        s.head ("/method", it -> {
-            it.header ("header", it.requestMethod ());
-        });
+//        s.delete ("/method", Request::requestMethod);
+//        s.options ("/method", Request::requestMethod);
+//        s.get ("/method", Request::requestMethod);
+//        s.patch ("/method", Request::requestMethod);
+//        s.post ("/method", Request::requestMethod);
+//        s.put ("/method", Request::requestMethod);
+//        s.trace ("/method", Request::requestMethod);
+//        s.head ("/method", it -> {
+//            it.header ("header", it.requestMethod ());
+//        });
 
         s.get ("/halt", it -> {
             it.halt (500, "halted");
@@ -252,24 +252,24 @@ final class Generic {
         assertEquals ("error message", response.headers.get ("error"));
     }
 
-    static void methods (TestScenario testScenario) {
-        checkMethod (testScenario, "HEAD", "header"); // Head does not support body message
-        checkMethod (testScenario, "DELETE");
-        checkMethod (testScenario, "OPTIONS");
-        checkMethod (testScenario, "GET");
-        checkMethod (testScenario, "PATCH");
-        checkMethod (testScenario, "POST");
-        checkMethod (testScenario, "PUT");
-        checkMethod (testScenario, "TRACE");
-    }
-
-    private static void checkMethod (TestScenario testScenario, String methodName) {
-        checkMethod (testScenario, methodName, null);
-    }
-
-    private static void checkMethod (TestScenario testScenario, String methodName, String headerName) {
-        UrlResponse res = testScenario.doMethod (methodName, "/method");
-        assertEquals (headerName == null? res.body : res.headers.get (headerName), methodName);
-        assertEquals (200, res.status);
-    }
+//    static void methods (TestScenario testScenario) {
+//        checkMethod (testScenario, "HEAD", "header"); // Head does not support body message
+//        checkMethod (testScenario, "DELETE");
+//        checkMethod (testScenario, "OPTIONS");
+//        checkMethod (testScenario, "GET");
+//        checkMethod (testScenario, "PATCH");
+//        checkMethod (testScenario, "POST");
+//        checkMethod (testScenario, "PUT");
+//        checkMethod (testScenario, "TRACE");
+//    }
+//
+//    private static void checkMethod (TestScenario testScenario, String methodName) {
+//        checkMethod (testScenario, methodName, null);
+//    }
+//
+//    private static void checkMethod (TestScenario testScenario, String methodName, String headerName) {
+//        UrlResponse res = testScenario.doMethod (methodName, "/method");
+//        assertEquals (headerName == null? res.body : res.headers.get (headerName), methodName);
+//        assertEquals (200, res.status);
+//    }
 }

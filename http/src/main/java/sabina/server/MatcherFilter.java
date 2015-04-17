@@ -93,21 +93,20 @@ final class MatcherFilter implements Filter {
         final HttpServletResponse httpRes = (HttpServletResponse)servletResponse;
 
         final String uri = httpReq.getRequestURI ();
-        // TODO Change enum to uppercase and remove 'toLowerCase'
-        final String httpMethodStr = httpReq.getMethod ().toLowerCase ();
+        final String httpMethodStr = httpReq.getMethod ();
         final String acceptType = httpReq.getHeader (ACCEPT_TYPE_REQUEST_MIME_HEADER);
 
         String bodyContent = null;
 
         try {
-            bodyContent = onFilter (before, httpReq, httpRes, uri, acceptType, bodyContent);
+            bodyContent = onFilter (BEFORE, httpReq, httpRes, uri, acceptType, bodyContent);
 
             final HttpMethod httpMethod = HttpMethod.valueOf (httpMethodStr);
             RouteMatch match = routeMatcher.findTarget (httpMethod, uri, acceptType);
 
-            if (match == null && httpMethod == head && bodyContent == null) {
+            if (match == null && httpMethod == HEAD && bodyContent == null) {
                 // See if get is mapped to provide default head mapping
-                RouteMatch requestedRouteTarget = routeMatcher.findTarget (get, uri, acceptType);
+                RouteMatch requestedRouteTarget = routeMatcher.findTarget (GET, uri, acceptType);
                 bodyContent = requestedRouteTarget != null? "" : null;
             }
 
@@ -115,7 +114,7 @@ final class MatcherFilter implements Filter {
                 bodyContent = handleTargetRoute (httpReq, httpRes, bodyContent, match, match.entry);
             }
 
-            bodyContent = onFilter (after, httpReq, httpRes, uri, acceptType, bodyContent);
+            bodyContent = onFilter (AFTER, httpReq, httpRes, uri, acceptType, bodyContent);
         }
         catch (HaltException e) {
             if (loggable)
@@ -214,9 +213,6 @@ final class MatcherFilter implements Filter {
         final List<RouteMatch> matchSet = routeMatcher.findTargets (method, uri, acceptType);
 
         for (RouteMatch filterMatch : matchSet) {
-            if (!filterMatch.entry.isFilter ())
-                continue;
-
             final Request request = Request.create (filterMatch, httpRequest, httpResponse);
             filterMatch.entry.handle (request);
 

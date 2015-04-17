@@ -16,6 +16,8 @@ package sabina.integration;
 
 import static java.lang.System.getProperty;
 import static java.util.Arrays.asList;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Logger.getLogger;
 import static sabina.integration.TestScenario.getKeyStoreLocation;
 import static sabina.integration.TestScenario.getKeystorePassword;
 
@@ -25,6 +27,9 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -56,6 +61,12 @@ import sabina.Server;
     private static File tmpExternalFile;
     private static List<Server> servers = new ArrayList<> ();
 
+    @BeforeClass public static void disableLogging () {
+        Logger rootLogger = getLogger ("");
+        Stream.of (rootLogger.getHandlers ()).forEach (it -> it.setLevel (INFO));
+        rootLogger.setLevel (INFO);
+    }
+
     @BeforeClass public static void setupFile () throws IOException {
         tmpExternalFile = new File (getProperty ("java.io.tmpdir"), "externalFile.html");
 
@@ -74,6 +85,7 @@ import sabina.Server;
             Cookies.setup (s);
             Generic.setup (s);
             Session.setup (s);
+            Routes.setup (s);
 
             if (tu.secure)
                 s.secure (getKeyStoreLocation (), getKeystorePassword ());
@@ -188,7 +200,7 @@ import sabina.Server;
         Generic.handleException (testScenario);
     }
     @Test(dataProvider = "scenarios")
-    public void methods (TestScenario testScenario) { Generic.methods (testScenario); }
+    public void methods (TestScenario testScenario) { Routes.methods (testScenario); }
 
     @Test(dataProvider = "scenarios")
     public void attribute (TestScenario testScenario) { Session.attribute (testScenario); }

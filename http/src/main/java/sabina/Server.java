@@ -277,47 +277,47 @@ public final class Server {
     /*
      * Filters
      */
-    public Server after (VoidHandler h) { return add (after, h); }
-    public Server before (VoidHandler h) { return add (before, h); }
-    public Server after (String p, VoidHandler h) { return add (after, p, h); }
-    public Server before (String p, VoidHandler h) { return add (before, p, h); }
-    public Server after (String p, String ct, VoidHandler h) { return add (after, p, ct, h); }
-    public Server before (String p, String ct, VoidHandler h) { return add (before, p, ct, h); }
+    public Server after (VoidHandler h) { return add (AFTER, h); }
+    public Server before (VoidHandler h) { return add (BEFORE, h); }
+    public Server after (String p, VoidHandler h) { return add (AFTER, p, h); }
+    public Server before (String p, VoidHandler h) { return add (BEFORE, p, h); }
+    public Server after (String p, String ct, VoidHandler h) { return add (AFTER, p, ct, h); }
+    public Server before (String p, String ct, VoidHandler h) { return add (BEFORE, p, ct, h); }
 
     /*
      * Routes
      */
-    public Server delete (String p, Handler h) { return add (delete, p, h); }
+    public Server delete (String p, Handler h) { return add (DELETE, p, h); }
     public Server delete (String p, VoidHandler h) { return delete (p, wrap (h)); }
-    public Server get (String p, Handler h) { return add (get, p, h); }
+    public Server get (String p, Handler h) { return add (GET, p, h); }
     public Server get (String p, VoidHandler h) { return get (p, wrap (h)); }
-    public Server head (String p, Handler h) { return add (head, p, h); }
+    public Server head (String p, Handler h) { return add (HEAD, p, h); }
     public Server head (String p, VoidHandler h) { return head (p, wrap (h)); }
-    public Server options (String p, Handler h) { return add (options, p, h); }
+    public Server options (String p, Handler h) { return add (OPTIONS, p, h); }
     public Server options (String p, VoidHandler h) { return options (p, wrap (h)); }
-    public Server patch (String p, Handler h) { return add (patch, p, h); }
+    public Server patch (String p, Handler h) { return add (PATCH, p, h); }
     public Server patch (String p, VoidHandler h) { return patch (p, wrap (h)); }
-    public Server post (String p, Handler h) { return add (post, p, h); }
+    public Server post (String p, Handler h) { return add (POST, p, h); }
     public Server post (String p, VoidHandler h) { return post (p, wrap (h)); }
-    public Server put (String p, Handler h) { return add (put, p, h); }
+    public Server put (String p, Handler h) { return add (PUT, p, h); }
     public Server put (String p, VoidHandler h) { return put (p, wrap (h)); }
-    public Server trace (String p, Handler h) { return add (trace, p, h); }
+    public Server trace (String p, Handler h) { return add (TRACE, p, h); }
     public Server trace (String p, VoidHandler h) { return trace (p, wrap (h)); }
-    public Server delete (String p, String ct, Handler h) { return add (delete, p, ct, h); }
+    public Server delete (String p, String ct, Handler h) { return add (DELETE, p, ct, h); }
     public Server delete (String p, String ct, VoidHandler h) { return delete (p, ct, wrap (h)); }
-    public Server get (String p, String ct, Handler h) { return add (get, p, ct, h); }
+    public Server get (String p, String ct, Handler h) { return add (GET, p, ct, h); }
     public Server get (String p, String ct, VoidHandler h) { return get (p, ct, wrap (h)); }
-    public Server head (String p, String ct, Handler h) { return add (head, p, ct, h); }
+    public Server head (String p, String ct, Handler h) { return add (HEAD, p, ct, h); }
     public Server head (String p, String ct, VoidHandler h) { return head (p, ct, wrap (h)); }
-    public Server options (String p, String ct, Handler h) { return add (options, p, ct, h); }
+    public Server options (String p, String ct, Handler h) { return add (OPTIONS, p, ct, h); }
     public Server options (String p, String ct, VoidHandler h) { return options (p, ct, wrap (h)); }
-    public Server patch (String p, String ct, Handler h) { return add (patch, p, ct, h); }
+    public Server patch (String p, String ct, Handler h) { return add (PATCH, p, ct, h); }
     public Server patch (String p, String ct, VoidHandler h) { return patch (p, ct, wrap (h)); }
-    public Server post (String p, String ct, Handler h) { return add (post, p, ct, h); }
+    public Server post (String p, String ct, Handler h) { return add (POST, p, ct, h); }
     public Server post (String p, String ct, VoidHandler h) { return post (p, ct, wrap (h)); }
-    public Server put (String p, String ct, Handler h) { return add (put, p, ct, h); }
+    public Server put (String p, String ct, Handler h) { return add (PUT, p, ct, h); }
     public Server put (String p, String ct, VoidHandler h) { return put (p, ct, wrap (h)); }
-    public Server trace (String p, String ct, Handler h) { return add (trace, p, ct, h); }
+    public Server trace (String p, String ct, Handler h) { return add (TRACE, p, ct, h); }
     public Server trace (String p, String ct, VoidHandler h) { return trace (p, ct, wrap (h)); }
 
     private Handler wrap (VoidHandler h) {

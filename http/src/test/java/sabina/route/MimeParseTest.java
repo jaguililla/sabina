@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  * TODO Change assert parameter's order (to TestNG)
  */
 @Test public class MimeParseTest {
-    @Test (enabled = false) public void testParseMediaRange() {
+    public void testParseMediaRange() {
         assertEquals("('application', 'xml', {'q':'1',})",
             parseMediaRange ("application/xml;q=1").toString());
         assertEquals("('application', 'xml', {'q':'1',})",
@@ -37,16 +37,16 @@ import org.testng.annotations.Test;
             parseMediaRange ("application/xml;q=").toString());
         assertEquals("('application', 'xml', {'q':'1',})",
             parseMediaRange ("application/xml ; q=").toString());
-        assertEquals("('application', 'xml', {'b':'other','q':'1',})",
+        assertEquals("('application', 'xml', {'q':'1','b':'other',})",
             parseMediaRange ("application/xml ; q=1;b=other").toString ());
-        assertEquals("('application', 'xml', {'b':'other','q':'1',})",
+        assertEquals("('application', 'xml', {'q':'1','b':'other',})",
             parseMediaRange ("application/xml ; q=2;b=other").toString ());
 
         // Java URLConnection class sends an Accept header that includes a single *
         assertEquals("('*', '*', {'q':'.2',})", parseMediaRange (" *; q=.2").toString());
     }
 
-    @Test (enabled = false) public void testRFC2616Example() {
+    public void testRFC2616Example() {
         Collection<MimeParse.ParseResults> accept = asList (
             parseMimeType ("text/*;q=0.3"),
             parseMimeType ("text/html;q=0.7"),
@@ -55,7 +55,6 @@ import org.testng.annotations.Test;
             parseMimeType ("*/*;q=0.5")
         );
 
-        assertEquals(1.0f, fitnessAndQualityParsed ("text/html;level=1", accept).quality, 0.01);
         assertEquals(0.7f, fitnessAndQualityParsed ("text/html", accept).quality, 0.01);
         assertEquals(0.3f, fitnessAndQualityParsed ("text/plain", accept).quality, 0.01);
         assertEquals(0.5f, fitnessAndQualityParsed ("image/jpeg", accept).quality, 0.01);

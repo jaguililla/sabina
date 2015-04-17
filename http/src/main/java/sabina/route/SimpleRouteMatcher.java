@@ -36,15 +36,12 @@ import sabina.Route;
  */
 final class SimpleRouteMatcher implements RouteMatcher {
     private static final Logger LOG = getLogger (SimpleRouteMatcher.class.getName ());
+    private static final List<Route> EMPTY = new ArrayList<> (0);
 
-    private final List<Route> routes = new ArrayList<> ();
+    private final Map<HttpMethod, List<Route>> routes = new HashMap<> ();
 
     /** Holds a map of Exception classes and associated handlers. */
     private final Map<Class<? extends Exception>, Fault<?>> exceptionMap = new HashMap<> ();
-
-    SimpleRouteMatcher () {
-        LOG.fine ("RouteMatcher created");
-    }
 
     /**
      * Parse and validates a route and adds it
@@ -52,8 +49,10 @@ final class SimpleRouteMatcher implements RouteMatcher {
      * @param target the invocation target
      */
     @Override public void processRoute (Route target) {
-        LOG.fine ("Adds route: " + target);
-        routes.add (target);
+        HttpMethod method = target.method;
+        if (!routes.containsKey (method))
+            routes.put (method, new ArrayList<> ());
+        routes.get (method).add (target);
     }
 
     /**
@@ -125,7 +124,7 @@ final class SimpleRouteMatcher implements RouteMatcher {
                 if (exceptionMap.containsKey(superclass)) {
                     // Use the handler for the mapped superclass, and cache handler
                     // for this exception class
-                    Fault handler = exceptionMap.get(superclass);
+                    Fault<? extends Exception> handler = exceptionMap.get(superclass);
                     exceptionMap.put(exceptionClass, handler);
                     return handler;
                 }
@@ -172,9 +171,11 @@ final class SimpleRouteMatcher implements RouteMatcher {
     private List<Route> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path) {
 
-        return routes.stream ()
-            .filter (entry -> matches (entry, httpMethod, path))
-            .collect (toList ());
+        return routes.containsKey (httpMethod)?
+            routes.get(httpMethod).stream ()
+                .filter (entry -> matches (entry, path))
+                .collect (toList ()) :
+            EMPTY;
     }
 
     // TODO: I believe this feature has impacted performance. Optimization?
@@ -195,13 +196,8 @@ final class SimpleRouteMatcher implements RouteMatcher {
         return null;
     }
 
-    public boolean matches (Route route, HttpMethod httpMethod, String path) {
-        return
-            ( (httpMethod == before || httpMethod == after)
-                && (route.method == httpMethod)
-                && route.path.equals (ALL_PATHS) )
-                || ( route.method == httpMethod
-                && matchPath (route, path) );
+    public boolean matches (Route route, String path) {
+        return (route.isFilter () && route.path.equals (ALL_PATHS)) || matchPath (route, path);
     }
 
     private boolean matchPath (Route route, String path) {

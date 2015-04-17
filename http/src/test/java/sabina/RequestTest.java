@@ -16,7 +16,7 @@ package sabina;
 
 import static org.apache.http.HttpStatus.*;
 import static org.testng.Assert.assertEquals;
-import static sabina.HttpMethod.after;
+import static sabina.HttpMethod.AFTER;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class RequestTest {
     private static final String THE_SERVLET_PATH = "/the/servlet/path";
     private static final String THE_CONTEXT_PATH = "/the/context/path";
 
-    private RouteMatch match = new RouteMatch (new Route (after, "/hi", it -> ""), "/hi");
+    private RouteMatch match = new RouteMatch (new Route (AFTER, "/hi", it -> ""), "/hi");
 
     @Test public void queryParamShouldReturnsParametersFromQueryString () {
         Map<String, String[]> params = new HashMap<> ();
@@ -294,7 +294,7 @@ public class RequestTest {
     }
 
     private Request createRequest () {
-        RouteMatch match = new RouteMatch (new Route (after, "/", it -> ""), "/");
+        RouteMatch match = new RouteMatch (new Route (AFTER, "/", it -> ""), "/");
         MockedHttpServletRequest servletRequest = new MockedHttpServletRequest (null);
         MockedHttpServletResponse servletResponse = new MockedHttpServletResponse ();
         return new Request (match, servletRequest, servletResponse);
