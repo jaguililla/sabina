@@ -17,7 +17,6 @@ package sabina;
 import static java.lang.String.format;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Logger.getLogger;
-import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -32,10 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 public final class Response {
     private static final Logger LOG = getLogger (Response.class.getName ());
 
-    public static Response create (HttpServletResponse response) {
-        return new Response (response);
-    }
-
     private final HttpServletResponse response;
     private String body;
 
@@ -48,7 +43,7 @@ public final class Response {
      *
      * @param statusCode the status code
      */
-    public void status (int statusCode) {
+    public void status (final int statusCode) {
         response.setStatus (statusCode);
     }
 
@@ -57,7 +52,7 @@ public final class Response {
      *
      * @param contentType the content type
      */
-    public void type (String contentType) {
+    public void type (final String contentType) {
         response.setContentType (contentType);
     }
 
@@ -66,7 +61,7 @@ public final class Response {
      *
      * @param body the body
      */
-    public void body (String body) {
+    public void body (final String body) {
         this.body = body;
     }
 
@@ -79,7 +74,7 @@ public final class Response {
         return this.body;
     }
 
-    public void addDateHeader (String name, long value) {
+    public void addDateHeader (final String name, final long value) {
         response.addDateHeader (name, value);
     }
 
@@ -88,14 +83,15 @@ public final class Response {
      *
      * @param location Where to redirect
      */
-    public void redirect (String location) {
-        LOG.fine (format ("Redirecting (%s %s to %s)", "Found", SC_FOUND, location));
+    public void redirect (final String location) {
+        if (LOG.isLoggable (FINE))
+            LOG.fine (format ("Redirecting to %s", location));
 
         try {
             response.sendRedirect (location);
         }
-        catch (IOException ioException) {
-            LOG.warning ("Redirect failure: " + ioException.getMessage ());
+        catch (IOException e) {
+            throw new RuntimeException ("Error redirecting to: " + location, e);
         }
     }
 
@@ -105,7 +101,7 @@ public final class Response {
      * @param location Where to redirect permanently
      * @param httpStatusCode the http status code
      */
-    public void redirect (String location, int httpStatusCode) {
+    public void redirect (final String location, final int httpStatusCode) {
         if (LOG.isLoggable (FINE))
             LOG.fine (format ("Redirecting (%s to %s)", httpStatusCode, location));
 
@@ -116,7 +112,7 @@ public final class Response {
             response.sendError (httpStatusCode);
         }
         catch (IOException e) {
-            LOG.warning ("Exception when trying to redirect permanently: " + e.getMessage ());
+            throw new RuntimeException ("Exception redirecting permanently to: " + location, e);
         }
     }
 
@@ -126,7 +122,7 @@ public final class Response {
      * @param header the header
      * @param value the value
      */
-    public void header (String header, String value) {
+    public void header (final String header, final String value) {
         response.addHeader (header, value);
     }
 
@@ -137,7 +133,7 @@ public final class Response {
      * @param name name of the cookie
      * @param value value of the cookie
      */
-    public void cookie (String name, String value) {
+    public void cookie (final String name, final String value) {
         cookie (name, value, -1, false);
     }
 
@@ -150,7 +146,7 @@ public final class Response {
      * @param maxAge max age of the cookie in seconds (negative for the not persistent cookie,
      * zero - deletes the cookie)
      */
-    public void cookie (String name, String value, int maxAge) {
+    public void cookie (final String name, final String value, final int maxAge) {
         cookie (name, value, maxAge, false);
     }
 
@@ -165,7 +161,9 @@ public final class Response {
      * @param secured if true : cookie will be secured
      * zero - deletes the cookie)
      */
-    public void cookie (String name, String value, int maxAge, boolean secured) {
+    public void cookie (
+        final String name, final String value, final int maxAge, final boolean secured) {
+
         cookie ("", name, value, maxAge, secured);
     }
 
@@ -181,11 +179,18 @@ public final class Response {
      * @param secured if true : cookie will be secured
      * zero - deletes the cookie)
      */
-    public void cookie (String path, String name, String value, int maxAge, boolean secured) {
-        Cookie cookie = new Cookie (name, value);
+    public void cookie (
+        final String path,
+        final String name,
+        final String value,
+        final int maxAge,
+        final boolean secured) {
+
+        final Cookie cookie = new Cookie (name, value);
         cookie.setPath (path);
         cookie.setMaxAge (maxAge);
         cookie.setSecure (secured);
+
         response.addCookie (cookie);
     }
 
@@ -194,9 +199,10 @@ public final class Response {
      *
      * @param name Name of the cookie.
      */
-    public void removeCookie (String name) {
-        Cookie cookie = new Cookie (name, "");
+    public void removeCookie (final String name) {
+        final Cookie cookie = new Cookie (name, "");
         cookie.setMaxAge (0);
+
         response.addCookie (cookie);
     }
 }

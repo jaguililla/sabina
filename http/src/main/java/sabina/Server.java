@@ -75,7 +75,7 @@ public final class Server {
     private String backend = getProperty ("sabina.backend", "undertow");
 
     private Backend server;
-    private RouteMatcher routeMatcher = RouteMatcherFactory.create ();
+    RouteMatcher routeMatcher = RouteMatcherFactory.create ();
 
     public Server () {
         super ();

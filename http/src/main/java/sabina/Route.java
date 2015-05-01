@@ -17,9 +17,11 @@ package sabina;
 import static java.lang.String.format;
 import static sabina.HttpMethod.AFTER;
 import static sabina.HttpMethod.BEFORE;
+import static sabina.Request.convertRouteToList;
 import static sabina.util.Checks.checkArgument;
 import static sabina.util.Strings.isNullOrEmpty;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -44,6 +46,8 @@ public final class Route {
     public final String acceptType;
     public final HttpMethod method;
     private final Handler handler;
+
+    final List<String> routeParts;
 
     /**
      * Constructor.
@@ -93,6 +97,7 @@ public final class Route {
         this.acceptType = acceptType;
         this.method = method;
         this.handler = handler;
+        this.routeParts = convertRouteToList (path);
     }
 
     public boolean isFilter () {

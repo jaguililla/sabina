@@ -66,7 +66,7 @@ final class Generic {
         s.get ("/param/:param", it -> "echo: " + it.params (":param"));
 
         s.get ("/paramandwild/:param/stuff/*", it ->
-                "paramandwild: " + it.params (":param") + it.splat ()[0]
+                "paramandwild: " + it.params (":param") + it.splat ().get (0)
         );
 
         s.get ("/paramwithmaj/:paramWithMaj", it -> "echo: " + it.params (":paramWithMaj"));

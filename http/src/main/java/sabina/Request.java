@@ -14,6 +14,7 @@
 
 package sabina;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.logging.Logger.getLogger;
 
@@ -28,21 +29,34 @@ import javax.servlet.http.HttpSession;
 import sabina.route.RouteMatch;
 
 /**
- * Provides information about the HTTP request
+ * Provides information about the HTTP request.
+ *
+ * <p>TODO getParams and getSplat can be joined in a single method (iterate only once)
+ * <p>TODO Route segments can be generated only once for Routes (when they are created)
+ *
+ * <pre>
+ * TODO Check these methods:
+ *
+ *    request.media_type        # media type of request.body            DONE, content type?
+ *    request["SOME_HEADER"]    # value of SOME_HEADER header,          DONE
+ *    request.user_agent        # user agent (used by :agent condition) DONE
+ *    request.url               # "http://example.com/example/foo"      DONE
+ *    request.ip                # client IP address                     DONE
+ *    request.env               # raw env hash handed in by Rack,       DONE
+ *    request.get?              # true (similar methods for other verbs)
+ *    request.secure?           # false (would be true over ssl)
+ *    request.forwarded?        # true (if running behind a reverse proxy)
+ *    request.xhr?              # is this an ajax request?
+ *    request.script_name       # "/example"
+ *    request.form_data?        # false
+ *    request.referrer          # the referrer of the client or '/'
+ * </pre>
  *
  * @author Per Wendel
  */
 public final class Request {
     private static final Logger LOG = getLogger(Request.class.getName ());
     private static final String USER_AGENT = "user-agent";
-
-    public static Request create (
-        final RouteMatch match,
-        final HttpServletRequest request,
-        final HttpServletResponse response) {
-
-        return new Request (match, request, response);
-    }
 
     public static List<String> convertRouteToList (final String route) {
         String[] pathArray = route.split ("/");
@@ -60,32 +74,18 @@ public final class Request {
     private final HttpServletRequest servletRequest;
 
     /* Lazy loaded stuff */
-    private Session session = null;
-    private String body = null;
+    private Session session;
+    private String body;
     private Set<String> headers;
-
-    //    request.media_type        # media type of request.body            DONE, content type?
-    //    request["SOME_HEADER"]    # value of SOME_HEADER header,          DONE
-    //    request.user_agent        # user agent (used by :agent condition) DONE
-    //    request.url               # "http://example.com/example/foo"      DONE
-    //    request.ip                # client IP address                     DONE
-    //    request.env               # raw env hash handed in by Rack,       DONE
-    //    request.get?              # true (similar methods for other verbs)
-    //    request.secure?           # false (would be true over ssl)
-    //    request.forwarded?        # true (if running behind a reverse proxy)
-    //    request.xhr?              # is this an ajax request?
-    //    request.script_name       # "/example"
-    //    request.form_data?        # false
-    //    request.referrer          # the referrer of the client or '/'
 
     /**
      * Constructor.
      *
-     * @param match   the route match.
-     * @param request the servlet request.
-     * @param response .
+     * @param match The route match.
+     * @param request The servlet request.
+     * @param response The servlet response.
      */
-    Request (
+    public Request (
         final RouteMatch match,
         final HttpServletRequest request,
         final HttpServletResponse response) {
@@ -94,24 +94,67 @@ public final class Request {
         this.response = new Response (response);
 
         List<String> requestList = convertRouteToList (match.requestURI);
-        List<String> matchedList = convertRouteToList (match.entry.path);
+        List<String> matchedList = match.entry.routeParts;
 
         params = getParams(requestList, matchedList);
         splat = getSplat(requestList, matchedList);
     }
 
+    private static Map<String, String> getParams (
+        final List<String> request, final List<String> matched) {
+
+        Map<String, String> params = new HashMap<> ();
+
+        for (int ii = 0; ii < request.size () && ii < matched.size (); ii++) {
+            String matchedPart = matched.get (ii);
+
+            if (matchedPart.startsWith (":")) {
+                LOG.fine ("matchedPart: " + matchedPart + " = " + request.get (ii));
+                params.put (matchedPart.toLowerCase (), request.get (ii));
+            }
+        }
+
+        return unmodifiableMap (params);
+    }
+
+    private static List<String> getSplat(final List<String> request, final List<String> matched) {
+        List<String> splat = new ArrayList<> ();
+
+        int nbrOfRequestParts = request.size();
+        int nbrOfMatchedParts = matched.size();
+
+        boolean sameLength = (nbrOfRequestParts == nbrOfMatchedParts);
+
+        for (int ii = 0; (ii < nbrOfRequestParts) && (ii < nbrOfMatchedParts); ii++) {
+            String matchedPart = matched.get(ii);
+
+            if (matchedPart.equals ("*")) {
+                StringBuilder splatParam = new StringBuilder(request.get(ii));
+                if (!sameLength && (ii == (nbrOfMatchedParts - 1))) {
+                    for (int j = ii + 1; j < nbrOfRequestParts; j++) {
+                        splatParam.append ("/");
+                        splatParam.append (request.get (j));
+                    }
+                }
+                splat.add (splatParam.toString ());
+            }
+        }
+
+        return unmodifiableList (splat);
+    }
+
     /**
-     * Returns the map containing all route params
+     * Returns the map containing all route params.
      *
-     * @return a map containing all route params
+     * @return A map containing all route params.
      */
     public Map<String, String> params () {
-        return unmodifiableMap (params);
+        return params;
     }
 
     /**
      * Returns the value of the provided route pattern parameter.
-     * Example: parameter 'name' from the following pattern: (get '/hello/:name')
+     * Example: parameter 'name' from the following pattern: (get '/hello/:name').
      *
      * @param param The param.
      * @return Null if the given param is null or not found.
@@ -126,149 +169,143 @@ public final class Request {
     }
 
     /**
-     * @return an array containing the splat (wildcard) parameters
+     * @return an array containing the splat (wildcard) parameters.
      */
-    public String[] splat () {
-        return splat.toArray (new String[splat.size ()]);
+    public List<String> splat () {
+        return splat;
     }
 
     /**
      * @return request method e.g. GET, POST, PUT, ...
-    //    request.request_method    # "GET",                                DONE
      */
     public String requestMethod () {
         return servletRequest.getMethod ();
     }
 
     /**
-     * @return the scheme
-    //    request.scheme            # "http"                                DONE
+     * @return the scheme (http/https).
      */
     public String scheme () {
         return servletRequest.getScheme ();
     }
 
     /**
-     * @return the host
-    //    request.host              # "example.com"                         DONE
+     * @return the host (ie: example.com).
      */
     public String host () {
         return servletRequest.getServerName ();
     }
 
     /**
-     * @return the user-agent
+     * @return the user-agent.
      */
     public String userAgent () {
         return servletRequest.getHeader (USER_AGENT);
     }
 
     /**
-     * @return the server port
+     * @return the server port.
      */
     public int port () {
         return servletRequest.getServerPort ();
     }
 
     /**
-     * @return the path info
-     * Example return: "/example/foo"
-    //    request.path_info         # "/foo",                               DONE
+     * Example return: "/example/foo".
+     *
+     * @return the path info.
      */
     public String pathInfo () {
         return servletRequest.getPathInfo ();
     }
 
     /**
-     * @return the servlet path
+     * @return the servlet path.
      */
     public String servletPath () {
         return servletRequest.getServletPath ();
     }
 
     /**
-     * @return the context path
+     * @return the context path.
      */
     public String contextPath () {
         return servletRequest.getContextPath ();
     }
 
     /**
-     * @return the URL string
+     * @return the URL string.
      */
     public String url () {
         return servletRequest.getRequestURL ().toString ();
     }
 
     /**
-     * @return the content type of the body
+     * @return the content type of the body.
      */
     public String contentType () {
         return servletRequest.getContentType ();
     }
 
     /**
-     * @return the client's IP address
+     * @return the client's IP address.
      */
     public String ip () {
         return servletRequest.getRemoteAddr ();
     }
 
     /**
-     * @return the request body sent by the client
+     * @return the request body sent by the client.
      */
     public String body () {
         if (body == null) {
-            try (InputStreamReader input =
-                new InputStreamReader (servletRequest.getInputStream ())) {
-
-                body = new Scanner (input).useDelimiter ("\\A").next ();
+            try (InputStreamReader in = new InputStreamReader (servletRequest.getInputStream ())) {
+                body = new Scanner (in).useDelimiter ("\\A").next ();
             }
             catch (Exception e) {
-                LOG.warning ("Exception when reading body: " + e.getMessage ());
+                throw new RuntimeException ("Exception when reading body", e);
             }
         }
         return body;
     }
 
     /**
-     * @return the length of request.body
-    //    request.content_length    # length of request.body,               DONE
+     * @return the length of request.body.
      */
     public int contentLength () {
         return servletRequest.getContentLength ();
     }
 
     /**
-     * gets the query param
-     *
-     * @param queryParam the query parameter
-     * @return the value of the provided queryParam
+     * Gets the query param.
      * Example: query parameter 'id' from the following request URI: /hello?id=foo
+     *
+     * @param queryParam the query parameter.
+     * @return the value of the provided queryParam.
      */
-    public String queryParams (String queryParam) {
+    public String queryParams (final String queryParam) {
         return servletRequest.getParameter (queryParam);
     }
 
     /**
-     * Gets the value for the provided header
+     * Gets the value for the provided header.
      *
-     * @param name the header
-     * @return the value of the provided header
+     * @param name the header.
+     * @return the value of the provided header.
      */
-    public String headers (String name) {
+    public String headers (final String name) {
         return servletRequest.getHeader (name);
     }
 
     /**
-     * @return all query parameters
+     * @return all query parameters.
      */
     public Set<String> queryParams () {
         return servletRequest.getParameterMap ().keySet ();
     }
 
     /**
-     * @return all headers
+     * @return all headers.
      */
     public Set<String> headers () {
         if (headers == null) {
@@ -281,30 +318,29 @@ public final class Request {
     }
 
     /**
-     * @return the query string
-    //    request.query_string      # "",                                   DONE
+     * @return the query string.
      */
     public String queryString () {
         return servletRequest.getQueryString ();
     }
 
     /**
-     * Sets an attribute on the request (can be fetched in filters/routes later in the chain)
+     * Sets an attribute on the request (can be fetched in filters/routes later in the chain).
      *
-     * @param attribute The attribute
-     * @param value     The attribute value
+     * @param attribute The attribute.
+     * @param value The attribute value.
      */
-    public void attribute (String attribute, Object value) {
+    public void attribute (final String attribute, final Object value) {
         servletRequest.setAttribute (attribute, value);
     }
 
     /**
-     * Gets the value of the provided attribute
+     * Gets the value of the provided attribute.
      *
      * @param name The attribute name.
-     * @return the value for the provided attribute
+     * @return the value for the provided attribute.
      */
-    public Object attribute (String name) {
+    public Object attribute (final String name) {
         return servletRequest.getAttribute (name);
     }
 
@@ -342,7 +378,7 @@ public final class Request {
      * @return the session associated with this request or <code>null</code> if
      * <code>create</code> is <code>false</code> and the request has no valid session
      */
-    public Session session (boolean create) {
+    public Session session (final boolean create) {
         if (session == null) {
             HttpSession httpSession = servletRequest.getSession (create);
             if (httpSession != null)
@@ -372,7 +408,7 @@ public final class Request {
      *
      * @return cookie value or null if the cookie was not found
      */
-    public String cookie (String name) {
+    public String cookie (final String name) {
         Cookie[] cookies = servletRequest.getCookies ();
         if (cookies != null)
             for (Cookie cookie : cookies)
@@ -394,52 +430,6 @@ public final class Request {
      */
     public String protocol() {
         return servletRequest.getProtocol();
-    }
-
-    private static Map<String, String> getParams (List<String> request, List<String> matched) {
-        LOG.fine ("get params");
-
-        Map<String, String> params = new HashMap<> ();
-
-        for (int i = 0; (i < request.size ()) && (i < matched.size ()); i++) {
-            String matchedPart = matched.get (i);
-            if (matchedPart.startsWith (":")) {
-                LOG.fine ("matchedPart: "
-                    + matchedPart
-                    + " = "
-                    + request.get (i));
-                params.put (matchedPart.toLowerCase (), request.get (i));
-            }
-        }
-        return unmodifiableMap (params);
-    }
-
-    private static List<String> getSplat(List<String> request, List<String> matched) {
-        LOG.fine("get splat");
-
-        int nbrOfRequestParts = request.size();
-        int nbrOfMatchedParts = matched.size();
-
-        boolean sameLength = (nbrOfRequestParts == nbrOfMatchedParts);
-
-        List<String> splat = new ArrayList<> ();
-
-        for (int i = 0; (i < nbrOfRequestParts) && (i < nbrOfMatchedParts); i++) {
-            String matchedPart = matched.get(i);
-
-            if (matchedPart.equals ("*")) {
-
-                StringBuilder splatParam = new StringBuilder(request.get(i));
-                if (!sameLength && (i == (nbrOfMatchedParts - 1))) {
-                    for (int j = i + 1; j < nbrOfRequestParts; j++) {
-                        splatParam.append ("/");
-                        splatParam.append (request.get (j));
-                    }
-                }
-                splat.add (splatParam.toString ());
-            }
-        }
-        return Collections.unmodifiableList (splat);
     }
 
     /*

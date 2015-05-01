@@ -39,7 +39,7 @@ import sabina.route.RouteMatcher;
  *
  * @author Per Wendel
  */
-final class MatcherFilter implements Filter {
+public class MatcherFilter implements Filter {
     private static final Logger LOG = getLogger (MatcherFilter.class.getName ());
 
     private static final String
@@ -172,7 +172,7 @@ final class MatcherFilter implements Filter {
         try {
             String result = null;
             if (!aTarget.isFilter ()) {
-                request = Request.create (aMatch, aHttpReq, aHttpRes);
+                request = new Request (aMatch, aHttpReq, aHttpRes);
 
                 Object element = aTarget.handle (request);
                 result = element != null? element.toString () : null;
@@ -213,7 +213,7 @@ final class MatcherFilter implements Filter {
         final List<RouteMatch> matchSet = routeMatcher.findTargets (method, uri, acceptType);
 
         for (RouteMatch filterMatch : matchSet) {
-            final Request request = Request.create (filterMatch, httpRequest, httpResponse);
+            final Request request = new Request (filterMatch, httpRequest, httpResponse);
             filterMatch.entry.handle (request);
 
             final String bodyAfterFilter = request.response.body ();
@@ -225,10 +225,13 @@ final class MatcherFilter implements Filter {
     }
 
     @Override public void init (FilterConfig filterConfig) {
-        // Not used
+        routes (filterConfig);
+//        Sabina.routeMatcher ();
     }
 
     @Override public void destroy () {
         // Not used
     }
+
+    protected void routes (FilterConfig filterConfig) {}
 }

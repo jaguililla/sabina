@@ -18,6 +18,7 @@ import java.util.function.BiConsumer;
 
 import sabina.Route.Handler;
 import sabina.Route.VoidHandler;
+import sabina.route.RouteMatcher;
 
 /**
  * Static methods to handle the default server (singleton server)
@@ -70,6 +71,10 @@ public final class Sabina {
     public static Server put (String p, String ct, VoidHandler h) { return s.put (p, ct, h); }
     public static Server trace (String p, String ct, Handler h) { return s.trace (p, ct, h); }
     public static Server trace (String p, String ct, VoidHandler h) { return s.trace (p, ct, h); }
+
+    public static RouteMatcher routeMatcher () {
+        return s.routeMatcher;
+    }
 
     public static void host (String host) {
         s.host (host);

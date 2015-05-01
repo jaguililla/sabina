@@ -14,6 +14,8 @@
 
 package sabina;
 
+import static sabina.util.Checks.checkArgument;
+
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.TreeSet;
@@ -34,9 +36,7 @@ public final class Session {
      * @throws IllegalArgumentException If the session is null.
      */
     Session (final HttpSession session) {
-        if (session == null)
-            throw new IllegalArgumentException ("Session cannot be null");
-
+        checkArgument (session != null, "Session cannot be null");
         this.session = session;
     }
 
@@ -48,7 +48,7 @@ public final class Session {
      * @param <T>  The type parameter.
      * @return The object with the specified name.
      */
-    @SuppressWarnings("unchecked") public <T> T attribute (String name) {
+    @SuppressWarnings("unchecked") public <T> T attribute (final String name) {
         return (T)session.getAttribute (name);
     }
 
@@ -58,7 +58,7 @@ public final class Session {
      * @param name The name to which the object is bound; cannot be null.
      * @param value The object to be bound.
      */
-    public void attribute (String name, Object value) {
+    public void attribute (final String name, final Object value) {
         session.setAttribute (name, value);
     }
 
@@ -67,8 +67,8 @@ public final class Session {
      * of all the objects bound to this session.
      */
     public Set<String> attributes () {
-        TreeSet<String> attributes = new TreeSet<> ();
-        Enumeration<String> enumeration = session.getAttributeNames ();
+        final TreeSet<String> attributes = new TreeSet<> ();
+        final Enumeration<String> enumeration = session.getAttributeNames ();
         while (enumeration.hasMoreElements ())
             attributes.add (enumeration.nextElement ());
 
@@ -113,7 +113,7 @@ public final class Session {
      *
      * @param interval The interval.
      */
-    public void maxInactiveInterval (int interval) {
+    public void maxInactiveInterval (final int interval) {
         session.setMaxInactiveInterval (interval);
     }
 
@@ -137,7 +137,7 @@ public final class Session {
      *
      * @param name The name of the object to remove from this session.
      */
-    public void removeAttribute (String name) {
+    public void removeAttribute (final String name) {
         session.removeAttribute (name);
     }
 }
