@@ -1,10 +1,18 @@
 [![Build Img]][Build Status] [![Coverage Img]][Coverage Status]
+[![Download Img]][Download Status] [![Kanban Img]][Kanban Status]
 
 [Build Img]: https://travis-ci.org/jamming/sabina.svg?branch=master
 [Build Status]: https://travis-ci.org/jamming/sabina
 
 [Coverage Img]: https://img.shields.io/coveralls/jamming/sabina.svg
 [Coverage Status]: https://coveralls.io/r/jamming/sabina
+
+[Download Img]: https://api.bintray.com/packages/jamming/maven/Sabina/images/download.svg
+[Download Status]: https://bintray.com/jamming/maven/Sabina/_latestVersion
+
+[Kanban Img]: https://img.shields.io/badge/kanban-huboard-blue.svg
+[Kanban Status]: https://huboard.com/jamming/sabina
+
 
 
 Sabina - a Sinatra inspired web framework
