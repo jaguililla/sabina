@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node1_0" href="./JsonContent.html" title="sabina.content.JsonContent" alt="" coords="16,17,103,41"/>
-<area shape="rect" id="node1" href="./JsonContent.html" title="&lt;TABLE&gt;" alt="" coords="5,5,113,53"/>
-<area shape="rect" id="node2_1" href="./XmlContent.html" title="sabina.content.XmlContent" alt="" coords="148,17,229,41"/>
-<area shape="rect" id="node2" href="./XmlContent.html" title="&lt;TABLE&gt;" alt="" coords="137,5,240,53"/>
-<area shape="rect" id="node3_2" href="./YamlContent.html" title="sabina.content.YamlContent" alt="" coords="275,17,363,41"/>
-<area shape="rect" id="node3" href="./YamlContent.html" title="&lt;TABLE&gt;" alt="" coords="265,5,374,53"/>
-</map>
