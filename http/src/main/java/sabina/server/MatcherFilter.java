@@ -226,7 +226,7 @@ public class MatcherFilter implements Filter {
 
     @Override public void init (FilterConfig filterConfig) {
         routes (filterConfig);
-//        Sabina.routeMatcher ();
+//        routeMatcher = Sabina.routeMatcher ();
     }
 
     @Override public void destroy () {

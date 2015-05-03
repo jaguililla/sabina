@@ -15,6 +15,7 @@
 import static java.lang.System.*
 
 apply plugin: 'application'
+apply plugin: 'war'
 
 description = "Sinatra web framework's benchmark"
 mainClassName = "sabina.benchmark.Application"

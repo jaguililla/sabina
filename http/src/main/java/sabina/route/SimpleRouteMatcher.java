@@ -17,7 +17,6 @@ package sabina.route;
 import static java.util.Collections.singletonList;
 import static java.util.logging.Logger.getLogger;
 import static java.util.stream.Collectors.toList;
-import static sabina.HttpMethod.*;
 import static sabina.Request.convertRouteToList;
 import static sabina.route.MimeParse.bestMatch;
 import static sabina.Route.*;

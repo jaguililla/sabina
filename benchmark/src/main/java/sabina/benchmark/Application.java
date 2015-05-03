@@ -21,14 +21,18 @@ import static sabina.content.JsonContent.toJson;
 import static sabina.view.MustacheView.renderMustache;
 
 import sabina.Request;
+import sabina.server.MatcherFilter;
 
 import java.util.*;
 import java.util.Date;
+import javax.servlet.FilterConfig;
+import javax.servlet.annotation.WebFilter;
 
 /**
  * .
  */
-final class Application {
+@WebFilter ("/*")
+final class Application extends MatcherFilter {
     static final String SETTINGS_RESOURCE = "/server.properties";
     static final Repository REPOSITORY = loadRepository ();
     static final int DB_ROWS = 10000;
@@ -114,7 +118,7 @@ final class Application {
         it.response.addDateHeader ("Date", new Date ().getTime ());
     }
 
-    public static void main (String[] args) {
+    private static void routes () {
         get ("/json", Application::getJson);
         get ("/db", Application::getDb);
         get ("/query", Application::getDb);
@@ -122,10 +126,18 @@ final class Application {
         get ("/update", Application::getUpdates);
         get ("/plaintext", Application::getPlaintext);
         after (Application::addCommonHeaders);
+    }
+
+    public static void main (String[] args) {
+        routes ();
 
         Properties settings = loadConfiguration ();
         host (settings.getProperty ("web.host"));
         port (settings.getProperty ("web.port"));
         start ();
+    }
+
+    @Override protected void routes (FilterConfig filterConfig) {
+        routes ();
     }
 }
