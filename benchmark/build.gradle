@@ -29,6 +29,7 @@ processResources {
 }
 
 dependencies {
+    compile project(':http')
     compile project(':extra')
 
     compile 'org.glassfish.grizzly:grizzly-http-servlet:2.3.19'
