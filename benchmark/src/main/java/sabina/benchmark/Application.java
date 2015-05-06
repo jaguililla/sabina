@@ -16,11 +16,11 @@ package sabina.benchmark;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.System.getProperty;
-import static sabina.Sabina.*;
 import static sabina.content.JsonContent.toJson;
 import static sabina.view.MustacheView.renderMustache;
 
 import sabina.Request;
+import sabina.Sabina;
 import sabina.server.MatcherFilter;
 
 import java.util.*;
@@ -118,7 +118,22 @@ final class Application extends MatcherFilter {
         it.response.addDateHeader ("Date", new Date ().getTime ());
     }
 
-    private static void routes () {
+    public static void main (String[] args) {
+        Sabina.get ("/json", Application::getJson);
+        Sabina.get ("/db", Application::getDb);
+        Sabina.get ("/query", Application::getDb);
+        Sabina.get ("/fortune", Application::getFortunes);
+        Sabina.get ("/update", Application::getUpdates);
+        Sabina.get ("/plaintext", Application::getPlaintext);
+        Sabina.after (Application::addCommonHeaders);
+
+        Properties settings = loadConfiguration ();
+        Sabina.host (settings.getProperty ("web.host"));
+        Sabina.port (settings.getProperty ("web.port"));
+        Sabina.start ();
+    }
+
+    @Override public void init (FilterConfig filterConfig) {
         get ("/json", Application::getJson);
         get ("/db", Application::getDb);
         get ("/query", Application::getDb);
@@ -126,18 +141,5 @@ final class Application extends MatcherFilter {
         get ("/update", Application::getUpdates);
         get ("/plaintext", Application::getPlaintext);
         after (Application::addCommonHeaders);
-    }
-
-    public static void main (String[] args) {
-        routes ();
-
-        Properties settings = loadConfiguration ();
-        host (settings.getProperty ("web.host"));
-        port (settings.getProperty ("web.port"));
-        start ();
-    }
-
-    @Override protected void routes (FilterConfig filterConfig) {
-        routes ();
     }
 }

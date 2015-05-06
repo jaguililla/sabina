@@ -43,13 +43,11 @@ public final class ApplicationTest {
     private static final String ENDPOINT = "http://localhost:5050";
     private static final Gson GSON = new Gson ();
 
-    @BeforeClass public static void setup () {
+    @BeforeClass public void setup () throws IOException {
         Application.main (null);
 //        ApplicationGrizzly.main (null);
 //        ApplicationJetty.main (null);
-    }
 
-    @BeforeClass public void warm_up () throws IOException {
         for (int ii = 0; ii < WARM_UP; ii++) {
             json ();
             plaintext ();
@@ -79,7 +77,6 @@ public final class ApplicationTest {
         stop ();
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void json () throws IOException {
         HttpResponse response = get (ENDPOINT + "/json");
         String content = getContent (response);
@@ -88,7 +85,6 @@ public final class ApplicationTest {
         assertEquals ("Hello, World!", GSON.fromJson (content, Map.class).get ("message"));
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void plaintext () throws IOException {
         HttpResponse response = get (ENDPOINT + "/plaintext");
         String content = getContent (response);
@@ -97,7 +93,6 @@ public final class ApplicationTest {
         assertEquals ("Hello, World!", content);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void no_query_parameter () throws IOException {
         HttpResponse response = get (ENDPOINT + "/db");
         String content = getContent (response);
@@ -107,47 +102,38 @@ public final class ApplicationTest {
         assertTrue (resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber"));
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void empty_query_parameter () throws IOException {
         checkDbRequest ("/query?queries", 1);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void text_query_parameter () throws IOException {
         checkDbRequest ("/query?queries=text", 1);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void zero_queries () throws IOException {
         checkDbRequest ("/query?queries=0", 1);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_thousand_queries () throws IOException {
         checkDbRequest ("/query?queries=1000", 500);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_query () throws IOException {
         checkDbRequest ("/query?queries=1", 1);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void ten_queries () throws IOException {
         checkDbRequest ("/query?queries=10", 10);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_hundred_queries () throws IOException {
         checkDbRequest ("/query?queries=100", 100);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void five_hundred_queries () throws IOException {
         checkDbRequest ("/query?queries=500", 500);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void fortunes () throws IOException {
         HttpResponse response = get (ENDPOINT + "/fortune");
         String content = getContent (response);
@@ -160,7 +146,6 @@ public final class ApplicationTest {
         assertEquals ("text/html; charset=utf-8", contentType.toLowerCase ());
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void no_updates_parameter () throws IOException {
         HttpResponse response = get (ENDPOINT + "/update");
         String content = getContent (response);
@@ -170,44 +155,141 @@ public final class ApplicationTest {
         assertTrue (resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber"));
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void empty_updates_parameter () throws IOException {
         checkDbRequest ("/update?queries", 1);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void text_updates_parameter () throws IOException {
         checkDbRequest ("/update?queries=text", 1);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void zero_updates () throws IOException {
         checkDbRequest ("/update?queries=0", 1);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_thousand_updates () throws IOException {
         checkDbRequest ("/update?queries=1000", 500);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_update () throws IOException {
         checkDbRequest ("/update?queries=1", 1);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void ten_updates () throws IOException {
         checkDbRequest ("/update?queries=10", 10);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void one_hundred_updates () throws IOException {
         checkDbRequest ("/update?queries=100", 100);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
     public void five_hundred_updates () throws IOException {
         checkDbRequest ("/update?queries=500", 500);
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_json () throws IOException {
+        json ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_plaintext () throws IOException {
+        plaintext ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_no_query_parameter () throws IOException {
+        no_query_parameter ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_empty_query_parameter () throws IOException {
+        empty_query_parameter ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_text_query_parameter () throws IOException {
+        text_query_parameter ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_zero_queries () throws IOException {
+        zero_queries ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_one_thousand_queries () throws IOException {
+        one_thousand_queries ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_one_query () throws IOException {
+        one_query ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_ten_queries () throws IOException {
+        ten_queries ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_one_hundred_queries () throws IOException {
+        one_hundred_queries ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_five_hundred_queries () throws IOException {
+        five_hundred_queries ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_fortunes () throws IOException {
+        fortunes ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_no_updates_parameter () throws IOException {
+        no_updates_parameter ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_empty_updates_parameter () throws IOException {
+        empty_updates_parameter ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_text_updates_parameter () throws IOException {
+        text_updates_parameter ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_zero_updates () throws IOException {
+        zero_updates ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_one_thousand_updates () throws IOException {
+        one_thousand_updates ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_one_update () throws IOException {
+        one_update ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_ten_updates () throws IOException {
+        ten_updates ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_one_hundred_updates () throws IOException {
+        one_hundred_updates ();
+    }
+
+    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
+    public void stress_five_hundred_updates () throws IOException {
+        five_hundred_updates ();
     }
 
     private void checkDbRequest (String path, int itemsCount) throws IOException {

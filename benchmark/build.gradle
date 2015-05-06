@@ -89,7 +89,7 @@ def stressTestReport () {
     }
     .each {
         printf (
-            "\t%-60s : %4d  %1.3f  %1.3f  %6.3f  %6.3f  %7.3f%n",
+            "\t%-70s : %4d  %1.3f  %1.3f  %6.3f  %6.3f  %7.3f%n",
             it[0], it[1], it[2], it[3], it[4], it[5], it[6]
         )
     }
