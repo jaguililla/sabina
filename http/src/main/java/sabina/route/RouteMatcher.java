@@ -17,8 +17,9 @@ package sabina.route;
 import java.util.List;
 
 import sabina.Fault;
-import sabina.HttpMethod;
 import sabina.Route;
+
+import sabina.HttpMethod;
 
 /**
  * Route matcher

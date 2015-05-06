@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import sabina.Route.VoidHandler;
+import sabina.Router.VoidHandler;
 
 @Test public class SabinaStaticIT {
     private static TestScenario testScenario = new TestScenario ("undertow", 4567, true, true);

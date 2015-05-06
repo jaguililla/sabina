@@ -19,7 +19,8 @@ import static sabina.integration.TestScenario.*;
 import static java.lang.String.*;
 
 import sabina.Request;
-import sabina.Route.VoidHandler;
+import sabina.Response;
+import sabina.Router.VoidHandler;
 import sabina.Server;
 
 final class Generic {
@@ -108,13 +109,20 @@ final class Generic {
                 part.toUpperCase () + " route: " + it.params (":param")
         );
 
+        s.get ("/reqres", (Request req, Response res) -> req.requestMethod ());
+
         s.after ("/hi", it -> it.response.header ("after", "foobar"));
     }
 
-    static void filtersShouldBeAcceptTypeAware (TestScenario testScenario) {
+    static void reqres (TestScenario scenario) {
+        UrlResponse response = scenario.doMethod ("GET", "/reqres");
+        scenario.assertResponseEquals (response, "GET", 200);
+    }
+
+    static void filtersShouldBeAcceptTypeAware (TestScenario scenario) {
         UrlResponse response =
-            testScenario.doMethod ("GET", "/protected/resource", null, "application/json");
-        testScenario.assertResponseEquals (response, "{\"message\": \"Go Away!\"}", 401);
+            scenario.doMethod ("GET", "/protected/resource", null, "application/json");
+        scenario.assertResponseEquals (response, "{\"message\": \"Go Away!\"}", 401);
     }
 
     static void routesShouldBeAcceptTypeAware (TestScenario testScenario) {

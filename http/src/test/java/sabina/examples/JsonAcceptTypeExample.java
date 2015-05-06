@@ -30,6 +30,7 @@ final class JsonAcceptTypeExample {
 		 * Running curl -i -H "Accept: text/html" http://localhost:4567/hello HTTP 404 error is
 		 * thrown.
 		 */
-        get ("/hello", "application/json", it -> "{\"message\": \"Hello World\"}").start ();
+        get ("/hello", "application/json", it -> "{\"message\": \"Hello World\"}");
+        start ();
     }
 }

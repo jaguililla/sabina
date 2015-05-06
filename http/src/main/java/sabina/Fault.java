@@ -33,7 +33,7 @@ public final class Fault<T extends Exception> {
      * @param exception .
      * @param handler .
      */
-    Fault (final Class<T> exception, final BiConsumer<T, Request> handler) {
+    public Fault (final Class<T> exception, final BiConsumer<T, Request> handler) {
         checkArgument (handler != null);
 
         this.handler = handler;

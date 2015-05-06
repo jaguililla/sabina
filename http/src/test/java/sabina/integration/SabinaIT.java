@@ -200,6 +200,9 @@ import sabina.Server;
         Generic.handleException (testScenario);
     }
     @Test(dataProvider = "scenarios")
+    public void reqres (TestScenario testScenario) { Generic.reqres (testScenario); }
+
+    @Test(dataProvider = "scenarios")
     public void methods (TestScenario testScenario) { Routes.methods (testScenario); }
 
     @Test(dataProvider = "scenarios")

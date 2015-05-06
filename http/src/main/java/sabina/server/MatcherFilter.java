@@ -39,7 +39,7 @@ import sabina.route.RouteMatcher;
  *
  * @author Per Wendel
  */
-public class MatcherFilter implements Filter {
+public class MatcherFilter implements Filter, Router {
     private static final Logger LOG = getLogger (MatcherFilter.class.getName ());
 
     private static final String
@@ -224,14 +224,13 @@ public class MatcherFilter implements Filter {
         return bodyContent;
     }
 
+    @Override public RouteMatcher getMatcher () { return routeMatcher; }
+
     @Override public void init (FilterConfig filterConfig) {
-        routes (filterConfig);
-//        routeMatcher = Sabina.routeMatcher ();
+        // To be overriden in Servlet Filters
     }
 
     @Override public void destroy () {
         // Not used
     }
-
-    protected void routes (FilterConfig filterConfig) {}
 }

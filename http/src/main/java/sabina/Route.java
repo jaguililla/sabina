@@ -22,8 +22,8 @@ import static sabina.util.Checks.checkArgument;
 import static sabina.util.Strings.isNullOrEmpty;
 
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
+
+import sabina.Router.Handler;
 
 /**
  * A Route is built up by a path (for url-matching) and the implementation of the 'handle'
@@ -34,11 +34,6 @@ import java.util.function.Function;
  * @author Per Wendel
  */
 public final class Route {
-    /** This is just a "type alias". */
-    public interface Handler extends Function<Request, Object> {}
-    /** This is just a "type alias". */
-    public interface VoidHandler extends Consumer<Request> {}
-
     public static final String ALL_PATHS = "+/*paths";
     private static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
@@ -47,7 +42,7 @@ public final class Route {
     public final HttpMethod method;
     private final Handler handler;
 
-    final List<String> routeParts;
+    public final List<String> routeParts;
 
     /**
      * Constructor.
@@ -57,7 +52,7 @@ public final class Route {
      * @param method .
      * @param handler .
      */
-    Route (final HttpMethod method, final Handler handler) {
+    public Route (final HttpMethod method, final Handler handler) {
         this (method, ALL_PATHS, handler);
     }
 
@@ -68,7 +63,7 @@ public final class Route {
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      * @param handler .
      */
-    Route (final HttpMethod method, final String path, final Handler handler) {
+    public Route (final HttpMethod method, final String path, final Handler handler) {
         this (
             method,
             path,

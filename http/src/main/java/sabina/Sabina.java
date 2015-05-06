@@ -16,9 +16,9 @@ package sabina;
 
 import java.util.function.BiConsumer;
 
-import sabina.Route.Handler;
-import sabina.Route.VoidHandler;
 import sabina.route.RouteMatcher;
+import sabina.Router.Handler;
+import sabina.Router.VoidHandler;
 
 /**
  * Static methods to handle the default server (singleton server)
@@ -29,48 +29,48 @@ public final class Sabina {
     /*
      * Filters
      */
-    public static Server after (VoidHandler h) { return s.after (h); }
-    public static Server before (VoidHandler h) { return s.before (h); }
-    public static Server after (String p, VoidHandler h) { return s.after (p, h); }
-    public static Server before (String p, VoidHandler h) { return s.before (p, h); }
-    public static Server after (String p, String ct, VoidHandler h) { return s.after (p, ct, h); }
-    public static Server before (String p, String ct, VoidHandler h) { return s.before (p, ct, h); }
+    public static void after (VoidHandler h) { s.after (h); }
+    public static void before (VoidHandler h) { s.before (h); }
+    public static void after (String p, VoidHandler h) { s.after (p, h); }
+    public static void before (String p, VoidHandler h) { s.before (p, h); }
+    public static void after (String p, String ct, VoidHandler h) { s.after (p, ct, h); }
+    public static void before (String p, String ct, VoidHandler h) { s.before (p, ct, h); }
 
     /*
      * Routes
      */
-    public static Server delete (String p, Handler h) { return s.delete (p, h); }
-    public static Server delete (String p, VoidHandler h) { return s.delete (p, h); }
-    public static Server get (String p, Handler h) { return s.get (p, h); }
-    public static Server get (String p, VoidHandler h) { return s.get (p, h); }
-    public static Server head (String p, Handler h) { return s.head (p, h); }
-    public static Server head (String p, VoidHandler h) { return s.head (p, h); }
-    public static Server options (String p, Handler h) { return s.options (p, h); }
-    public static Server options (String p, VoidHandler h) { return s.options (p, h); }
-    public static Server patch (String p, Handler h) { return s.patch (p, h); }
-    public static Server patch (String p, VoidHandler h) { return s.patch (p, h); }
-    public static Server post (String p, Handler h) { return s.post (p, h); }
-    public static Server post (String p, VoidHandler h) { return s.post (p, h); }
-    public static Server put (String p, Handler h) { return s.put (p, h); }
-    public static Server put (String p, VoidHandler h) { return s.put (p, h); }
-    public static Server trace (String p, Handler h) { return s.trace (p, h); }
-    public static Server trace (String p, VoidHandler h) { return s.trace (p, h); }
-    public static Server delete (String p, String ct, Handler h) { return s.delete (p, ct, h); }
-    public static Server delete (String p, String ct, VoidHandler h) { return s.delete (p, ct, h); }
-    public static Server get (String p, String ct, Handler h) { return s.get (p, ct, h); }
-    public static Server get (String p, String ct, VoidHandler h) { return s.get (p, ct, h); }
-    public static Server head (String p, String ct, Handler h) { return s.head (p, ct, h); }
-    public static Server head (String p, String ct, VoidHandler h) { return s.head (p, ct, h); }
-    public static Server options (String p, String ct, Handler h) { return s.options (p, ct, h); }
-    public static Server options (String p, String ct, VoidHandler h) { return s.options (p, ct, h); }
-    public static Server patch (String p, String ct, Handler h) { return s.patch (p, ct, h); }
-    public static Server patch (String p, String ct, VoidHandler h) { return s.patch (p, ct, h); }
-    public static Server post (String p, String ct, Handler h) { return s.post (p, ct, h); }
-    public static Server post (String p, String ct, VoidHandler h) { return s.post (p, ct, h); }
-    public static Server put (String p, String ct, Handler h) { return s.put (p, ct, h); }
-    public static Server put (String p, String ct, VoidHandler h) { return s.put (p, ct, h); }
-    public static Server trace (String p, String ct, Handler h) { return s.trace (p, ct, h); }
-    public static Server trace (String p, String ct, VoidHandler h) { return s.trace (p, ct, h); }
+    public static void delete (String p, Handler h) { s.delete (p, h); }
+    public static void delete (String p, VoidHandler h) { s.delete (p, h); }
+    public static void get (String p, Handler h) { s.get (p, h); }
+    public static void get (String p, VoidHandler h) { s.get (p, h); }
+    public static void head (String p, Handler h) { s.head (p, h); }
+    public static void head (String p, VoidHandler h) { s.head (p, h); }
+    public static void options (String p, Handler h) { s.options (p, h); }
+    public static void options (String p, VoidHandler h) { s.options (p, h); }
+    public static void patch (String p, Handler h) { s.patch (p, h); }
+    public static void patch (String p, VoidHandler h) { s.patch (p, h); }
+    public static void post (String p, Handler h) { s.post (p, h); }
+    public static void post (String p, VoidHandler h) { s.post (p, h); }
+    public static void put (String p, Handler h) { s.put (p, h); }
+    public static void put (String p, VoidHandler h) { s.put (p, h); }
+    public static void trace (String p, Handler h) { s.trace (p, h); }
+    public static void trace (String p, VoidHandler h) { s.trace (p, h); }
+    public static void delete (String p, String ct, Handler h) { s.delete (p, ct, h); }
+    public static void delete (String p, String ct, VoidHandler h) { s.delete (p, ct, h); }
+    public static void get (String p, String ct, Handler h) { s.get (p, ct, h); }
+    public static void get (String p, String ct, VoidHandler h) { s.get (p, ct, h); }
+    public static void head (String p, String ct, Handler h) { s.head (p, ct, h); }
+    public static void head (String p, String ct, VoidHandler h) { s.head (p, ct, h); }
+    public static void options (String p, String ct, Handler h) { s.options (p, ct, h); }
+    public static void options (String p, String ct, VoidHandler h) { s.options (p, ct, h); }
+    public static void patch (String p, String ct, Handler h) { s.patch (p, ct, h); }
+    public static void patch (String p, String ct, VoidHandler h) { s.patch (p, ct, h); }
+    public static void post (String p, String ct, Handler h) { s.post (p, ct, h); }
+    public static void post (String p, String ct, VoidHandler h) { s.post (p, ct, h); }
+    public static void put (String p, String ct, Handler h) { s.put (p, ct, h); }
+    public static void put (String p, String ct, VoidHandler h) { s.put (p, ct, h); }
+    public static void trace (String p, String ct, Handler h) { s.trace (p, ct, h); }
+    public static void trace (String p, String ct, VoidHandler h) { s.trace (p, ct, h); }
 
     public static RouteMatcher routeMatcher () {
         return s.routeMatcher;
@@ -124,10 +124,10 @@ public final class Sabina {
         s.stop ();
     }
 
-    public static <T extends Exception> Server exception(
+    public static <T extends Exception> void exception (
         Class<T> exceptionClass, BiConsumer<T, Request> handler) {
 
-        return s.exception (exceptionClass, handler);
+        s.exception (exceptionClass, handler);
     }
 
     public static void reset () {
@@ -152,7 +152,8 @@ public final class Sabina {
      */
     public static void serve (String p, Handler h) {
         // TODO Change 'get' for 'any' (first create the method ;)
-        get (p, h).start ();
+        get (p, h);
+        start ();
     }
 
     private Sabina () {

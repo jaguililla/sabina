@@ -17,7 +17,7 @@ package sabina.examples;
 import static sabina.Sabina.*;
 import static sabina.content.JsonContent.toJson;
 
-import sabina.Route.Handler;
+import sabina.Router.Handler;
 
 class MyMessage {
     private String message;

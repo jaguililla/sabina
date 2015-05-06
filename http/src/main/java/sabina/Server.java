@@ -18,14 +18,9 @@ import static java.lang.Integer.parseInt;
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
 import static java.util.logging.Logger.getLogger;
-import static sabina.HttpMethod.*;
 
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
-import sabina.Route.Handler;
-import sabina.Route.VoidHandler;
 import sabina.route.RouteMatcher;
 import sabina.route.RouteMatcherFactory;
 import sabina.server.Backend;
@@ -51,7 +46,7 @@ import sabina.server.BackendFactory;
  *
  * @author Per Wendel
  */
-public final class Server {
+public final class Server implements Router {
     private static final Logger LOG = getLogger (Server.class.getName ());
 
     private static final int DEFAULT_PORT = 4567;
@@ -229,115 +224,5 @@ public final class Server {
         routeMatcher = RouteMatcherFactory.create ();
     }
 
-    Server addRoute (Route action) {
-        routeMatcher.processRoute (action);
-        return this;
-    }
-
-    Server add (HttpMethod method, Handler h) {
-        return addRoute (new Route (method, h));
-    }
-
-    Server add (HttpMethod method, String p, Handler h) {
-        return addRoute (new Route (method, p, h));
-    }
-
-    Server add (HttpMethod method, String p, String ct, Handler h) {
-        return addRoute (new Route (method, p, ct, h));
-    }
-
-    Server add (HttpMethod method, VoidHandler h) {
-        return add (method, wrap (h));
-    }
-
-    Server add (HttpMethod method, String p, VoidHandler h) {
-        return add (method, p, wrap (h));
-    }
-
-    Server add (HttpMethod method, String p, String ct, VoidHandler h) {
-        return add (method, p, ct, wrap (h));
-    }
-
-    /**
-     * Maps an exception handler to be executed when an exception occurs during routing.
-     *
-     * @param exceptionClass the exception class.
-     * @param h The handler.
-     * @param <T> Exception type.
-     * @return The server whith the added exception h.
-     */
-    public <T extends Exception> Server exception(
-        Class<T> exceptionClass, BiConsumer<T, Request> h) {
-
-        Fault<?> wrapper = new Fault<> (exceptionClass, h);
-        routeMatcher.processFault (wrapper);
-        return this;
-    }
-
-    /*
-     * Filters
-     */
-    public Server after (VoidHandler h) { return add (AFTER, h); }
-    public Server before (VoidHandler h) { return add (BEFORE, h); }
-    public Server after (String p, VoidHandler h) { return add (AFTER, p, h); }
-    public Server before (String p, VoidHandler h) { return add (BEFORE, p, h); }
-    public Server after (String p, String ct, VoidHandler h) { return add (AFTER, p, ct, h); }
-    public Server before (String p, String ct, VoidHandler h) { return add (BEFORE, p, ct, h); }
-
-    /*
-     * Routes
-     */
-    public Server delete (String p, Handler h) { return add (DELETE, p, h); }
-    public Server delete (String p, VoidHandler h) { return delete (p, wrap (h)); }
-    public Server get (String p, Handler h) { return add (GET, p, h); }
-    public Server get (String p, VoidHandler h) { return get (p, wrap (h)); }
-    public Server head (String p, Handler h) { return add (HEAD, p, h); }
-    public Server head (String p, VoidHandler h) { return head (p, wrap (h)); }
-    public Server options (String p, Handler h) { return add (OPTIONS, p, h); }
-    public Server options (String p, VoidHandler h) { return options (p, wrap (h)); }
-    public Server patch (String p, Handler h) { return add (PATCH, p, h); }
-    public Server patch (String p, VoidHandler h) { return patch (p, wrap (h)); }
-    public Server post (String p, Handler h) { return add (POST, p, h); }
-    public Server post (String p, VoidHandler h) { return post (p, wrap (h)); }
-    public Server put (String p, Handler h) { return add (PUT, p, h); }
-    public Server put (String p, VoidHandler h) { return put (p, wrap (h)); }
-    public Server trace (String p, Handler h) { return add (TRACE, p, h); }
-    public Server trace (String p, VoidHandler h) { return trace (p, wrap (h)); }
-    public Server delete (String p, String ct, Handler h) { return add (DELETE, p, ct, h); }
-    public Server delete (String p, String ct, VoidHandler h) { return delete (p, ct, wrap (h)); }
-    public Server get (String p, String ct, Handler h) { return add (GET, p, ct, h); }
-    public Server get (String p, String ct, VoidHandler h) { return get (p, ct, wrap (h)); }
-    public Server head (String p, String ct, Handler h) { return add (HEAD, p, ct, h); }
-    public Server head (String p, String ct, VoidHandler h) { return head (p, ct, wrap (h)); }
-    public Server options (String p, String ct, Handler h) { return add (OPTIONS, p, ct, h); }
-    public Server options (String p, String ct, VoidHandler h) { return options (p, ct, wrap (h)); }
-    public Server patch (String p, String ct, Handler h) { return add (PATCH, p, ct, h); }
-    public Server patch (String p, String ct, VoidHandler h) { return patch (p, ct, wrap (h)); }
-    public Server post (String p, String ct, Handler h) { return add (POST, p, ct, h); }
-    public Server post (String p, String ct, VoidHandler h) { return post (p, ct, wrap (h)); }
-    public Server put (String p, String ct, Handler h) { return add (PUT, p, ct, h); }
-    public Server put (String p, String ct, VoidHandler h) { return put (p, ct, wrap (h)); }
-    public Server trace (String p, String ct, Handler h) { return add (TRACE, p, ct, h); }
-    public Server trace (String p, String ct, VoidHandler h) { return trace (p, ct, wrap (h)); }
-
-    private Handler wrap (VoidHandler h) {
-        return request -> {
-            h.accept (request);
-            return "";
-        };
-    }
-
-    /*
-     * TODO Use to next two functions to ease usage (lambdas in a form: (req, res) -> "")
-     */
-    private Handler wrap (BiFunction<Request, Response, Object> h) {
-        return request -> h.apply (request, request.response);
-    }
-
-    private Handler wrap (BiConsumer<Request, Response> h) {
-        return request -> {
-            h.accept (request, request.response);
-            return ""; // TODO Returning null is like not found (404)
-        };
-    }
+    @Override public RouteMatcher getMatcher () { return routeMatcher; }
 }

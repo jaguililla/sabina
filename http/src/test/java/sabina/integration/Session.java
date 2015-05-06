@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.joining;
 import static org.testng.Assert.assertEquals;
 import static sabina.integration.TestScenario.*;
 
-import sabina.Route.*;
+import sabina.Router.Handler;
 import sabina.Server;
 
 /**

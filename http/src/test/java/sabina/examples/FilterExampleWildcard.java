@@ -24,6 +24,7 @@ import static sabina.Sabina.*;
  */
 final class FilterExampleWildcard {
     public static void main (String[] args) {
-        before ("/protected/*", it -> it.halt (401, "Go Away!")).start ();
+        before ("/protected/*", it -> it.halt (401, "Go Away!"));
+        start ();
     }
 }
