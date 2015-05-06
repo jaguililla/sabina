@@ -211,15 +211,14 @@ final class SimpleRouteMatcher implements RouteMatcher {
         }
 
         // check params
-        List<String> thisPathList = convertRouteToList (route.path);
         List<String> pathList = convertRouteToList (path);
 
-        int thisPathSize = thisPathList.size ();
+        int thisPathSize = route.routeParts.size ();
         int pathSize = pathList.size ();
 
         if (thisPathSize == pathSize) {
             for (int i = 0; i < thisPathSize; i++) {
-                String thisPathPart = thisPathList.get (i);
+                String thisPathPart = route.routeParts.get (i);
                 String pathPart = pathList.get (i);
 
                 if ((i == thisPathSize - 1) && (thisPathPart.equals ("*") && route.path
@@ -250,7 +249,7 @@ final class SimpleRouteMatcher implements RouteMatcher {
 
                 if (thisPathSize < pathSize) {
                     for (int i = 0; i < thisPathSize; i++) {
-                        String thisPathPart = thisPathList.get (i);
+                        String thisPathPart = route.routeParts.get (i);
                         String pathPart = pathList.get (i);
                         if (thisPathPart.equals ("*") && (i == thisPathSize - 1) && route.path
                             .endsWith ("*")) {
