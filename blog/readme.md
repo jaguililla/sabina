@@ -14,14 +14,14 @@ Changes
 * Code formatting
 * Update to Java 8
 * Port to Sabina
+
+
+Future improvements
+------------------
+
 * Upgrade MongoDB driver to 3.0
-* Style with Bootstrap (just for fun ;)
-
-
-Minor stuff
------------
-
-Other improvement could be use loggers.
+* Style with Bootstrap
+* Use loggers
 
 
 Install
