@@ -401,6 +401,10 @@ public final class Request {
         return result;
     }
 
+    public Cookie[] getCookies () {
+        return servletRequest.getCookies ();
+    }
+
     /**
      * Gets cookie by name.
      *

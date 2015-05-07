@@ -126,6 +126,10 @@ public final class Response {
         response.addHeader (header, value);
     }
 
+    public void addCookie (Cookie cookie) {
+        response.addCookie (cookie);
+    }
+
     /**
      * Adds not persistent cookie to the response.
      * Can be invoked multiple times to insert more than one cookie.
