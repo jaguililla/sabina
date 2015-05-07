@@ -72,6 +72,7 @@ public class BlogController {
             DBObject post = blogPostDAO.findByPermalink (permalink);
             if (post == null) {
                 response.redirect ("/post_not_found");
+                return ""; // TODO Fix this in Sabina
             }
             else {
                 // empty comment to hold new comment in form at bottom of blog entry detail page
@@ -85,7 +86,7 @@ public class BlogController {
                 root.put ("post", post);
                 root.put ("comment", newComment);
 
-                response.body (renderFreeMarker ("entry_template.ftl", root));
+                return renderFreeMarker ("entry_template.ftl", root);
             }
         });
 
@@ -107,7 +108,7 @@ public class BlogController {
                     // duplicate user
                     root.put ("username_error",
                         "Username already in use, Please choose another");
-                    response.body (renderFreeMarker ("signup.ftl", root));
+                    return renderFreeMarker ("signup.ftl", root);
                 }
                 else {
                     // good user, let's start a session
@@ -116,12 +117,13 @@ public class BlogController {
 
                     response.addCookie (new Cookie ("session", sessionID));
                     response.redirect ("/welcome");
+                    return "";
                 }
             }
             else {
                 // bad signup
                 System.out.println ("User Registration did not validate");
-                response.body (renderFreeMarker ("", root));
+                return renderFreeMarker ("signup.ftl", root);
             }
         });
 
@@ -149,12 +151,13 @@ public class BlogController {
             if (username == null) {
                 // looks like a bad request. user is not logged in
                 response.redirect ("/login");
+                return "";
             }
             else {
                 HashMap<Object, Object> root = new HashMap<> ();
                 root.put ("username", username);
 
-                response.body (renderFreeMarker ("newpost_template.ftl", root));
+                return renderFreeMarker ("newpost_template.ftl", root);
             }
         });
 
@@ -168,6 +171,7 @@ public class BlogController {
 
             if (username == null) {
                 response.redirect ("/login");    // only logged in users can post to blog
+                return "";
             }
             else if (title.equals ("") || post.equals ("")) {
                 // redisplay page with errors
@@ -177,7 +181,7 @@ public class BlogController {
                 root.put ("username", username);
                 root.put ("tags", tags);
                 root.put ("body", post);
-                response.body (renderFreeMarker ("newpost_template.ftl", root));
+                return renderFreeMarker ("newpost_template.ftl", root);
             }
             else {
                 // extract tags
@@ -190,6 +194,7 @@ public class BlogController {
 
                 // now redirect to the blog permalink
                 response.redirect ("/post/" + permalink);
+                return "";
             }
         });
 
@@ -200,13 +205,14 @@ public class BlogController {
             if (username == null) {
                 System.out.println ("welcome() can't identify the user, redirecting to signup");
                 response.redirect ("/signup");
+                return "";
             }
             else {
                 HashMap<Object, Object> root = new HashMap<> ();
 
                 root.put ("username", username);
 
-                response.body (renderFreeMarker ("welcome.ftl", root));
+                return renderFreeMarker ("welcome.ftl", root);
             }
         });
 
@@ -220,6 +226,7 @@ public class BlogController {
             DBObject post = blogPostDAO.findByPermalink (permalink);
             if (post == null) {
                 response.redirect ("/post_not_found");
+                return "";
             }
             // check that comment is good
             else if (name.equals ("") || body.equals ("")) {
@@ -234,11 +241,12 @@ public class BlogController {
                 root.put ("post", post);
                 root.put ("errors", "Post must contain your name and an actual comment");
 
-                response.body (renderFreeMarker ("entry_template.ftl", root));
+                return renderFreeMarker ("entry_template.ftl", root);
             }
             else {
                 blogPostDAO.addPostComment (name, email, body, permalink);
                 response.redirect ("/post/" + permalink);
+                return "";
             }
         });
 
@@ -269,12 +277,14 @@ public class BlogController {
 
                 if (sessionID == null) {
                     response.redirect ("/internal_error");
+                    return "";
                 }
                 else {
                     // set the cookie for the user's browser
                     response.addCookie (new Cookie ("session", sessionID));
 
                     response.redirect ("/welcome");
+                    return "";
                 }
             }
             else {
@@ -283,7 +293,7 @@ public class BlogController {
                 root.put ("username", StringEscapeUtils.escapeHtml4 (username));
                 root.put ("password", "");
                 root.put ("login_error", "Invalid Login");
-                response.body (renderFreeMarker ("login.ftl", root));
+                return renderFreeMarker ("login.ftl", root);
             }
         });
 
