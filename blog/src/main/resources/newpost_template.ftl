@@ -1,9 +1,19 @@
-<!doctype HTML>
-<html>
+<!DOCTYPE html>
+
+<html lang="en" class="no-js">
 <head>
-    <title>Create a new post</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/css/bootstrap.min.css"
+    rel="stylesheet" />
+  <title>Create a new post</title>
 </head>
+
 <body>
+<div class="container">
 <#if username??>
     Welcome ${username} <a href="/logout">Logout</a> | <a href="/">Blog Home</a>
 
@@ -24,7 +34,10 @@
 
             <p>
                 <input type="submit" value="Submit">
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
 </body>
 </html>
 
