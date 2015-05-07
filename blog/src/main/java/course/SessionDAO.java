@@ -18,12 +18,13 @@
 package course;
 
 import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import sun.misc.BASE64Encoder;
 
 public class SessionDAO {
     private final DBCollection sessionsCollection;
@@ -51,9 +52,9 @@ public class SessionDAO {
         byte randomBytes[] = new byte[32];
         generator.nextBytes (randomBytes);
 
-        BASE64Encoder encoder = new BASE64Encoder ();
+        Encoder encoder = Base64.getEncoder ();
 
-        String sessionID = encoder.encode (randomBytes);
+        String sessionID = encoder.encodeToString (randomBytes);
 
         // build the BSON object
         BasicDBObject session = new BasicDBObject ("username", username);

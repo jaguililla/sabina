@@ -17,6 +17,8 @@
 
 package course;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.mongodb.*;
@@ -52,7 +54,7 @@ public class BlogPostDAO {
         }
     }
 
-    public String addPost (String title, String body, List tags, String username) {
+    public String addPost (String title, String body, List<?> tags, String username) {
         System.out.println ("inserting blog entry " + title + " " + body);
 
         String permalink = title.replaceAll ("\\s", "_"); // whitespace becomes _
@@ -64,8 +66,8 @@ public class BlogPostDAO {
         post.append ("body", body);
         post.append ("permalink", permalink);
         post.append ("tags", tags);
-        post.append ("comments", new java.util.ArrayList ());
-        post.append ("date", new java.util.Date ());
+        post.append ("comments", new ArrayList<> ());
+        post.append ("date", new Date ());
 
         try {
             postsCollection.insert (post);
