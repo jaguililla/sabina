@@ -1,6 +1,4 @@
 
-import static java.lang.System.*
-
 apply plugin: 'application'
 
 description = "Blog with MongoDB. Taken of Mongo University (M101J: MongoDB for Java Developers)"
