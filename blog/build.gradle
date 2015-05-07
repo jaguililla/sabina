@@ -1,0 +1,21 @@
+
+import static java.lang.System.*
+
+apply plugin: 'application'
+
+description = "Blog with MongoDB. Taken of Mongo University (M101J: MongoDB for Java Developers)"
+
+mainClassName = "course.BlogController"
+
+dependencies {
+//    compile project(':http')
+//    compile project(':extra')
+
+//    compile 'org.mongodb:mongo-java-driver:3.0.0'
+
+    compile 'org.mongodb:mongo-java-driver:2.10.1'
+    compile 'com.sparkjava:spark-core:1.1.1'
+    compile 'org.freemarker:freemarker:2.3.19'
+    compile 'org.apache.commons:commons-lang3:3.1'
+    compile 'commons-codec:commons-codec:1.7'
+}
