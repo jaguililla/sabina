@@ -2,9 +2,9 @@
 BLOG
 ====
 
-Blog with MongoDB
+Blog with MongoDB.
 
-Taken of Mongo University (M101J: MongoDB for Java Developers)
+Taken of Mongo University (M101J: MongoDB for Java Developers).
 
 
 Changes
@@ -16,6 +16,12 @@ Changes
 * Port to Sabina
 * Upgrade MongoDB driver to 3.0
 * Style with Bootstrap (just for fun ;)
+
+
+Minor stuff
+-----------
+
+Other improvement could be use loggers.
 
 
 Install
