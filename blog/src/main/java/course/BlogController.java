@@ -72,7 +72,7 @@ public class BlogController {
             DBObject post = blogPostDAO.findByPermalink (permalink);
             if (post == null) {
                 response.redirect ("/post_not_found");
-                return ""; // TODO Fix this in Sabina
+                return "";
             }
             else {
                 // empty comment to hold new comment in form at bottom of blog entry detail page
