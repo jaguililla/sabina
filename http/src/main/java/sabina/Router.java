@@ -38,11 +38,11 @@ public interface Router {
     /** This is just a "type alias". */
     interface BiVoidHandler extends BiConsumer<Request, Response> {}
 
+    RouteMatcher getMatcher ();
+
     /**
      * Parses, validates and adds a route
      */
-    RouteMatcher getMatcher ();
-
     default void addRoute (Route action) { getMatcher ().processRoute (action); }
 
     default void add (HttpMethod m, Handler h) {
