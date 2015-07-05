@@ -36,7 +36,7 @@ dependencies {
 
     compile 'com.mchange:c3p0:0.9.2.1'
     compile 'mysql:mysql-connector-java:5.1.28'
-    compile 'org.mongodb:mongo-java-driver:3.0.0'
+    compile 'org.mongodb:mongo-java-driver:3.0.2'
 
     testCompile 'org.apache.httpcomponents:fluent-hc:4.4'
 }
