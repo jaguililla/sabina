@@ -17,41 +17,43 @@
 
 package course;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
+import org.bson.Document;
 
 public class BlogPostDAO {
-    DBCollection postsCollection;
+    MongoCollection<Document> postsCollection;
 
-    public BlogPostDAO (final DB blogDatabase) {
+    public BlogPostDAO (final MongoDatabase blogDatabase) {
         postsCollection = blogDatabase.getCollection ("posts");
     }
 
-    public DBObject findByPermalink (String permalink) {
-        return postsCollection.findOne (new BasicDBObject ("permalink", permalink));
+    public Document findByPermalink (String permalink) {
+        return postsCollection.find (eq ("permalink", permalink)).first ();
     }
 
-    public List<DBObject> findByDateDescending (int limit) {
-        try (DBCursor cursor = postsCollection.find ()) {
-            return cursor
-                .sort (new BasicDBObject ("date", -1))
-                .limit (limit).toArray ();
-        }
+    public List<Document> findByDateDescending (int limit) {
+        return postsCollection.find ()
+            .sort (new Document ("date", -1))
+            .limit (limit)
+            .into (new ArrayList<> ());
     }
 
-    public List<DBObject> findByTagDateDescending (final String tag) {
-        BasicDBObject query = new BasicDBObject ("tags", tag);
+    public List<Document> findByTagDateDescending (final String tag) {
+        Document query = new Document ("tags", tag);
         System.out.println ("/tag query: " + query.toString ());
 
-        try (DBCursor cursor = postsCollection.find (query)) {
-            return cursor
-                .sort (new BasicDBObject ("date", -1))
-                .limit (10)
-                .toArray ();
-        }
+        return postsCollection.find (query)
+            .sort (new Document ("date", -1))
+            .limit (10)
+            .into (new ArrayList<> ());
     }
 
     public String addPost (String title, String body, List<?> tags, String username) {
@@ -61,7 +63,7 @@ public class BlogPostDAO {
         permalink = permalink.replaceAll ("\\W", ""); // get rid of non alphanumeric
         permalink = permalink.toLowerCase ();
 
-        BasicDBObject post = new BasicDBObject ("title", title);
+        Document post = new Document ("title", title);
         post.append ("author", username);
         post.append ("body", body);
         post.append ("permalink", permalink);
@@ -70,7 +72,7 @@ public class BlogPostDAO {
         post.append ("date", new Date ());
 
         try {
-            postsCollection.insert (post);
+            postsCollection.insertOne (post);
             System.out.println ("Inserting blog post with permalink " + permalink);
         }
         catch (Exception e) {
@@ -84,14 +86,14 @@ public class BlogPostDAO {
     public void addPostComment (
         final String name, final String email, final String body, final String permalink) {
 
-        BasicDBObject comment = new BasicDBObject ("author", name).append ("body", body);
+        Document comment = new Document ("author", name).append ("body", body);
         if (email != null && !email.equals ("")) {
             comment.append ("email", email);
         }
 
-        postsCollection.update (
-            new BasicDBObject ("permalink", permalink),
-            new BasicDBObject ("$push", new BasicDBObject ("comments", comment)),
-            false, false);
+        postsCollection.updateOne (
+            eq ("permalink", permalink),
+            new Document ("$push", new Document ("comments", comment)),
+            new UpdateOptions ().upsert (false));
     }
 }

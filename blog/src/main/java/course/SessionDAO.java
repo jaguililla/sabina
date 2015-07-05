@@ -17,31 +17,32 @@
 
 package course;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Base64.Encoder;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 
 public class SessionDAO {
-    private final DBCollection sessionsCollection;
+    private final MongoCollection<Document> sessionsCollection;
 
-    public SessionDAO (final DB blogDatabase) {
+    public SessionDAO (final MongoDatabase blogDatabase) {
         sessionsCollection = blogDatabase.getCollection ("sessions");
     }
 
     public String findUserNameBySessionId (String sessionId) {
-        DBObject session = getSession (sessionId);
+        Document session = getSession (sessionId);
 
         return session == null? null : session.get ("username").toString ();
     }
 
     // retrieves the session from the sessions table
-    public DBObject getSession (String sessionID) {
-        return sessionsCollection.findOne (new BasicDBObject ("_id", sessionID));
+    public Document getSession (String sessionID) {
+        return sessionsCollection.find (eq ("_id", sessionID)).first ();
     }
 
     // starts a new session in the sessions table
@@ -57,17 +58,17 @@ public class SessionDAO {
         String sessionID = encoder.encodeToString (randomBytes);
 
         // build the BSON object
-        BasicDBObject session = new BasicDBObject ("username", username);
+        Document session = new Document ("username", username);
 
         session.append ("_id", sessionID);
 
-        sessionsCollection.insert (session);
+        sessionsCollection.insertOne (session);
 
         return session.getString ("_id");
     }
 
     // ends the session by deleting it from the sesisons table
     public void endSession (String sessionID) {
-        sessionsCollection.remove (new BasicDBObject ("_id", sessionID));
+        sessionsCollection.deleteOne (eq ("_id", sessionID));
     }
 }

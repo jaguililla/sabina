@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.Cookie;
 
-import com.mongodb.DB;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoDatabase;
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import org.bson.Document;
 import sabina.Request;
 import sabina.Response;
 
@@ -37,7 +37,7 @@ public class BlogController {
 
     public BlogController (String mongoURIString) throws IOException {
         final MongoClient mongoClient = new MongoClient (new MongoClientURI (mongoURIString));
-        final DB blogDatabase = mongoClient.getDB ("blog");
+        final MongoDatabase blogDatabase = mongoClient.getDatabase ("blog");
 
         blogPostDAO = new BlogPostDAO (blogDatabase);
         userDAO = new UserDAO (blogDatabase);
@@ -52,7 +52,7 @@ public class BlogController {
         get ("/", (Request request, Response response) -> {
             String username = sessionDAO.findUserNameBySessionId (getSessionCookie (request));
 
-            List<DBObject> posts = blogPostDAO.findByDateDescending (10);
+            List<Document> posts = blogPostDAO.findByDateDescending (10);
             Map<Object, Object> root = new HashMap<> ();
 
             root.put ("myposts", posts);
@@ -69,7 +69,7 @@ public class BlogController {
 
             System.out.println ("/post: get " + permalink);
 
-            DBObject post = blogPostDAO.findByPermalink (permalink);
+            Document post = blogPostDAO.findByPermalink (permalink);
             if (post == null) {
                 response.redirect ("/post_not_found");
                 return "";
@@ -223,7 +223,7 @@ public class BlogController {
             String body = StringEscapeUtils.escapeHtml4 (request.queryParams ("commentBody"));
             String permalink = request.queryParams ("permalink");
 
-            DBObject post = blogPostDAO.findByPermalink (permalink);
+            Document post = blogPostDAO.findByPermalink (permalink);
             if (post == null) {
                 response.redirect ("/post_not_found");
                 return "";
@@ -268,7 +268,7 @@ public class BlogController {
 
             System.out.println ("Login: User submitted: " + username + "  " + password);
 
-            DBObject user = userDAO.validateLogin (username, password);
+            Document user = userDAO.validateLogin (username, password);
 
             if (user != null) {
 
@@ -303,7 +303,7 @@ public class BlogController {
             HashMap<Object, Object> root = new HashMap<> ();
 
             String tag = StringEscapeUtils.escapeHtml4 (request.params (":thetag"));
-            List<DBObject> posts = blogPostDAO.findByTagDateDescending (tag);
+            List<Document> posts = blogPostDAO.findByTagDateDescending (tag);
 
             root.put ("myposts", posts);
             if (username != null) {

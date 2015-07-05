@@ -17,6 +17,8 @@
 
 package course;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,13 +27,15 @@ import java.util.Base64;
 import java.util.Base64.Encoder;
 import java.util.Random;
 
-import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 
 public class UserDAO {
-    private final DBCollection usersCollection;
+    private final MongoCollection<Document> usersCollection;
     private Random random = new SecureRandom ();
 
-    public UserDAO (final DB blogDatabase) {
+    public UserDAO (final MongoDatabase blogDatabase) {
         usersCollection = blogDatabase.getCollection ("users");
     }
 
@@ -39,7 +43,7 @@ public class UserDAO {
     public boolean addUser (String username, String password, String email) {
         String passwordHash = makePasswordHash (password, Integer.toString (random.nextInt ()));
 
-        BasicDBObject user = new BasicDBObject ();
+        Document user = new Document ();
 
         user.append ("_id", username).append ("password", passwordHash);
 
@@ -48,14 +52,14 @@ public class UserDAO {
             user.append ("email", email);
         }
 
-        try {
-            usersCollection.insert (user);
+//        try {
+            usersCollection.insertOne (user);
             return true;
-        }
-        catch (MongoException.DuplicateKey e) {
-            System.out.println ("Username already in use: " + username);
-            return false;
-        }
+//        }
+//        catch (MongoException.DuplicateKey e) {
+//            System.out.println ("Username already in use: " + username);
+//            return false;
+//        }
     }
 
     private String makePasswordHash (String password, String salt) {
@@ -77,10 +81,10 @@ public class UserDAO {
         }
     }
 
-    public DBObject validateLogin (String username, String password) {
-        DBObject user;
+    public Document validateLogin (String username, String password) {
+        Document user;
 
-        user = usersCollection.findOne (new BasicDBObject ("_id", username));
+        user = usersCollection.find (eq ("_id", username)).first ();
 
         if (user == null) {
             System.out.println ("User not in database");
