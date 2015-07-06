@@ -52,7 +52,7 @@ public final class Server implements Router {
     private static final int DEFAULT_PORT = 4567;
     private static final String DEFAULT_HOST = "0.0.0.0";
 
-    public static Server server (int port) {
+    public static Server server (final int port) {
         return new Server (port);
     }
 

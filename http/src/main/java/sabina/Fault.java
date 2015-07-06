@@ -14,6 +14,7 @@
 
 package sabina;
 
+import static java.lang.String.format;
 import static sabina.util.Checks.checkArgument;
 
 import java.util.function.BiConsumer;
@@ -40,13 +41,7 @@ public final class Fault<T extends Exception> {
         this.exception = exception;
     }
 
-    /**
-     * Invoked when an exception that is mapped to this handler occurs during routing
-     *
-     * @param exception The exception that was thrown during routing
-     * @param request The request object providing information about the HTTP request
-     */
-    public void handle (final T exception, final Request request) {
-        handler.accept (exception, request);
+    @Override public String toString () {
+        return format ("Fault: %s", exception.getName ());
     }
 }

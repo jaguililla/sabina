@@ -14,6 +14,7 @@
 
 package sabina.route;
 
+import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.singletonList;
 import static java.util.logging.Logger.getLogger;
 import static java.util.stream.Collectors.toList;
@@ -34,10 +35,9 @@ import sabina.Route;
  * @author Per Wendel
  */
 final class SimpleRouteMatcher implements RouteMatcher {
-    private static final Logger LOG = getLogger (SimpleRouteMatcher.class.getName ());
-    private static final List<Route> EMPTY = new ArrayList<> (0);
+//    private static final Logger LOG = getLogger (SimpleRouteMatcher.class.getName ());
 
-    private final Map<HttpMethod, List<Route>> routes = new HashMap<> ();
+    private final Map<HttpMethod, List<Route>> routeMap = new HashMap<> ();
 
     /** Holds a map of Exception classes and associated handlers. */
     private final Map<Class<? extends Exception>, Fault<?>> exceptionMap = new HashMap<> ();
@@ -49,9 +49,9 @@ final class SimpleRouteMatcher implements RouteMatcher {
      */
     @Override public void processRoute (Route target) {
         HttpMethod method = target.method;
-        if (!routes.containsKey (method))
-            routes.put (method, new ArrayList<> ());
-        routes.get (method).add (target);
+        if (!routeMap.containsKey (method))
+            routeMap.put (method, new ArrayList<> ());
+        routeMap.get (method).add (target);
     }
 
     /**
@@ -170,11 +170,11 @@ final class SimpleRouteMatcher implements RouteMatcher {
     private List<Route> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path) {
 
-        return routes.containsKey (httpMethod)?
-            routes.get(httpMethod).stream ()
+        return routeMap.containsKey (httpMethod)?
+            routeMap.get(httpMethod).stream ()
                 .filter (entry -> matches (entry, path))
                 .collect (toList ()) :
-            EMPTY;
+            EMPTY_LIST;
     }
 
     // TODO: I believe this feature has impacted performance. Optimization?

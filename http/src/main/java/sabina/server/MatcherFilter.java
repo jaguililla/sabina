@@ -99,7 +99,7 @@ public class MatcherFilter implements Filter, Router {
         String bodyContent = null;
 
         try {
-            bodyContent = onFilter (BEFORE, httpReq, httpRes, uri, acceptType, bodyContent);
+            bodyContent = onFilter (BEFORE, httpReq, httpRes, uri, acceptType, null);
 
             final HttpMethod httpMethod = HttpMethod.valueOf (httpMethodStr);
             RouteMatch match = routeMatcher.findTarget (httpMethod, uri, acceptType);
@@ -174,7 +174,7 @@ public class MatcherFilter implements Filter, Router {
             if (!aTarget.isFilter ()) {
                 request = new Request (aMatch, aHttpReq, aHttpRes);
 
-                Object element = aTarget.handle (request);
+                Object element = aTarget.handler.apply (request);
                 result = element != null? element.toString () : null;
             }
             if (result != null) {
@@ -187,7 +187,7 @@ public class MatcherFilter implements Filter, Router {
         catch (Exception e) {
             Fault<Exception> handler = (Fault<Exception>)routeMatcher.findHandler (e.getClass ());
             if (handler != null && request != null) {
-                handler.handle (e, request);
+                handler.handler.accept (e, request);
             }
             else {
                 LOG.severe (e.getMessage ());
@@ -214,7 +214,7 @@ public class MatcherFilter implements Filter, Router {
 
         for (RouteMatch filterMatch : matchSet) {
             final Request request = new Request (filterMatch, httpRequest, httpResponse);
-            filterMatch.entry.handle (request);
+            filterMatch.entry.handler.apply (request);
 
             final String bodyAfterFilter = request.response.body ();
             if (bodyAfterFilter != null)

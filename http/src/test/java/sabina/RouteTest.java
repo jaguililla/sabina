@@ -49,6 +49,6 @@ public class RouteTest {
         assert action.path.equals ("path");
         assert action.acceptType.equals ("type");
         assert action.method.equals (AFTER);
-        assert action.toString ().equals ("AFTER path [type]");
+        assert action.toString ().equals ("Route: AFTER path (type)");
     }
 }

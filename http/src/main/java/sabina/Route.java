@@ -40,7 +40,7 @@ public final class Route {
     public final String path;
     public final String acceptType;
     public final HttpMethod method;
-    private final Handler handler;
+    public final Handler handler;
 
     public final List<String> routeParts;
 
@@ -99,18 +99,7 @@ public final class Route {
         return method == AFTER || method == BEFORE;
     }
 
-    /**
-     * Invoked when a req is made on this route's corresponding path e.g. '/hello'.
-     *
-     * @param req The request object providing information about the HTTP request.
-     *
-     * @return The content to be set in the response.
-     */
-    public Object handle (final Request req) {
-        return handler.apply (req);
-    }
-
     @Override public String toString () {
-        return format ("%s %s [%s]", method, path, acceptType);
+        return format ("Route: %s %s (%s)", method, path, acceptType);
     }
 }
