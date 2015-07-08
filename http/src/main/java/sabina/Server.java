@@ -17,8 +17,12 @@ package sabina;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
+import static java.util.Arrays.asList;
 import static java.util.logging.Logger.getLogger;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import sabina.route.RouteMatcher;
@@ -50,14 +54,14 @@ public final class Server implements Router {
     private static final Logger LOG = getLogger (Server.class.getName ());
 
     private static final int DEFAULT_PORT = 4567;
-    private static final String DEFAULT_HOST = "0.0.0.0";
+    private static final String DEFAULT_BIND = "0.0.0.0";
 
     public static Server server (final int port) {
         return new Server (port);
     }
 
     private int port = DEFAULT_PORT;
-    private String ipAddress = DEFAULT_HOST;
+    private String bind = DEFAULT_BIND;
 
     private String keystoreFile;
     private String keystorePassword;
@@ -66,6 +70,7 @@ public final class Server implements Router {
 
     private String staticFileFolder;
     private String externalStaticFileFolder;
+    private List<Consumer<Server>> configurationCallbacks = new ArrayList<> ();
 
     private String backend = getProperty ("sabina.backend", "undertow");
 
@@ -85,6 +90,10 @@ public final class Server implements Router {
         backend (backend);
     }
 
+    public void configure (Consumer<Server>... callbacks) {
+        this.configurationCallbacks = asList (callbacks);
+    }
+
     /**
      * Set the IP address that Sabina should listen on. If not called the default
      * address is '0.0.0.0'. This has to be called before any route mapping is done.
@@ -92,7 +101,7 @@ public final class Server implements Router {
      * @param ipAddress The ip.
      */
     public void host (String ipAddress) {
-        this.ipAddress = ipAddress;
+        this.bind = ipAddress;
     }
 
     /**
@@ -185,10 +194,11 @@ public final class Server implements Router {
     }
 
     public void start () {
+        configurationCallbacks.stream ().forEach (c -> c.accept (this));
         new Thread (() -> {
             server = BackendFactory.create (backend, routeMatcher, hasMultipleHandlers ());
             server.startUp (
-                ipAddress,
+                bind,
                 port,
                 keystoreFile,
                 keystorePassword,
@@ -197,7 +207,7 @@ public final class Server implements Router {
                 staticFileFolder,
                 externalStaticFileFolder);
         }).start ();
-        LOG.info (format ("Server started at: %s:%s with %s backend", ipAddress, port, backend));
+        LOG.info (format ("Server started at: %s:%s with %s backend", bind, port, backend));
     }
 
     private boolean hasMultipleHandlers () {

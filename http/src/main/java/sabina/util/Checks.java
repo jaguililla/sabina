@@ -14,7 +14,7 @@
 
 package sabina.util;
 
-import com.google.common.base.Preconditions;
+import static java.lang.String.format;
 
 /**
  * TODO .
@@ -23,15 +23,13 @@ import com.google.common.base.Preconditions;
  */
 public final class Checks {
     public static void checkArgument (boolean condition) {
-        Preconditions.checkArgument (condition);
-    }
-
-    public static void checkArgument (boolean condition, String message) {
-        Preconditions.checkArgument (condition, message);
+        if (!condition)
+            throw new IllegalArgumentException ();
     }
 
     public static void checkArgument (boolean condition, String message, Object... arguments) {
-        Preconditions.checkArgument (condition, message, arguments);
+        if (!condition)
+            throw new IllegalArgumentException (format (message, arguments));
     }
 
     private Checks () {

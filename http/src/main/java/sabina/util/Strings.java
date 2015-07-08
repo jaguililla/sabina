@@ -26,7 +26,7 @@ import java.io.UnsupportedEncodingException;
  */
 public final class Strings {
     public static boolean isNullOrEmpty (String str) {
-        return com.google.common.base.Strings.isNullOrEmpty (str);
+        return str == null || str.isEmpty ();
     }
 
     public static String encode (final byte[] body, final String encoding) {
