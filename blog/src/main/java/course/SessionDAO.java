@@ -53,7 +53,7 @@ public class SessionDAO {
         byte randomBytes[] = new byte[32];
         generator.nextBytes (randomBytes);
 
-        Encoder encoder = Base64.getEncoder ();
+        Encoder encoder = Base64.getUrlEncoder ().withoutPadding ();
 
         String sessionID = encoder.encodeToString (randomBytes);
 

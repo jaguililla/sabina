@@ -49,8 +49,8 @@ public class BlogController {
 
     private void initializeRoutes () throws IOException {
         // this is the blog home page
-        get ("/", (Request request, Response response) -> {
-            String username = sessionDAO.findUserNameBySessionId (getSessionCookie (request));
+        get ("/", request -> {
+            String username = sessionDAO.findUserNameBySessionId (getSession (request));
 
             List<Document> posts = blogPostDAO.findByDateDescending (10);
             Map<Object, Object> root = new HashMap<> ();
@@ -146,7 +146,7 @@ public class BlogController {
         // will present the form used to process new blog posts
         get ("/newpost", (Request request, Response response) -> {
             // get cookie
-            String username = sessionDAO.findUserNameBySessionId (getSessionCookie (request));
+            String username = sessionDAO.findUserNameBySessionId (getSession (request));
 
             if (username == null) {
                 // looks like a bad request. user is not logged in
@@ -167,7 +167,7 @@ public class BlogController {
             String post = StringEscapeUtils.escapeHtml4 (request.queryParams ("body"));
             String tags = StringEscapeUtils.escapeHtml4 (request.queryParams ("tags"));
 
-            String username = sessionDAO.findUserNameBySessionId (getSessionCookie (request));
+            String username = sessionDAO.findUserNameBySessionId (getSession (request));
 
             if (username == null) {
                 response.redirect ("/login");    // only logged in users can post to blog
@@ -199,7 +199,7 @@ public class BlogController {
         });
 
         get ("/welcome", (Request request, Response response) -> {
-            String cookie = getSessionCookie (request);
+            String cookie = getSession (request);
             String username = sessionDAO.findUserNameBySessionId (cookie);
 
             if (username == null) {
@@ -251,7 +251,7 @@ public class BlogController {
         });
 
         // present the login page
-        get ("/login", (Request request, Response response) -> {
+        get ("/login", request -> {
             HashMap<Object, Object> root = new HashMap<> ();
 
             root.put ("username", "");
@@ -298,8 +298,8 @@ public class BlogController {
         });
 
         // Show the posts filed under a certain tag
-        get ("/tag/:thetag", (Request request, Response response) -> {
-            String username = sessionDAO.findUserNameBySessionId (getSessionCookie (request));
+        get ("/tag/:thetag", request -> {
+            String username = sessionDAO.findUserNameBySessionId (getSession (request));
             HashMap<Object, Object> root = new HashMap<> ();
 
             String tag = StringEscapeUtils.escapeHtml4 (request.params (":thetag"));
@@ -314,14 +314,14 @@ public class BlogController {
         });
 
         // tells the user that the URL is dead
-        get ("/post_not_found", (Request request, Response response) -> {
+        get ("/post_not_found", request -> {
             HashMap<Object, Object> root = new HashMap<> ();
             return renderFreeMarker ("post_not_found.ftl", root);
         });
 
         // allows the user to logout of the blog
         get ("/logout", (Request request, Response response) -> {
-            String sessionID = getSessionCookie (request);
+            String sessionID = getSession (request);
 
             if (sessionID == null) {
                 // no session to end
@@ -332,8 +332,9 @@ public class BlogController {
                 sessionDAO.endSession (sessionID);
 
                 // this should delete the cookie
-                Cookie c = getSessionCookieActual (request);
-                c.setMaxAge (0);
+                Cookie c = getSessionCookie (request);
+                if (c != null)
+                    c.setMaxAge (0);
 
                 response.addCookie (c);
 
@@ -342,7 +343,7 @@ public class BlogController {
         });
 
         // used to process internal errors
-        get ("/internal_error", (Request request, Response response) -> {
+        get ("/internal_error", request -> {
             HashMap<Object, Object> root = new HashMap<> ();
 
             root.put ("error", "System has encountered an error.");
@@ -350,17 +351,21 @@ public class BlogController {
         });
     }
 
-    // helper function to get session cookie as string
-    private String getSessionCookie (final Request request) {
+    private Cookie getSessionCookie (final Request request) {
         if (request.getCookies () == null) {
             return null;
         }
         for (Cookie cookie : request.getCookies ()) {
             if (cookie.getName ().equals ("session")) {
-                return cookie.getValue ();
+                return cookie;
             }
         }
         return null;
+    }
+
+    private String getSession (final Request request) {
+        Cookie sessionCookie = getSessionCookie (request);
+        return sessionCookie == null? null : sessionCookie.getValue ();
     }
 
     // validates that the registration form has been filled out right and username conforms
@@ -420,18 +425,5 @@ public class BlogController {
         }
 
         return cleaned;
-    }
-
-    // helper function to get session cookie as string
-    private Cookie getSessionCookieActual (final Request request) {
-        if (request.getCookies () == null) {
-            return null;
-        }
-        for (Cookie cookie : request.getCookies ()) {
-            if (cookie.getName ().equals ("session")) {
-                return cookie;
-            }
-        }
-        return null;
     }
 }

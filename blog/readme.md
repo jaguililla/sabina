@@ -19,8 +19,7 @@ Changes
 Future improvements
 -------------------
 
-* Upgrade MongoDB driver to 3.0
-* Style with Bootstrap
+* Add Bootstrap navbar
 * Use loggers
 
 
