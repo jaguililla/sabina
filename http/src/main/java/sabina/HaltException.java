@@ -15,7 +15,6 @@
 package sabina;
 
 import static sabina.util.Checks.checkArgument;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 /**
  * Exception used for stopping the execution.
@@ -25,11 +24,14 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 public final class HaltException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
+    private static final int MIN_HTTP_CODE = 100;
+    private static final int HTTP_OK = 200;
+
     public final int statusCode;
     public final String body;
 
     HaltException () {
-        this (SC_OK, null);
+        this (HTTP_OK, null);
     }
 
     HaltException (final int statusCode) {
@@ -37,11 +39,11 @@ public final class HaltException extends RuntimeException {
     }
 
     HaltException (final String body) {
-        this (SC_OK, body);
+        this (HTTP_OK, body);
     }
 
     HaltException (final int statusCode, final String body) {
-        checkArgument (statusCode >= 100, "Invalid HTTP error code: " + statusCode);
+        checkArgument (statusCode >= MIN_HTTP_CODE, "Invalid HTTP error code: " + statusCode);
         this.statusCode = statusCode;
         this.body = body;
     }
