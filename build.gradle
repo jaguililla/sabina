@@ -37,6 +37,11 @@ subprojects {
     apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/java.gradle'
     apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/bintray.gradle'
 
+    repositories {
+        jcenter ()
+        mavenLocal()
+    }
+
     dependencies {
         testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
         testCompile 'org.testng:testng:6.8.21'
