@@ -20,6 +20,16 @@ Then, add the Sabina maven dependency:
 </dependency>
 ```
 
+Or with Gradle:
+
+```groovy
+dependencies {
+    compile ('sabina:http:${config.projectVersion}') { transitive = false }
+    // Import the backend you are going to use
+    compile 'io.undertow:undertow-servlet:1.2.8.Final'
+}
+```
+
 And start coding:
 
 ```java

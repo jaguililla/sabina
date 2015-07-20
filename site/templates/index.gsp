@@ -59,7 +59,9 @@
   <h4>Gradle</h4>
 
 <pre><code class="groovy">dependencies {
-    compile 'sabina:http:${config.projectVersion}'
+    compile ('sabina:http:${config.projectVersion}') { transitive = false }
+    // Import the backend you are going to use
+    compile 'io.undertow:undertow-servlet:1.2.8.Final'
 }</code></pre>
 
   <h4>Maven</h4>
