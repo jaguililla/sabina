@@ -22,7 +22,9 @@ Sabina 1.1.1 is now available on [JCenter]!!!
 
 ```groovy
 dependencies {
-  compile 'sabina:http:1.1.1'
+  compile ('sabina:http:1.3.2) { transitive = false }
+  // Import the backend you are going to use
+  compile 'io.undertow:undertow-servlet:1.2.8.Final'
 }
 ```
 
