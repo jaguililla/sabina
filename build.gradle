@@ -18,33 +18,28 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.freemarker:freemarker:2.3.19'
-        classpath 'org.pegdown:pegdown:1.4.2'
+        classpath 'org.freemarker:freemarker:2.3.23'
+        classpath 'org.pegdown:pegdown:1.5.0'
         classpath 'org.asciidoctor:asciidoctorj:1.5.2'
     }
 }
 
 plugins {
     id 'me.champeau.jbake' version '0.2'
-    id 'org.ajoberstar.github-pages' version '1.1.0-milestone.1'
-    id "com.github.kt3k.coveralls" version "2.3.1"
+    id 'org.ajoberstar.github-pages' version '1.2.0'
+    id "com.github.kt3k.coveralls" version "2.4.0"
 }
 
-apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/wrapper.gradle'
-apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/site.gradle'
+apply from: 'gradle/wrapper.gradle'
+apply from: 'gradle/site.gradle'
 
 subprojects {
-    apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/java.gradle'
-    apply from: 'https://raw.githubusercontent.com/jamming/dotfiles/master/gradle/bintray.gradle'
-
-    repositories {
-        jcenter ()
-        mavenLocal()
-    }
+    apply from: "${project.rootDir}/gradle/java.gradle"
+    apply from: "${project.rootDir}/gradle/bintray.gradle"
 
     dependencies {
-        testCompile 'org.apache.httpcomponents:httpclient:4.3.3'
-        testCompile 'org.testng:testng:6.8.21'
+        testCompile 'org.apache.httpcomponents:httpclient:4.3.3' // TODO Upgrading breaks tests
+        testCompile 'org.testng:testng:6.9.6'
     }
 }
 
@@ -59,8 +54,6 @@ coveralls {
 tasks.coveralls {
     onlyIf { System.env.'CI' }
 }
-
-def projectSite = "site"
 
 githubPages {
     repoUri = githubUrl
