@@ -1,4 +1,4 @@
-package sabina;
+package sabina.utils;
 
 /**
  * Created by jam on 7/7/15.
