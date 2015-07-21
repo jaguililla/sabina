@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import sabina.*;
 import sabina.route.RouteMatch;
 import sabina.route.RouteMatcher;
+import sabina.route.RouteMatcherFactory;
 
 /**
  * Filter for matching of filters and routes.
@@ -60,7 +61,7 @@ public class MatcherFilter implements Filter, Router {
      * TODO Needed by Undertow to instantiate the filter.
      */
     public MatcherFilter () {
-        routeMatcher = null;
+        routeMatcher = RouteMatcherFactory.create ();
         backend = "undertow";
         hasOtherHandlers = false;
     }

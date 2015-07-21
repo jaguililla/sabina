@@ -36,7 +36,7 @@
 
         <db.host>localhost</db.host>
 
-        <sabina-version>1.3.1</sabina-version>
+        <sabina-version>1.3.3-SNAPSHOT</sabina-version>
     </properties>
 
     <repositories>
@@ -153,6 +153,15 @@
                 <version>2.6</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <!--<packagingExcludes>-->
+                        <!--WEB-INF/lib/jetty-*.jar,-->
+                        <!--WEB-INF/lib/undertow-*.jar,-->
+                        <!--WEB-INF/lib/freemarker-*.jar,-->
+                        <!--WEB-INF/lib/rythm-*.jar,-->
+                        <!--WEB-INF/lib/xnio-*.jar,-->
+                        <!--WEB-INF/lib/scribe-*.jar,-->
+                        <!--WEB-INF/lib/jboss-*.jar-->
+                    <!--</packagingExcludes>-->
                 </configuration>
                 <executions>
                     <execution>

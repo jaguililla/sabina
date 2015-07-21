@@ -32,7 +32,7 @@ import javax.servlet.annotation.WebFilter;
  * .
  */
 @WebFilter ("/*")
-final class Application extends MatcherFilter {
+public final class Application extends MatcherFilter {
     static final String SETTINGS_RESOURCE = "/server.properties";
     static final Repository REPOSITORY = loadRepository ();
     static final int DB_ROWS = 10000;
@@ -45,7 +45,7 @@ final class Application extends MatcherFilter {
     static Properties loadConfiguration () {
         try {
             Properties settings = new Properties ();
-            settings.load (Class.class.getResourceAsStream (SETTINGS_RESOURCE));
+            settings.load (Application.class.getResourceAsStream (SETTINGS_RESOURCE));
             return settings;
         }
         catch (Exception ex) {
