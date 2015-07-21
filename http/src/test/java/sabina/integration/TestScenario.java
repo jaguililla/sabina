@@ -17,7 +17,6 @@ package sabina.integration;
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
 import static java.lang.System.out;
-import static org.apache.http.conn.socket.PlainConnectionSocketFactory.INSTANCE;
 import static org.apache.http.conn.ssl.SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
 import static org.testng.Assert.assertEquals;
 
@@ -34,18 +33,20 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.UnsupportedSchemeException;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.ManagedHttpClientConnectionFactory;
@@ -64,7 +65,7 @@ final class TestScenario {
     final String backend;
     final boolean secure, externalFiles;
 
-    private final CloseableHttpClient httpClient;
+    private final HttpClient httpClient;
     private final CookieStore cookieStore;
 
     TestScenario (String backend, int port, boolean secure, boolean externalFiles) {
@@ -78,11 +79,11 @@ final class TestScenario {
 
         Registry<ConnectionSocketFactory> socketFactoryRegistry =
             RegistryBuilder.<ConnectionSocketFactory>create ()
-                .register ("http", INSTANCE)
+                .register ("http", PlainConnectionSocketFactory.INSTANCE)
                 .register ("https", sslConnectionSocketFactory)
                 .build ();
 
-        BasicHttpClientConnectionManager connManager =
+        HttpClientConnectionManager connManager =
             new BasicHttpClientConnectionManager (socketFactoryRegistry,
                 new ManagedHttpClientConnectionFactory ());
 
