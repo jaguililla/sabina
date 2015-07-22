@@ -16,6 +16,7 @@ package sabina;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
 import static java.lang.System.getProperty;
 import static java.util.Arrays.asList;
 import static java.util.logging.Logger.getLogger;
@@ -68,14 +69,17 @@ public final class Server implements Router {
     private String truststoreFile;
     private String truststorePassword;
 
-    private String staticFileFolder;
-    private String externalStaticFileFolder;
+    private String resourcesLocation;
+    private String filesLocation;
     private List<Consumer<Server>> configurationCallbacks = new ArrayList<> ();
 
     private String backend = getProperty ("sabina.backend", "undertow");
 
     private Backend server;
     RouteMatcher routeMatcher = RouteMatcherFactory.create ();
+
+    /** Starts counting since instance creation. */
+    private final long start = currentTimeMillis ();
 
     public Server () {
         super ();
@@ -175,7 +179,7 @@ public final class Server implements Router {
      * @param folder the folder in classp.
      */
     public void resourcesLocation (String folder) {
-        staticFileFolder = folder.startsWith ("/")? folder.substring (1) : folder;
+        resourcesLocation = folder.startsWith ("/")? folder.substring (1) : folder;
     }
 
     /**
@@ -185,7 +189,7 @@ public final class Server implements Router {
      * @param externalFolder the external folder serving static files.
      */
     public void filesLocation (String externalFolder) {
-        externalStaticFileFolder = externalFolder;
+        filesLocation = externalFolder;
     }
 
     public void filesLocation (String folder, String externalFolder) {
@@ -204,14 +208,22 @@ public final class Server implements Router {
                 keystorePassword,
                 truststoreFile,
                 truststorePassword,
-                staticFileFolder,
-                externalStaticFileFolder);
+                resourcesLocation,
+                filesLocation);
         }).start ();
-        LOG.info (format ("Server started at: %s:%s with %s backend", bind, port, backend));
+        LOG.info (
+            format (
+                "Server started in %dms at: %s:%s with %s backend",
+                currentTimeMillis () - start,
+                bind,
+                port,
+                backend
+            )
+        );
     }
 
     private boolean hasMultipleHandlers () {
-        return staticFileFolder != null || externalStaticFileFolder != null;
+        return resourcesLocation != null || filesLocation != null;
     }
 
     /**

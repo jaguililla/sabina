@@ -18,7 +18,6 @@ import java.util.function.BiConsumer;
 
 import sabina.Router.BiHandler;
 import sabina.Router.BiVoidHandler;
-import sabina.route.RouteMatcher;
 import sabina.Router.Handler;
 import sabina.Router.VoidHandler;
 
