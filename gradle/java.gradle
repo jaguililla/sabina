@@ -27,14 +27,15 @@ group = projectGroup
 version = projectVersion
 description = projectDescription
 
-// TODO To be completed
-//processResources {
-//    filesMatching('**/config.properties') {
-//        filter {
-//            it.replace('localhost', project.property('myhost'))
-//        }
-//    }
-//}
+processResources {
+    filterPatterns.split(",").each {pattern ->
+        filesMatching (pattern) {
+            filter {
+                it.replace ('${project.version}', project.version)
+            }
+        }
+    }
+}
 
 clean << {
     delete "$buildDir"

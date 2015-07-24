@@ -1,14 +1,14 @@
 package sabina.util;
 
-import static java.util.Arrays.stream;
+import static sabina.util.Builders.entry;
 import static sabina.util.Strings.*;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Read only (not allowed to store) settings. If no key is found, default is returned or exception
@@ -23,40 +23,34 @@ public final class Settings {
         return instance == null? instance = new Settings () : instance;
     }
 
-    private Map<String, ?> settings = new HashMap<> ();
-
-    private Settings () {
-        super ();
+    public static Map<String, ?> url (String inputs) {
+        try {
+            return stream (new URL (inputs).openConnection ().getInputStream ());
+        }
+        catch (IOException e) {
+            return new HashMap<> ();
+        }
     }
 
-    public void loadArgs (String... entries) {
-
+    public static Map<String, ?> resource (String inputs) {
+        try {
+            return stream (Class.class.getResourceAsStream (inputs));
+        }
+        catch (IOException e) {
+            return new HashMap<> ();
+        }
     }
 
-    /**
-     * Load from: url, file or resource. Finally, it checks system properties with same name to
-     * override values (useful to set values in the command line.
-     *
-     * @param inputs
-     */
-    public void load (String... inputs) {
-        stream (inputs).map (in -> {
-            try {
-                URL uri = new URL (in);
-
-                Properties p = new Properties ();
-                p.load (uri.openConnection ().getInputStream ());
-                return p.entrySet ();
-            }
-            catch (IOException e) {
-                e.printStackTrace ();
-                // Try other options
-                return null;
-            }
-        });
+    public static Map<String, ?> file (String inputs) {
+        try {
+            return stream (new FileInputStream (inputs));
+        }
+        catch (IOException e) {
+            return new HashMap<> ();
+        }
     }
 
-    private Object cast (String value) {
+    private static Object cast (String value) {
         Scanner scanner = new Scanner (value);
         if (scanner.hasNextDouble ()) return scanner.nextDouble ();
         if (scanner.hasNextLong ()) return scanner.nextLong ();
@@ -65,11 +59,57 @@ public final class Settings {
         throw new IllegalArgumentException ();
     }
 
-    public <T> T get (String key, T value) {
+    private static Map<String, ?> stream (InputStream stream) throws IOException {
+        if (stream == null)
+            return new HashMap<> ();
+
+        try (InputStream s = stream) {
+            Properties props = new Properties ();
+            props.load (s);
+            return props.entrySet ().stream ()
+                .map (entry ->
+                    entry (
+                        String.valueOf (entry.getKey ()),
+                        cast (String.valueOf (entry.getValue ()))
+                    )
+                )
+                .collect (Collectors.toMap (Entry::getKey, Entry::getValue));
+        }
+    }
+
+    private Map<String, Object> settings = new HashMap<> ();
+
+    private Settings () {
+        super ();
+    }
+
+    /**
+     * Load from: url, file or resource. Finally, it checks system properties with same name to
+     * override values (useful to set values in the command line.
+     *
+     * @param entries .
+     */
+    @SafeVarargs public final Settings load (Map<String, ?>... entries) {
+        Arrays.stream (entries).forEach (settings::putAll);
+        // Override with system properties (if set)
+        return this;
+    }
+
+    @SuppressWarnings ("unchecked") public <T> T get (String key) {
         return (T)settings.get (key);
     }
 
-    public static void main (String... args) {
+    public static void main (String... args) throws Exception {
+        settings ().load (
+            resource ("/sabina.properties"),
+            resource ("/application.properties"),
+            file ("application.properties")
+        );
+
+        int port = settings ().get ("sabina_default_port");
+
+        System.out.println (port);
+
         System.out.format (
             "%sRED %sGREEN %sBLUE %sNormal again", ANSI_RED, ANSI_GREEN, ANSI_BLUE, ANSI_RESET
         );
