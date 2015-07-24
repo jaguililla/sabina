@@ -25,6 +25,55 @@ import java.io.UnsupportedEncodingException;
  * @author jam
  */
 public final class Strings {
+    public enum AnsiColor {
+        BLACK (0),
+        RED (1),
+        GREEN (2),
+        YELLOW (3),
+        BLUE (4),
+        MAGENTA (5),
+        CYAN (6),
+        WHITE (7),
+
+        DEFAULT (9);
+
+        private static final int FOREGROUND = 30;
+        private static final int BACKGROUND = 40;
+
+        public final int code;
+        public final int fg;
+        public final int bg;
+
+        private AnsiColor (int code) {
+            this.code = code;
+            this.fg = FOREGROUND + code;
+            this.bg = BACKGROUND + code;
+        }
+    }
+
+    public enum AnsiEffect {
+        BOLD (1),
+        UNDERLINE (4),
+        BLINK (5),
+        INVERSE (7),
+
+        RESET (0);
+
+        public static final int SWITCH_EFFECT = 20;
+
+        final int on;
+
+        private AnsiEffect (int code) {
+            this.on = code;
+        }
+    }
+
+    public static final String ANSI_PREFIX = "\u001B[";
+
+    public static String ansi (String text, AnsiColor fg, AnsiColor bg, AnsiEffect... fxs) {
+        return text;
+    }
+
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -40,14 +89,14 @@ public final class Strings {
     }
 
     public static String encode (final byte[] body, final String encoding) {
-        return ofNullable(encoding).map(enc -> {
+        return ofNullable (encoding).map (enc -> {
             try {
-                return body == null? "" : new String(body, enc);
+                return body == null? "" : new String (body, enc);
             }
             catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException (e);
             }
-        }).orElse(new String(body));
+        }).orElse (new String (body));
     }
 
     public static byte[] decode (final String text, final String encoding) {
@@ -55,13 +104,14 @@ public final class Strings {
             return new byte[0];
 
         if (encoding == null)
-            return text.getBytes();
+            return text.getBytes ();
 
         try {
-            return text.getBytes(encoding);
+            return text.getBytes (encoding);
         }
         catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(format("Error decoding '%s' with '%s'", text, encoding), e);
+            throw new RuntimeException (format ("Error decoding '%s' with '%s'", text, encoding),
+                e);
         }
     }
 
