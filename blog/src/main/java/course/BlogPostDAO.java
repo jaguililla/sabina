@@ -18,6 +18,7 @@
 package course;
 
 import static com.mongodb.client.model.Filters.eq;
+import static sabina.util.log.Logger.getLogger;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,8 +28,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
+import sabina.util.log.Logger;
 
 public class BlogPostDAO {
+    private static final Logger LOG = getLogger (BlogPostDAO.class);
+
     MongoCollection<Document> postsCollection;
 
     public BlogPostDAO (final MongoDatabase blogDatabase) {
@@ -48,7 +52,7 @@ public class BlogPostDAO {
 
     public List<Document> findByTagDateDescending (final String tag) {
         Document query = new Document ("tags", tag);
-        System.out.println ("/tag query: " + query.toString ());
+        LOG.info ("/tag query: " + query.toString ());
 
         return postsCollection.find (query)
             .sort (new Document ("date", -1))
@@ -57,7 +61,7 @@ public class BlogPostDAO {
     }
 
     public String addPost (String title, String body, List<?> tags, String username) {
-        System.out.println ("inserting blog entry " + title + " " + body);
+        LOG.info ("inserting blog entry " + title + " " + body);
 
         String permalink = title.replaceAll ("\\s", "_"); // whitespace becomes _
         permalink = permalink.replaceAll ("\\W", ""); // get rid of non alphanumeric
@@ -73,10 +77,10 @@ public class BlogPostDAO {
 
         try {
             postsCollection.insertOne (post);
-            System.out.println ("Inserting blog post with permalink " + permalink);
+            LOG.info ("Inserting blog post with permalink " + permalink);
         }
         catch (Exception e) {
-            System.out.println ("Error inserting post");
+            LOG.error ("Error inserting post", e);
             return null;
         }
 

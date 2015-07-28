@@ -1,72 +1,57 @@
-<!DOCTYPE html>
+<#assign pageTitle = "Blog Post">
+<#include "fragments/header.ftl">
 
-<html lang="en" class="no-js">
-<head>
-  <meta charset="utf-8" />
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<#include "fragments/navbar.ftl">
 
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/css/bootstrap.min.css"
-    rel="stylesheet" />
-  <title>Blog Post</title>
-</head>
-
-<body>
 <div class="container">
-<#if username??>
-    Welcome ${username} <a href="/logout">Logout</a> | <a href="/newpost">New Post</a>
+  <a href="/">Blog Home</a><br><br>
 
-    <p>
-</#if>
+  <h2>${post["title"]}</h2>
 
-<a href="/">Blog Home</a><br><br>
+  <p>Posted ${post["date"]?datetime}<i> By ${post["author"]}</i></p>
+  <hr />
+  <p>${post["body"]}</p>
 
-<h2>${post["title"]}</h2>
-Posted ${post["date"]?datetime}<i> By ${post["author"]}</i><br>
-<hr>
-${post["body"]}
-<p>
+  <p>
     <em>Filed Under</em>:
     <#if post["tags"]??>
-        <#list post["tags"] as tag>
-            <a href="/tag/${tag}">${tag}</a>
-        </#list>
+      <#list post["tags"] as tag>
+        <a href="/tag/${tag}">${tag}</a>
+      </#list>
     </#if>
-<p>
-    Comments:
-<ul>
+  </p>
+
+  <p>Comments:</p>
+
+  <ul>
     <#if post["comments"]??>
-        <#assign numComments = post["comments"]?size>
-            <#else>
-                <#assign numComments = 0>
+      <#assign numComments = post["comments"]?size>
+    <#else>
+      <#assign numComments = 0>
     </#if>
+
     <#if (numComments > 0)>
-        <#list 0 .. (numComments -1) as i>
-            <br>
-            ${post["comments"][i]["body"]}<br>
-            <hr>
-        </#list>
+      <#list 0 .. (numComments -1) as i>
+        <br />
+        ${post["comments"][i]["body"]}<br />
+        <hr />
+      </#list>
     </#if>
+
     <h3>Add a comment</h3>
 
     <form action="/newcomment" method="POST">
-        <input type="hidden" name="permalink", value="${post["permalink"]}">
-        ${errors!""}<br>
-        <b>Name</b> (required)<br>
-        <input type="text" name="commentName" size="60" value="${comment["name"]}"><br>
-        <b>Email</b> (optional)<br>
-        <input type="text" name="commentEmail" size="60" value="${comment["email"]}"><br>
-        <b>Comment</b><br>
-        <textarea name="commentBody" cols="60" rows="10">${comment["body"]}</textarea><br>
-        <input type="submit" value="Submit">
+      <input type="hidden" name="permalink", value="${post["permalink"]}">
+      ${errors!""}<br />
+      <b>Name</b> (required)<br />
+      <input type="text" name="commentName" size="60" value="${comment["name"]}" /><br />
+      <b>Email</b> (optional)<br />
+      <input type="text" name="commentEmail" size="60" value="${comment["email"]}" /><br />
+      <b>Comment</b><br />
+      <textarea name="commentBody" cols="60" rows="10">${comment["body"]}</textarea><br />
+      <input type="submit" value="Submit" />
     </form>
-</ul>
+  </ul>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
-</body>
-</html>
-
-
+<#include "fragments/footer.ftl">

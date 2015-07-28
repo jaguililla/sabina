@@ -14,21 +14,25 @@ Changes
 * Code formatting
 * Update to Java 8
 * Port to Sabina
+* Bootstrap based Web
 
 
 Future improvements
 -------------------
 
 * Add Bootstrap navbar
-* Use loggers
+* Fix Bootstrap form issues
+* Deploy to Heroku
 
 
 Install
 -------
 
-tar -Jxvf posts.txz && \
-mongoimport --db blog --file posts.json --collection posts && \
-rm -f posts.json
+Inside the `assets` directory, execute:
+
+    tar -Jxvf posts.txz && \
+    mongoimport --db blog --file posts.json --collection posts && \
+    rm -f posts.json
 
 
 Run

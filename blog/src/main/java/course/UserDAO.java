@@ -18,6 +18,7 @@
 package course;
 
 import static com.mongodb.client.model.Filters.eq;
+import static sabina.util.log.Logger.getLogger;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -30,8 +31,11 @@ import java.util.Random;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import sabina.util.log.Logger;
 
 public class UserDAO {
+    private static final Logger LOG = getLogger (UserDAO.class);
+
     private final MongoCollection<Document> usersCollection;
     private Random random = new SecureRandom ();
 
@@ -52,14 +56,8 @@ public class UserDAO {
             user.append ("email", email);
         }
 
-//        try {
-            usersCollection.insertOne (user);
-            return true;
-//        }
-//        catch (MongoException.DuplicateKey e) {
-//            System.out.println ("Username already in use: " + username);
-//            return false;
-//        }
+        usersCollection.insertOne (user);
+        return true;
     }
 
     private String makePasswordHash (String password, String salt) {
@@ -87,7 +85,7 @@ public class UserDAO {
         user = usersCollection.find (eq ("_id", username)).first ();
 
         if (user == null) {
-            System.out.println ("User not in database");
+            LOG.error ("User not in database");
             return null;
         }
 
@@ -96,7 +94,7 @@ public class UserDAO {
         String salt = hashedAndSalted.split (",")[1];
 
         if (!hashedAndSalted.equals (makePasswordHash (password, salt))) {
-            System.out.println ("Submitted password is not a match");
+            LOG.error ("Submitted password is not a match");
             return null;
         }
 

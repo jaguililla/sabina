@@ -1,6 +1,7 @@
 package course;
 
 import static sabina.Sabina.*;
+import static sabina.util.log.Logger.getLogger;
 import static sabina.view.FreeMarkerView.renderFreeMarker;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.bson.Document;
 import sabina.Request;
 import sabina.Response;
+import sabina.util.log.Logger;
 
 /**
  * This class encapsulates the controllers for the blog web application.  It delegates all
@@ -27,6 +29,8 @@ import sabina.Response;
  * It is also the entry point into the web application.
  */
 public class BlogController {
+    private static final Logger LOG = getLogger (BlogController.class);
+
     public static void main (String[] args) throws IOException {
         new BlogController (args.length == 0? "mongodb://localhost" : args[0]);
     }
@@ -67,7 +71,7 @@ public class BlogController {
         get ("/post/:permalink", (Request request, Response response) -> {
             String permalink = request.params (":permalink");
 
-            System.out.println ("/post: get " + permalink);
+            LOG.info ("/post: get " + permalink);
 
             Document post = blogPostDAO.findByPermalink (permalink);
             if (post == null) {
@@ -103,7 +107,7 @@ public class BlogController {
 
             if (validateSignup (username, password, verify, email, root)) {
                 // good user
-                System.out.println ("Signup: Creating user with: " + username + " " + password);
+                LOG.info ("Signup: Creating user with: " + username + " " + password);
                 if (!userDAO.addUser (username, password, email)) {
                     // duplicate user
                     root.put ("username_error",
@@ -113,7 +117,7 @@ public class BlogController {
                 else {
                     // good user, let's start a session
                     String sessionID = sessionDAO.startSession (username);
-                    System.out.println ("Session ID is" + sessionID);
+                    LOG.info ("Session ID is" + sessionID);
 
                     response.addCookie (new Cookie ("session", sessionID));
                     response.redirect ("/welcome");
@@ -122,7 +126,7 @@ public class BlogController {
             }
             else {
                 // bad signup
-                System.out.println ("User Registration did not validate");
+                LOG.info ("User Registration did not validate");
                 return renderFreeMarker ("signup.ftl", root);
             }
         });
@@ -203,7 +207,7 @@ public class BlogController {
             String username = sessionDAO.findUserNameBySessionId (cookie);
 
             if (username == null) {
-                System.out.println ("welcome() can't identify the user, redirecting to signup");
+                LOG.info ("welcome() can't identify the user, redirecting to signup");
                 response.redirect ("/signup");
                 return "";
             }
@@ -266,7 +270,7 @@ public class BlogController {
             String username = request.queryParams ("username");
             String password = request.queryParams ("password");
 
-            System.out.println ("Login: User submitted: " + username + "  " + password);
+            LOG.info ("Login: User submitted: " + username + "  " + password);
 
             Document user = userDAO.validateLogin (username, password);
 
@@ -346,7 +350,7 @@ public class BlogController {
         get ("/internal_error", request -> {
             HashMap<Object, Object> root = new HashMap<> ();
 
-            root.put ("error", "System has encountered an error.");
+            root.put ("error", "The application has found an error.");
             return renderFreeMarker ("error_template.ftl", root);
         });
     }
