@@ -37,9 +37,12 @@ subprojects {
     apply from: "${project.rootDir}/gradle/java.gradle"
     apply from: "${project.rootDir}/gradle/bintray.gradle"
 
+    apply plugin: 'groovy'
+
     dependencies {
-        testCompile 'org.apache.httpcomponents:httpclient:4.3.3' // TODO Upgrading breaks tests
+        testCompile 'org.apache.httpcomponents:httpclient:4.3.3' // TODO Upgrade breaks tests
         testCompile 'org.testng:testng:6.9.6'
+        testCompile 'org.codehaus.groovy:groovy:2.4.4'
     }
 }
 
