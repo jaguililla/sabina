@@ -21,10 +21,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import com.samskivert.mustache.Template;
+import sabina.util.Io;
 
 public class MustacheView {
     public static String renderMustache (String templateName, Object model) {
-        InputStream resourceStream = Class.class.getResourceAsStream (templateName);
+        InputStream resourceStream = Io.classLoader().getResourceAsStream (templateName);
         InputStreamReader resourceReader = new InputStreamReader (resourceStream);
         BufferedReader reader = new BufferedReader (resourceReader);
         Template template = compiler ().compile (reader);
