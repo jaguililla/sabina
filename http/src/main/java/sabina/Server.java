@@ -15,21 +15,26 @@
 package sabina;
 
 import static java.lang.Integer.parseInt;
-import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.getProperty;
 import static java.util.Arrays.asList;
-import static java.util.logging.Logger.getLogger;
+import static sabina.util.log.Logger.getLogger;
+import static sabina.util.Settings.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
+
+import sabina.util.Settings;
+import sabina.util.Strings;
+import sabina.util.log.Logger;
 
 import sabina.route.RouteMatcher;
 import sabina.route.RouteMatcherFactory;
 import sabina.server.Backend;
 import sabina.server.BackendFactory;
+import sabina.util.Io;
 
 /**
  * The main building block of a Sabina application is a set of routes. A route is
@@ -52,10 +57,18 @@ import sabina.server.BackendFactory;
  * @author Per Wendel
  */
 public final class Server implements Router {
-    private static final Logger LOG = getLogger (Server.class.getName ());
+    private static final Logger LOG = getLogger (Server.class);
 
     private static final int DEFAULT_PORT = 4567;
     private static final String DEFAULT_BIND = "0.0.0.0";
+
+    {
+        settings ().load (
+            resource ("/sabina.properties"),
+            resource ("/application.properties"),
+            file ("application.properties")
+        );
+    }
 
     public static Server server (final int port) {
         return new Server (port);
@@ -211,15 +224,25 @@ public final class Server implements Router {
                 resourcesLocation,
                 filesLocation);
         }).start ();
-        LOG.info (
-            format (
-                "Server started in %dms at: %s:%s with %s backend",
-                currentTimeMillis () - start,
-                bind,
-                port,
-                backend
-            )
-        );
+        try {
+            Logger.setup ("sabina.properties");
+            LOG.info (
+                Strings.filter (
+                    Io.read (settings ().get ("sabina_banner")),
+                    Settings.settings ().getAll ()
+                )
+                //            format (
+                //                "Server started in %dms at: %s:%s with %s backend",
+                //                currentTimeMillis () - start,
+                //                bind,
+                //                port,
+                //                backend
+                //            )
+            );
+        }
+        catch (IOException e) {
+            e.printStackTrace ();
+        }
     }
 
     private boolean hasMultipleHandlers () {
