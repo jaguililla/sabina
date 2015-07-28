@@ -152,16 +152,18 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
+                    <warName>ROOT</warName>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <!--<packagingExcludes>-->
-                        <!--WEB-INF/lib/jetty-*.jar,-->
-                        <!--WEB-INF/lib/undertow-*.jar,-->
-                        <!--WEB-INF/lib/freemarker-*.jar,-->
-                        <!--WEB-INF/lib/rythm-*.jar,-->
-                        <!--WEB-INF/lib/xnio-*.jar,-->
-                        <!--WEB-INF/lib/scribe-*.jar,-->
-                        <!--WEB-INF/lib/jboss-*.jar-->
-                    <!--</packagingExcludes>-->
+                    <packagingExcludes>
+                        WEB-INF/lib/jetty-*.jar,
+                        WEB-INF/lib/undertow-*.jar,
+                        WEB-INF/lib/freemarker-*.jar,
+                        WEB-INF/lib/rythm-*.jar,
+                        WEB-INF/lib/mysql-*.jar,
+                        WEB-INF/lib/xnio-*.jar,
+                        WEB-INF/lib/scribe-*.jar,
+                        WEB-INF/lib/jboss-*.jar
+                    </packagingExcludes>
                 </configuration>
                 <executions>
                     <execution>

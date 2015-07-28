@@ -22,25 +22,24 @@ import static sabina.view.MustacheView.renderMustache;
 import sabina.Request;
 import sabina.Sabina;
 import sabina.server.MatcherFilter;
+import sabina.util.Io;
 
 import java.util.*;
 import java.util.Date;
 import javax.servlet.FilterConfig;
 import javax.servlet.annotation.WebFilter;
 
-/**
- * .
- */
 @WebFilter ("/*")
 public final class Application extends MatcherFilter {
     static final String SETTINGS_RESOURCE = "/server.properties";
-    static final Repository REPOSITORY = loadRepository ();
     static final int DB_ROWS = 10000;
 
     private static final String MESSAGE = "Hello, World!";
     private static final String CONTENT_TYPE_TEXT = "text/plain";
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String QUERIES_PARAM = "queries";
+
+    static Repository repository = loadRepository ();
 
     static Properties loadConfiguration () {
         try {
@@ -64,22 +63,28 @@ public final class Application extends MatcherFilter {
     }
 
     private static Object getDb (Request it) {
-        final World[] worlds = REPOSITORY.getWorlds (getQueries (it), false);
+        final World[] worlds = repository.getWorlds (getQueries (it), false);
         it.response.type (CONTENT_TYPE_JSON);
         return toJson (it.queryParams (QUERIES_PARAM) == null? worlds[0] : worlds);
     }
 
     private static Object getFortunes (Request it) {
-        List<Fortune> fortunes = REPOSITORY.getFortunes ();
-        fortunes.add (new Fortune (0, "Additional fortune added at request time."));
-        fortunes.sort ((a, b) -> a.message.compareTo (b.message));
+        try {
+            List<Fortune> fortunes = repository.getFortunes ();
+            fortunes.add (new Fortune (0, "Additional fortune added at request time."));
+            fortunes.sort ((a, b) -> a.message.compareTo (b.message));
 
-        it.response.type ("text/html; charset=utf-8");
-        return renderMustache ("/fortunes.mustache", fortunes);
+            it.response.type ("text/html; charset=utf-8");
+            return renderMustache ("fortunes.mustache", fortunes);
+        }
+        catch (Exception e) {
+            e.printStackTrace ();
+            return e.getMessage ();
+        }
     }
 
     private static Object getUpdates (Request it) {
-        World[] worlds = REPOSITORY.getWorlds (getQueries (it), true);
+        World[] worlds = repository.getWorlds (getQueries (it), true);
         it.response.type (CONTENT_TYPE_JSON);
         return toJson (it.queryParams (QUERIES_PARAM) == null? worlds[0] : worlds);
     }
@@ -134,12 +139,17 @@ public final class Application extends MatcherFilter {
     }
 
     @Override public void init (FilterConfig filterConfig) {
+        // Web always uses Mongo because connection pool configuration problems
+        repository = new MongoDbRepository (loadConfiguration ());
+        // Set class for loading resources inside web application
+        Io.classLoader (Application.class);
+
         get ("/json", Application::getJson);
         get ("/db", Application::getDb);
         get ("/query", Application::getDb);
         get ("/fortune", Application::getFortunes);
         get ("/update", Application::getUpdates);
         get ("/plaintext", Application::getPlaintext);
-        after (Application::addCommonHeaders);
+        after (Application::addCommonHeaders); // TODO Is this required inside a server?
     }
 }

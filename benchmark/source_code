@@ -3,5 +3,8 @@
 ./sabina/src/main/java/sabina/benchmark/Message.java
 ./sabina/src/main/java/sabina/benchmark/World.java
 ./sabina/src/main/java/sabina/benchmark/Fortune.java
+./sabina/src/main/java/sabina/benchmark/Repository.java
+./sabina/src/main/java/sabina/benchmark/MongoDbRepository.java
+./sabina/src/main/java/sabina/benchmark/MySqlRepository.java
 ./sabina/src/main/resources/fortunes.mustache
 ./sabina/src/main/resources/server.properties

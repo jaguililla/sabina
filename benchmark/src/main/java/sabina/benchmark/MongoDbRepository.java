@@ -27,22 +27,6 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
 final class MongoDbRepository implements Repository {
-//    private static final boolean BULK = true; // TODO
-    private static final String [] FORTUNES = {
-        "fortune: No such file or directory",
-        "A computer scientist is someone who fixes things that aren't broken.",
-        "After enough decimal places, nobody gives a damn.",
-        "A bad random number generator: 1, 1, 1, 1, 1, 4.33e+67, 1, 1, 1",
-        "A computer program does what you tell it to do, not what you want it to do.",
-        "Emacs is a nice operating system, but I prefer UNIX. — Tom Christaensen",
-        "Any program that runs right is obsolete.",
-        "A list is only as strong as its weakest link. — Donald Knuth",
-        "Feature: A bug with seniority.",
-        "Computers make very fast, very accurate mistakes.",
-        "<script>alert(\"This should not be displayed in a browser alert box.\");</script>",
-        "フレームワークのベンチマーク"
-    };
-
     private MongoCollection<Document> worldCollection;
     private MongoCollection<Document> fortuneCollection;
 
@@ -57,31 +41,6 @@ final class MongoDbRepository implements Repository {
         MongoDatabase db = mongoClient.getDatabase (DATABASE);
         worldCollection = db.getCollection (WORLD);
         fortuneCollection = db.getCollection (FORTUNE);
-
-        loadData ();
-    }
-
-    private void loadData () {
-        fortuneCollection.drop ();
-        if (fortuneCollection.count () == 0) {
-            int id = 0;
-            for (String fortune : FORTUNES) {
-                fortuneCollection.insertOne (
-                    new Document ("_id", ++id).append ("message", fortune)
-                );
-            }
-        }
-
-        worldCollection.drop ();
-        if (worldCollection.count () == 0) {
-            final Random random = ThreadLocalRandom.current ();
-            for (int ii = 1; ii <= DB_ROWS; ii++) {
-                int randomNumber = random.nextInt (DB_ROWS) + 1;
-                worldCollection.insertOne (
-                    new Document ("_id", ii).append ("randomNumber", randomNumber)
-                );
-            }
-        }
     }
 
     @Override public List<Fortune> getFortunes () {
@@ -89,8 +48,10 @@ final class MongoDbRepository implements Repository {
 
         fortuneCollection.find ().forEach ((Block<Document>)doc ->
             fortunes.add (
-                new Fortune (doc.get ("_id", Integer.class).intValue (), (String)doc.get
-                    ("message"))
+                new Fortune (
+                    doc.get ("_id", Integer.class).intValue (),
+                    (String)doc.get ("message")
+                )
             )
         );
 

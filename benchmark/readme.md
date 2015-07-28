@@ -6,6 +6,19 @@ development platforms. The test utilizes Sabina routes, Gson for JSON serializat
 OSIV pattern created with Sabina filters.
 
 
+## Local setup
+
+### MySql
+
+    mysql -u root -p <db.sql
+    
+### MongoDB
+
+    tar -Jxvf db.txz && \
+    mongorestore dump/ && \
+    rm -rf dump
+    
+
 ## Tests
 
 * [Sabina application](/src/main/java/sabina/benchmark/Application.java)
@@ -45,5 +58,4 @@ http://localhost:5050/fortune
 ### Database updates
 
 http://localhost:5050/update
-
 

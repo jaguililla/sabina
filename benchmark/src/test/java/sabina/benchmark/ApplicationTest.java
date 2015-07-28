@@ -45,8 +45,6 @@ import org.testng.annotations.Test;
 
     @BeforeClass public void setup () throws IOException {
         Application.main (null);
-//        ApplicationGrizzly.main (null);
-//        ApplicationJetty.main (null);
 
         for (int ii = 0; ii < WARM_UP; ii++) {
             json ();

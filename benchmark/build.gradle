@@ -32,8 +32,6 @@ dependencies {
     compile project(':http')
     compile project(':extra')
 
-    compile 'org.glassfish.grizzly:grizzly-http-servlet:2.3.19'
-
     compile 'com.mchange:c3p0:0.9.2.1'
     compile 'mysql:mysql-connector-java:5.1.28'
     compile 'org.mongodb:mongo-java-driver:3.0.2'
