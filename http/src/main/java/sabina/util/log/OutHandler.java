@@ -25,7 +25,7 @@ public class OutHandler extends StreamHandler {
      *
      */
     public OutHandler() {
-        setFormatter(new SimpleFormatter());
+        setFormatter(new ShortFormat());
         setOutputStream(System.out);
     }
 

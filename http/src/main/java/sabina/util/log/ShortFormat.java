@@ -19,6 +19,6 @@ import java.util.logging.LogRecord;
 public class ShortFormat extends Formatter {
     /** {@inheritDoc} */
     @Override public String format (LogRecord aRecord) {
-        return String.format ("%d %s", aRecord.getMillis (), aRecord.getMessage ());
+        return String.format ("%d %s%n", aRecord.getMillis (), aRecord.getMessage ());
     }
 }

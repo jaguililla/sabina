@@ -9,6 +9,7 @@
 package sabina.util.log;
 
 import static java.lang.String.format;
+import static java.util.Arrays.stream;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
@@ -21,16 +22,11 @@ import java.util.logging.LogManager;
  * @author jamming
  */
 public class Logger extends java.util.logging.Logger {
-    /** TODO . */
-    private static final String LOGGING_SETTINGS_RESOURCE = "/log.properties";
-
-    /**
-     * The logging manager property is set here, because this class is loaded before 'LogManager'
-     */
-    static {
+    public static void setup (String resource) {
         try {
             LogManager.getLogManager ().readConfiguration (
-                Class.class.getResourceAsStream (LOGGING_SETTINGS_RESOURCE));
+                ClassLoader.getSystemClassLoader ().getResourceAsStream (resource)
+            );
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -50,6 +46,8 @@ public class Logger extends java.util.logging.Logger {
 
     public Logger (String aName, String bundleName) {
         super (aName, bundleName);
+        stream (getGlobal ().getHandlers ()).forEach (this::addHandler);
+        addHandler (new OutHandler ());
     }
 
     public void caller () {
@@ -66,6 +64,10 @@ public class Logger extends java.util.logging.Logger {
     }
 
     public void error (String message, Throwable exception) {
+        log (SEVERE, message);
+    }
+
+    public void error (String message) {
         log (SEVERE, message);
     }
 

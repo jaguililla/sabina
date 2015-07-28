@@ -16,8 +16,13 @@ package sabina.util;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
+import static sabina.util.Builders.entry;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * TODO .
@@ -70,6 +75,14 @@ public final class Strings {
 
     public static final String ANSI_PREFIX = "\u001B[";
 
+    public static String ansi (AnsiColor fg, AnsiEffect... fxs) {
+        return "";
+    }
+
+    public static String ansi (AnsiColor fg, AnsiColor bg, AnsiEffect... fxs) {
+        return "";
+    }
+
     public static String ansi (String text, AnsiColor fg, AnsiColor bg, AnsiEffect... fxs) {
         return text;
     }
@@ -115,7 +128,69 @@ public final class Strings {
         }
     }
 
+    public static String filter (final String text, Map<?, ?> parameters) {
+        Set<? extends Entry<?, ?>> entries = parameters.entrySet ();
+        return filter (text, entries.toArray (new Entry[entries.size ()]));
+    }
+
+    /**
+     * ${key}
+     *
+     * @param text
+     * @param parameters
+     * @return
+     */
+    public static String filter (final String text, final Entry<?, ?>... parameters) {
+        String result = text;
+
+        for (Entry<?, ?> parameter : parameters) {
+            String key = String.valueOf (parameter.getKey ());
+            String value = String.valueOf (parameter.getValue ());
+            result = result.replace ("${" + key + "}", value);
+        }
+
+        return result;
+    }
+
+    public static String repeat (String str, int times) {
+        StringBuilder sb = new StringBuilder (str.length () * times);
+
+        for (int ii = 0; ii < times; ii++)
+            sb.append (str);
+
+        return sb.toString ();
+    }
+
+    /**
+     * Indenta todas las líneas de una cadena de texto usando una cadena de
+     * texto como relleno el número de veces que se indique.
+     * @param sourceString Cadena cuyas líneas serán indentadas.
+     * @param padString Cadena que se añadirá al principio de cada línea.
+     * @param times Número de veces que se añadirá la cadena de relleno.
+     * @return Cadena con todas sus líneas indentadas.
+     */
+    public static String indent (final String sourceString, final String padString, final int times) {
+        StringTokenizer lineTokenizer = new StringTokenizer(sourceString, "\n");
+        StringBuffer result = new StringBuffer();
+        String appendString = repeat (padString, times);
+        while (lineTokenizer.hasMoreTokens()) {
+            result.append(appendString);
+            result.append(lineTokenizer.nextToken());
+            result.append('\n');
+        }
+        return result.toString();
+    }
+
     private Strings () {
         throw new IllegalStateException ();
+    }
+
+    public static void main (String... args) {
+        System.out.println (
+            filter ("${abc} ${b}",
+                entry ("abc", "1"),
+                entry ("b", "2")
+            )
+        );
     }
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by jam on 7/18/15.
  */
-public class Entry<K, V> implements Map.Entry<K, V> {
+public final class Entry<K, V> implements Map.Entry<K, V> {
     public final K key;
     public final V value;
 

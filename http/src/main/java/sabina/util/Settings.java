@@ -1,5 +1,6 @@
 package sabina.util;
 
+import static java.util.stream.Collectors.toMap;
 import static sabina.util.Builders.entry;
 import static sabina.util.Strings.*;
 
@@ -8,11 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Read only (not allowed to store) settings. If no key is found, default is returned or exception
  * thrown.
+ *
+ * <p>Simple settings, if you need more use HOCON
  *
  * @author jamming
  */
@@ -23,7 +25,7 @@ public final class Settings {
         return instance == null? instance = new Settings () : instance;
     }
 
-    public static Map<String, ?> url (String inputs) {
+    public static Map<String, String> url (String inputs) {
         try {
             return stream (new URL (inputs).openConnection ().getInputStream ());
         }
@@ -32,7 +34,7 @@ public final class Settings {
         }
     }
 
-    public static Map<String, ?> resource (String inputs) {
+    public static Map<String, String> resource (String inputs) {
         try {
             return stream (Class.class.getResourceAsStream (inputs));
         }
@@ -41,7 +43,7 @@ public final class Settings {
         }
     }
 
-    public static Map<String, ?> file (String inputs) {
+    public static Map<String, String> file (String inputs) {
         try {
             return stream (new FileInputStream (inputs));
         }
@@ -50,16 +52,26 @@ public final class Settings {
         }
     }
 
-    private static Object cast (String value) {
-        Scanner scanner = new Scanner (value);
-        if (scanner.hasNextDouble ()) return scanner.nextDouble ();
-        if (scanner.hasNextLong ()) return scanner.nextLong ();
-        if (scanner.hasNextBoolean ()) return scanner.nextBoolean ();
-        if (scanner.hasNext ()) return scanner.next ();
-        throw new IllegalArgumentException ();
+    public static Map<String, String> parameters (String[] inputs) {
+        Map<String, String> result = new HashMap<> ();
+
+        for (int ii = 0; ii < inputs.length; ii += 2) {
+            String odd = inputs[ii].trim ();
+
+            if (odd.startsWith ("--"))
+                odd = odd.substring ("--".length ());
+            else
+                throw new IllegalArgumentException ();
+
+            String even = inputs[ii + 1].trim ();
+
+            result.put (odd, even);
+        }
+
+        return result;
     }
 
-    private static Map<String, ?> stream (InputStream stream) throws IOException {
+    private static Map<String, String> stream (InputStream stream) throws IOException {
         if (stream == null)
             return new HashMap<> ();
 
@@ -68,16 +80,13 @@ public final class Settings {
             props.load (s);
             return props.entrySet ().stream ()
                 .map (entry ->
-                    entry (
-                        String.valueOf (entry.getKey ()),
-                        cast (String.valueOf (entry.getValue ()))
-                    )
+                    entry ( (String)entry.getKey (), (String)entry.getValue () )
                 )
-                .collect (Collectors.toMap (Entry::getKey, Entry::getValue));
+                .collect (toMap (Entry::getKey, Entry::getValue));
         }
     }
 
-    private Map<String, Object> settings = new HashMap<> ();
+    private Map<String, String> settings = new HashMap<> ();
 
     private Settings () {
         super ();
@@ -89,29 +98,62 @@ public final class Settings {
      *
      * @param entries .
      */
-    @SafeVarargs public final Settings load (Map<String, ?>... entries) {
+    @SafeVarargs public final Settings load (Map<String, String>... entries) {
         Arrays.stream (entries).forEach (settings::putAll);
         // Override with system properties (if set)
         return this;
     }
 
-    @SuppressWarnings ("unchecked") public <T> T get (String key) {
-        return (T)settings.get (key);
+    public Map<String, String> getAll () {
+        Map<String, String> result = new HashMap<> ();
+        result.putAll (settings);
+        return result;
+    }
+
+    public String get (String key) {
+        return settings.get (key);
+    }
+
+    public int getInt (String key) {
+        return Integer.parseInt (get (key));
+    }
+
+    public long getLong (String key) {
+        return Long.parseLong (get (key));
+    }
+
+    public byte getByte (String key) {
+        return Byte.parseByte (get (key));
+    }
+
+    public short getShort (String key) {
+        return Short.parseShort (get (key));
+    }
+
+    public float getFloat (String key) {
+        return Float.parseFloat (get (key));
+    }
+
+    public double getDouble (String key) {
+        return Double.parseDouble (get (key));
     }
 
     public static void main (String... args) throws Exception {
+        Arrays.stream (args).forEach (System.out::println);
+
         settings ().load (
             resource ("/sabina.properties"),
             resource ("/application.properties"),
-            file ("application.properties")
+            file ("application.properties"),
+            parameters (args)
         );
 
-        int port = settings ().get ("sabina_default_port");
+        int port = settings ().getInt ("sabina_default_port");
 
         System.out.println (port);
 
         System.out.format (
-            "%sRED %sGREEN %sBLUE %sNormal again", ANSI_RED, ANSI_GREEN, ANSI_BLUE, ANSI_RESET
+            "%sRED %sGREEN %sBLUE %sNormal again%n", ANSI_RED, ANSI_GREEN, ANSI_BLUE, ANSI_RESET
         );
     }
 }
