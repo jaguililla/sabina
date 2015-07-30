@@ -20,6 +20,6 @@ services:
 before_script:
   - mysql -u root < ${TRAVIS_BUILD_DIR}/benchmark/assets/db.sql
 
-# script: gradle/wrapper clean assemble
+script: gradle/wrapper clean assemble
 
 after_success: gradle/wrapper clean assemble check jacocoTestReport coveralls
