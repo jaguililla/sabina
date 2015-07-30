@@ -39,6 +39,7 @@ processResources {
 
 clean << {
     delete "$buildDir"
+    delete "target" // TODO Do not delete benchmark/target
     delete "*.log"
     delete "log?"
 }
