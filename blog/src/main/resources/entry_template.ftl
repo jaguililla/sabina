@@ -4,8 +4,6 @@
 <#include "fragments/navbar.ftl">
 
 <div class="container">
-  <a href="/">Blog Home</a><br><br>
-
   <h2>${post["title"]}</h2>
 
   <p>Posted ${post["date"]?datetime}<i> By ${post["author"]}</i></p>
@@ -41,7 +39,7 @@
     <h3>Add a comment</h3>
 
     <form action="/newcomment" method="POST">
-      <input type="hidden" name="permalink", value="${post["permalink"]}">
+      <input type="hidden" name="permalink", value="${post["permalink"]}" />
       ${errors!""}<br />
       <b>Name</b> (required)<br />
       <input type="text" name="commentName" size="60" value="${comment["name"]}" /><br />

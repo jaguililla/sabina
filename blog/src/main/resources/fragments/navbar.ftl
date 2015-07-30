@@ -15,21 +15,19 @@
         <span class="icon-bar"></span>
       </button>
 
-      <a class="navbar-brand" href="/">My Blog</a>
+      <a class="navbar-brand" href="/">
+        <i id="logoSmall" class="glyphicon glyphicon-bullhorn" aria-hidden="true"></i> Blongo
+      </a>
     </div>
 
-    <div id="navbar" class="collapse navbar-collapse">
+    <div id="navbar" class="collapse navbar-collapse navbar-right">
       <#if username??>
-        <p class="navbar-text">
-          Welcome ${username} <a href="/logout">Logout</a> | <a href="/newpost">New Post</a>
-        </p>
+        Welcome ${username} <a href="/logout">Logout</a>
+        <a class="btn btn-primary navbar-btn" href="/newpost">New Post</a>
+      <#else>
+        <a class="btn btn-primary navbar-btn" href="/login">Login</a>
+        <a class="btn btn-success navbar-btn" href="/signup">Signup</a>
       </#if>
-
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">item</a></li>
-        <li><a href="#signup">Signup</a></li>
-        <li><a href="#login">Login</a></li>
-      </ul>
     </div>
   </div>
 </nav>

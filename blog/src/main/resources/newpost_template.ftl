@@ -1,11 +1,9 @@
 <#assign pageTitle = "Create a new post">
 <#include "fragments/header.ftl">
 
-<div class="container">
-  <#if username??>
-    <p>Welcome ${username} <a href="/logout">Logout</a> | <a href="/">Blog Home</a></p>
-  </#if>
+<#include "fragments/navbar.ftl">
 
+<div class="container">
   <form action="/newpost" method="POST">
     ${errors!""}
     <h2>Title</h2>

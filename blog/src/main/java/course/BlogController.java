@@ -48,6 +48,7 @@ public class BlogController {
         sessionDAO = new SessionDAO (blogDatabase);
 
         initializeRoutes ();
+        resourcesLocation ("public");
         start (8082);
     }
 

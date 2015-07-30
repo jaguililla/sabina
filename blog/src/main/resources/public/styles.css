@@ -1,0 +1,21 @@
+
+body {
+  margin-top: 75px;
+  overflow-y: scroll;
+}
+
+#logoSmall {
+  font-size: 20px;
+  line-height: 0.7;
+  margin-left: 2px;
+  top: 2px;
+}
+
+#logo {
+  font-size: 150px;
+  top: 20px;
+}
+
+#logoCell {
+  text-align: center;
+}
