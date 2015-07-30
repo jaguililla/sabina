@@ -1,3 +1,9 @@
+
+#
+# TRAVIS BUILD
+# Caching .gradle and not cleaning it (with 'wipe') causes the job to fail.
+#
+
 language: java
 jdk: oraclejdk8
 
@@ -13,6 +19,6 @@ services:
 before_script:
   - mysql -u root < ${TRAVIS_BUILD_DIR}/benchmark/assets/db.sql
 
-# script: gradle/wrapper wipe assemble --debug
+script: gradle/wrapper wipe check
 
-after_success: gradle/wrapper clean check jacocoTestReport coveralls
+after_success: gradle/wrapper jacocoTestReport coveralls
