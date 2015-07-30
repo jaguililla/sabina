@@ -14,4 +14,6 @@ services:
 before_script:
   - mysql -u root < ${TRAVIS_BUILD_DIR}/benchmark/assets/db.sql
 
+script: gradle/wrapper clean check --debug
+
 after_success: gradle/wrapper clean check jacocoTestReport coveralls
