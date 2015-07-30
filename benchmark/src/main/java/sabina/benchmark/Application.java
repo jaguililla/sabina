@@ -55,10 +55,8 @@ public final class Application extends MatcherFilter {
     static Repository loadRepository () {
         switch (getProperty ("sabina.benchmark.repository", "mysql")) {
             case "mongodb":
-                System.out.println (">>>>>>>>>>>> MONGODB");
                 return new MongoDbRepository (loadConfiguration ());
             case "mysql":
-                System.out.println (">>>>>>>>>>>> MYSQL");
             default:
                 return new MySqlRepository (loadConfiguration ());
         }
