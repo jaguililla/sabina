@@ -6,6 +6,7 @@ sudo: false
 
 cache:
   directories:
+  - .gradle
   - $HOME/.gradle
 
 services:
@@ -13,5 +14,7 @@ services:
 
 before_script:
   - mysql -u root < ${TRAVIS_BUILD_DIR}/benchmark/assets/db.sql
+  - tar -Jxvf ${TRAVIS_BUILD_DIR}/benchmark/assets/db.txz
+  - mongorestore ${TRAVIS_BUILD_DIR}/benchmark/assets/dump/
 
 after_success: gradle/wrapper jacocoTestReport coveralls
