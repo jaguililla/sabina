@@ -17,5 +17,5 @@ before_script:
   - tar -Jxvf ${TRAVIS_BUILD_DIR}/benchmark/assets/db.txz
   - mongorestore ${TRAVIS_BUILD_DIR}/benchmark/assets/dump/
 
-script: gradle/wrapper clean check jacocoTestReport coveralls -Dsabina.benchmark.repository=mongodb
+script: gradle/wrapper clean check jacocoTestReport coveralls --info
 
