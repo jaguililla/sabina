@@ -38,6 +38,7 @@ final class MySqlRepository implements Repository {
 
     MySqlRepository (Properties settings) {
         final String jdbcUrl = settings.getProperty ("mysql.uri");
+        System.out.println (">>>>>>>>>>>>> JDBC URL: " + jdbcUrl);
         DATA_SOURCE = createSessionFactory (jdbcUrl);
     }
 
