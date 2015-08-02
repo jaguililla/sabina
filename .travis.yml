@@ -13,6 +13,7 @@ services:
   - mongodb
 
 before_script:
+  - apt-get install -y graphviz
   - mysql -u root < ${TRAVIS_BUILD_DIR}/benchmark/assets/db.sql
   - tar -Jxvf ${TRAVIS_BUILD_DIR}/benchmark/assets/db.txz
   - mongorestore ${TRAVIS_BUILD_DIR}/benchmark/assets/dump/

@@ -22,6 +22,7 @@ Future improvements
 
 * Add Bootstrap navbar
 * Fix Bootstrap form issues
+* Use SVG logo (check assets)
 * Deploy to Heroku
 
 
