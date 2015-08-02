@@ -106,5 +106,3 @@ jacocoTestReport {
 //        executionData = files(executionData.findAll { it.exists() })
 //    }
 //}
-
-task bundle (dependsOn: [ 'check', 'javadoc' ])

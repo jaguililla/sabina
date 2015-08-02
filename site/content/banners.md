@@ -1,3 +1,8 @@
+title=Banners
+date=2015-08-02
+type=page
+status=published
+~~~~~~
 
        _____       _     _
       / ____|     | |   (_)
