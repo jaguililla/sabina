@@ -40,7 +40,7 @@ dependencies {
 }
 
 project.ext ['sabinaBackend'] = getProperty('sabina.backend', 'undertow')
-project.ext ['sabinaBenchmarkRepository'] = getProperty ('sabina.benchmark.repository', 'mongodb')
+project.ext ['sabinaBenchmarkRepository'] = getProperty ('sabina.benchmark.repository', 'mysql')
 
 test {
     systemProperties = [
