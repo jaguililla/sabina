@@ -63,9 +63,15 @@ public final class Application extends MatcherFilter {
     }
 
     private static Object getDb (Request it) {
-        final World[] worlds = repository.getWorlds (getQueries (it), false);
-        it.response.type (CONTENT_TYPE_JSON);
-        return toJson (it.queryParams (QUERIES_PARAM) == null? worlds[0] : worlds);
+        try {
+            final World[] worlds = repository.getWorlds (getQueries (it), false);
+            it.response.type (CONTENT_TYPE_JSON);
+            return toJson (it.queryParams (QUERIES_PARAM) == null? worlds[0] : worlds);
+        }
+        catch (Exception e) {
+            e.printStackTrace ();
+            return e.getMessage ();
+        }
     }
 
     private static Object getFortunes (Request it) {
@@ -84,9 +90,15 @@ public final class Application extends MatcherFilter {
     }
 
     private static Object getUpdates (Request it) {
-        World[] worlds = repository.getWorlds (getQueries (it), true);
-        it.response.type (CONTENT_TYPE_JSON);
-        return toJson (it.queryParams (QUERIES_PARAM) == null? worlds[0] : worlds);
+        try {
+            World[] worlds = repository.getWorlds (getQueries (it), true);
+            it.response.type (CONTENT_TYPE_JSON);
+            return toJson (it.queryParams (QUERIES_PARAM) == null? worlds[0] : worlds);
+        }
+        catch (Exception e) {
+            e.printStackTrace ();
+            return e.getMessage ();
+        }
     }
 
     private static int getQueries (final Request request) {

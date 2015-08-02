@@ -4,10 +4,10 @@ jdk: oraclejdk8
 
 sudo: false
 
-# cache:
-  # directories:
-  # - .gradle
-  # - $HOME/.gradle
+cache:
+  directories:
+  - .gradle
+  - $HOME/.gradle
 
 services:
   - mongodb
@@ -17,5 +17,7 @@ before_script:
   - tar -Jxvf ${TRAVIS_BUILD_DIR}/benchmark/assets/db.txz
   - mongorestore ${TRAVIS_BUILD_DIR}/benchmark/assets/dump/
 
-# script: gradle/wrapper clean check jacocoTestReport coveralls --info --stacktrace
+script: gradle/wrapper clean assemble check jacocoTestReport coveralls -is
 
+# TODO after_success generate site, etc.
+# TODO after_failure cat logs to check problem
