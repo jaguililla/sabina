@@ -54,7 +54,10 @@ check << {
 }
 
 def stressTestReport () {
-    def file = "$buildDir/test-results/TEST-sabina.benchmark.ApplicationTest.xml"
+    def file = "$buildDir/test-results/TEST-sabina.benchmark.ApplicationStressTest.xml"
+    if (!new File (file).exists ())
+        return
+
     def parser = new groovy.util.XmlSlurper()
     def testsuite = parser.parse (file)
 

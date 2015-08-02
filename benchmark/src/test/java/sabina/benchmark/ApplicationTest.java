@@ -15,7 +15,6 @@
 package sabina.benchmark;
 
 import static org.apache.http.client.fluent.Request.Get;
-import static org.testng.AssertJUnit.*;
 import static sabina.Sabina.stop;
 
 import java.io.IOException;
@@ -34,44 +33,16 @@ import org.testng.annotations.Test;
  * <p>TODO
  * Write article about stress test with TestNG (scenarios, combine different tests in scenarios,
  * adding random pauses...)
- *
- * <p>TODO Change assert's order
  */
 @Test public final class ApplicationTest {
-    private static final int THREADS = 16, EXECUTIONS = 75, WARM_UP = 10;
-
     private static final String ENDPOINT = "http://localhost:5050";
     private static final Gson GSON = new Gson ();
 
     @BeforeClass public void setup () throws IOException {
         Application.main (null);
-
-        for (int ii = 0; ii < WARM_UP; ii++) {
-            json ();
-            plaintext ();
-            no_query_parameter ();
-            empty_query_parameter ();
-            text_query_parameter ();
-            zero_queries ();
-            one_thousand_queries ();
-            one_query ();
-            ten_queries ();
-            one_hundred_queries ();
-            five_hundred_queries ();
-            fortunes ();
-            no_updates_parameter ();
-            empty_updates_parameter ();
-            text_updates_parameter ();
-            zero_updates ();
-            one_thousand_updates ();
-            one_update ();
-            ten_updates ();
-            one_hundred_updates ();
-            five_hundred_updates ();
-        }
     }
 
-    @AfterClass public static void close () {
+    @AfterClass public void close () {
         stop ();
     }
 
@@ -80,7 +51,7 @@ import org.testng.annotations.Test;
         String content = getContent (response);
 
         checkResponse (response, content, "application/json");
-        assertEquals ("Hello, World!", GSON.fromJson (content, Map.class).get ("message"));
+        assert "Hello, World!".equals (GSON.fromJson (content, Map.class).get ("message"));
     }
 
     public void plaintext () throws IOException {
@@ -88,7 +59,7 @@ import org.testng.annotations.Test;
         String content = getContent (response);
 
         checkResponse (response, content, "text/plain");
-        assertEquals ("Hello, World!", content);
+        assert "Hello, World!".equals (content);
     }
 
     public void no_query_parameter () throws IOException {
@@ -97,7 +68,7 @@ import org.testng.annotations.Test;
 
         checkResponse (response, content, "application/json");
         Map<?, ?> resultsMap = GSON.fromJson (content, Map.class);
-        assertTrue (resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber"));
+        assert resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber");
     }
 
     public void empty_query_parameter () throws IOException {
@@ -137,11 +108,11 @@ import org.testng.annotations.Test;
         String content = getContent (response);
         String contentType = response.getEntity ().getContentType ().getValue ();
 
-        assertTrue (response.getFirstHeader ("Server") != null);
-        assertTrue (response.getFirstHeader ("Date") != null);
-        assertTrue (content.contains ("&lt;script&gt;alert(&quot;This should not be displayed"));
-        assertTrue (content.contains ("フレームワークのベンチマーク"));
-        assertEquals ("text/html; charset=utf-8", contentType.toLowerCase ());
+        assert response.getFirstHeader ("Server") != null;
+        assert response.getFirstHeader ("Date") != null;
+        assert content.contains ("&lt;script&gt;alert(&quot;This should not be displayed");
+        assert content.contains ("フレームワークのベンチマーク");
+        assert "text/html; charset=utf-8".equals (contentType.toLowerCase ());
     }
 
     public void no_updates_parameter () throws IOException {
@@ -150,7 +121,7 @@ import org.testng.annotations.Test;
 
         checkResponse (response, content, "application/json");
         Map<?, ?> resultsMap = GSON.fromJson (content, Map.class);
-        assertTrue (resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber"));
+        assert resultsMap.containsKey ("id") && resultsMap.containsKey ("randomNumber");
     }
 
     public void empty_updates_parameter () throws IOException {
@@ -185,111 +156,6 @@ import org.testng.annotations.Test;
         checkDbRequest ("/update?queries=500", 500);
     }
 
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_json () throws IOException {
-        json ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_plaintext () throws IOException {
-        plaintext ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_no_query_parameter () throws IOException {
-        no_query_parameter ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_empty_query_parameter () throws IOException {
-        empty_query_parameter ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_text_query_parameter () throws IOException {
-        text_query_parameter ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_zero_queries () throws IOException {
-        zero_queries ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_one_thousand_queries () throws IOException {
-        one_thousand_queries ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_one_query () throws IOException {
-        one_query ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_ten_queries () throws IOException {
-        ten_queries ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_one_hundred_queries () throws IOException {
-        one_hundred_queries ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_five_hundred_queries () throws IOException {
-        five_hundred_queries ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_fortunes () throws IOException {
-        fortunes ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_no_updates_parameter () throws IOException {
-        no_updates_parameter ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_empty_updates_parameter () throws IOException {
-        empty_updates_parameter ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_text_updates_parameter () throws IOException {
-        text_updates_parameter ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_zero_updates () throws IOException {
-        zero_updates ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_one_thousand_updates () throws IOException {
-        one_thousand_updates ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_one_update () throws IOException {
-        one_update ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_ten_updates () throws IOException {
-        ten_updates ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_one_hundred_updates () throws IOException {
-        one_hundred_updates ();
-    }
-
-    @Test(threadPoolSize = THREADS, invocationCount = EXECUTIONS)
-    public void stress_five_hundred_updates () throws IOException {
-        five_hundred_updates ();
-    }
-
     private void checkDbRequest (String path, int itemsCount) throws IOException {
         HttpResponse response = get (ENDPOINT + path);
         String content = getContent (response);
@@ -308,19 +174,19 @@ import org.testng.annotations.Test;
     }
 
     private void checkResponse (HttpResponse res, String content, String contentType) {
-        assertTrue (res.getFirstHeader ("Server") != null);
-        assertTrue (res.getFirstHeader ("Date") != null);
-        assertEquals (content.length (), res.getEntity ().getContentLength ());
-        assertTrue (res.getEntity ().getContentType ().getValue ().contains (contentType));
+        assert res.getFirstHeader ("Server") != null;
+        assert res.getFirstHeader ("Date") != null;
+        assert content.length () == res.getEntity ().getContentLength ();
+        assert res.getEntity ().getContentType ().getValue ().contains (contentType);
     }
 
     private void checkResultItems (String result, int size) {
         List<?> resultsList = GSON.fromJson (result, List.class);
-        assertEquals (size, resultsList.size ());
+        assert size == resultsList.size ();
 
         for (int ii = 0; ii < size; ii++) {
             Map<?, ?> r = (Map)resultsList.get (ii);
-            assertTrue (r.containsKey ("id") && r.containsKey ("randomNumber"));
+            assert r.containsKey ("id") && r.containsKey ("randomNumber");
         }
     }
 }
