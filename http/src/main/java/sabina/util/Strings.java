@@ -16,7 +16,8 @@ package sabina.util;
 
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
-import static sabina.util.Builders.entry;
+import static sabina.util.Checks.checkArgument;
+import static sabina.util.Objects.stringOf;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -39,7 +40,6 @@ public final class Strings {
         MAGENTA (5),
         CYAN (6),
         WHITE (7),
-
         DEFAULT (9);
 
         private static final int FOREGROUND = 30;
@@ -60,44 +60,84 @@ public final class Strings {
         BOLD (1),
         UNDERLINE (4),
         BLINK (5),
-        INVERSE (7),
-
-        RESET (0);
+        INVERSE (7);
 
         public static final int SWITCH_EFFECT = 20;
 
         final int on;
+        final int off;
 
         private AnsiEffect (int code) {
             this.on = code;
+            this.off = SWITCH_EFFECT + code;
         }
     }
 
-    public static final String ANSI_PREFIX = "\u001B[";
+    private static final String ANSI_PREFIX = "\u001B[";
+    private static final String ANSI_END = "m";
+
+    public static final String ANSI_RESET = ANSI_PREFIX + "0" + ANSI_END;
+
+    public static String ansi (AnsiEffect... fxs) {
+        throw new UnsupportedOperationException ();
+    }
 
     public static String ansi (AnsiColor fg, AnsiEffect... fxs) {
-        return "";
+        throw new UnsupportedOperationException ();
     }
 
     public static String ansi (AnsiColor fg, AnsiColor bg, AnsiEffect... fxs) {
-        return "";
+        throw new UnsupportedOperationException ();
     }
 
     public static String ansi (String text, AnsiColor fg, AnsiColor bg, AnsiEffect... fxs) {
-        return text;
+        throw new UnsupportedOperationException ();
     }
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+    /**
+     * Calls {@link #filter(String, Entry[])} converting the map in entries.
+     *
+     * @see #filter(String, Entry[])
+     */
+    public static String filter (final String text, final Map<?, ?> parameters) {
+        checkArgument (parameters != null);
+        Set<? extends Entry<?, ?>> entries = parameters.entrySet ();
+        return filter (text, entries.toArray (new Entry[entries.size ()]));
+    }
 
-    public static boolean isNullOrEmpty (String str) {
+    /**
+     * Filters a text substituting each key by its value. The keys format is:
+     * <code>${key}</code> and all occurrences are replaced by the supplied value.
+     *
+     * <p>If a variable does not have a parameter, it is left as it is.
+     *
+     * @param text The text to filter. Can not be 'null'.
+     * @param parameters The map with the list of key/value tuples. Can not be 'null'.
+     * @return The filtered text or the same string if no values are passed or found in the text.
+     */
+    public static String filter (final String text, final Entry<?, ?>... parameters) {
+        checkArgument (text != null);
+        checkArgument (parameters != null);
+
+        String result = text;
+
+        for (Entry<?, ?> parameter : parameters) {
+            Object v = parameter.getValue ();
+            Object k = parameter.getKey ();
+            checkArgument (v != null);
+            checkArgument (k != null);
+
+            String key = stringOf (k);
+            checkArgument (!isEmpty (key));
+            String value = stringOf (v);
+
+            result = result.replace ("${" + key + "}", value);
+        }
+
+        return result;
+    }
+
+    public static boolean isEmpty (String str) {
         return str == null || str.isEmpty ();
     }
 
@@ -126,30 +166,6 @@ public final class Strings {
             throw new RuntimeException (format ("Error decoding '%s' with '%s'", text, encoding),
                 e);
         }
-    }
-
-    public static String filter (final String text, Map<?, ?> parameters) {
-        Set<? extends Entry<?, ?>> entries = parameters.entrySet ();
-        return filter (text, entries.toArray (new Entry[entries.size ()]));
-    }
-
-    /**
-     * ${key}
-     *
-     * @param text
-     * @param parameters
-     * @return
-     */
-    public static String filter (final String text, final Entry<?, ?>... parameters) {
-        String result = text;
-
-        for (Entry<?, ?> parameter : parameters) {
-            String key = String.valueOf (parameter.getKey ());
-            String value = String.valueOf (parameter.getValue ());
-            result = result.replace ("${" + key + "}", value);
-        }
-
-        return result;
     }
 
     public static String repeat (String str, int times) {
@@ -183,14 +199,5 @@ public final class Strings {
 
     private Strings () {
         throw new IllegalStateException ();
-    }
-
-    public static void main (String... args) {
-        System.out.println (
-            filter ("${abc} ${b}",
-                entry ("abc", "1"),
-                entry ("b", "2")
-            )
-        );
     }
 }

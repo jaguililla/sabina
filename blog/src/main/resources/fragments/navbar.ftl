@@ -21,7 +21,7 @@
     </div>
 
     <div id="navbar" class="collapse navbar-collapse navbar-right">
-      <#if username??>
+      <#if username?? && username != "">
         Welcome ${username} <a href="/logout">Logout</a>
         <a class="btn btn-primary navbar-btn" href="/newpost">New Post</a>
       <#else>

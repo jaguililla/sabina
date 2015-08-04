@@ -19,7 +19,7 @@ import static sabina.HttpMethod.AFTER;
 import static sabina.HttpMethod.BEFORE;
 import static sabina.Request.convertRouteToList;
 import static sabina.util.Checks.checkArgument;
-import static sabina.util.Strings.isNullOrEmpty;
+import static sabina.util.Strings.isEmpty;
 
 import java.util.List;
 
@@ -85,7 +85,7 @@ public final class Route {
         final String acceptType,
         final Handler handler) {
 
-        checkArgument (!isNullOrEmpty (path) && !isNullOrEmpty (acceptType));
+        checkArgument (!isEmpty (path) && !isEmpty (acceptType));
         checkArgument (handler != null && method != null);
 
         this.path = path;

@@ -2,7 +2,6 @@ package sabina.util;
 
 import static java.util.stream.Collectors.toMap;
 import static sabina.util.Builders.entry;
-import static sabina.util.Strings.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -136,24 +135,5 @@ public final class Settings {
 
     public double getDouble (String key) {
         return Double.parseDouble (get (key));
-    }
-
-    public static void main (String... args) throws Exception {
-        Arrays.stream (args).forEach (System.out::println);
-
-        settings ().load (
-            resource ("/sabina.properties"),
-            resource ("/application.properties"),
-            file ("application.properties"),
-            parameters (args)
-        );
-
-        int port = settings ().getInt ("sabina_default_port");
-
-        System.out.println (port);
-
-        System.out.format (
-            "%sRED %sGREEN %sBLUE %sNormal again%n", ANSI_RED, ANSI_GREEN, ANSI_BLUE, ANSI_RESET
-        );
     }
 }

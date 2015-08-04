@@ -24,6 +24,7 @@ Future improvements
 * Fix Bootstrap form issues
 * Use SVG logo (check assets)
 * Deploy to Heroku
+* Fix navbar bugs (user login)
 
 
 Install

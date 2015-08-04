@@ -4,6 +4,10 @@ body {
   overflow-y: scroll;
 }
 
+h2 {
+  margin-bottom: 20px;
+}
+
 #logoSmall {
   font-size: 20px;
   line-height: 0.7;

@@ -16,7 +16,7 @@ package sabina.route;
 
 import static java.lang.Float.parseFloat;
 import static java.lang.String.format;
-import static sabina.util.Strings.isNullOrEmpty;
+import static sabina.util.Strings.isEmpty;
 
 import java.util.*;
 
@@ -113,7 +113,7 @@ final class MimeParse {
         ParseResults results = parseMimeType (range);
         String q = results.params.get ("q");
         float f = toFloat (q, 1);
-        if (isNullOrEmpty (q) || f < 0 || f > 1) {
+        if (isEmpty (q) || f < 0 || f > 1) {
             results.params.put ("q", "1");
         }
         return results;
