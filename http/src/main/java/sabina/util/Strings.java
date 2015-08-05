@@ -14,85 +14,32 @@
 
 package sabina.util;
 
-import static java.lang.String.format;
-import static java.util.Optional.ofNullable;
+import static java.lang.System.getProperty;
 import static sabina.util.Checks.checkArgument;
-import static sabina.util.Objects.stringOf;
+import static sabina.util.Things.stringOf;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 /**
- * TODO .
+ * Several string utilities not included in the JDK. Some are in other libraries like Guava or
+ * Commons Lang.
+ *
+ * <p>I implement them because the previously mentioned libraries just duplicate some functions
+ * with modern JREs.
  *
  * @author jam
  */
 public final class Strings {
-    public enum AnsiColor {
-        BLACK (0),
-        RED (1),
-        GREEN (2),
-        YELLOW (3),
-        BLUE (4),
-        MAGENTA (5),
-        CYAN (6),
-        WHITE (7),
-        DEFAULT (9);
+    /** Runtime specific end of line. */
+    public  static final String EOL = getProperty ("line.separator");
 
-        private static final int FOREGROUND = 30;
-        private static final int BACKGROUND = 40;
-
-        public final int code;
-        public final int fg;
-        public final int bg;
-
-        private AnsiColor (int code) {
-            this.code = code;
-            this.fg = FOREGROUND + code;
-            this.bg = BACKGROUND + code;
-        }
-    }
-
-    public enum AnsiEffect {
-        BOLD (1),
-        UNDERLINE (4),
-        BLINK (5),
-        INVERSE (7);
-
-        public static final int SWITCH_EFFECT = 20;
-
-        final int on;
-        final int off;
-
-        private AnsiEffect (int code) {
-            this.on = code;
-            this.off = SWITCH_EFFECT + code;
-        }
-    }
-
-    private static final String ANSI_PREFIX = "\u001B[";
-    private static final String ANSI_END = "m";
-
-    public static final String ANSI_RESET = ANSI_PREFIX + "0" + ANSI_END;
-
-    public static String ansi (AnsiEffect... fxs) {
-        throw new UnsupportedOperationException ();
-    }
-
-    public static String ansi (AnsiColor fg, AnsiEffect... fxs) {
-        throw new UnsupportedOperationException ();
-    }
-
-    public static String ansi (AnsiColor fg, AnsiColor bg, AnsiEffect... fxs) {
-        throw new UnsupportedOperationException ();
-    }
-
-    public static String ansi (String text, AnsiColor fg, AnsiColor bg, AnsiEffect... fxs) {
-        throw new UnsupportedOperationException ();
-    }
+    /** Variable prefix for string filtering. */
+    private static final String VARIABLE_PREFIX = "${";
+    /** Variable sufix for string filtering. */
+    private static final String VARIABLE_SUFFIX = "}";
 
     /**
      * Calls {@link #filter(String, Entry[])} converting the map in entries.
@@ -122,79 +69,97 @@ public final class Strings {
         String result = text;
 
         for (Entry<?, ?> parameter : parameters) {
-            Object v = parameter.getValue ();
             Object k = parameter.getKey ();
-            checkArgument (v != null);
+            Object v = parameter.getValue ();
             checkArgument (k != null);
+            checkArgument (v != null, "'%s' value is 'null'", k);
 
             String key = stringOf (k);
-            checkArgument (!isEmpty (key));
+            checkArgument (!isEmpty (key), "key with '%s' value is empty", v);
             String value = stringOf (v);
 
-            result = result.replace ("${" + key + "}", value);
+            result = result.replace (VARIABLE_PREFIX + key + VARIABLE_SUFFIX, value);
         }
 
         return result;
     }
 
-    public static boolean isEmpty (String str) {
-        return str == null || str.isEmpty ();
+    /**
+     * Utility method to check if a string has a value.
+     *
+     * @param text String to check.
+     * @return True if the string is 'null' or empty.
+     */
+    public static boolean isEmpty (String text) {
+        return text == null || text.isEmpty ();
     }
 
-    public static String encode (final byte[] body, final String encoding) {
-        return ofNullable (encoding).map (enc -> {
-            try {
-                return body == null? "" : new String (body, enc);
-            }
-            catch (UnsupportedEncodingException e) {
-                throw new RuntimeException (e);
-            }
-        }).orElse (new String (body));
+    /**
+     * Only a wrapper to avoid having to catch the checked exception.
+     *
+     * @see String#String(byte[], String)
+     */
+    public static String encode (final byte[] data, final String encoding) {
+        try {
+            return new String (data, encoding);
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException (e);
+        }
     }
 
+    /**
+     * Only a wrapper to avoid having to catch the checked exception.
+     *
+     * @see String#getBytes(String)
+     */
     public static byte[] decode (final String text, final String encoding) {
-        if (text == null)
-            return new byte[0];
-
-        if (encoding == null)
-            return text.getBytes ();
-
         try {
             return text.getBytes (encoding);
         }
         catch (UnsupportedEncodingException e) {
-            throw new RuntimeException (format ("Error decoding '%s' with '%s'", text, encoding),
-                e);
+            throw new RuntimeException (e);
         }
-    }
-
-    public static String repeat (String str, int times) {
-        StringBuilder sb = new StringBuilder (str.length () * times);
-
-        for (int ii = 0; ii < times; ii++)
-            sb.append (str);
-
-        return sb.toString ();
     }
 
     /**
-     * Indenta todas las líneas de una cadena de texto usando una cadena de
-     * texto como relleno el número de veces que se indique.
-     * @param sourceString Cadena cuyas líneas serán indentadas.
-     * @param padString Cadena que se añadirá al principio de cada línea.
-     * @param times Número de veces que se añadirá la cadena de relleno.
-     * @return Cadena con todas sus líneas indentadas.
+     * Repeat a given text a certain number of times.
+     *
+     * @param text String to repeat. It can't be 'null'.
+     * @param times Number of times to repeat the text. Must be greater than 0.
+     * @return The passed text repeated the given times.
      */
-    public static String indent (final String sourceString, final String padString, final int times) {
-        StringTokenizer lineTokenizer = new StringTokenizer(sourceString, "\n");
-        StringBuffer result = new StringBuffer();
-        String appendString = repeat (padString, times);
-        while (lineTokenizer.hasMoreTokens()) {
-            result.append(appendString);
-            result.append(lineTokenizer.nextToken());
-            result.append('\n');
-        }
-        return result.toString();
+    public static String repeat (String text, int times) {
+        checkArgument (text != null);
+        checkArgument (times >= 0);
+
+        StringBuilder buffer = new StringBuilder (text.length () * times);
+
+        for (int ii = 0; ii < times; ii++)
+            buffer.append (text);
+
+        return buffer.toString ();
+    }
+
+    /**
+     * Indents every line with the given padding the number of times specified.
+     *
+     * @param text Text to indent. Can't be 'null'.
+     * @param padding String to repeat at the beginning of each line. Can't be 'null'.
+     * @param times Number of times to repeat the padding text. Must be greater than 0.
+     * @return Text with every line indented with the given padding the number of times specified.
+     */
+    public static String indent (final String text, final String padding, final int times) {
+        checkArgument (text != null);
+
+        String[] lines = text.split (EOL, -1);
+        String appendString = repeat (padding, times);
+        StringBuilder buffer = new StringBuilder ();
+
+        for (int ii = 0; ii < lines.length - 1; ii++)
+            buffer.append (appendString).append (lines[ii]).append (EOL);
+
+        return buffer.append (appendString).append (lines[lines.length - 1]).toString ();
     }
 
     private Strings () {

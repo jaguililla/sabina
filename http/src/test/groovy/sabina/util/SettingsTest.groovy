@@ -2,11 +2,10 @@ package sabina.util
 
 import org.testng.annotations.Test
 
-import static sabina.util.Builders.entry
+import static sabina.util.Entry.entry
 import static sabina.util.Strings.filter
 
-@Test
-public class SettingsTest {
+@Test public class SettingsTest {
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void "filter does not allow 'null' text" () {
         filter (null)

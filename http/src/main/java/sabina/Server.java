@@ -18,6 +18,8 @@ import static java.lang.Integer.parseInt;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.getProperty;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toMap;
+import static sabina.util.Entry.entry;
 import static sabina.util.log.Logger.getLogger;
 import static sabina.util.Settings.*;
 
@@ -26,15 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import sabina.util.Settings;
-import sabina.util.Strings;
+import sabina.util.*;
 import sabina.util.log.Logger;
 
 import sabina.route.RouteMatcher;
 import sabina.route.RouteMatcherFactory;
 import sabina.server.Backend;
 import sabina.server.BackendFactory;
-import sabina.util.Io;
 
 /**
  * The main building block of a Sabina application is a set of routes. A route is
@@ -226,10 +226,13 @@ public final class Server implements Router {
         }).start ();
         try {
             Logger.setup ("sabina.properties");
+            Settings settings = Settings.settings ();
             LOG.info (
                 Strings.filter (
-                    Io.read (settings ().get ("sabina_banner")),
-                    Settings.settings ().getAll ()
+                    Io.read (settings.getString ("sabina_banner")),
+                    settings.keys ().stream ()
+                        .map (k -> entry (k, settings.get (k)))
+                        .collect (toMap (Entry::getKey, Entry::getValue))
                 )
                 //            format (
                 //                "Server started in %dms at: %s:%s with %s backend",

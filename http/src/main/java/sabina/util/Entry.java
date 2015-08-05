@@ -1,13 +1,21 @@
 package sabina.util;
 
 import static java.lang.String.format;
+import static java.util.Objects.hash;
+import static sabina.util.Things.equal;
 
 import java.util.Map;
 
 /**
- * Created by jam on 7/18/15.
+ * Entry is a key, value association (a pair really, but using pair makes Java orthodox nervous).
+ *
+ * @author jam
  */
 public final class Entry<K, V> implements Map.Entry<K, V> {
+    public static <K, V> Entry<K, V> entry (K key, V value) {
+        return new Entry<> (key, value);
+    }
+
     public final K key;
     public final V value;
 
@@ -20,13 +28,20 @@ public final class Entry<K, V> implements Map.Entry<K, V> {
     @Override public V getValue() { return value; }
     @Override public V setValue(V value) { throw new UnsupportedOperationException(); }
 
-    @Override public boolean equals (Object obj) {
-//        return Objects.equal (key, obj.key);
-        return false;
+    @Override public boolean equals (Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Entry that = (Entry)o;
+        return
+            equal (key, that.key) &&
+            equal (value, that.value);
     }
 
     @Override public int hashCode () {
-        return Objects.hash (key, value);
+        return hash (key, value);
     }
 
     @Override public String toString () {

@@ -2,11 +2,11 @@ package sabina.util;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static sabina.util.Entry.entry;
 
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * Utility methods to build nested collections using closures and/or varargs
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
  */
 public final class Builders {
     @SafeVarargs private static <T> void addNotNulls (List<T> list, T... items) {
-        list.addAll (asList (items).stream ().filter (item -> item != null).collect (toList()));
+        list.addAll (asList (items).stream ().filter (item -> item != null).collect (toList ()));
     }
 
     private static <K> void addNotNulls (Map<K, ?> map, Entry<K, ?>... items) {
@@ -59,10 +59,6 @@ public final class Builders {
 
     public static <K> Map<K, ?> map (Entry<K, ?>... items) {
         return map(LinkedHashMap::new, m -> addNotNulls (m, items));
-    }
-
-    public static <K, V> Entry<K, V> entry (K key, V value) {
-        return new Entry<> (key, value);
     }
 
     public static <E, T> Entry<E, List<T>> listEntry (

@@ -1,7 +1,8 @@
 package sabina.util;
 
+import static java.lang.Long.parseLong;
 import static java.util.stream.Collectors.toMap;
-import static sabina.util.Builders.entry;
+import static sabina.util.Entry.entry;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,16 +11,45 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * Read only (not allowed to store) settings. If no key is found, default is returned or exception
- * thrown.
+ * Read only settings. It is not allowed to store or set parameters, reloading is allowed and
+ * replaces and adds new parameters.
  *
- * <p>Simple settings, if you need more use HOCON
+ * <p>If no key is found, an exception is thrown.
+ *
+ * <p>When returning all parameters, a copy is provided, it is NOT MODIFICABLE.
+ *
+ * <p>Simple settings, if you need more use HOCON.
+ *
+ * <p>It is a singleton shared by all JVM objects.
+ *
+ * <p>Usage will be load one time at start scenario, you can build a reload settings upon this
+ * class.
+ *
+ * <p>Values are stored as strings and converted each time they are accessed.
+ * TODO Think on how to fix this (trying with patterns at loading time: integers, floats, boolean)
+ *      byte b = 0x1A;
+ *      short s = 1;
+ *      int i = 0b01_000_1;
+ *      long l = 1_000_000;
+ *
+ *      float f = .1_2F;
+ *      double d = .1_2d;
+ *
+ *      boolean bool = true;
+ *
+ *      char c = '\u0000';
+ *      String str = "";
  *
  * @author jamming
  */
 public final class Settings {
     private static Settings instance;
 
+    /**
+     * Gets the settings instance.
+     *
+     * @return The unique Settings instance.
+     */
     public static Settings settings () {
         return instance == null? instance = new Settings () : instance;
     }
@@ -51,6 +81,18 @@ public final class Settings {
         }
     }
 
+    public static Map<String, String> system (String prefix) {
+        throw new UnsupportedOperationException ();
+    }
+
+    /**
+     * GNU non standard long parameters supported only
+     *
+     * --paramName "param value"
+     *
+     * @param inputs .
+     * @return .
+     */
     public static Map<String, String> parameters (String[] inputs) {
         Map<String, String> result = new HashMap<> ();
 
@@ -85,7 +127,7 @@ public final class Settings {
         }
     }
 
-    private Map<String, String> settings = new HashMap<> ();
+    private Map<String, Object> settings = new HashMap<> ();
 
     private Settings () {
         super ();
@@ -95,45 +137,54 @@ public final class Settings {
      * Load from: url, file or resource. Finally, it checks system properties with same name to
      * override values (useful to set values in the command line.
      *
+     * Load from different sources priority is developer responsability. It makes sense to be
+     *
+     * 1. Application resource (basic defaults)
+     * 2. URL shared config accross different systems (architecture)
+     * 3. System properties (could be system wide)
+     * 4. Config file (installation configuration)
+     * 5. Program parameters (specified at application startup)
+     *
      * @param entries .
      */
     @SafeVarargs public final Settings load (Map<String, String>... entries) {
         Arrays.stream (entries).forEach (settings::putAll);
-        // Override with system properties (if set)
         return this;
     }
 
-    public Map<String, String> getAll () {
-        Map<String, String> result = new HashMap<> ();
-        result.putAll (settings);
-        return result;
+    public Set<String> keys () {
+        return settings.keySet ();
     }
 
-    public String get (String key) {
-        return settings.get (key);
+    @SuppressWarnings ("unchecked") public <T> T get (String key) {
+        return (T)settings.get (key);
+    }
+
+    public String getString (String key) {
+        return settings.get (key).toString ();
     }
 
     public int getInt (String key) {
-        return Integer.parseInt (get (key));
+        return Integer.parseInt (getString (key));
     }
 
     public long getLong (String key) {
-        return Long.parseLong (get (key));
+        return parseLong (getString (key));
     }
 
     public byte getByte (String key) {
-        return Byte.parseByte (get (key));
+        return Byte.parseByte (getString (key));
     }
 
     public short getShort (String key) {
-        return Short.parseShort (get (key));
+        return Short.parseShort (getString (key));
     }
 
     public float getFloat (String key) {
-        return Float.parseFloat (get (key));
+        return Float.parseFloat (getString (key));
     }
 
     public double getDouble (String key) {
-        return Double.parseDouble (get (key));
+        return Double.parseDouble (getString (key));
     }
 }
