@@ -57,15 +57,8 @@ public interface Router {
         addRoute (new Route (m, p, ct, h));
     }
 
-    default void add (HttpMethod m, VoidHandler h) { add (m, wrap (h)); }
-    default void add (HttpMethod m, String p, VoidHandler h) { add (m, p, wrap (h)); }
-    default void add (HttpMethod m, String p, String ct, VoidHandler h) { add (m, p, ct, wrap (h)); }
-    default void add (HttpMethod m, BiHandler h) { add (m, wrap (h)); }
     default void add (HttpMethod m, String p, BiHandler h) { add (m, p, wrap (h)); }
     default void add (HttpMethod m, String p, String ct, BiHandler h) { add (m, p, ct, wrap (h)); }
-    default void add (HttpMethod m, BiVoidHandler h) { add (m, wrap (h)); }
-    default void add (HttpMethod m, String p, BiVoidHandler h) { add (m, p, wrap (h)); }
-    default void add (HttpMethod m, String p, String ct, BiVoidHandler h) { add (m, p, ct, wrap (h)); }
 
     default Handler wrap (VoidHandler h) {
         return request -> {
@@ -103,19 +96,19 @@ public interface Router {
     /*
      * Filters
      */
-    default void after (VoidHandler h) { add (AFTER, h); }
-    default void before (VoidHandler h) { add (BEFORE, h); }
-    default void after (String p, VoidHandler h) { add (AFTER, p, h); }
-    default void before (String p, VoidHandler h) { add (BEFORE, p, h); }
-    default void after (String p, String ct, VoidHandler h) { add (AFTER, p, ct, h); }
-    default void before (String p, String ct, VoidHandler h) { add (BEFORE, p, ct, h); }
+    default void after (VoidHandler h) { add (AFTER, wrap (h)); }
+    default void before (VoidHandler h) { add (BEFORE, wrap (h)); }
+    default void after (String p, VoidHandler h) { add (AFTER, p, wrap (h)); }
+    default void before (String p, VoidHandler h) { add (BEFORE, p, wrap (h)); }
+    default void after (String p, String ct, VoidHandler h) { add (AFTER, p, ct, wrap (h)); }
+    default void before (String p, String ct, VoidHandler h) { add (BEFORE, p, ct, wrap (h)); }
 
-    default void after (BiVoidHandler h) { add (AFTER, h); }
-    default void before (BiVoidHandler h) { add (BEFORE, h); }
-    default void after (String p, BiVoidHandler h) { add (AFTER, p, h); }
-    default void before (String p, BiVoidHandler h) { add (BEFORE, p, h); }
-    default void after (String p, String ct, BiVoidHandler h) { add (AFTER, p, ct, h); }
-    default void before (String p, String ct, BiVoidHandler h) { add (BEFORE, p, ct, h); }
+    default void after (BiVoidHandler h) { add (AFTER, wrap (h)); }
+    default void before (BiVoidHandler h) { add (BEFORE, wrap (h)); }
+    default void after (String p, BiVoidHandler h) { add (AFTER, p, wrap (h)); }
+    default void before (String p, BiVoidHandler h) { add (BEFORE, p, wrap (h)); }
+    default void after (String p, String ct, BiVoidHandler h) { add (AFTER, p, ct, wrap (h)); }
+    default void before (String p, String ct, BiVoidHandler h) { add (BEFORE, p, ct, wrap (h)); }
 
     /*
      * Routes

@@ -1,8 +1,11 @@
 package sabina.util;
 
 import static java.lang.Long.parseLong;
+import static java.lang.System.getProperties;
 import static java.util.stream.Collectors.toMap;
+import static sabina.util.Checks.checkArgument;
 import static sabina.util.Entry.entry;
+import static sabina.util.Strings.isEmpty;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,7 +15,7 @@ import java.util.*;
 
 /**
  * Read only settings. It is not allowed to store or set parameters, reloading is allowed and
- * replaces and adds new parameters.
+ * replaces old values and adds new parameters.
  *
  * <p>If no key is found, an exception is thrown.
  *
@@ -82,7 +85,12 @@ public final class Settings {
     }
 
     public static Map<String, String> system (String prefix) {
-        throw new UnsupportedOperationException ();
+        checkArgument (!isEmpty (prefix));
+
+        return getProperties ().keySet ().stream ()
+            .map (Things::stringOf)
+            .filter (it -> it.startsWith (prefix))
+            .collect (toMap (it -> it.substring (prefix.length () + 1), System::getProperty));
     }
 
     /**
@@ -94,6 +102,8 @@ public final class Settings {
      * @return .
      */
     public static Map<String, String> parameters (String[] inputs) {
+        checkArgument (inputs != null && inputs.length % 2 == 0);
+
         Map<String, String> result = new HashMap<> ();
 
         for (int ii = 0; ii < inputs.length; ii += 2) {
@@ -186,5 +196,9 @@ public final class Settings {
 
     public double getDouble (String key) {
         return Double.parseDouble (getString (key));
+    }
+
+    public boolean getBoolean (String key) {
+        return Boolean.parseBoolean (getString (key));
     }
 }

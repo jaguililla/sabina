@@ -1,5 +1,9 @@
 package sabina.util;
 
+import static java.lang.String.format;
+import static sabina.util.Checks.checkArgument;
+import static sabina.util.Strings.isEmpty;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,21 +18,24 @@ public final class Io {
     }
 
     public static void classLoader (Class<?> clazz) {
+        checkArgument (clazz != null);
         classLoader (clazz.getClassLoader ());
     }
 
     public static void classLoader (ClassLoader classLoader) {
-        if (classLoader == null)
-            throw new IllegalArgumentException ();
-
+        checkArgument (classLoader != null);
         Io.classLoader = classLoader;
     }
 
     public static String read (String input) throws IOException {
-        return read (classLoader.getResourceAsStream (input));
+        checkArgument (!isEmpty (input));
+        InputStream stream = classLoader.getResourceAsStream (input);
+        checkArgument (stream != null, format ("Resource '%s' not found", input));
+        return read (stream);
     }
 
     public static String read (InputStream input) throws IOException {
+        checkArgument (input != null);
         BufferedReader br = new BufferedReader (new InputStreamReader (input));
         StringJoiner text = new StringJoiner ("\n");
         for (String line = br.readLine (); line != null; line = br.readLine ())

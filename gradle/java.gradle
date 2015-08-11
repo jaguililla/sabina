@@ -82,6 +82,10 @@ task wipe (dependsOn: 'clean') << {
 
 test {
     useTestNG ()
+
+    testLogging {
+        showStandardStreams = System.getProperty ("gout") != null
+    }
 }
 
 jacocoTestReport {

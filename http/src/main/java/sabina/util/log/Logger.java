@@ -50,15 +50,6 @@ public class Logger extends java.util.logging.Logger {
         addHandler (new OutHandler ());
     }
 
-    public void caller () {
-        if (isLoggable (FINE)) {
-            StackTraceElement stack = Thread.currentThread ().getStackTrace () [3];
-            log (FINE,
-                stack.getClassName () + '.' + stack.getMethodName ()
-                + " (" + stack.getLineNumber () + ')');
-        }
-    }
-
     public void debug (String message, Object... parameters) {
         log (FINE, format (message, parameters));
     }

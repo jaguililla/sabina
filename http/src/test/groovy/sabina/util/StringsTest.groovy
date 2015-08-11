@@ -5,8 +5,7 @@ import org.testng.annotations.Test
 import static sabina.util.Entry.entry
 import static sabina.util.Strings.*
 
-@Test
-public class StringsTest {
+@Test public class StringsTest {
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void "filter does not allow 'null' text" () {
         filter (null)

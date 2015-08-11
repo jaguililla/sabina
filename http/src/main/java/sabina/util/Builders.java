@@ -2,6 +2,7 @@ package sabina.util;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static sabina.util.Checks.checkArgument;
 import static sabina.util.Entry.entry;
 
 import java.util.*;
@@ -18,12 +19,19 @@ public final class Builders {
         list.addAll (asList (items).stream ().filter (item -> item != null).collect (toList ()));
     }
 
+    @SuppressWarnings ("unchecked") @SafeVarargs
     private static <K> void addNotNulls (Map<K, ?> map, Entry<K, ?>... items) {
+        checkArgument (map != null);
+        checkArgument (items != null);
+
         Map<K, Object> objectMap = (Map<K, Object>)map;
         asList(items).stream ().forEach (i -> objectMap.put (i.getKey (), i.getValue ()));
     }
 
-    public static <T> T build (Supplier<T> supplier, Consumer<T> builder) {
+    private static <T> T build (Supplier<T> supplier, Consumer<T> builder) {
+        checkArgument (supplier != null);
+        checkArgument (builder != null);
+
         T result = supplier.get();
         builder.accept (result);
         return result;
@@ -129,75 +137,4 @@ public final class Builders {
         @SuppressWarnings ("unchecked") T result = (T)pointer;
         return result;
     }
-
-    public static <T> Collection<T> flatten (Collection<T> collection) {
-        throw new UnsupportedOperationException ();
-    }
-
-    public static <T> Collection<T> merge (Collection<T> a, Collection<T> b) {
-        throw new UnsupportedOperationException ();
-    }
-
-//    public static void main (String [] args) {
-//        list (LinkedList::new, l -> {
-//            l.add("");
-//            l.add("");
-//        });
-//
-//        list (l -> {
-//            l.add("");
-//            l.add("");
-//        });
-//
-//        List<?> lst = list (
-//            "",
-//            "",
-//            false
-//        );
-//
-//        Map<?, ?> m1 = new LinkedHashMap<> ();
-//        List<LocalTime> l1 = new ArrayList<> ();
-//
-//        Map<?, ?> m = map (
-//            mapEntry ("m1", m1),
-//            listEntry ("dt", l1),
-//            mapEntry ("m",
-//                listEntry ("m1", true, false)
-//            ),
-//            listEntry ("lst", l -> {
-//                l.add (0);
-//                l.add ("");
-//            }),
-//            entry ("", list ("", ""))
-//        );
-//
-//        Map<?, ?> person = map (
-//            entry ("name", "Juanjo"),
-//            entry ("surname", "Aguililla"),
-//            entry ("birth", LocalDate.of (1979, 1, 22)),
-//            mapEntry ("address",
-//                entry ("street", "C/Albufera")
-//            ),
-//            listEntry ("sports",
-//                mapEntry ("running",
-//                    entry ("active", false)
-//                ),
-//                mapEntry ("basket",
-//                    entry ("active", true)
-//                ),
-//                mapEntry ("karate",
-//                    entry ("active", true)
-//                )
-//            )
-//        );
-//
-//        System.out.println (((List<?>)m.get ("lst")).get(0));
-//        int intVal = get (m, "lst", 0);
-//        System.out.println (intVal);
-//        System.out.println ((Integer)get (m, "lst", 0));
-//        System.out.println (((List<?>)((Map<?, ?>)m.get ("m")).get ("m1")).get(0));
-//        boolean boolVal = get (lst, 2);
-//        String strVal = (get (lst, 2)).toString ();
-//        System.out.println (boolVal);
-//    }
 }
