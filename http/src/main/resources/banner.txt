@@ -5,18 +5,17 @@
     _\ \ (_| | |_) | | | | | (_| |
     \__/\__,_|_.__/|_|_| |_|\__,_|
 
-    VERSION ${project.version}
-    Started in ${sabina_startup_ms}ms using ${sabina_heap_used}MB
+    Sabina ${sabina.backend} v${project.version}
+    Listening at ${sabina.bind}:${sabina.port}
 
-    Bind             : ${sabina_default_bind}:${sabina_default_port}
-    Backend          : ${sabina_backend}
+    Keystore         : ${sabina.keystore.file}
+    Truststore       : ${sabina.truststore.file}
 
-    Keystore         : ${sabina_keystore_file}
-    Truststore       : ${sabina_truststore_file}
-
-    Static Resources : ${sabina_resources_location}
-    Static Files     : ${sabina_files_location}
+    Static Resources : ${sabina.resources.location}
+    Static Files     : ${sabina.files.location}
 
     Settings:
-    ${sabina_settings}
+    ${application.settings}
 
+
+    Started in ${sabina.startup}ms using ${sabina.heap}MB
