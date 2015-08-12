@@ -35,7 +35,7 @@ import sabina.Router.Handler;
  */
 public final class Route {
     public static final String ALL_PATHS = "+/*paths";
-    private static final String DEFAULT_ACCEPT_TYPE = "*/*";
+    public static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
     public final String path;
     public final String acceptType;
