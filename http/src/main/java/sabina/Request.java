@@ -21,6 +21,7 @@ import static java.util.logging.Logger.getLogger;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,25 +33,13 @@ import sabina.route.RouteMatch;
  * Provides information about the HTTP request.
  *
  * <p>TODO getParams and getSplat can be joined in a single method (iterate only once)
- * <p>TODO Route segments can be generated only once for Routes (when they are created)
  *
- * <pre>
- * TODO Check these methods:
- *
- *    request.media_type        # media type of request.body            DONE, content type?
- *    request["SOME_HEADER"]    # value of SOME_HEADER header,          DONE
- *    request.user_agent        # user agent (used by :agent condition) DONE
- *    request.url               # "http://example.com/example/foo"      DONE
- *    request.ip                # client IP address                     DONE
- *    request.env               # raw env hash handed in by Rack,       DONE
- *    request.get?              # true (similar methods for other verbs)
- *    request.secure?           # false (would be true over ssl)
- *    request.forwarded?        # true (if running behind a reverse proxy)
- *    request.xhr?              # is this an ajax request?
- *    request.script_name       # "/example"
- *    request.form_data?        # false
- *    request.referrer          # the referrer of the client or '/'
- * </pre>
+ *  servletRequest.getPathTranslated (); // Script name * request.script_name       # "/example"
+ *  servletRequest.getLocalName ();
+ *  servletRequest.getLocalPort ();
+ *  servletRequest.getLocalAddr ();
+ *  servletRequest.getRemoteHost ();
+ *  servletRequest.getRemotePort ();
  *
  * @author Per Wendel
  */
@@ -144,6 +133,27 @@ public final class Request {
     }
 
     /**
+     * request.url      # "http://example.com/example/foo"
+     *
+     * @return
+     */
+    public StringBuffer requestUrl () {
+        return servletRequest.getRequestURL ();
+    }
+
+    /**
+     * request.forwarded?        # true (if running behind a reverse proxy)
+     *
+     * @return
+     */
+    public boolean isForwarded () {
+        Object originalRequestURI =
+            servletRequest.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+
+        return originalRequestURI != null;
+    }
+
+    /**
      * Returns the map containing all route params.
      *
      * @return A map containing all route params.
@@ -183,6 +193,27 @@ public final class Request {
     }
 
     /**
+     * request.get?              # true (similar methods for other verbs)
+     *
+     * @return
+     */
+    public boolean isGet () {
+        return requestMethod ().equals ("GET");
+    }
+
+    public boolean isPost () {
+        return requestMethod ().equals ("Post");
+    }
+
+    public boolean isPut () {
+        return requestMethod ().equals ("Put");
+    }
+
+    public boolean isDelete () {
+        return requestMethod ().equals ("Delete");
+    }
+
+    /**
      * @return the scheme (http/https).
      */
     public String scheme () {
@@ -197,6 +228,7 @@ public final class Request {
     }
 
     /**
+     * request.user_agent        # user agent (used by :agent condition)
      * @return the user-agent.
      */
     public String userAgent () {
@@ -241,6 +273,7 @@ public final class Request {
     }
 
     /**
+     * request.media_type        # media type of request.body
      * @return the content type of the body.
      */
     public String contentType () {
@@ -248,6 +281,7 @@ public final class Request {
     }
 
     /**
+     * request.ip                # client IP address
      * @return the client's IP address.
      */
     public String ip () {
@@ -289,6 +323,7 @@ public final class Request {
 
     /**
      * Gets the value for the provided header.
+     * request["SOME_HEADER"]    # value of SOME_HEADER header
      *
      * @param name the header.
      * @return the value of the provided header.
@@ -388,8 +423,8 @@ public final class Request {
     }
 
     /**
+     * request.cookies           # hash of browser cookies
      * @return request cookies (or empty Map if cookies dosn't present)
-    //    request.cookies           # hash of browser cookies,              DONE
      */
     public Map<String, String> cookies () {
         Map<String, String> result = new HashMap<> ();
@@ -433,7 +468,7 @@ public final class Request {
      * @return Returns the name and version of the protocol the request uses
      */
     public String protocol() {
-        return servletRequest.getProtocol();
+        return servletRequest.getProtocol ();
     }
 
     /*
@@ -451,6 +486,23 @@ public final class Request {
 
     public void cookie (final String name, final String value, final int maxAge) {
         response.cookie (name, value, maxAge);
+    }
+
+    /**
+     * request.referrer          # the referrer of the client or '/'
+     * @return
+     */
+    public String referrer () {
+        return servletRequest.getHeader("referer");
+    }
+
+    /**
+     * request.secure?           # false (would be true over ssl)
+     *
+     * @return
+     */
+    public boolean secure () {
+        return servletRequest.isSecure ();
     }
 
     public void cookie (

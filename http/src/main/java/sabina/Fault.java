@@ -42,6 +42,6 @@ public final class Fault<T extends Exception> {
     }
 
     @Override public String toString () {
-        return format ("Fault: %s", exception.getName ());
+        return format ("Fault: %s", exception == null? "<empty>" : exception.getName ());
     }
 }
