@@ -59,34 +59,23 @@ import sabina.server.BackendFactory;
 public final class Server implements Router {
     private static final Logger LOG = getLogger (Server.class);
 
-    private static final int DEFAULT_PORT = 4567;
-    private static final String DEFAULT_BIND = "0.0.0.0";
+    private static final Settings SETTINGS = settings ().load (
+        resource ("/sabina.properties"),
+        system ("sabina")
+    );
 
-    {
-        settings ().load (
-            resource ("/sabina.properties"),
-            resource ("/application.properties"),
-            file ("application.properties")
-        );
-    }
+    private int port = settings ().getInt ("sabina.port");
+    private String bind = settings ().getString ("sabina.bind");
 
-    public static Server server (final int port) {
-        return new Server (port);
-    }
+    private String keystoreFile = settings ().getString ("sabina.keystore.file");
+    private String keystorePassword = settings ().getString ("sabina.keystore.password");
+    private String truststoreFile = settings ().getString ("sabina.truststore.file");
+    private String truststorePassword = settings ().getString ("sabina.truststore.password");
 
-    private int port = DEFAULT_PORT;
-    private String bind = DEFAULT_BIND;
+    private String resourcesLocation = settings ().getString ("sabina.resources.location");
+    private String filesLocation = settings ().getString ("sabina.files.location");
 
-    private String keystoreFile;
-    private String keystorePassword;
-    private String truststoreFile;
-    private String truststorePassword;
-
-    private String resourcesLocation;
-    private String filesLocation;
-    private List<Consumer<Server>> configurationCallbacks = new ArrayList<> ();
-
-    private String backend = getProperty ("sabina.backend", "undertow");
+    private String backend = settings ().getString ("sabina.backend");
 
     private Backend server;
     RouteMatcher routeMatcher = RouteMatcherFactory.create ();
@@ -107,8 +96,13 @@ public final class Server implements Router {
         backend (backend);
     }
 
-    public void configure (Consumer<Server>... callbacks) {
-        this.configurationCallbacks = asList (callbacks);
+    /**
+     * Backdoor to support Sabina static methods testing.
+     *
+     * @param routeMatcher New routeMatcher
+     */
+    void routeMatcher (RouteMatcher routeMatcher) {
+        this.routeMatcher = routeMatcher;
     }
 
     /**
@@ -119,6 +113,10 @@ public final class Server implements Router {
      */
     public void host (String ipAddress) {
         this.bind = ipAddress;
+    }
+
+    public String host () {
+        return bind;
     }
 
     /**
@@ -134,6 +132,10 @@ public final class Server implements Router {
 
     public void port (String port) {
         port (parseInt (port));
+    }
+
+    public int port () {
+        return port;
     }
 
     public String backend () {
@@ -211,7 +213,6 @@ public final class Server implements Router {
     }
 
     public void start () {
-        configurationCallbacks.stream ().forEach (c -> c.accept (this));
         new Thread (() -> {
             server = BackendFactory.create (backend, routeMatcher, hasMultipleHandlers ());
             server.startUp (
@@ -226,21 +227,13 @@ public final class Server implements Router {
         }).start ();
         try {
             Logger.setup ("sabina.properties");
-            Settings settings = Settings.settings ();
             LOG.info (
                 Strings.filter (
-                    Io.read (settings.getString ("sabina_banner")),
-                    settings.keys ().stream ()
-                        .map (k -> entry (k, settings.get (k)))
+                    Io.read (SETTINGS.getString ("sabina.banner")),
+                    SETTINGS.keys ().stream ()
+                        .map (k -> entry (k, SETTINGS.get (k)))
                         .collect (toMap (Entry::getKey, Entry::getValue))
                 )
-                //            format (
-                //                "Server started in %dms at: %s:%s with %s backend",
-                //                currentTimeMillis () - start,
-                //                bind,
-                //                port,
-                //                backend
-                //            )
             );
         }
         catch (IOException e) {
@@ -249,7 +242,7 @@ public final class Server implements Router {
     }
 
     private boolean hasMultipleHandlers () {
-        return resourcesLocation != null || filesLocation != null;
+        return !Strings.isEmpty (resourcesLocation) || !Strings.isEmpty (filesLocation);
     }
 
     /**

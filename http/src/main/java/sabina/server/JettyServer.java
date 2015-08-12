@@ -15,6 +15,7 @@
 package sabina.server;
 
 import static java.lang.System.exit;
+import static sabina.util.Strings.isEmpty;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import sabina.util.Strings;
 
 /**
  * Simple Jetty Handler.
@@ -83,7 +85,7 @@ final class JettyServer implements Backend {
 
         ServerConnector connector;
 
-        if (keystoreFile == null) {
+        if (isEmpty (keystoreFile)) {
             connector = createSocketConnector ();
         }
         else {
@@ -101,7 +103,7 @@ final class JettyServer implements Backend {
         server.setConnectors (new Connector[] { connector });
 
         // Handle static file routes
-        if (staticFilesFolder == null && externalFilesFolder == null) {
+        if (isEmpty (staticFilesFolder) && isEmpty(externalFilesFolder)) {
             server.setHandler (handler);
         }
         else {
@@ -163,13 +165,12 @@ final class JettyServer implements Backend {
         String keystorePassword, String truststoreFile,
         String truststorePassword) {
 
-        SslContextFactory sslContextFactory = new SslContextFactory (
-            keystoreFile);
+        SslContextFactory sslContextFactory = new SslContextFactory (keystoreFile);
 
         if (keystorePassword != null) {
             sslContextFactory.setKeyStorePassword (keystorePassword);
         }
-        if (truststoreFile != null) {
+        if (!isEmpty (truststoreFile)) {
             sslContextFactory.setTrustStorePath (truststoreFile);
         }
         if (truststorePassword != null) {

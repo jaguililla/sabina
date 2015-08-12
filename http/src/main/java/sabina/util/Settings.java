@@ -90,7 +90,7 @@ public final class Settings {
         return getProperties ().keySet ().stream ()
             .map (Things::stringOf)
             .filter (it -> it.startsWith (prefix))
-            .collect (toMap (it -> it.substring (prefix.length () + 1), System::getProperty));
+            .collect (toMap (it -> it, System::getProperty));
     }
 
     /**

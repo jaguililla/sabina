@@ -47,12 +47,13 @@ import static sabina.util.Settings.*
         System.setProperty ("settings.test.a", "1")
         System.setProperty ("settings.test.b", "2")
         System.setProperty ("settings.test.c", "3")
+        System.setProperty ("settings.d", "4")
         Map<String, String> m = system ("settings.test")
 
         assert m.size () == 3 &&
-            m.get("a").equals ("1") &&
-            m.get("b").equals ("2") &&
-            m.get("c").equals ("3")
+            m.get("settings.test.a").equals ("1") &&
+            m.get("settings.test.b").equals ("2") &&
+            m.get("settings.test.c").equals ("3")
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class)

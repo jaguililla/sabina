@@ -23,6 +23,7 @@ import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.System.exit;
 import static java.lang.System.setProperty;
 import static javax.servlet.DispatcherType.REQUEST;
+import static sabina.util.Strings.isEmpty;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.servlet.api.FilterInfo;
 import io.undertow.servlet.api.InstanceFactory;
 import io.undertow.servlet.api.InstanceHandle;
+import sabina.util.Strings;
 
 final class MatcherFilterInfo extends FilterInfo implements Cloneable {
     private final MatcherFilter matcherFilter;
@@ -142,7 +144,7 @@ final class UndertowServer implements Backend {
             deploymentManager = createDeploymentManager (staticFilesFolder, externalFilesFolder);
             deploymentManager.deploy ();
 
-            server = (keystoreFile == null)?
+            server = isEmpty (keystoreFile)?
                 server (port, host, deploymentManager.start ()) :
                 server (port, host, deploymentManager.start (),
                     createSecureSocketContext (
@@ -181,7 +183,7 @@ final class UndertowServer implements Backend {
             .addFilter (new MatcherFilterInfo ("router", filter))
             .addFilterUrlMapping ("router", "/*", REQUEST);
 
-        if (aStaticFilesRoute != null || aExternalFilesLocation != null)
+        if (!isEmpty (aStaticFilesRoute) || !isEmpty (aExternalFilesLocation))
             deployment.addInnerHandlerChainWrapper (
                 handler -> predicate (suffixes (".jpg", ".png", ".css", ".html", ".js"),
                     resource (new ChainResourceManager (aStaticFilesRoute, aExternalFilesLocation)),
@@ -211,11 +213,11 @@ final class UndertowServer implements Backend {
         String truststoreFile, String truststorePassword) {
 
         try {
-            if (keystoreFile != null)
+            if (!isEmpty (keystoreFile))
                 setProperty ("javax.net.ssl.keyStore", keystoreFile);
             if (keystorePassword != null)
                 setProperty ("javax.net.ssl.keyStorePassword", keystorePassword);
-            if (truststoreFile != null)
+            if (!isEmpty (truststoreFile))
                 setProperty ("javax.net.ssl.trustStore", truststoreFile);
             if (truststorePassword != null)
                 setProperty ("javax.net.ssl.trustStorePassword", truststorePassword);
