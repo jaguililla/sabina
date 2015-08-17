@@ -1,7 +1,6 @@
 package sabina.util
 
 import java.time.LocalDate
-import java.time.LocalTime
 import java.util.function.Consumer
 
 import static sabina.util.Builders.*
@@ -11,6 +10,11 @@ import org.testng.annotations.Test
 import static sabina.util.Entry.entry
 
 @Test class BuildersTest {
+    @Test (expectedExceptions = IllegalStateException)
+    public void "an instance of 'Builders' can not be created" () {
+        _create ()
+    }
+
     public void "a list with a supplier creates the correct instance" () {
         List<String> lst = list ({ new LinkedList<String> () }, {
             it.add "a"
@@ -25,7 +29,7 @@ import static sabina.util.Entry.entry
     public void "default list builder returns an ArrayList" () {
         List<String> lst = list ({
             it.add("1")
-        } as Consumer<List<?>>)
+        } as Consumer<List<String>>)
         assert lst instanceof ArrayList
         assert lst.size () == 1
         assert lst[0].equals ("1")
@@ -41,13 +45,22 @@ import static sabina.util.Entry.entry
         assert lst.equals (Arrays.asList ("a", "b", false))
     }
 
-    public void "usage examples" () {
-        Map<?, ?> m1 = new LinkedHashMap<> ()
-        List<LocalTime> l1 = new ArrayList<> ()
+    public void "a list with a given supplier can be built from a sequence of elements" () {
+        List<?> lst = list ({ new LinkedList<?> () },
+            "a",
+            "b",
+            false
+        )
 
+        assert lst instanceof LinkedList
+        assert false == get (lst, 2) // TODO Move to 'get' tests
+        assert lst.equals (Arrays.asList ("a", "b", false))
+    }
+
+    public void "usage examples" () {
         Map<?, ?> m = map (
-            mapEntry ("m1", m1),
-            listEntry ("dt", l1),
+            mapEntry ("m1", new LinkedHashMap<> ()),
+            listEntry ("dt", new ArrayList<> ()),
             mapEntry ("m",
                 listEntry ("m1", true, false)
             ),
@@ -70,16 +83,22 @@ import static sabina.util.Entry.entry
                 entry ("street", "C/Albufera")
             ),
             listEntry ("sports",
-                mapEntry ("running",
+                map (
+                    entry ("name", "running"),
                     entry ("active", false)
                 ),
-                mapEntry ("basket",
+                map (
+                    entry ("name", "basket"),
                     entry ("active", true)
                 ),
-                mapEntry ("karate",
+                map (
+                    entry ("name", "karate"),
                     entry ("active", true)
                 )
             )
         )
+
+        assert get (person, "sports", 2, "active") == true
+        assert get (person, "address", "street").equals ("C/Albufera")
     }
 }

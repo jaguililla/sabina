@@ -68,6 +68,8 @@ public final class Things {
         return value == null || value.toString ().isEmpty ()? "" : format ("%s: %s", name, value);
     }
 
+    static void _create () { new Things (); }
+
     private Things () {
         throw new IllegalStateException ();
     }

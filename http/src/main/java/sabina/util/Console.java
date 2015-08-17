@@ -109,4 +109,10 @@ public final class Console {
     public static void print (String text, Object... parameters) {
         System.out.printf (text, parameters);
     }
+
+    static void _create () { new Console (); }
+
+    private Console () {
+        throw new IllegalStateException ();
+    }
 }

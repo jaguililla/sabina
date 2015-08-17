@@ -32,6 +32,8 @@ public final class Checks {
             throw new IllegalArgumentException (format (message, arguments));
     }
 
+    static void _create () { new Checks (); }
+
     private Checks () {
         throw new IllegalStateException ();
     }

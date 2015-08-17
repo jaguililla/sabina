@@ -7,6 +7,11 @@ import org.testng.annotations.Test
 import static sabina.util.Things.printHash
 
 @Test public class ThingsTest {
+    @Test (expectedExceptions = IllegalStateException)
+    public void "an instance of 'Things' can not be created" () {
+        _create ()
+    }
+
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void "print 'null' object throws an exception" () {
         printInstance (null)

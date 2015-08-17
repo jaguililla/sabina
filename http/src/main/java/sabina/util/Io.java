@@ -27,21 +27,28 @@ public final class Io {
         Io.classLoader = classLoader;
     }
 
-    public static String read (String input) throws IOException {
+    public static String read (String input) {
         checkArgument (!isEmpty (input));
         InputStream stream = classLoader.getResourceAsStream (input);
         checkArgument (stream != null, format ("Resource '%s' not found", input));
         return read (stream);
     }
 
-    public static String read (InputStream input) throws IOException {
+    public static String read (InputStream input) {
         checkArgument (input != null);
         BufferedReader br = new BufferedReader (new InputStreamReader (input));
         StringJoiner text = new StringJoiner ("\n");
-        for (String line = br.readLine (); line != null; line = br.readLine ())
-            text.add (line);
+        try {
+            for (String line = br.readLine (); line != null; line = br.readLine ())
+                text.add (line);
+        }
+        catch (IOException e) {
+            throw new RuntimeException (e);
+        }
         return text.toString ();
     }
+
+    static void _create () { new Io (); }
 
     private Io () {
         throw new IllegalStateException ();

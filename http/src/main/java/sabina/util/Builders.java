@@ -137,4 +137,10 @@ public final class Builders {
         @SuppressWarnings ("unchecked") T result = (T)pointer;
         return result;
     }
+
+    static void _create () { new Builders (); }
+
+    private Builders () {
+        throw new IllegalStateException ();
+    }
 }

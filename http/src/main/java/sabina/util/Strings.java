@@ -162,6 +162,8 @@ public final class Strings {
         return buffer.append (appendString).append (lines[lines.length - 1]).toString ();
     }
 
+    static void _create () { new Strings (); }
+
     private Strings () {
         throw new IllegalStateException ();
     }

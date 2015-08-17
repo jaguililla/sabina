@@ -7,6 +7,11 @@ import static sabina.util.Io.*
 @Test class IoTest {
     private final static String RESOURCE_CONTENTS = "resource file" + Strings.EOL + "second line"
 
+    @Test (expectedExceptions = IllegalStateException)
+    public void "an instance of 'Io' can not be created" () {
+        _create ()
+    }
+
     public void "the default class loader should be the system one" () {
         assert classLoader() == ClassLoader.getSystemClassLoader ()
     }
