@@ -16,7 +16,7 @@ import java.util.logging.*;
  *
  * @author jamming
  */
-public class OutHandler extends StreamHandler {
+public class TerminalHandler extends StreamHandler {
     /**
      * Create a <tt>ConsoleHandler</tt> for <tt>System.err</tt>.
      * <p>
@@ -24,8 +24,8 @@ public class OutHandler extends StreamHandler {
      * <tt>LogManager</tt> properties (or their default values).
      *
      */
-    public OutHandler() {
-        setFormatter(new ShortFormat());
+    public TerminalHandler () {
+        setFormatter(new PatternFormat ());
         setOutputStream(System.out);
     }
 
