@@ -15,195 +15,69 @@
 package sabina.integration;
 
 import static java.lang.System.getProperty;
-import static java.util.Arrays.asList;
-import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.FINEST;
 import static java.util.logging.Logger.getLogger;
-import static sabina.integration.TestScenario.getKeyStoreLocation;
-import static sabina.integration.TestScenario.getKeystorePassword;
+import static sabina.Sabina.*;
+import static sabina.integration.TestScenario.*;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import sabina.Server;
+import sabina.Router.VoidHandler;
 
 /**
- * The goal is to have a single IT running all scenarios in different servers and different ports.
- * Then each test is executed agains all started servers.
+ * WARNING!!! Run in a single thread. Multi thread in this test can cause arbitrary breakages.
  *
- * This could seem tricky (because it is), if you know a more straighforward way to do this, please,
- * please... mail me.
- *
- * @author jam
+ * @author jamming
  */
-@Test public class SabinaIT {
-    private static List<TestScenario> scenarios = asList (
-        new TestScenario ("undertow", 6011, false, false),
-        new TestScenario ("undertow", 6012, false, true),
-        new TestScenario ("undertow", 6013, true, false),
-        new TestScenario ("undertow", 6014, true, true),
-        new TestScenario ("jetty", 6021, false, false),
-        new TestScenario ("jetty", 6022, false, true),
-        new TestScenario ("jetty", 6023, true, false),
-        new TestScenario ("jetty", 6024, true, true)
-    );
+@Test (singleThreaded = true) public class SabinaIT {
+    private static TestScenario testScenario = new TestScenario ("undertow", 4567, true, true);
+    private static String part = "param";
 
-    private static File tmpExternalFile;
-    private static List<Server> servers = new ArrayList<> ();
-
-    @BeforeClass public static void disableLogging () {
+    @BeforeClass public static void setupLogging () {
         Logger rootLogger = getLogger ("");
-        Stream.of (rootLogger.getHandlers ()).forEach (it -> it.setLevel (INFO));
-        rootLogger.setLevel (INFO);
+        Stream.of (rootLogger.getHandlers ()).forEach (it -> it.setLevel (FINEST));
+        rootLogger.setLevel (FINEST);
     }
 
-    @BeforeClass public static void setupFile () throws IOException {
-        tmpExternalFile = new File (getProperty ("java.io.tmpdir"), "externalFile.html");
+    @BeforeClass public static void setupFile () throws IOException { ServerIT.setupFile (); }
 
-        try (FileWriter writer = new FileWriter (tmpExternalFile)) {
-            writer.write ("Content of external file");
-            writer.flush ();
-        }
-    }
+    @BeforeClass public static void setup () {
+        get ("/reset/route", it -> "should not be executed");
+        reset ();
+        get ("/error500", (VoidHandler)it -> { throw new IllegalStateException (); });
 
-    @BeforeClass public static void setup () throws IOException {
-        for (TestScenario tu : scenarios) {
-            Server s = new Server (tu.backend, tu.port);
-            servers.add (s);
+        secure (getKeyStoreLocation (), getKeystorePassword ());
+        filesLocation ("/public", getProperty ("java.io.tmpdir"));
 
-            Books.setup (s);
-            Cookies.setup (s);
-            Generic.setup (s);
-            Session.setup (s);
-            Routes.setup (s);
-
-            if (tu.secure)
-                s.secure (getKeyStoreLocation (), getKeystorePassword ());
-            if (tu.externalFiles)
-                s.filesLocation ("/public", getProperty ("java.io.tmpdir"));
-
-            s.start ();
-        }
-        scenarios.stream ().forEach (TestScenario::waitForStartup);
+        start (testScenario.port);
+        testScenario.waitForStartup ();
     }
 
     @AfterClass public static void cleanup () {
-        servers.stream ().forEach (Server::stop);
-        scenarios.stream ().forEach (TestScenario::waitForShutdown);
+        stop ();
+        testScenario.waitForShutdown ();
     }
 
-    @AfterClass public static void cleanupFile () {
-        if (tmpExternalFile != null)
-            if (!tmpExternalFile.delete ())
-                throw new IllegalStateException ();
+    @AfterClass public static void cleanupFile () { ServerIT.cleanupFile (); }
+
+    public void routes_after_reset_are_not_available () {
+        UrlResponse response = testScenario.doGet ("/reset/route");
+        assert response.status == 404;
     }
 
-    @DataProvider (name = "scenarios")
-    public Object[][] scenarios () {
-        Object [][] result = new Object [scenarios.size ()][1];
-
-        int ii = 0;
-        for (TestScenario tu : scenarios) {
-            result[ii++] = new Object [] { tu };
-        }
-
-        return result;
+    @Test (expectedExceptions = IllegalStateException.class)
+    public void reset_on_a_running_server_raises_an_error () {
+        reset ();
     }
 
-    @Test(dataProvider = "scenarios")
-    public void createBook (TestScenario testScenario) { Books.createBook (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void listBooks (TestScenario testScenario) { Books.listBooks (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void getBook (TestScenario testScenario) { Books.getBook (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void updateBook (TestScenario testScenario) { Books.updateBook (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void deleteBook (TestScenario testScenario) { Books.deleteBook (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void bookNotFound (TestScenario testScenario) { Books.bookNotFound (testScenario); }
-
-    @Test(dataProvider = "scenarios")
-    public void emptyCookies (TestScenario testScenario) { Cookies.emptyCookies (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void createCookie (TestScenario testScenario) { Cookies.createCookie (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void removeCookie (TestScenario testScenario) { Cookies.removeCookie (testScenario); }
-
-    @Test(dataProvider = "scenarios")
-    public void filtersShouldBeAcceptTypeAware (TestScenario testScenario) {
-        Generic.filtersShouldBeAcceptTypeAware (testScenario);
+    public void uncaugh_exception_return_a_500_error () {
+        UrlResponse response = testScenario.doGet ("/error500");
+        assert response.body.equals ("<html><body><h2>500 Internal Error</h2></body></html>");
+        assert response.status == 500;
     }
-    @Test(dataProvider = "scenarios")
-    public void routesShouldBeAcceptTypeAware (TestScenario testScenario) {
-        Generic.routesShouldBeAcceptTypeAware (testScenario);
-    }
-    @Test(dataProvider = "scenarios")
-    public void getHi (TestScenario testScenario) { Generic.getHi (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void hiHead (TestScenario testScenario) { Generic.hiHead (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void getHiAfterFilter (TestScenario testScenario) {
-        Generic.getHiAfterFilter (testScenario);
-    }
-    @Test(dataProvider = "scenarios")
-    public void getRoot (TestScenario testScenario) { Generic.getRoot (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void paramAndWild (TestScenario testScenario) { Generic.paramAndWild (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void echoParam1 (TestScenario testScenario) { Generic.echoParam1 (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void echoParam2 (TestScenario testScenario) { Generic.echoParam2 (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void echoParamWithUpperCaseInValue (TestScenario testScenario) {
-        Generic.echoParamWithUpperCaseInValue (testScenario);
-    }
-    @Test(dataProvider = "scenarios")
-    public void twoRoutesWithDifferentCase (TestScenario testScenario) {
-        Generic.twoRoutesWithDifferentCase (testScenario);
-    }
-    @Test(dataProvider = "scenarios")
-    public void echoParamWithMaj (TestScenario testScenario) { Generic.echoParamWithMaj (
-        testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void unauthorized (TestScenario testScenario) { Generic.unauthorized (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void notFound (TestScenario testScenario) { Generic.notFound (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void fileNotFound (TestScenario testScenario) { Generic.fileNotFound (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void postOk (TestScenario testScenario) { Generic.postOk (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void patchOk (TestScenario testScenario) { Generic.patchOk (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void staticFile (TestScenario testScenario) { Generic.staticFile (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void externalStaticFile (TestScenario testScenario) {
-        Generic.externalStaticFile (testScenario);
-    }
-    @Test(dataProvider = "scenarios")
-    public void halt (TestScenario testScenario) { Generic.halt (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void requestData (TestScenario testScenario) { Generic.requestData (testScenario); }
-    @Test(dataProvider = "scenarios")
-    public void handleException (TestScenario testScenario) {
-        Generic.handleException (testScenario);
-    }
-    @Test(dataProvider = "scenarios")
-    public void reqres (TestScenario testScenario) { Generic.reqres (testScenario); }
-
-    @Test(dataProvider = "scenarios")
-    public void methods (TestScenario testScenario) { Routes.methods (testScenario); }
-
-    @Test(dataProvider = "scenarios")
-    public void attribute (TestScenario testScenario) { Session.attribute (testScenario); }
 }
