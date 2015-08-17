@@ -20,6 +20,7 @@ import static java.lang.System.getProperty;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
 import static sabina.util.Entry.entry;
+import static sabina.util.Strings.filter;
 import static sabina.util.log.Logger.getLogger;
 import static sabina.util.Settings.*;
 
@@ -64,6 +65,8 @@ public final class Server implements Router {
         system ("sabina")
     );
 
+    private long creation = System.nanoTime ();
+
     private int port = settings ().getInt ("sabina.port");
     private String bind = settings ().getString ("sabina.bind");
 
@@ -84,14 +87,16 @@ public final class Server implements Router {
     private final long start = currentTimeMillis ();
 
     public Server () {
-        super ();
+        Logger.setup ("sabina.properties");
     }
 
     public Server (int port) {
+        this ();
         port (port);
     }
 
     public Server (String backend, int port) {
+        this ();
         port (port);
         backend (backend);
     }
@@ -225,20 +230,18 @@ public final class Server implements Router {
                 resourcesLocation,
                 filesLocation);
         }).start ();
-        try {
-            Logger.setup ("sabina.properties");
-            LOG.info (
-                Strings.filter (
-                    Io.read (SETTINGS.getString ("sabina.banner")),
-                    SETTINGS.keys ().stream ()
-                        .map (k -> entry (k, SETTINGS.get (k)))
-                        .collect (toMap (Entry::getKey, Entry::getValue))
-                )
-            );
-        }
-        catch (IOException e) {
-            e.printStackTrace ();
-        }
+        showBanner ();
+    }
+
+    private void showBanner () {
+        LOG.info ("[STARTUP]%s",
+            filter (
+                Io.read (SETTINGS.getString ("sabina.banner")),
+                SETTINGS.keys ().stream ()
+                    .map (k -> entry (k, SETTINGS.get (k)))
+                    .collect (toMap (Entry::getKey, Entry::getValue))
+            )
+        );
     }
 
     private boolean hasMultipleHandlers () {
