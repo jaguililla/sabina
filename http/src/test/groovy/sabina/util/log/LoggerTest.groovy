@@ -1,27 +1,16 @@
 package sabina.util.log
 
 import org.testng.annotations.Test
-import sabina.util.Settings
 
-import java.util.logging.Handler
-import java.util.logging.LogManager
+import static java.util.logging.Level.FINE
+import static sabina.util.Console.*
 
-import static java.util.logging.Level.*
-import static sabina.util.Settings.parameters
-import static sabina.util.Settings.settings
+import static sabina.util.Console.restoreOut
+import static sabina.util.Configuration.parameters
+import static sabina.util.Configuration.configuration
 import static sabina.util.log.Logger.*
 
 @Test class LoggerTest {
-    @Test (expectedExceptions = IllegalArgumentException)
-    public void "setting up the log module with a 'null' resource fails" () {
-        setup (null)
-    }
-
-    public void "setting up the log module with a not existent resource do nothing" () {
-        setup ("")
-        setup ("/not-found.properties")
-    }
-
     @Test (expectedExceptions = IllegalArgumentException)
     public void "it is not allowed to get a logger with 'null' class" () {
         getLogger (null)
@@ -33,18 +22,19 @@ import static sabina.util.log.Logger.*
     }
 
     public void "printing a log message writes the message in the handler" () {
-        PrintStream o = System.out
-        ByteArrayOutputStream baos = new ByteArrayOutputStream()
-        System.out = new PrintStream(baos)
-
-        settings ().load (
-            parameters (["--logging.level", "fine"] as String [])
+        configuration ().load (
+            parameters ([
+                "--logging.level", FINE.toString (),
+                "--logging.handlers", TerminalHandler.name,
+                "--logging.sabina.util.log.TerminalHandler.formatter", PatternFormat.name
+            ] as String [])
         )
+        LogSettings.load ()
+        ByteArrayOutputStream baos = redirectOut ()
 
-        setup ("sabina.properties")
         Logger logger = getLogger (LoggerTest)
 
-        logger.debug ("debug %d: %s", 1, "example")
+        logger.fine ("debug %d: %s", 1, "example")
         assert baos.toString ().contains ("debug 1: example")
         baos.reset ()
 
@@ -52,14 +42,26 @@ import static sabina.util.log.Logger.*
         assert baos.toString ().contains ("info 1: example")
         baos.reset ()
 
-        logger.warn ("warn %d: %s", 1, "example")
+        logger.warning ("warn %d: %s", 1, "example")
         assert baos.toString ().contains ("warn 1: example")
         baos.reset ()
 
-        logger.error ("error %d: %s", 1, "example")
+        logger.severe ("error %d: %s", 1, "example")
         assert baos.toString ().contains ("error 1: example")
-        baos.reset ()
 
-        System.out = o
+        restoreOut ()
+    }
+
+    public void "printing a message with an exception lists the stack trace" () {
+        ByteArrayOutputStream baos = redirectOut ()
+
+        Logger logger = getLogger (LoggerTest)
+
+        logger.severe ("error %d: %s", new RuntimeException ("logged exception"), 1, "example")
+        String loggedMessage = baos.toString ()
+        assert loggedMessage.contains ("error 1: example")
+        assert loggedMessage.contains ("logged exception")
+
+        restoreOut ()
     }
 }

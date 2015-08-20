@@ -85,7 +85,7 @@ public class UserDAO {
         user = usersCollection.find (eq ("_id", username)).first ();
 
         if (user == null) {
-            LOG.error ("User not in database");
+            LOG.severe ("User not in database");
             return null;
         }
 
@@ -94,7 +94,7 @@ public class UserDAO {
         String salt = hashedAndSalted.split (",")[1];
 
         if (!hashedAndSalted.equals (makePasswordHash (password, salt))) {
-            LOG.error ("Submitted password is not a match");
+            LOG.severe ("Submitted password is not a match");
             return null;
         }
 

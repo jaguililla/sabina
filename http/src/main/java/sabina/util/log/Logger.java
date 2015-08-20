@@ -8,22 +8,17 @@
 
 package sabina.util.log;
 
-import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.String.format;
-import static java.util.Arrays.stream;
+import static java.lang.System.setProperty;
 import static java.util.logging.Level.*;
 import static java.util.logging.LogManager.getLogManager;
 import static sabina.util.Checks.checkArgument;
 import static sabina.util.Exceptions.printThrowable;
 import static sabina.util.Strings.EOL;
-import static sabina.util.Strings.isEmpty;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
-
-import sabina.util.Exceptions;
-import sabina.util.Strings;
+import java.util.logging.LogRecord;
 
 /**
  * TODO .
@@ -31,22 +26,11 @@ import sabina.util.Strings;
  * @author jamming
  */
 public final class Logger {
+    private static final String LOGGING_CONFIG_PROPERTY = "java.util.logging.config.class";
+
     static {
-        // Set configuration class name
-
-    }
-
-    public static void setup (String resource) {
-        checkArgument (resource != null);
-
-        try {
-            getLogManager ().readConfiguration (
-                getSystemClassLoader ().getResourceAsStream (resource)
-            );
-        }
-        catch (Exception e) {
-            e.printStackTrace(); // Do not use a logger here as we are setting up them
-        }
+        setProperty (LOGGING_CONFIG_PROPERTY, LogSettings.class.getName ());
+        LogSettings.load ();
     }
 
     public static Logger getLogger (Class<?> clazz) {
@@ -73,28 +57,40 @@ public final class Logger {
         this.logger = logger;
     }
 
-    public void debug (String message, Object... parameters) {
-        log (FINE, message, parameters);
+    public void fine (String message, Object... parameters) {
+        log (FINE, message, null, parameters);
     }
 
     public void info (String message, Object... parameters) {
-        log (INFO, message, parameters);
+        log (INFO, message, null, parameters);
     }
 
-    public void warn (String message, Object... parameters) {
-        log (WARNING, message, parameters);
+    public void warning (String message, Object... parameters) {
+        log (WARNING, message, null, parameters);
     }
 
-    public void error (String message, Object... parameters) {
-        log (SEVERE, message, parameters);
+    public void severe (String message, Object... parameters) {
+        log (SEVERE, message, null, parameters);
     }
 
-    public void error (String message, Throwable exception, Object... parameters) {
-        log (SEVERE, message + EOL + printThrowable (exception), parameters);
+    public void severe (String message, Throwable exception, Object... parameters) {
+        log (SEVERE, message, exception, parameters);
     }
 
-    private void log (Level level, String message, Object... parameters) {
-        if (logger.isLoggable (level))
-            logger.log (level, format (message, parameters));
+    /**
+     * TODO Use THROWN and PARAMETERS in Logger.log (check this things before!)
+     *
+     * @param level
+     * @param message
+     * @param parameters
+     */
+    private void log (Level level, String message, Throwable thrown, Object... parameters) {
+        if (logger.isLoggable (level)) {
+            LogRecord record = new LogRecord (level, message);
+            record.setLoggerName (logger.getName ());
+            record.setThrown (thrown);
+            record.setParameters (parameters);
+            logger.log (record);
+        }
     }
 }

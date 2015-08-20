@@ -80,7 +80,7 @@ public class BlogPostDAO {
             LOG.info ("Inserting blog post with permalink " + permalink);
         }
         catch (Exception e) {
-            LOG.error ("Error inserting post", e);
+            LOG.severe ("Error inserting post", e);
             return null;
         }
 
