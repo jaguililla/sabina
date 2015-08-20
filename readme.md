@@ -4,8 +4,8 @@
 [Build Img]: https://travis-ci.org/jamming/sabina.svg?branch=master
 [Build Status]: https://travis-ci.org/jamming/sabina
 
-[Coverage Img]: https://img.shields.io/coveralls/jamming/sabina.svg
-[Coverage Status]: https://coveralls.io/r/jamming/sabina
+[Coverage Img]: https://coveralls.io/repos/jamming/sabina/badge.svg?branch=master&service=github
+[Coverage Status]: https://coveralls.io/github/jamming/sabina?branch=master
 
 [Download Img]: https://api.bintray.com/packages/jamming/maven/Sabina/images/download.svg
 [Download Status]: https://bintray.com/jamming/maven/Sabina/_latestVersion
