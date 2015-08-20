@@ -45,7 +45,7 @@ import sabina.Server;
  *
  * @author jam
  */
-@Test public class ServerIT {
+@Test public final class ServerIT {
     private static List<TestScenario> scenarios = asList (
         new TestScenario ("undertow", 6011, false, false),
         new TestScenario ("undertow", 6012, false, true),
