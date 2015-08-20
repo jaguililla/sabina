@@ -28,7 +28,7 @@ String getProperty (String name, String value) {
 }
 
 def wrapperPath = getProperty ("wrapperPath", "gradle")
-def wrapperGradleVersion = getProperty ("wrapperGradleVersion", "2.5")
+def wrapperGradleVersion = getProperty ("wrapperGradleVersion", "2.6")
 
 wrapper {
     gradleVersion = wrapperGradleVersion
