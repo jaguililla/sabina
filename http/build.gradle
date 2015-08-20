@@ -16,6 +16,6 @@ description = 'A Sinatra inspired java web framework (http)'
 
 dependencies {
     // SERVER DEPENDENCIES
-    compile 'org.eclipse.jetty:jetty-webapp:9.3.0.v20150612'
-    compile 'io.undertow:undertow-servlet:1.2.8.Final'
+    compile 'org.eclipse.jetty:jetty-webapp:9.3.2.v20150730'
+    compile 'io.undertow:undertow-servlet:1.2.10.Final'
 }
