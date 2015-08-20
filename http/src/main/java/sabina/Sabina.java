@@ -120,11 +120,11 @@ public final class Sabina {
     }
 
     public static String host () {
-        return SERVER.host ();
+        return SERVER.bind ();
     }
 
     public static void host (String host) {
-        SERVER.host (host);
+        SERVER.bind (host);
     }
 
     public static int port () {

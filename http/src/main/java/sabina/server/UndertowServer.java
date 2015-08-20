@@ -43,7 +43,6 @@ import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.servlet.api.FilterInfo;
 import io.undertow.servlet.api.InstanceFactory;
 import io.undertow.servlet.api.InstanceHandle;
-import sabina.util.Strings;
 
 final class MatcherFilterInfo extends FilterInfo implements Cloneable {
     private final MatcherFilter matcherFilter;
