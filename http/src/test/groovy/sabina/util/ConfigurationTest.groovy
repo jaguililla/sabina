@@ -2,19 +2,19 @@ package sabina.util
 
 import org.testng.annotations.Test
 
-import static sabina.util.Settings.*
+import static Configuration.*
 
-@Test public class SettingsTest {
+@Test public class ConfigurationTest {
     public void "loading an invalid url returns an empty map" () {
         assert url ("http://localhost:9999/invalid").isEmpty ()
     }
 
     public void "loading an non existent resource returns an empty map" () {
-        assert resource ("/settings/non-existent.properties").isEmpty ()
+        assert resource ("/configuration/non-existent.properties").isEmpty ()
     }
 
     public void "loading a valid resource returns its keys" () {
-        Map<String, String> m = resource ("/settings/valid.properties")
+        Map<String, String> m = resource ("/configuration/valid.properties")
         assert m.size () == 3 &&
             m.get("a").equals ("1") &&
             m.get("b").equals ("2") &&
@@ -22,11 +22,11 @@ import static sabina.util.Settings.*
     }
 
     public void "loading an non existent file returns an empty map" () {
-        assert file ("src/test/resources/settings/non-existent.properties").isEmpty ()
+        assert file ("src/test/resources/configuration/non-existent.properties").isEmpty ()
     }
 
     public void "loading a valid file returns its keys" () {
-        Map<String, String> m = file ("src/test/resources/settings/valid.properties")
+        Map<String, String> m = file ("src/test/resources/configuration/valid.properties")
         assert m.size () == 3 &&
             m.get("a").equals ("1") &&
             m.get("b").equals ("2") &&
@@ -81,11 +81,11 @@ import static sabina.util.Settings.*
     }
 
     public void "loading different sources contain all the keys" () {
-        Settings s = settings ()
+        Configuration s = configuration ()
 
         s.load (
-            resource ("/settings/valid.properties"),
-            file ("src/test/resources/settings/settings.properties")
+            resource ("/configuration/valid.properties"),
+            file ("src/test/resources/configuration/settings.properties")
         )
 
         assert s.getString ("a").equals ("1") &&
@@ -98,11 +98,11 @@ import static sabina.util.Settings.*
     }
 
     public void "loading sources with duplicated keys returns the value of the last ones" () {
-        Settings s = settings ()
+        Configuration s = configuration ()
 
         s.load (
-            file ("src/test/resources/settings/settings.properties"),
-            resource ("/settings/settings-modified.properties")
+            file ("src/test/resources/configuration/settings.properties"),
+            resource ("/configuration/settings-modified.properties")
         )
 
         assert s.get("str").equals ("cba") &&
@@ -112,8 +112,8 @@ import static sabina.util.Settings.*
     }
 
     public void "the settings return all the keys available in the configuration" () {
-        Settings s = settings ()
-        s.load (resource ("/settings/valid.properties"))
+        Configuration s = configuration ()
+        s.load (resource ("/configuration/valid.properties"))
         assert s.keys ().contains ("a") &&
             s.keys ().contains ("b") &&
             s.keys ().contains ("c")
@@ -121,8 +121,8 @@ import static sabina.util.Settings.*
 
     @SuppressWarnings ("GroovyPointlessBoolean")
     public void "getting parameters with a given class returns them with the correct type" () {
-        Settings s = settings ()
-        s.load (file ("src/test/resources/settings/settings.properties"))
+        Configuration s = configuration ()
+        s.load (file ("src/test/resources/configuration/settings.properties"))
 
         assert s.getString("str").equals ("abc") &&
             s.getBoolean("bool") == true &&
@@ -132,6 +132,16 @@ import static sabina.util.Settings.*
             s.getShort("int") == (short)1 &&
             s.getFloat("float") == 0.1f &&
             s.getDouble("float") == 0.1d
+    }
+
+    public void "an exception thrown while loading will result in an empty map" () {
+        Map<String, String> map = loadStream (new InputStream () {
+            @Override int read () throws IOException {
+                throw new IOException ()
+            }
+        })
+
+        assert map.isEmpty ()
     }
 }
 

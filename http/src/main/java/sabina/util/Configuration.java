@@ -8,6 +8,7 @@ import static sabina.util.Entry.entry;
 import static sabina.util.Strings.isEmpty;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -28,6 +29,9 @@ import java.util.*;
  * <p>Usage will be load one time at start scenario, you can build a reload settings upon this
  * class.
  *
+ * <p>TODO Should be like Properties on steroids
+ * <p>TODO Resolve paths to load with URIs/URLs (if URL invalid, then load as resource)
+ *
  * <p>Values are stored as strings and converted each time they are accessed.
  * TODO Think on how to fix this (trying with patterns at loading time: integers, floats, boolean)
  *      byte b = 0x1A;
@@ -45,21 +49,21 @@ import java.util.*;
  *
  * @author jamming
  */
-public final class Settings {
-    private static Settings instance;
+public final class Configuration {
+    private static Configuration instance;
 
     /**
-     * Gets the settings instance.
+     * Gets the configuration instance.
      *
-     * @return The unique Settings instance.
+     * @return The unique Configuration instance.
      */
-    public static Settings settings () {
-        return instance == null? instance = new Settings () : instance;
+    public static Configuration configuration () {
+        return instance == null? instance = new Configuration () : instance;
     }
 
     public static Map<String, String> url (String inputs) {
         try {
-            return stream (new URL (inputs).openConnection ().getInputStream ());
+            return loadStream (new URL (inputs).openConnection ().getInputStream ());
         }
         catch (IOException e) {
             return new HashMap<> ();
@@ -67,19 +71,14 @@ public final class Settings {
     }
 
     public static Map<String, String> resource (String inputs) {
-        try {
-            return stream (Class.class.getResourceAsStream (inputs));
-        }
-        catch (IOException e) {
-            return new HashMap<> ();
-        }
+        return loadStream (Class.class.getResourceAsStream (inputs));
     }
 
     public static Map<String, String> file (String inputs) {
         try {
-            return stream (new FileInputStream (inputs));
+            return loadStream (new FileInputStream (inputs));
         }
-        catch (IOException e) {
+        catch (FileNotFoundException e) {
             return new HashMap<> ();
         }
     }
@@ -122,7 +121,7 @@ public final class Settings {
         return result;
     }
 
-    private static Map<String, String> stream (InputStream stream) throws IOException {
+    static Map<String, String> loadStream (InputStream stream) {
         if (stream == null)
             return new HashMap<> ();
 
@@ -135,11 +134,14 @@ public final class Settings {
                 )
                 .collect (toMap (Entry::getKey, Entry::getValue));
         }
+        catch (IOException e) {
+            return new HashMap<> ();
+        }
     }
 
     private Map<String, Object> settings = new HashMap<> ();
 
-    private Settings () {
+    private Configuration () {
         super ();
     }
 
@@ -157,7 +159,7 @@ public final class Settings {
      *
      * @param entries .
      */
-    @SafeVarargs public final Settings load (Map<String, String>... entries) {
+    @SafeVarargs public final Configuration load (Map<String, String>... entries) {
         Arrays.stream (entries).forEach (settings::putAll);
         return this;
     }

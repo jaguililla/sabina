@@ -41,7 +41,7 @@ import static sabina.util.Io.*
         classLoader ((ClassLoader)null)
     }
 
-    @Test (expectedExceptions = IllegalArgumentException.class)
+    @Test (expectedExceptions = IllegalArgumentException)
     public void "if a resource is not found it is listed in the exception" () {
         try {
             read ("not-found.txt")
@@ -50,5 +50,14 @@ import static sabina.util.Io.*
             assert e.getMessage ().contains ("not-found.txt")
             throw e
         }
+    }
+
+    @Test (expectedExceptions = RuntimeException)
+    public void "an IO exception reading an input stream will be converted in a runtime one" () {
+        read (new InputStream () {
+            @Override int read () throws IOException {
+                throw new IOException ()
+            }
+        })
     }
 }

@@ -5,6 +5,9 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.concat;
 import static sabina.util.Checks.checkArgument;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -63,6 +66,8 @@ public final class Console {
     private static final String ANSI_SEPARATOR = ";";
     private static final String ANSI_RESET = "0";
 
+    private static final PrintStream OUT = System.out;
+
     private static String ansiCode (IntStream colors, Stream<AnsiEffect> fxs) {
         String body = concat(colors, fxs.mapToInt (fx -> fx.code))
             .mapToObj (String::valueOf)
@@ -108,6 +113,21 @@ public final class Console {
 
     public static void print (String text, Object... parameters) {
         System.out.printf (text, parameters);
+    }
+
+    public static ByteArrayOutputStream redirectOut () {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream ();
+        redirectOut (baos);
+        return baos;
+    }
+
+    public static void redirectOut (OutputStream out) {
+        System.setOut (new PrintStream(out));
+    }
+
+    public static void restoreOut () {
+        System.out.flush ();
+        System.setOut (OUT);
     }
 
     static void _create () { new Console (); }

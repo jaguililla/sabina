@@ -1,6 +1,6 @@
 package sabina.util;
 
-import static com.sun.javafx.runtime.SystemProperties.getProperty;
+import static java.lang.System.getProperty;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;

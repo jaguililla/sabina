@@ -90,13 +90,11 @@ import static sabina.util.Strings.EOL
     }
 
     public void "print formats the message correctly on system output" () {
-        PrintStream o = System.out
-        ByteArrayOutputStream baos = new ByteArrayOutputStream()
-        System.out = new PrintStream(baos)
+        ByteArrayOutputStream baos = redirectOut ()
 
         println ("%s string %d integer %1.2f float", "str", 12, 1.2);
-        assert baos.toString ().equals ("str string 12 integer 1.20 float" + EOL)
 
-        System.out = o
+        restoreOut ()
+        assert baos.toString ().equals ("str string 12 integer 1.20 float" + EOL)
     }
 }

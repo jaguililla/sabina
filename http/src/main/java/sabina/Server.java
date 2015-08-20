@@ -15,21 +15,24 @@
 package sabina;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.Runtime.getRuntime;
+import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.getProperty;
-import static java.util.Arrays.asList;
+import static java.lang.management.ManagementFactory.*;
 import static java.util.stream.Collectors.toMap;
 import static sabina.util.Entry.entry;
+import static sabina.util.Io.read;
 import static sabina.util.Strings.filter;
 import static sabina.util.log.Logger.getLogger;
-import static sabina.util.Settings.*;
+import static sabina.util.Configuration.*;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import java.lang.management.MemoryUsage;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Map;
 
 import sabina.util.*;
+import sabina.util.log.LogSettings;
 import sabina.util.log.Logger;
 
 import sabina.route.RouteMatcher;
@@ -60,34 +63,29 @@ import sabina.server.BackendFactory;
 public final class Server implements Router {
     private static final Logger LOG = getLogger (Server.class);
 
-    private static final Settings SETTINGS = settings ().load (
+    private static final Configuration CONFIGURATION = configuration ().load (
         resource ("/sabina.properties"),
         system ("sabina")
     );
 
-    private long creation = System.nanoTime ();
+    private int port = configuration ().getInt ("sabina.port");
+    private String bind = configuration ().getString ("sabina.bind");
 
-    private int port = settings ().getInt ("sabina.port");
-    private String bind = settings ().getString ("sabina.bind");
+    private String keystoreFile = configuration ().getString ("sabina.keystore.file");
+    private String keystorePassword = configuration ().getString ("sabina.keystore.password");
+    private String truststoreFile = configuration ().getString ("sabina.truststore.file");
+    private String truststorePassword = configuration ().getString ("sabina.truststore.password");
 
-    private String keystoreFile = settings ().getString ("sabina.keystore.file");
-    private String keystorePassword = settings ().getString ("sabina.keystore.password");
-    private String truststoreFile = settings ().getString ("sabina.truststore.file");
-    private String truststorePassword = settings ().getString ("sabina.truststore.password");
+    private String resourcesLocation = configuration ().getString ("sabina.resources.location");
+    private String filesLocation = configuration ().getString ("sabina.files.location");
 
-    private String resourcesLocation = settings ().getString ("sabina.resources.location");
-    private String filesLocation = settings ().getString ("sabina.files.location");
-
-    private String backend = settings ().getString ("sabina.backend");
+    private String backend = configuration ().getString ("sabina.backend");
 
     private Backend server;
     RouteMatcher routeMatcher = RouteMatcherFactory.create ();
 
-    /** Starts counting since instance creation. */
-    private final long start = currentTimeMillis ();
-
     public Server () {
-        Logger.setup ("sabina.properties");
+        LogSettings.load ();
     }
 
     public Server (int port) {
@@ -116,11 +114,11 @@ public final class Server implements Router {
      *
      * @param ipAddress The ip.
      */
-    public void host (String ipAddress) {
+    public void bind (String ipAddress) {
         this.bind = ipAddress;
     }
 
-    public String host () {
+    public String bind () {
         return bind;
     }
 
@@ -234,14 +232,46 @@ public final class Server implements Router {
     }
 
     private void showBanner () {
-        LOG.info ("[STARTUP]%s",
-            filter (
-                Io.read (SETTINGS.getString ("sabina.banner")),
-                SETTINGS.keys ().stream ()
-                    .map (k -> entry (k, SETTINGS.get (k)))
-                    .collect (toMap (Entry::getKey, Entry::getValue))
-            )
-        );
+        String banner = read (CONFIGURATION.getString ("sabina.banner"));
+
+        Map<String, Object> configuration = CONFIGURATION.keys ().stream ()
+            .map (k -> entry (k, CONFIGURATION.get (k)))
+            .collect (toMap (Entry::getKey, Entry::getValue));
+
+        // Override manually changed ones
+        configuration.put ("sabina.backend", backend ().toUpperCase ());
+        configuration.put ("sabina.bind", bind);
+        configuration.put ("sabina.port", port);
+        configuration.put ("sabina.keystore.file", keystoreFile == null? "" : keystoreFile);
+        configuration.put ("sabina.truststore.file", truststoreFile == null? "" : truststoreFile);
+        configuration.put ("sabina.resources.location", resourcesLocation == null? "" : resourcesLocation);
+        configuration.put ("sabina.files.location", filesLocation == null? "" : filesLocation);
+
+        // Add runtime data
+        Runtime rt = getRuntime ();
+        MemoryUsage heap = getMemoryMXBean ().getHeapMemoryUsage ();
+        try {
+            configuration.put ("sabina.host", InetAddress.getLocalHost ().getCanonicalHostName ());
+        }
+        catch (UnknownHostException e) {
+            configuration.put ("sabina.host", "UNKNOWN");
+        }
+        configuration.put ("sabina.cpus", rt.availableProcessors ());
+        configuration.put ("sabina.jvm.memory", format ("%,d", heap.getInit () / 1024));
+        configuration.put ("sabina.jvm", getRuntimeMXBean ().getVmName ());
+        configuration.put ("sabina.jvm.version", getRuntimeMXBean ().getSpecVersion ());
+
+        // Generate 'Settings' list
+
+        // Add startup data
+        long bootTime = currentTimeMillis () - getRuntimeMXBean ().getStartTime ();
+        configuration.put ("sabina.boot.time", format ("%01.3f", bootTime / 1000f));
+
+        rt.gc (); // Run GC just after start
+
+        configuration.put ("sabina.used.memory", format ("%,d", heap.getUsed () / 1024));
+
+        LOG.info ("[STARTUP]%s", filter (banner, configuration));
     }
 
     private boolean hasMultipleHandlers () {
