@@ -9,6 +9,18 @@ import static Configuration.*
         assert url ("http://localhost:9999/invalid").isEmpty ()
     }
 
+    public void "loading an url returns a map" () {
+        String workDir = new File (".").absolutePath
+        String file = "file://${workDir}/src/test/resources/configuration/valid.properties"
+
+        Map<String, String> m = url (file)
+
+        assert m.size () == 3 &&
+            m.get("a").equals ("1") &&
+            m.get("b").equals ("2") &&
+            m.get("c").equals ("3")
+    }
+
     public void "loading an non existent resource returns an empty map" () {
         assert resource ("/configuration/non-existent.properties").isEmpty ()
     }

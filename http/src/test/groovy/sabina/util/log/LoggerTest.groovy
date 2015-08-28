@@ -22,19 +22,17 @@ import static sabina.util.log.Logger.*
     }
 
     public void "printing a log message writes the message in the handler" () {
-        configuration ().load (
-            parameters ([
-                "--logging.level", FINE.toString (),
-                "--logging.handlers", TerminalHandler.name,
-                "--logging.sabina.util.log.TerminalHandler.formatter", PatternFormat.name
-            ] as String [])
-        )
-        LogSettings.load ()
+        LogConfiguration.load ([
+            ".level" : FINE.toString (),
+            "handlers" : TerminalHandler.name,
+            "sabina.util.log.TerminalHandler.formatter" : PatternFormat.name
+        ])
+
         ByteArrayOutputStream baos = redirectOut ()
 
         Logger logger = getLogger (LoggerTest)
 
-        logger.fine ("debug %d: %s", 1, "example")
+        logger.debug ("debug %d: %s", 1, "example")
         assert baos.toString ().contains ("debug 1: example")
         baos.reset ()
 
@@ -42,11 +40,11 @@ import static sabina.util.log.Logger.*
         assert baos.toString ().contains ("info 1: example")
         baos.reset ()
 
-        logger.warning ("warn %d: %s", 1, "example")
+        logger.warn ("warn %d: %s", 1, "example")
         assert baos.toString ().contains ("warn 1: example")
         baos.reset ()
 
-        logger.severe ("error %d: %s", 1, "example")
+        logger.error ("error %d: %s", 1, "example")
         assert baos.toString ().contains ("error 1: example")
 
         restoreOut ()
@@ -57,7 +55,7 @@ import static sabina.util.log.Logger.*
 
         Logger logger = getLogger (LoggerTest)
 
-        logger.severe ("error %d: %s", new RuntimeException ("logged exception"), 1, "example")
+        logger.error ("error %d: %s", new RuntimeException ("logged exception"), 1, "example")
         String loggedMessage = baos.toString ()
         assert loggedMessage.contains ("error 1: example")
         assert loggedMessage.contains ("logged exception")

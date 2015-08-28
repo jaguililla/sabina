@@ -14,11 +14,16 @@
 
 package sabina.examples.groovy
 
+import sabina.util.Configuration
+
 import static sabina.Sabina.start
 
 import sabina.Request
 import sabina.Router
 import sabina.Sabina
+
+import static sabina.util.Configuration.configuration
+import static sabina.util.Configuration.parameters
 
 /**
  * Demonstrate the use of sessions inside Sabina.
@@ -53,6 +58,10 @@ final class SessionExample {
     }
 
     static void main (String... args) {
+        configuration ().load (
+            parameters ("--parameter1", "value", "--argument2", "another value")
+        )
+
         get "/", {
             Object sessionName = it.session.attribute (SESSION_NAME)
 

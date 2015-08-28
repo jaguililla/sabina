@@ -2,7 +2,6 @@ package sabina.util;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static sabina.util.Checks.checkArgument;
 
 import java.util.*;

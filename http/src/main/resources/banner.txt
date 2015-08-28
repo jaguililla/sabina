@@ -16,7 +16,7 @@
     Static Resources : ${sabina.resources.location}
     Static Files     : ${sabina.files.location}
 
-    Settings:          ${application.settings}
+    Settings:          ${sabina.application.settings}
 
     Started in ${sabina.boot.time} s using ${sabina.used.memory} KB
 

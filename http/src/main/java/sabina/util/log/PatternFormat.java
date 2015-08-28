@@ -8,6 +8,13 @@
 
 package sabina.util.log;
 
+import static java.lang.Thread.currentThread;
+import static java.time.format.DateTimeFormatter.ofPattern;
+import static sabina.util.Console.AnsiColor.*;
+import static sabina.util.Console.AnsiEffect.BOLD;
+import static sabina.util.Console.AnsiEffect.INVERSE;
+import static sabina.util.Console.AnsiEffect.UNDERLINE;
+import static sabina.util.Console.ansi;
 import static sabina.util.Strings.EOL;
 
 import java.time.Instant;
@@ -15,8 +22,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Formatter;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
+import sabina.util.Console;
 import sabina.util.Exceptions;
 import sabina.util.Strings;
 
@@ -28,26 +37,48 @@ import sabina.util.Strings;
  * @author jamming
  */
 public final class PatternFormat extends Formatter {
+    /** Chop adds ~ at the end of the truncated string */
+    private boolean useColor, showDate, showPackage, chopThread;
+    private String basePackage;
+
+//    private final DateTimeFormatter dateTimeFormatter = ofPattern ("yyyy-MM-dd HH:mm:ss,SSS");
+    private final DateTimeFormatter dateTimeFormatter = ofPattern ("HH:mm:ss,SSS");
+
     /*
      * TODO Setup: field lenghts, include package or not, include date or not
-     * TODO Three files: log, errors y libs
      */
-    private final String pattern = "%s  %-6s %-20s %-10s: %s%n";
+    private final String pattern = "%s%s %-6s %-15s [%-10s]" + ansi() + " %s%n";
 
     /** {@inheritDoc} */
     @Override public String format (LogRecord record) {
-        Instant instant = Instant.ofEpochMilli(record.getMillis ());
+        Instant instant = Instant.ofEpochMilli (record.getMillis ());
         LocalDateTime ldt = LocalDateTime.ofInstant (instant, ZoneOffset.UTC);
 
         Throwable thrown = record.getThrown ();
         String trace = thrown == null? "" : EOL + Exceptions.printThrowable (thrown);
 
+        String level = record.getLevel ().toString ();
+        String color = ansi (BLUE);
+
+        switch (level) {
+            case "INFO":
+                color = ansi (GREEN, BOLD);
+                break;
+            case "WARNING":
+                color = ansi (YELLOW, BOLD);
+                break;
+            case "ERROR":
+                color = ansi (RED, BOLD);
+                break;
+        }
+
         return String.format (
             pattern,
-            DateTimeFormatter.ofPattern ("yyyy-MM-dd HH:mm:ss,SSS").format (ldt),
-            record.getLevel (),
+            color,
+            dateTimeFormatter.format (ldt),
+            level,
             record.getLoggerName (),
-            Thread.currentThread ().getName (),
+            currentThread ().getName (),
             String.format (record.getMessage (), record.getParameters ()) + trace
         );
     }

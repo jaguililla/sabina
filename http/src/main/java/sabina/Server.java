@@ -19,6 +19,7 @@ import static java.lang.Runtime.getRuntime;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.management.ManagementFactory.*;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 import static sabina.util.Entry.entry;
 import static sabina.util.Io.read;
@@ -30,9 +31,12 @@ import java.lang.management.MemoryUsage;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import sabina.util.*;
-import sabina.util.log.LogSettings;
+import sabina.util.log.LogConfiguration;
 import sabina.util.log.Logger;
 
 import sabina.route.RouteMatcher;
@@ -85,7 +89,7 @@ public final class Server implements Router {
     RouteMatcher routeMatcher = RouteMatcherFactory.create ();
 
     public Server () {
-        LogSettings.load ();
+        LogConfiguration.load ();
     }
 
     public Server (int port) {
@@ -262,6 +266,11 @@ public final class Server implements Router {
         configuration.put ("sabina.jvm.version", getRuntimeMXBean ().getSpecVersion ());
 
         // Generate 'Settings' list
+        configuration.put ("sabina.application.settings", configuration.entrySet ().stream ()
+                .filter (e -> !e.getKey ().startsWith ("sabina."))
+                .map (e -> format ("%20s : %s", e.getKey (), e.getValue ()))
+                .collect (joining (Strings.EOL, Strings.EOL, ""))
+        );
 
         // Add startup data
         long bootTime = currentTimeMillis () - getRuntimeMXBean ().getStartTime ();

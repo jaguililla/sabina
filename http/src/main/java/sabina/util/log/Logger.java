@@ -8,13 +8,9 @@
 
 package sabina.util.log;
 
-import static java.lang.String.format;
 import static java.lang.System.setProperty;
 import static java.util.logging.Level.*;
-import static java.util.logging.LogManager.getLogManager;
 import static sabina.util.Checks.checkArgument;
-import static sabina.util.Exceptions.printThrowable;
-import static sabina.util.Strings.EOL;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -29,8 +25,7 @@ public final class Logger {
     private static final String LOGGING_CONFIG_PROPERTY = "java.util.logging.config.class";
 
     static {
-        setProperty (LOGGING_CONFIG_PROPERTY, LogSettings.class.getName ());
-        LogSettings.load ();
+        setProperty (LOGGING_CONFIG_PROPERTY, LogConfiguration.class.getName ());
     }
 
     public static Logger getLogger (Class<?> clazz) {
@@ -75,6 +70,22 @@ public final class Logger {
 
     public void severe (String message, Throwable exception, Object... parameters) {
         log (SEVERE, message, exception, parameters);
+    }
+
+    public void debug (String message, Object... parameters) {
+        fine (message, parameters);
+    }
+
+    public void warn (String message, Object... parameters) {
+        warning (message, parameters);
+    }
+
+    public void error (String message, Object... parameters) {
+        severe (message, parameters);
+    }
+
+    public void error (String message, Throwable exception, Object... parameters) {
+        severe (message, exception, parameters);
     }
 
     /**

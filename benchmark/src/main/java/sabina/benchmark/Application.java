@@ -153,8 +153,6 @@ public final class Application extends MatcherFilter {
     @Override public void init (FilterConfig filterConfig) {
         // Web always uses Mongo because connection pool configuration problems
         repository = new MongoDbRepository (loadConfiguration ());
-        // Set class for loading resources inside web application
-        Io.classLoader (Application.class);
 
         get ("/json", Application::getJson);
         get ("/db", Application::getDb);

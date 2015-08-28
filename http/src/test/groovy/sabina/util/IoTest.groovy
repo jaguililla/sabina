@@ -25,6 +25,16 @@ import static sabina.util.Io.*
         assert r.equals (RESOURCE_CONTENTS)
     }
 
+    public void "reading a resource from a URL returns its contents" () {
+        String r = read (Class.getResource ("/sabina/util/resource.txt"))
+        assert r.equals (RESOURCE_CONTENTS)
+    }
+
+    @Test (expectedExceptions = RuntimeException.class)
+    public void "reading a resource from an invalid URL throws an exception" () {
+        read (new URL ("http://localhost:0/error"));
+    }
+
     public void "using a different class loader resolves resources nicely" () {
         classLoader (Io.class)
         String r = read ("sabina/util/resource.txt")

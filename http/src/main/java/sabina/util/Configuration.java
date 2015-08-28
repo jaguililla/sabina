@@ -139,7 +139,7 @@ public final class Configuration {
         }
     }
 
-    private Map<String, Object> settings = new HashMap<> ();
+    private Map<String, Object> settings = new LinkedHashMap<> ();
 
     private Configuration () {
         super ();
