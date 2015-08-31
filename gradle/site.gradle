@@ -55,7 +55,7 @@ task site (dependsOn: 'jbake') {
             from "$buildDir/${projectSite}.orig/"
             into "$buildDir/$projectSite"
             include ('**/*.html')
-            filter {ln -> ln.replace ('${config.projectVersion}', projectVersion)}
+            filter {ln -> ln.replace ('${config.projectVersion}', project.version)}
         }
         delete "$buildDir/${projectSite}.orig/"
     }
