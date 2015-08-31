@@ -9,77 +9,98 @@
 package sabina.util.log;
 
 import static java.lang.Thread.currentThread;
-import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.time.ZoneOffset.UTC;
+import static java.util.logging.Level.*;
 import static sabina.util.Console.AnsiColor.*;
-import static sabina.util.Console.AnsiEffect.BOLD;
-import static sabina.util.Console.AnsiEffect.INVERSE;
-import static sabina.util.Console.AnsiEffect.UNDERLINE;
 import static sabina.util.Console.ansi;
+import static sabina.util.Exceptions.printThrowable;
 import static sabina.util.Strings.EOL;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import sabina.util.Console;
-import sabina.util.Exceptions;
-import sabina.util.Strings;
+import sabina.util.Console.AnsiColor;
 
 /**
- * TODO .
  * TODO Set pattern in configuration
  * TODO Colored output for ERROR, WARN...
  *
  * @author jamming
  */
 public final class PatternFormat extends Formatter {
-    /** Chop adds ~ at the end of the truncated string */
-    private boolean useColor, showDate, showPackage, chopThread;
-    private String basePackage;
+    private AnsiColor threadColor = CYAN;
+    private AnsiColor loggerColor = MAGENTA;
 
-//    private final DateTimeFormatter dateTimeFormatter = ofPattern ("yyyy-MM-dd HH:mm:ss,SSS");
-    private final DateTimeFormatter dateTimeFormatter = ofPattern ("HH:mm:ss,SSS");
+    private boolean useColor = true;
+    private String pattern = "%tH:%<tM:%<tS,%<tL %s%-6s%s %s%-20s%s [%s%-10s%s] %s%n";
 
-    /*
-     * TODO Setup: field lenghts, include package or not, include date or not
-     */
-    private final String pattern = "%s%s %-6s %-15s [%-10s]" + ansi() + " %s%n";
+    private Map<Level, AnsiColor> levelColors = new HashMap<> ();
+
+    public PatternFormat () {
+        levelColors.put (FINE, BLUE);
+        levelColors.put (INFO, GREEN);
+        levelColors.put (WARNING, YELLOW);
+        levelColors.put (SEVERE, RED);
+    }
 
     /** {@inheritDoc} */
     @Override public String format (LogRecord record) {
         Instant instant = Instant.ofEpochMilli (record.getMillis ());
-        LocalDateTime ldt = LocalDateTime.ofInstant (instant, ZoneOffset.UTC);
+        LocalDateTime dateTime = LocalDateTime.ofInstant (instant, UTC);
 
         Throwable thrown = record.getThrown ();
-        String trace = thrown == null? "" : EOL + Exceptions.printThrowable (thrown);
+        String trace = thrown == null?
+            "" : EOL + ansi (RED) + printThrowable (thrown) + ansi ();
 
-        String level = record.getLevel ().toString ();
-        String color = ansi (BLUE);
+        Level level = record.getLevel ();
+        String levelColor = levelColors.containsKey (level)?
+            ansi (levelColors.get (level)) : "";
 
-        switch (level) {
-            case "INFO":
-                color = ansi (GREEN, BOLD);
-                break;
-            case "WARNING":
-                color = ansi (YELLOW, BOLD);
-                break;
-            case "ERROR":
-                color = ansi (RED, BOLD);
-                break;
-        }
-
-        return String.format (
-            pattern,
-            color,
-            dateTimeFormatter.format (ldt),
-            level,
-            record.getLoggerName (),
-            currentThread ().getName (),
-            String.format (record.getMessage (), record.getParameters ()) + trace
-        );
+        return useColor ?
+            String.format (
+                pattern,
+                dateTime,
+                levelColor,
+                level,
+                ansi (),
+                ansi (loggerColor),
+                record.getLoggerName (),
+                ansi (),
+                ansi (threadColor),
+                currentThread ().getName (),
+                ansi (),
+                String.format (record.getMessage (), record.getParameters ()) + trace
+            ) :
+            String.format (
+                pattern,
+                dateTime,
+                level,
+                record.getLoggerName (),
+                currentThread ().getName (),
+                String.format (record.getMessage (), record.getParameters ()) + trace
+            );
     }
+
+    public AnsiColor getFineColor () { return levelColors.get (FINE); }
+    public void setFineColor (AnsiColor color) { levelColors.put (FINE, color); }
+    public AnsiColor getInfoColor () { return levelColors.get (INFO); }
+    public void setInfoColor (AnsiColor color) { levelColors.put (INFO, color); }
+    public AnsiColor getWarningColor () { return levelColors.get (WARNING); }
+    public void setWarningColor (AnsiColor color) { levelColors.put (WARNING, color); }
+    public AnsiColor getSevereColor () { return levelColors.get (SEVERE); }
+    public void setSevereColor (AnsiColor color) { levelColors.put (SEVERE, color); }
+
+    public AnsiColor getLoggerColor () { return loggerColor; }
+    public void setLoggerColor (AnsiColor loggerColor) { this.loggerColor = loggerColor; }
+    public String getPattern () { return pattern; }
+    public void setPattern (String pattern) { this.pattern = pattern; }
+    public AnsiColor getThreadColor () { return threadColor; }
+    public void setThreadColor (AnsiColor threadColor) { this.threadColor = threadColor; }
+    public boolean isUseColor () { return useColor; }
+    public void setUseColor (boolean useColor) { this.useColor = useColor; }
 }

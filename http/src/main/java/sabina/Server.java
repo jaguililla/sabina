@@ -67,9 +67,18 @@ import sabina.server.BackendFactory;
 public final class Server implements Router {
     private static final Logger LOG = getLogger (Server.class);
 
+    /**
+     * 1. Application resource (basic defaults)
+     * 2. URL shared config accross different systems (architecture)
+     * 3. System properties (could be system wide)
+     * 4. Config file (installation configuration)
+     * 5. Program parameters (specified at application startup)
+     */
     private static final Configuration CONFIGURATION = configuration ().load (
         resource ("/sabina.properties"),
-        system ("sabina")
+        resource ("/application.properties"),
+        system ("sabina"),
+        file ("application.properties")
     );
 
     private int port = configuration ().getInt ("sabina.port");
@@ -280,7 +289,7 @@ public final class Server implements Router {
 
         configuration.put ("sabina.used.memory", format ("%,d", heap.getUsed () / 1024));
 
-        LOG.info ("[STARTUP]%s", filter (banner, configuration));
+        LOG.info ("Application started%s", filter (banner, configuration));
     }
 
     private boolean hasMultipleHandlers () {

@@ -37,7 +37,7 @@
 jbake {
     input = file("$project.projectDir/$projectSite")
     output = file("$buildDir/$projectSite")
-    configuration['projectVersion'] = projectVersion
+    configuration['projectVersion'] = project.version
 }
 
 task site (dependsOn: 'jbake') {

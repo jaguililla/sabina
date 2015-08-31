@@ -20,13 +20,6 @@ apply plugin: 'eclipse'
 
 defaultTasks 'check'
 
-/*
- * These properties are defined in 'gradle.properties'
- */
-group = projectGroup
-version = projectVersion
-description = projectDescription
-
 processResources {
     filterPatterns.split(",").each {pattern ->
         filesMatching (pattern) {

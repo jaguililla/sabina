@@ -2,6 +2,7 @@ package sabina.util;
 
 import static java.lang.Long.parseLong;
 import static java.lang.System.getProperties;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
 import static sabina.util.Checks.checkArgument;
 import static sabina.util.Entry.entry;
@@ -13,10 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Read only settings. It is not allowed to store or set parameters, reloading is allowed and
- * replaces old values and adds new parameters.
+ * replaces old values and adds new parameters (it does not delete parameters).
  *
  * <p>If no key is found, an exception is thrown.
  *
@@ -160,8 +162,15 @@ public final class Configuration {
      * @param entries .
      */
     @SafeVarargs public final Configuration load (Map<String, String>... entries) {
-        Arrays.stream (entries).forEach (settings::putAll);
+        stream (entries).forEach (settings::putAll);
+        settings = settings.entrySet ().stream ()
+            .map (this::setType)
+            .collect (toMap (Entry::getKey, Entry::getValue));
         return this;
+    }
+
+    private Entry<String, Object> setType (Entry<String, Object> entry) {
+        return entry; // TODO Convert value to the right type (using scanner?)
     }
 
     public Set<String> keys () {

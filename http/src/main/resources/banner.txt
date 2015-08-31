@@ -5,7 +5,7 @@
     _\ \ (_| | |_) | | | | | (_| |
     \__/\__,_|_.__/|_|_| |_|\__,_|
 
-    Sabina ${sabina.backend} v${project.version}
+    Sabina ${sabina.backend} v${sabina.version}
     Listening at ${sabina.bind}:${sabina.port}
     In '${sabina.host}' with ${sabina.cpus} CPUs ${sabina.jvm.memory} KB
     Java ${sabina.jvm.version} [${sabina.jvm}]
