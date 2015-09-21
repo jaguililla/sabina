@@ -38,7 +38,7 @@ Command:
 
     git add . && git commit && \
     sed -i s/-SNAPSHOT// gradle.properties && \
-    gw wipe assemble javadoc site jacoco publish publishGhPages && \
+    gw --no-daemon wipe check assemble javadoc site jacoco publish publishGhPages && \
     git add gradle.properties && git commit -m "Release ${config.projectVersion}" && \
     git tag "${config.projectVersion}" && \
     vim gradle.properties && \
@@ -57,13 +57,11 @@ Contribute
 
 * Commit format: the preferred commit format (through it is not enforced) would have:
 
-    - type: can be any of: feat, fix, refactor, doc, test (lowercased)
-    - module: any module of the application, or tha application itself (in lowercase)
-    - title:
-    - Description: a more complete description of the issue
-    - issue #id:
+    - Summary: small summary of the change. In imperative form.
+    - Description: a more complete description of the issue. It is optional.
+    - issue #id: task Id. Optional.
 
-        type(module): title
+        Summary
 
         Description
 
