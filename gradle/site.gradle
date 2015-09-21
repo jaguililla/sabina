@@ -37,7 +37,28 @@
 jbake {
     input = file("$project.projectDir/$projectSite")
     output = file("$buildDir/$projectSite")
-    configuration['projectVersion'] = project.version
+    version = '2.4.0'
+
+    configuration['project.version'] = project.version
+    configuration['site.host'] = 'http://there4.co/sabina'
+
+    configuration['render.index'] = false
+    configuration['render.tags'] = false
+    configuration['render.archive'] = false
+    configuration['render.feed'] = false
+    configuration['render.sitemap'] = true
+
+    configuration['template.index.file'] = 'index.gsp'
+    configuration['template.archive.file'] = 'archive.gsp'
+    configuration['template.sitemap.file'] = 'sitemap.gsp'
+    configuration['template.post.file'] = 'post.gsp'
+    configuration['template.page.file'] = 'page.gsp'
+    configuration['template.feed.file'] = 'feed.gsp'
+
+    // Custom properties
+    configuration['bootstrapcdn'] = 'http://netdna.bootstrapcdn.com'
+    configuration['cloudflare'] = 'http://cdnjs.cloudflare.com/ajax/libs'
+    configuration['googlefonts'] = 'http://fonts.googleapis.com/css?family'
 }
 
 task site (dependsOn: 'jbake') {
