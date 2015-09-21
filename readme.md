@@ -18,7 +18,7 @@
 Sabina - a Sinatra inspired web framework
 =========================================
 
-Sabina 1.1.1 is now available on [JCenter]!!!
+Sabina is available at [JCenter]!!!
 
 ```groovy
 dependencies {
