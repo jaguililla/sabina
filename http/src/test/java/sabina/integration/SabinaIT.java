@@ -35,7 +35,7 @@ import sabina.Router.VoidHandler;
  * @author jamming
  */
 @Test (singleThreaded = true) public final class SabinaIT {
-    private static TestScenario testScenario = new TestScenario ("undertow", 4567, true, true);
+    private static TestScenario testScenario = new TestScenario ("undertow", 5678, true, true);
     private static String part = "param";
 
     @BeforeClass public static void setupLogging () {
