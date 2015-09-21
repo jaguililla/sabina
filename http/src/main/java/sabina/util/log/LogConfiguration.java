@@ -1,9 +1,9 @@
 package sabina.util.log;
 
-import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.*;
 import static java.util.logging.LogManager.getLogManager;
+import static sabina.util.Builders.entry;
 import static sabina.util.Builders.map;
-import static sabina.util.Entry.entry;
 
 import java.io.*;
 import java.util.Map;
@@ -55,14 +55,15 @@ public final class LogConfiguration {
         return new ByteArrayInputStream (baos.toByteArray ());
     }
 
-    Map<Object, Object> loadDefaults () {
+    Map<?, ?> loadDefaults () {
         String handlerClass = TerminalHandler.class.getName ();
         String patternClass = PatternFormat.class.getName ();
 
         return map (
-            entry (".level", FINE.toString ()),
+            entry (".level", INFO.toString ()),
             entry ("handlers", handlerClass),
-            entry (handlerClass + ".formatter", patternClass)
+            entry (handlerClass + ".formatter", patternClass),
+            entry (handlerClass + ".level", INFO.toString ())
         );
     }
 }

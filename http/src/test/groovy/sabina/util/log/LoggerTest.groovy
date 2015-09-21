@@ -25,7 +25,8 @@ import static sabina.util.log.Logger.*
         LogConfiguration.load ([
             ".level" : FINE.toString (),
             "handlers" : TerminalHandler.name,
-            "sabina.util.log.TerminalHandler.formatter" : PatternFormat.name
+            (TerminalHandler.name + ".formatter") : PatternFormat.name,
+            (TerminalHandler.name + ".level") : FINE.toString ()
         ])
 
         ByteArrayOutputStream baos = redirectOut ()
@@ -51,6 +52,7 @@ import static sabina.util.log.Logger.*
     }
 
     public void "printing a message with an exception lists the stack trace" () {
+        LogConfiguration.load ()
         ByteArrayOutputStream baos = redirectOut ()
 
         Logger logger = getLogger (LoggerTest)

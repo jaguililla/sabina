@@ -9,8 +9,9 @@
 package sabina.util.log;
 
 import static java.lang.Thread.currentThread;
-import static java.time.ZoneOffset.UTC;
+import static java.time.ZoneId.systemDefault;
 import static java.util.logging.Level.*;
+import static sabina.util.Builders.*;
 import static sabina.util.Console.AnsiColor.*;
 import static sabina.util.Console.ansi;
 import static sabina.util.Exceptions.printThrowable;
@@ -18,11 +19,8 @@ import static sabina.util.Strings.EOL;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Formatter;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
+import java.util.logging.*;
 
 import sabina.util.Console.AnsiColor;
 
@@ -33,33 +31,47 @@ import sabina.util.Console.AnsiColor;
  * @author jamming
  */
 public final class PatternFormat extends Formatter {
+    private static final String COLOR_PATTERN =
+        "%tH:%<tM:%<tS,%<tL %s%-6s%s %s%-20s%s [%s%-10s%s] %s%n";
+    private static final String PATTERN = "%tH:%<tM:%<tS,%<tL %-6s %-20s [%-10s] %s%n";
+
     private AnsiColor threadColor = CYAN;
     private AnsiColor loggerColor = MAGENTA;
 
     private boolean useColor = true;
-    private String pattern = "%tH:%<tM:%<tS,%<tL %s%-6s%s %s%-20s%s [%s%-10s%s] %s%n";
+    private String pattern = COLOR_PATTERN;
 
-    private Map<Level, AnsiColor> levelColors = new HashMap<> ();
+    private Map<Level, AnsiColor> levelColors = tmap (
+        entry (FINE, BLUE),
+        entry (INFO, GREEN),
+        entry (WARNING, YELLOW),
+        entry (SEVERE, RED)
+    );
 
     public PatternFormat () {
-        levelColors.put (FINE, BLUE);
-        levelColors.put (INFO, GREEN);
-        levelColors.put (WARNING, YELLOW);
-        levelColors.put (SEVERE, RED);
+        LogManager manager = LogManager.getLogManager();
+        String cname = getClass().getName();
+//        setUseColor (manager.getLevelProperty(cname +".level", Level.INFO));
     }
 
     /** {@inheritDoc} */
     @Override public String format (LogRecord record) {
         Instant instant = Instant.ofEpochMilli (record.getMillis ());
-        LocalDateTime dateTime = LocalDateTime.ofInstant (instant, UTC);
+        LocalDateTime dateTime = LocalDateTime.ofInstant (instant, systemDefault ());
 
         Throwable thrown = record.getThrown ();
         String trace = thrown == null?
-            "" : EOL + ansi (RED) + printThrowable (thrown) + ansi ();
+            "" :
+            useColor?
+                ansi (RED) + EOL + printThrowable (thrown) + ansi () :
+                EOL + printThrowable (thrown);
 
         Level level = record.getLevel ();
         String levelColor = levelColors.containsKey (level)?
-            ansi (levelColors.get (level)) : "";
+            ansi (levelColors.get (level)) : ansi (BLUE);
+
+        final String message = record.getMessage ();
+        final Object[] parameters = record.getParameters ();
 
         return useColor ?
             String.format (
@@ -74,7 +86,7 @@ public final class PatternFormat extends Formatter {
                 ansi (threadColor),
                 currentThread ().getName (),
                 ansi (),
-                String.format (record.getMessage (), record.getParameters ()) + trace
+                String.format (message, parameters) + trace
             ) :
             String.format (
                 pattern,
@@ -82,7 +94,7 @@ public final class PatternFormat extends Formatter {
                 level,
                 record.getLoggerName (),
                 currentThread ().getName (),
-                String.format (record.getMessage (), record.getParameters ()) + trace
+                String.format (message, parameters) + trace
             );
     }
 
@@ -102,5 +114,8 @@ public final class PatternFormat extends Formatter {
     public AnsiColor getThreadColor () { return threadColor; }
     public void setThreadColor (AnsiColor threadColor) { this.threadColor = threadColor; }
     public boolean isUseColor () { return useColor; }
-    public void setUseColor (boolean useColor) { this.useColor = useColor; }
+    public void setUseColor (boolean useColor) {
+        this.useColor = useColor;
+        this.pattern = useColor? COLOR_PATTERN : PATTERN;
+    }
 }

@@ -12,7 +12,6 @@ import static java.lang.System.setProperty;
 import static java.util.logging.Level.*;
 import static sabina.util.Checks.checkArgument;
 
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -37,11 +36,6 @@ public final class Logger {
 
         String name = clazz.getName ();
         java.util.logging.Logger logger = java.util.logging.Logger.getLogger(name, bundleName);
-
-        logger.addHandler (new TerminalHandler());
-
-        for (Handler h : logger.getHandlers ())
-            h.setLevel (FINEST);
 
         return new Logger (logger);
     }
@@ -89,7 +83,7 @@ public final class Logger {
     }
 
     /**
-     * TODO Use THROWN and PARAMETERS in Logger.log (check this things before!)
+     * TODO .
      *
      * @param level
      * @param message

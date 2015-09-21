@@ -24,8 +24,4 @@ public final class TerminalHandler extends StreamHandler {
         super.publish(record);
         flush();
     }
-
-    @Override public void close() {
-        flush ();
-    }
 }
