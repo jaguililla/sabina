@@ -7,8 +7,6 @@ import static sabina.util.Builders.*
 
 import org.testng.annotations.Test
 
-import static sabina.util.Entry.entry
-
 @Test class BuildersTest {
     private static Map<?, ?> createSampleMap () {
         map (
@@ -63,14 +61,32 @@ import static sabina.util.Entry.entry
             null,
             entry ("c", 1)
         )
+
         assert l.size () == 4
         assert 1 == get (l, "c")
         assert null == get (l, "b")
     }
 
+    public void "a typed map can be created with 'tmap'" () {
+        Map<String, Integer> l = tmap (
+            entry ("a", 1),
+            null,
+            entry ("b", null),
+            null,
+            entry (null, null),
+            null,
+            entry ("c", 2)
+        )
+
+        assert l.size () == 4
+        assert 1 == get (l, "a")
+        assert null == get (l, "b")
+        assert 2 == get (l, "c")
+    }
+
     public void "any set of 'null' elements results in an empty collection" () {
         assert map (null, null).isEmpty ()
-        assert map ((Entry<Object, Object>[])null).isEmpty ()
+        assert map ((Map.Entry<Object, Object>[])null).isEmpty ()
         assert list (null, null).isEmpty ()
         assert list ((Object[])null).isEmpty ()
         assert set (null, null).isEmpty ()

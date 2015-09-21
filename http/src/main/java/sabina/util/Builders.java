@@ -5,6 +5,8 @@ import static java.util.stream.Collectors.toList;
 import static sabina.util.Checks.checkArgument;
 
 import java.util.*;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -14,19 +16,21 @@ import java.util.function.Supplier;
  * @author juanjoaguililla
  */
 public final class Builders {
-    private static void addNotNulls (Collection<Object>list, Object... items) {
+    @SafeVarargs private static <T> void addNotNulls (Collection<T>list, T... items) {
         list.addAll (items == null? new ArrayList () : stream (items)
-            .filter (it -> it != null)
-            .collect (toList ())
+                .filter (it -> it != null)
+                .collect (toList ())
         );
     }
 
-    @SafeVarargs
-    private static void addNotNulls (Map<Object, Object> map, Entry<Object, Object>... items) {
-        if (items != null)
+    @SafeVarargs @SuppressWarnings ("unchecked")
+    private static <K> void addNotNulls (Map<K, ?> map, Entry<K, ?>... items) {
+        if (items != null) {
+            Map<K, Object> objectMap = (Map<K, Object>)map;
             stream (items)
                 .filter (it -> it != null)
-                .forEach (it -> map.put (it.getKey (), it.getValue ()));
+                .forEach (i -> objectMap.put (i.getKey (), i.getValue ()));
+        }
     }
 
     private static <T> T build (Supplier<T> supplier, Consumer<T> builder) {
@@ -37,27 +41,35 @@ public final class Builders {
         return result;
     }
 
-    public static Set<Object> set (Object... items) {
+    @SafeVarargs public static <T> Set<T> set (T... items) {
         return build (LinkedHashSet::new, l -> addNotNulls (l, items));
     }
 
-    public static List<Object> list (Object... items) {
+    @SafeVarargs public static <T> List<T> list (T... items) {
         return build (ArrayList::new, l -> addNotNulls (l, items));
     }
 
-    @SafeVarargs public static Map<Object, Object> map (Entry<Object, Object>... items) {
+    @SafeVarargs public static <K> Map<K, ?> map (Entry<K, ?>... items) {
         return build (LinkedHashMap::new, m -> addNotNulls (m, items));
     }
 
-    public static Object get (Collection<Object> collection, Object... keys) {
+    @SafeVarargs public static <K, V> Map<K, V> tmap (Entry<K, V>... items) {
+        return build (LinkedHashMap::new, m -> addNotNulls (m, items));
+    }
+
+    public static <K, V> Entry<K, V> entry (K key, V value) {
+        return new SimpleImmutableEntry<> (key, value);
+    }
+
+    public static <T> T get (Collection<?> collection, Object... keys) {
         return getValue (collection, keys);
     }
 
-    public static Object get (Map<Object, Object> collection, Object... keys) {
+    public static <T> T get (Map<?, ?> collection, Object... keys) {
         return getValue (collection, keys);
     }
 
-    private static Object getValue (Object collection, Object... keys) {
+    private static <T> T getValue (Object collection, Object... keys) {
         Object pointer = collection;
 
         for (Object key : keys)
@@ -82,7 +94,8 @@ public final class Builders {
                 throw new IllegalArgumentException ();
             }
 
-        return pointer;
+        @SuppressWarnings ("unchecked") T result = (T)pointer;
+        return result;
     }
 
     static void _create () { new Builders (); }

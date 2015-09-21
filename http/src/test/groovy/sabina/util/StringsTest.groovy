@@ -2,7 +2,7 @@ package sabina.util
 
 import org.testng.annotations.Test
 
-import static sabina.util.Entry.entry
+import static sabina.util.Builders.entry
 import static sabina.util.Strings.*
 
 @Test public class StringsTest {
@@ -18,7 +18,7 @@ import static sabina.util.Strings.*
 
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void "filter does not allow 'null' entries" () {
-        filter ("text", (Entry<?, ?>[])null)
+        filter ("text", (Map.Entry<?, ?>[])null)
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class)
