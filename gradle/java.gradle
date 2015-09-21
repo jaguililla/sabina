@@ -15,14 +15,11 @@
 apply plugin: 'java'
 apply plugin: 'jacoco'
 
-apply plugin: 'idea'
-apply plugin: 'eclipse'
-
 defaultTasks 'check'
 
 processResources {
     filterPatterns.split(",").each {pattern ->
-        filesMatching (pattern) {
+        filesMatching (pattern.trim ()) {
             filter {
                 it.replace ('${project.version}', project.version)
             }
@@ -33,8 +30,12 @@ processResources {
 clean << {
     delete "$buildDir"
     delete "target" // TODO Do not delete benchmark/target
-    delete "*.log"
+    delete "*.log" // TODO Do not delete 'log' files
     delete "log?"
+}
+
+task wipe (dependsOn: 'clean') << {
+    delete ".gradle"
 }
 
 repositories {
@@ -55,29 +56,29 @@ javadoc {
     options.docletpath = configurations.umlgraphDoclet.files.asType(List)
     options.doclet = 'org.umlgraph.doclet.UmlGraphDoc'
 
-    options.addStringOption('views')
-    options.addStringOption('inferrel')
-    options.addStringOption('inferdep')
+    options.addBooleanOption('views', true)
+    options.addBooleanOption('attributes', true)
+    options.addBooleanOption('enumconstants', true)
+    options.addBooleanOption('inferrel', true)
+    options.addBooleanOption('inferdep', true)
+    options.addBooleanOption('types', true)
+    options.addBooleanOption('visibility', true)
+
     options.addStringOption('hide', 'java.*')
-    options.addStringOption('collpackages')
-    options.addStringOption('qualify')
-    options.addStringOption('postfixpackage')
-    options.addStringOption('Xdoclint:none')
+    options.addStringOption('collpackages', 'java.util.*')
     options.addStringOption('nodefontsize', '9')
     options.addStringOption('nodefontpackagesize', '7')
     options.addStringOption('link', 'http://download.oracle.com/javase/8/docs/api/')
-    options.addStringOption('link', 'http://docs.oracle.com/javase/8/docs/jdk/api/javadoc/doclet/')
-}
 
-task wipe (dependsOn: 'clean') << {
-    delete ".gradle"
+    // TODO Not used because no string parameter is used
+    options.addStringOption('Xdoclint:none') // Check http://docs.oracle.com/javase/8/docs/technotes/tools/unix/javadoc.html
 }
 
 test {
     useTestNG ()
 
     testLogging {
-        showStandardStreams = System.getProperty ("gout") != null
+        showStandardStreams = System.getProperty ("show.output") != null
     }
 }
 
