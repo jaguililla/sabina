@@ -7,9 +7,7 @@ import org.testng.annotations.Test
 import sabina.route.RouteMatch
 import sabina.route.RouteMatcher
 import sabina.Router.Handler
-import sabina.Router.BiHandler
 import sabina.Router.VoidHandler
-import sabina.Router.BiVoidHandler
 
 import static sabina.HttpMethod.*
 
@@ -61,13 +59,6 @@ import static sabina.HttpMethod.*
         Request request = new Request (new RouteMatch(route, "/"), null, null)
 
         testRouter.wrap ({} as VoidHandler).apply (request).equals ("")
-
-        BiVoidHandler voidHandler = { req, res -> req.toString() } as BiVoidHandler
-        testRouter.wrap (voidHandler).apply (request).equals ("")
-
-        BiHandler handler = { req, res -> "result" } as BiHandler
-        testRouter.wrap (handler).apply (request).equals ("result")
-
     }
 
     public void "adding an exception handler passes the correct value to the matcher" () {

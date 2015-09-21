@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.bson.Document;
 import sabina.Request;
-import sabina.Response;
 import sabina.util.log.Logger;
 
 /**
@@ -69,14 +68,14 @@ public class BlogController {
         });
 
         // used to display actual blog post detail page
-        get ("/post/:permalink", (Request request, Response response) -> {
+        get ("/post/:permalink", request -> {
             String permalink = request.params (":permalink");
 
             LOG.info ("/post: get " + permalink);
 
             Document post = blogPostDAO.findByPermalink (permalink);
             if (post == null) {
-                response.redirect ("/post_not_found");
+                request.response.redirect ("/post_not_found");
                 return "";
             }
             else {
@@ -96,7 +95,7 @@ public class BlogController {
         });
 
         // handle the signup post
-        post ("/signup", (Request request, Response response) -> {
+        post ("/signup", (request) -> {
             String email = request.queryParams ("email");
             String username = request.queryParams ("username");
             String password = request.queryParams ("password");
@@ -120,8 +119,8 @@ public class BlogController {
                     String sessionID = sessionDAO.startSession (username);
                     LOG.info ("Session ID is" + sessionID);
 
-                    response.addCookie (new Cookie ("session", sessionID));
-                    response.redirect ("/welcome");
+                    request.response.addCookie (new Cookie ("session", sessionID));
+                    request.response.redirect ("/welcome");
                     return "";
                 }
             }
@@ -133,7 +132,7 @@ public class BlogController {
         });
 
         // present signup form for blog
-        get ("/signup", (Request request, Response response) -> {
+        get ("/signup", (request) -> {
             HashMap<Object, Object> root = new HashMap<> ();
 
             // initialize values for the form.
@@ -149,13 +148,13 @@ public class BlogController {
         });
 
         // will present the form used to process new blog posts
-        get ("/newpost", (Request request, Response response) -> {
+        get ("/newpost", (request) -> {
             // get cookie
             String username = sessionDAO.findUserNameBySessionId (getSession (request));
 
             if (username == null) {
                 // looks like a bad request. user is not logged in
-                response.redirect ("/login");
+                request.response.redirect ("/login");
                 return "";
             }
             else {
@@ -167,7 +166,7 @@ public class BlogController {
         });
 
         // handle the new post submission
-        post ("/newpost", (Request request, Response response) -> {
+        post ("/newpost", (request) -> {
             String title = StringEscapeUtils.escapeHtml4 (request.queryParams ("subject"));
             String post = StringEscapeUtils.escapeHtml4 (request.queryParams ("body"));
             String tags = StringEscapeUtils.escapeHtml4 (request.queryParams ("tags"));
@@ -175,7 +174,7 @@ public class BlogController {
             String username = sessionDAO.findUserNameBySessionId (getSession (request));
 
             if (username == null) {
-                response.redirect ("/login");    // only logged in users can post to blog
+                request.response.redirect ("/login");    // only logged in users can post to blog
                 return "";
             }
             else if (title.equals ("") || post.equals ("")) {
@@ -198,18 +197,18 @@ public class BlogController {
                 String permalink = blogPostDAO.addPost (title, post, tagsArray, username);
 
                 // now redirect to the blog permalink
-                response.redirect ("/post/" + permalink);
+                request.response.redirect ("/post/" + permalink);
                 return "";
             }
         });
 
-        get ("/welcome", (Request request, Response response) -> {
+        get ("/welcome", (request) -> {
             String cookie = getSession (request);
             String username = sessionDAO.findUserNameBySessionId (cookie);
 
             if (username == null) {
                 LOG.info ("welcome() can't identify the user, redirecting to signup");
-                response.redirect ("/signup");
+                request.response.redirect ("/signup");
                 return "";
             }
             else {
@@ -222,7 +221,7 @@ public class BlogController {
         });
 
         // process a new comment
-        post ("/newcomment", (Request request, Response response) -> {
+        post ("/newcomment", (request) -> {
             String name = StringEscapeUtils.escapeHtml4 (request.queryParams ("commentName"));
             String email = StringEscapeUtils.escapeHtml4 (request.queryParams ("commentEmail"));
             String body = StringEscapeUtils.escapeHtml4 (request.queryParams ("commentBody"));
@@ -230,7 +229,7 @@ public class BlogController {
 
             Document post = blogPostDAO.findByPermalink (permalink);
             if (post == null) {
-                response.redirect ("/post_not_found");
+                request.response.redirect ("/post_not_found");
                 return "";
             }
             // check that comment is good
@@ -250,7 +249,7 @@ public class BlogController {
             }
             else {
                 blogPostDAO.addPostComment (name, email, body, permalink);
-                response.redirect ("/post/" + permalink);
+                request.response.redirect ("/post/" + permalink);
                 return "";
             }
         });
@@ -267,7 +266,7 @@ public class BlogController {
 
         // process output coming from login form. On success redirect folks to the welcome page
         // on failure, just return an error and let them try again.
-        post ("/login", (Request request, Response response) -> {
+        post ("/login", (request) -> {
             String username = request.queryParams ("username");
             String password = request.queryParams ("password");
 
@@ -281,14 +280,14 @@ public class BlogController {
                 String sessionID = sessionDAO.startSession (user.get ("_id").toString ());
 
                 if (sessionID == null) {
-                    response.redirect ("/internal_error");
+                    request.response.redirect ("/internal_error");
                     return "";
                 }
                 else {
                     // set the cookie for the user's browser
-                    response.addCookie (new Cookie ("session", sessionID));
+                    request.response.addCookie (new Cookie ("session", sessionID));
 
-                    response.redirect ("/welcome");
+                    request.response.redirect ("/welcome");
                     return "";
                 }
             }
@@ -325,12 +324,12 @@ public class BlogController {
         });
 
         // allows the user to logout of the blog
-        get ("/logout", (Request request, Response response) -> {
+        get ("/logout", (request) -> {
             String sessionID = getSession (request);
 
             if (sessionID == null) {
                 // no session to end
-                response.redirect ("/login");
+                request.response.redirect ("/login");
             }
             else {
                 // deletes from session table
@@ -341,9 +340,9 @@ public class BlogController {
                 if (c != null)
                     c.setMaxAge (0);
 
-                response.addCookie (c);
+                request.response.addCookie (c);
 
-                response.redirect ("/login");
+                request.response.redirect ("/login");
             }
         });
 

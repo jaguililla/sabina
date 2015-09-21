@@ -16,8 +16,6 @@ package sabina;
 
 import java.util.function.BiConsumer;
 
-import sabina.Router.BiHandler;
-import sabina.Router.BiVoidHandler;
 import sabina.Router.Handler;
 import sabina.Router.VoidHandler;
 
@@ -36,13 +34,6 @@ public final class Sabina {
     public static void before (String p, VoidHandler h) { SERVER.before (p, h); }
     public static void after (String p, String ct, VoidHandler h) { SERVER.after (p, ct, h); }
     public static void before (String p, String ct, VoidHandler h) { SERVER.before (p, ct, h); }
-
-    public static void after (BiVoidHandler h) { SERVER.after (h); }
-    public static void before (BiVoidHandler h) { SERVER.before (h); }
-    public static void after (String p, BiVoidHandler h) { SERVER.after (p, h); }
-    public static void before (String p, BiVoidHandler h) { SERVER.before (p, h); }
-    public static void after (String p, String ct, BiVoidHandler h) { SERVER.after (p, ct, h); }
-    public static void before (String p, String ct, BiVoidHandler h) { SERVER.before (p, ct, h); }
 
     /*
      * Routes
@@ -79,39 +70,6 @@ public final class Sabina {
     public static void put (String p, String ct, VoidHandler h) { SERVER.put (p, ct, h); }
     public static void trace (String p, String ct, Handler h) { SERVER.trace (p, ct, h); }
     public static void trace (String p, String ct, VoidHandler h) { SERVER.trace (p, ct, h); }
-
-    public static void delete (String p, BiHandler h) { SERVER.delete (p, h); }
-    public static void delete (String p, BiVoidHandler h) { SERVER.delete (p, h); }
-    public static void get (String p, BiHandler h) { SERVER.get (p, h); }
-    public static void get (String p, BiVoidHandler h) { SERVER.get (p, h); }
-    public static void head (String p, BiHandler h) { SERVER.head (p, h); }
-    public static void head (String p, BiVoidHandler h) { SERVER.head (p, h); }
-    public static void options (String p, BiHandler h) { SERVER.options (p, h); }
-    public static void options (String p, BiVoidHandler h) { SERVER.options (p, h); }
-    public static void patch (String p, BiHandler h) { SERVER.patch (p, h); }
-    public static void patch (String p, BiVoidHandler h) { SERVER.patch (p, h); }
-    public static void post (String p, BiHandler h) { SERVER.post (p, h); }
-    public static void post (String p, BiVoidHandler h) { SERVER.post (p, h); }
-    public static void put (String p, BiHandler h) { SERVER.put (p, h); }
-    public static void put (String p, BiVoidHandler h) { SERVER.put (p, h); }
-    public static void trace (String p, BiHandler h) { SERVER.trace (p, h); }
-    public static void trace (String p, BiVoidHandler h) { SERVER.trace (p, h); }
-    public static void delete (String p, String ct, BiHandler h) { SERVER.delete (p, ct, h); }
-    public static void delete (String p, String ct, BiVoidHandler h) { SERVER.delete (p, ct, h); }
-    public static void get (String p, String ct, BiHandler h) { SERVER.get (p, ct, h); }
-    public static void get (String p, String ct, BiVoidHandler h) { SERVER.get (p, ct, h); }
-    public static void head (String p, String ct, BiHandler h) { SERVER.head (p, ct, h); }
-    public static void head (String p, String ct, BiVoidHandler h) { SERVER.head (p, ct, h); }
-    public static void options (String p, String ct, BiHandler h) { SERVER.options (p, ct, h); }
-    public static void options (String p, String ct, BiVoidHandler h) { SERVER.options (p, ct, h); }
-    public static void patch (String p, String ct, BiHandler h) { SERVER.patch (p, ct, h); }
-    public static void patch (String p, String ct, BiVoidHandler h) { SERVER.patch (p, ct, h); }
-    public static void post (String p, String ct, BiHandler h) { SERVER.post (p, ct, h); }
-    public static void post (String p, String ct, BiVoidHandler h) { SERVER.post (p, ct, h); }
-    public static void put (String p, String ct, BiHandler h) { SERVER.put (p, ct, h); }
-    public static void put (String p, String ct, BiVoidHandler h) { SERVER.put (p, ct, h); }
-    public static void trace (String p, String ct, BiHandler h) { SERVER.trace (p, ct, h); }
-    public static void trace (String p, String ct, BiVoidHandler h) { SERVER.trace (p, ct, h); }
 
     public static <T extends Exception> void exception (
         Class<T> exceptionClass, BiConsumer<T, Request> handler) {

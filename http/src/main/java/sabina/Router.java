@@ -17,7 +17,6 @@ package sabina;
 import static sabina.HttpMethod.*;
 
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -33,10 +32,6 @@ public interface Router {
     interface Handler extends Function<Request, Object> {}
     /** This is just a "type alias". */
     interface VoidHandler extends Consumer<Request> {}
-    /** This is just a "type alias". */
-    interface BiHandler extends BiFunction<Request, Response, Object> {}
-    /** This is just a "type alias". */
-    interface BiVoidHandler extends BiConsumer<Request, Response> {}
 
     RouteMatcher getMatcher ();
 
@@ -57,27 +52,10 @@ public interface Router {
         addRoute (new Route (m, p, ct, h));
     }
 
-    default void add (HttpMethod m, String p, BiHandler h) { add (m, p, wrap (h)); }
-    default void add (HttpMethod m, String p, String ct, BiHandler h) { add (m, p, ct, wrap (h)); }
-
     default Handler wrap (VoidHandler h) {
         return request -> {
             h.accept (request);
             return "";
-        };
-    }
-
-    /*
-     * TODO Use to next two functions to ease usage (lambdas in a form: (req, res) -> "")
-     */
-    default Handler wrap (BiHandler h) {
-        return request -> h.apply (request, request.response);
-    }
-
-    default Handler wrap (BiVoidHandler h) {
-        return request -> {
-            h.accept (request, request.response);
-            return ""; // TODO Returning null is like not found (404)
         };
     }
 
@@ -102,13 +80,6 @@ public interface Router {
     default void before (String p, VoidHandler h) { add (BEFORE, p, wrap (h)); }
     default void after (String p, String ct, VoidHandler h) { add (AFTER, p, ct, wrap (h)); }
     default void before (String p, String ct, VoidHandler h) { add (BEFORE, p, ct, wrap (h)); }
-
-    default void after (BiVoidHandler h) { add (AFTER, wrap (h)); }
-    default void before (BiVoidHandler h) { add (BEFORE, wrap (h)); }
-    default void after (String p, BiVoidHandler h) { add (AFTER, p, wrap (h)); }
-    default void before (String p, BiVoidHandler h) { add (BEFORE, p, wrap (h)); }
-    default void after (String p, String ct, BiVoidHandler h) { add (AFTER, p, ct, wrap (h)); }
-    default void before (String p, String ct, BiVoidHandler h) { add (BEFORE, p, ct, wrap (h)); }
 
     /*
      * Routes
@@ -145,37 +116,4 @@ public interface Router {
     default void put (String p, String ct, VoidHandler h) { put (p, ct, wrap (h)); }
     default void trace (String p, String ct, Handler h) { add (TRACE, p, ct, h); }
     default void trace (String p, String ct, VoidHandler h) { trace (p, ct, wrap (h)); }
-
-    default void delete (String p, BiHandler h) { add (DELETE, p, h); }
-    default void delete (String p, BiVoidHandler h) { delete (p, wrap (h)); }
-    default void get (String p, BiHandler h) { add (GET, p, h); }
-    default void get (String p, BiVoidHandler h) { get (p, wrap (h)); }
-    default void head (String p, BiHandler h) { add (HEAD, p, h); }
-    default void head (String p, BiVoidHandler h) { head (p, wrap (h)); }
-    default void options (String p, BiHandler h) { add (OPTIONS, p, h); }
-    default void options (String p, BiVoidHandler h) { options (p, wrap (h)); }
-    default void patch (String p, BiHandler h) { add (PATCH, p, h); }
-    default void patch (String p, BiVoidHandler h) { patch (p, wrap (h)); }
-    default void post (String p, BiHandler h) { add (POST, p, h); }
-    default void post (String p, BiVoidHandler h) { post (p, wrap (h)); }
-    default void put (String p, BiHandler h) { add (PUT, p, h); }
-    default void put (String p, BiVoidHandler h) { put (p, wrap (h)); }
-    default void trace (String p, BiHandler h) { add (TRACE, p, h); }
-    default void trace (String p, BiVoidHandler h) { trace (p, wrap (h)); }
-    default void delete (String p, String ct, BiHandler h) { add (DELETE, p, ct, h); }
-    default void delete (String p, String ct, BiVoidHandler h) { delete (p, ct, wrap (h)); }
-    default void get (String p, String ct, BiHandler h) { add (GET, p, ct, h); }
-    default void get (String p, String ct, BiVoidHandler h) { get (p, ct, wrap (h)); }
-    default void head (String p, String ct, BiHandler h) { add (HEAD, p, ct, h); }
-    default void head (String p, String ct, BiVoidHandler h) { head (p, ct, wrap (h)); }
-    default void options (String p, String ct, BiHandler h) { add (OPTIONS, p, ct, h); }
-    default void options (String p, String ct, BiVoidHandler h) { options (p, ct, wrap (h)); }
-    default void patch (String p, String ct, BiHandler h) { add (PATCH, p, ct, h); }
-    default void patch (String p, String ct, BiVoidHandler h) { patch (p, ct, wrap (h)); }
-    default void post (String p, String ct, BiHandler h) { add (POST, p, ct, h); }
-    default void post (String p, String ct, BiVoidHandler h) { post (p, ct, wrap (h)); }
-    default void put (String p, String ct, BiHandler h) { add (PUT, p, ct, h); }
-    default void put (String p, String ct, BiVoidHandler h) { put (p, ct, wrap (h)); }
-    default void trace (String p, String ct, BiHandler h) { add (TRACE, p, ct, h); }
-    default void trace (String p, String ct, BiVoidHandler h) { trace (p, ct, wrap (h)); }
 }

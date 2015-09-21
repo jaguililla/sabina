@@ -20,6 +20,8 @@ import static java.lang.String.*;
 
 import sabina.Request;
 import sabina.Response;
+import sabina.Router;
+import sabina.Router.Handler;
 import sabina.Router.VoidHandler;
 import sabina.Server;
 
@@ -109,7 +111,7 @@ final class Generic {
                 part.toUpperCase () + " route: " + it.params (":param")
         );
 
-        s.get ("/reqres", (Request req, Response res) -> req.requestMethod ());
+        s.get ("/reqres", Request::requestMethod);
 
         s.after ("/hi", it -> it.response.header ("after", "foobar"));
     }
