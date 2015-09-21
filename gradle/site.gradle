@@ -34,6 +34,13 @@
  * }
  */
 
+apply plugin: 'me.champeau.jbake'
+
+task wipe << {
+    delete ".gradle"
+    delete "$buildDir"
+}
+
 jbake {
     input = file("$project.projectDir/$projectSite")
     output = file("$buildDir/$projectSite")
@@ -42,7 +49,7 @@ jbake {
     configuration['project.version'] = project.version
     configuration['site.host'] = 'http://there4.co/sabina'
 
-    configuration['render.index'] = false
+//    configuration['render.index'] = false
     configuration['render.tags'] = false
     configuration['render.archive'] = false
     configuration['render.feed'] = false

@@ -12,3 +12,7 @@ target/
 # Idea
 .idea/
 *.iml
+
+# Runtime
+logs/
+*.log

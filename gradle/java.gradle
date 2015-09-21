@@ -12,6 +12,10 @@
  * and limitations under the License.
  */
 
+/*
+ * TODO Change compiler warnings for errors
+ */
+
 apply plugin: 'java'
 apply plugin: 'jacoco'
 

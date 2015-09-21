@@ -38,7 +38,7 @@ Command:
 
     git add . && git commit && \
     sed -i s/-SNAPSHOT// gradle.properties && \
-    gw --no-daemon wipe check assemble javadoc site jacoco publish publishGhPages && \
+    gw --no-daemon wipe check assemble javadoc jacocoTestReport site publish publishGhPages && \
     git add gradle.properties && git commit -m "Release ${config.projectVersion}" && \
     git tag "${config.projectVersion}" && \
     vim gradle.properties && \
