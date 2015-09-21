@@ -1,3 +1,4 @@
+
 [![Build Img]][Build Status] [![Coverage Img]][Coverage Status]
 [![Download Img]][Download Status] [![Kanban Img]][Kanban Status]
 
@@ -14,7 +15,6 @@
 [Kanban Status]: https://huboard.com/jamming/sabina
 
 
-
 Sabina - a Sinatra inspired web framework
 =========================================
 
@@ -22,7 +22,7 @@ Sabina is available at [JCenter]!!!
 
 ```groovy
 dependencies {
-  compile ('sabina:http:1.3.2) { transitive = false }
+  compile ('sabina:http:1.3.2') { transitive = false }
   // Import the backend you are going to use
   compile 'io.undertow:undertow-servlet:1.2.8.Final'
 }
