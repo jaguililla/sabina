@@ -30,14 +30,14 @@ import javax.servlet.http.*;
 import org.testng.annotations.Test;
 import sabina.route.RouteMatch;
 
-public class RequestTest {
+@Test public class RequestTest {
 
     private static final String THE_SERVLET_PATH = "/the/servlet/path";
     private static final String THE_CONTEXT_PATH = "/the/context/path";
 
     private RouteMatch match = new RouteMatch (new Route (AFTER, "/hi", it -> ""), "/hi");
 
-    @Test public void queryParamShouldReturnsParametersFromQueryString () {
+    public void queryParamShouldReturnsParametersFromQueryString () {
         Map<String, String[]> params = new HashMap<> ();
         params.put ("name", new String[] { "Federico" });
         HttpServletRequest servletRequest = new MockedHttpServletRequest (params);
@@ -47,7 +47,7 @@ public class RequestTest {
         assertEquals (name, "Federico", "Invalid name in query string");
     }
 
-    @Test public void shouldBeAbleToGetTheServletPath () {
+    public void shouldBeAbleToGetTheServletPath () {
         HttpServletRequest servletRequest = new MockedHttpServletRequest (new HashMap<> ()) {
             @Override public String getServletPath () {
                 return THE_SERVLET_PATH;
@@ -60,7 +60,7 @@ public class RequestTest {
             "Should have delegated getting the servlet path");
     }
 
-    @Test public void shouldBeAbleToGetTheContextPath () {
+    public void shouldBeAbleToGetTheContextPath () {
         HttpServletRequest servletRequest = new MockedHttpServletRequest (new HashMap<> ()) {
             @Override public String getContextPath () {
                 return THE_CONTEXT_PATH;
