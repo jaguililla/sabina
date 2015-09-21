@@ -39,7 +39,7 @@ final class Session {
         });
 
         s.get ("/session", (Handler)it ->
-            it.session ().attributes ().stream ().collect (joining ())
+            it.session ().attributeValues ().stream ().collect (joining ())
         );
     }
 
