@@ -21,7 +21,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.management.ManagementFactory.*;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
-import static sabina.util.Entry.entry;
+import static sabina.util.Builders.entry;
 import static sabina.util.Io.read;
 import static sabina.util.Strings.filter;
 import static sabina.util.log.Logger.getLogger;

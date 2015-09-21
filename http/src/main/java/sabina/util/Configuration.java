@@ -3,9 +3,12 @@ package sabina.util;
 import static java.lang.Long.parseLong;
 import static java.lang.System.getProperties;
 import static java.util.Arrays.stream;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toMap;
+import static sabina.util.Builders.entry;
+import static sabina.util.Builders.tmap;
 import static sabina.util.Checks.checkArgument;
-import static sabina.util.Entry.entry;
 import static sabina.util.Strings.isEmpty;
 
 import java.io.FileInputStream;
@@ -15,6 +18,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 /**
  * Read only settings. It is not allowed to store or set parameters, reloading is allowed and
@@ -53,6 +58,58 @@ import java.util.Map.Entry;
  */
 public final class Configuration {
     private static Configuration instance;
+
+    /**
+     _		No
+     _1		No
+     1_		No
+     _1_	No
+     1		Yes
+     1_0	Yes
+     1__0	Yes
+     1_0_2	Yes
+     1-		No
+     -1		Yes
+     a		No
+     0a		No
+     */
+    private static final String DEC_RE = "-?\\d+(_*\\d)*";
+
+    /**
+     0x_		No
+     0x_1		No
+     0x1_		No
+     0x_1_		No
+     0x1		Yes
+     0x1_0		Yes
+     0x1__0		Yes
+     0x1_0_2	Yes
+     0x1-		No
+     -0x1		Yes
+     0xa		Yes
+     0x0a		Yes
+     0xg		No
+     0x0g		No
+     */
+    private static final String HEX_RE = "-?0x\\p{XDigit}+(_*\\p{XDigit})*";
+
+    /**
+     *
+     */
+    private static final String OCT_RE = "-?0[0-7]+(_*[0-7])*";
+
+    private static final String FLOAT_RE = "\\d+(_*\\d)*";
+
+    private static final Map<Pattern, Function<String, Object>> converters = tmap (
+        entry (compileCi (DEC_RE + "y"), v -> Byte.decode (v.substring (v.length () - 1))),
+        entry (compileCi ("true|false"), Boolean::valueOf),
+        entry (compile ("'.'"), v -> v.charAt (1)), // Unicode is translated by properties
+        entry (compile ("\".*\""), v -> v.substring (1, v.length () - 1))
+    );
+
+    static final Pattern compileCi (String pattern) {
+        return compile (pattern, CASE_INSENSITIVE);
+    }
 
     /**
      * Gets the configuration instance.
@@ -132,7 +189,7 @@ public final class Configuration {
             props.load (s);
             return props.entrySet ().stream ()
                 .map (entry ->
-                    entry ( (String)entry.getKey (), (String)entry.getValue () )
+                    entry ((String)entry.getKey (), (String)entry.getValue ())
                 )
                 .collect (toMap (Entry::getKey, Entry::getValue));
         }
