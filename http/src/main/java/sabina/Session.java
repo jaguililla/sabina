@@ -16,9 +16,7 @@ package sabina;
 
 import static sabina.util.Checks.checkArgument;
 
-import java.util.Enumeration;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.servlet.http.HttpSession;
 
@@ -62,15 +60,22 @@ public final class Session {
         session.setAttribute (name, value);
     }
 
-    /**
-     * @return An <code>Enumeration</code> of <code>String</code> objects containing the names
-     * of all the objects bound to this session.
-     */
-    public Set<String> attributes () {
+    public Map<String, Object> attributes () {
+        final Map<String, Object> attributes = new HashMap<> ();
+        final Enumeration<String> enumeration = session.getAttributeNames ();
+        while (enumeration.hasMoreElements ()) {
+            final String key = enumeration.nextElement ();
+            attributes.put (key, attribute (key));
+        }
+
+        return attributes;
+    }
+
+    public Set<String> attributeValues () {
         final TreeSet<String> attributes = new TreeSet<> ();
         final Enumeration<String> enumeration = session.getAttributeNames ();
         while (enumeration.hasMoreElements ())
-            attributes.add (enumeration.nextElement ());
+            attributes.add (attribute (enumeration.nextElement ()));
 
         return attributes;
     }
@@ -117,27 +122,19 @@ public final class Session {
         session.setMaxInactiveInterval (interval);
     }
 
-    /**
-     * Invalidates this session then unbinds any objects bound to it.
-     */
     public void invalidate () {
         session.invalidate ();
     }
 
-    /**
-     * @return True if the client does not yet know about the session or if the client chooses
-     * not to join the session.
-     */
     public boolean isNew () {
         return session.isNew ();
     }
 
-    /**
-     * Removes the object bound with the specified name from this session.
-     *
-     * @param name The name of the object to remove from this session.
-     */
     public void removeAttribute (final String name) {
         session.removeAttribute (name);
+    }
+
+    public Enumeration<String> attributeNames () {
+        return session.getAttributeNames ();
     }
 }

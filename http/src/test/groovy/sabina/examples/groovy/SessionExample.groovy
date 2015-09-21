@@ -57,6 +57,24 @@ final class SessionExample {
         })
     }
 
+    def d = get "/", {
+        Object sessionName = it.session.attribute (SESSION_NAME)
+
+        sessionName == null?
+            """
+                <html>
+                    <body>
+                        What's your name?:
+                        <form action="/entry" method="POST">
+                            <input type="text" name="name"/>
+                            <input type="submit" value="go"/>
+                        </form>
+                    </body>
+                </html>
+                """ :
+            "<html><body>Hello, ${sessionName}!</body></html>"
+    }
+
     static void main (String... args) {
         configuration ().load (
             parameters ("--parameter1", "value", "--argument2", "another value")
