@@ -12,23 +12,12 @@
  * and limitations under the License.
  */
 
-task clean << {
-    delete "$buildDir"
-    delete "target" // TODO Do not delete benchmark/target
-    delete "*.log"
-    delete "log?"
+task unwrap << {
+    delete "gradle/wrapper"
+    delete "gradle/wrapper.bat"
+    delete "gradle/wrapper.jar"
+    delete "gradle/wrapper.properties"
 }
-
-task wipe (dependsOn: 'clean') << {
-    delete ".gradle"
-}
-
-String getProperty (String name, String value) {
-    project.hasProperty (name)? project.property (name) : value
-}
-
-def wrapperPath = getProperty ("wrapperPath", "gradle")
-def wrapperGradleVersion = getProperty ("wrapperGradleVersion", "2.6")
 
 wrapper {
     gradleVersion = wrapperGradleVersion
