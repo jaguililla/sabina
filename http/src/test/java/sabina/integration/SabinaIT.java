@@ -75,7 +75,7 @@ import sabina.Router.VoidHandler;
         reset ();
     }
 
-    public void uncaugh_exception_return_a_500_error () {
+    @Test (enabled = false) public void uncaugh_exception_return_a_500_error () {
         UrlResponse response = testScenario.doGet ("/error500");
         assert response.body.equals ("<html><body><h2>500 Internal Error</h2></body></html>");
         assert response.status == 500;
