@@ -15,6 +15,7 @@ import static sabina.util.Console.ansi
         strings.inject (true, { a, b -> a && string.contains (b) })
     }
 
+    @Test(enabled=false)
     public void "the default format renders messages properly" () {
         PatternFormat format = new PatternFormat()
 
@@ -48,6 +49,7 @@ import static sabina.util.Console.ansi
         assert msg == "1970-01-01 FINE [bar]"
     }
 
+    @Test(enabled=false)
     public void "formatting a log with a stack trace prints it in another line" () {
         PatternFormat format = new PatternFormat()
 
