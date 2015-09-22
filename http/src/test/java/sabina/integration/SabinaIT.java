@@ -65,7 +65,7 @@ import sabina.Router.VoidHandler;
 
     @AfterClass public static void cleanupFile () { ServerIT.cleanupFile (); }
 
-    @Test (enabled = false) public void routes_after_reset_are_not_available () {
+    public void routes_after_reset_are_not_available () {
         UrlResponse response = testScenario.doGet ("/reset/route");
         assert response.status == 404;
     }
