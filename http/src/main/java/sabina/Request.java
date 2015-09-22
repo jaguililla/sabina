@@ -17,9 +17,11 @@ package sabina;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.logging.Logger.getLogger;
+import static sabina.util.Builders.entry;
 
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
@@ -85,42 +87,31 @@ public final class Request {
         List<String> requestList = convertRouteToList (match.requestURI);
         List<String> matchedList = match.entry.routeParts;
 
-        params = getParams(requestList, matchedList);
-        splat = getSplat(requestList, matchedList);
+        final Entry<Map<String, String>, List<String>> params = getParams (requestList, matchedList);
+        this.params = params.getKey ();
+        this.splat = params.getValue ();
     }
 
-    private static Map<String, String> getParams (
+    private Entry<Map<String, String>, List<String>> getParams (
         final List<String> request, final List<String> matched) {
 
         Map<String, String> params = new HashMap<> ();
+        List<String> splat = new ArrayList<> ();
 
-        for (int ii = 0; ii < request.size () && ii < matched.size (); ii++) {
+        int smaller = Math.min (request.size (), matched.size ());
+        boolean sameLength = (request.size () == matched.size ());
+
+        for (int ii = 0; ii < smaller; ii++) {
             String matchedPart = matched.get (ii);
 
             if (matchedPart.startsWith (":")) {
                 LOG.fine ("matchedPart: " + matchedPart + " = " + request.get (ii));
                 params.put (matchedPart.toLowerCase (), request.get (ii));
             }
-        }
-
-        return unmodifiableMap (params);
-    }
-
-    private static List<String> getSplat(final List<String> request, final List<String> matched) {
-        List<String> splat = new ArrayList<> ();
-
-        int nbrOfRequestParts = request.size();
-        int nbrOfMatchedParts = matched.size();
-
-        boolean sameLength = (nbrOfRequestParts == nbrOfMatchedParts);
-
-        for (int ii = 0; (ii < nbrOfRequestParts) && (ii < nbrOfMatchedParts); ii++) {
-            String matchedPart = matched.get(ii);
-
-            if (matchedPart.equals ("*")) {
+            else if (matchedPart.equals ("*")) {
                 StringBuilder splatParam = new StringBuilder(request.get(ii));
-                if (!sameLength && (ii == (nbrOfMatchedParts - 1))) {
-                    for (int j = ii + 1; j < nbrOfRequestParts; j++) {
+                if (!sameLength && (ii == (matched.size () - 1))) {
+                    for (int j = ii + 1; j < request.size (); j++) {
                         splatParam.append ("/");
                         splatParam.append (request.get (j));
                     }
@@ -129,7 +120,7 @@ public final class Request {
             }
         }
 
-        return unmodifiableList (splat);
+        return entry (unmodifiableMap (params), unmodifiableList (splat));
     }
 
     /**
