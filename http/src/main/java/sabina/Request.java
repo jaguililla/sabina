@@ -14,6 +14,7 @@
 
 package sabina;
 
+import static java.lang.Math.min;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.logging.Logger.getLogger;
@@ -34,14 +35,12 @@ import sabina.route.RouteMatch;
 /**
  * Provides information about the HTTP request.
  *
- * <p>TODO getParams and getSplat can be joined in a single method (iterate only once)
- *
- *  servletRequest.getPathTranslated (); // Script name * request.script_name       # "/example"
- *  servletRequest.getLocalName ();
- *  servletRequest.getLocalPort ();
- *  servletRequest.getLocalAddr ();
- *  servletRequest.getRemoteHost ();
- *  servletRequest.getRemotePort ();
+ * servletRequest.getPathTranslated (); // Script name * request.script_name       # "/example"
+ * servletRequest.getLocalName ();
+ * servletRequest.getLocalPort ();
+ * servletRequest.getLocalAddr ();
+ * servletRequest.getRemoteHost ();
+ * servletRequest.getRemotePort ();
  *
  * @author Per Wendel
  */
@@ -98,7 +97,7 @@ public final class Request {
         Map<String, String> params = new HashMap<> ();
         List<String> splat = new ArrayList<> ();
 
-        int smaller = Math.min (request.size (), matched.size ());
+        int smaller = min (request.size (), matched.size ());
         boolean sameLength = (request.size () == matched.size ());
 
         for (int ii = 0; ii < smaller; ii++) {
@@ -137,7 +136,7 @@ public final class Request {
      *
      * @return
      */
-    public boolean isForwarded () {
+    public boolean forwarded () {
         Object originalRequestURI =
             servletRequest.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
 
