@@ -44,6 +44,12 @@ Command:
     vim gradle.properties && \
     git add gradle.properties && git commit -m "New snapshot" && git push origin master --tags
 
+sed -i s/-SNAPSHOT// gradle.properties && \
+gw --no-daemon wipe check assemble javadoc jacocoTestReport site publish publishGhPages && \
+git add gradle.properties && git commit -m "Release 1.3.3" && \
+git tag "1.3.3" && \
+vim gradle.properties && \
+git add gradle.properties && git commit -m "New snapshot" && git push origin master --tags
 
 Contribute
 ==========
