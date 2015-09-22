@@ -2,8 +2,6 @@ package sabina.util.log
 
 import org.testng.annotations.Test
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.logging.LogRecord
 
 import static java.util.logging.Level.FINE
@@ -26,7 +24,7 @@ import static sabina.util.Console.ansi
         println msg
 
         assert contains (msg,
-            "01:00:00,000", "FINE", "bar", "msg", ansi (CYAN), ansi (MAGENTA), ansi (BLUE), ansi ()
+            ":00:00,000", "FINE", "bar", "msg", ansi (CYAN), ansi (MAGENTA), ansi (BLUE), ansi ()
         )
     }
 
@@ -60,7 +58,7 @@ import static sabina.util.Console.ansi
         println msg
 
         assert contains (msg,
-            "01:00:00,000", "FINE", "bar", "msg", ansi (CYAN), ansi (MAGENTA), ansi (BLUE), ansi (),
+            ":00:00,000", "FINE", "bar", "msg", ansi (CYAN), ansi (MAGENTA), ansi (BLUE), ansi (),
             "RuntimeException", "logged exception", ansi (RED)
         )
 
@@ -70,7 +68,7 @@ import static sabina.util.Console.ansi
         println msg
 
         assert contains (msg,
-            "01:00:00,000", "FINE", "bar", "msg", "RuntimeException", "logged exception"
+            ":00:00,000", "FINE", "bar", "msg", "RuntimeException", "logged exception"
         )
     }
 
