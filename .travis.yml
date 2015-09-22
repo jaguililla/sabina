@@ -21,5 +21,3 @@ before_script:
 script: gradle/wrapper check --info --stacktrace
 
 after_success: gradle/wrapper javadoc site jacocoTestReport coveralls
-
-# TODO after_failure cat logs to check problem
