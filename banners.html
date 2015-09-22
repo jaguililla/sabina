@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Sabina - A small web framework for Java</title>
+  <title>Banners</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
@@ -30,7 +30,7 @@
 <body onload="prettyPrint()">
   <div id="wrap">
 
-  
+
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <a href="https://github.com/jamming/sabina">
     <img
@@ -94,92 +94,65 @@
 </div>
 <div class="container">
 
+<pre><code>   _____       _     _
+  / ____|     | |   (_)
+ | (___   __ _| |__  _ _ __   __ _
+  \___ \ / _` | &#39;_ \| | &#39;_ \ / _` |
+  ____) | (_| | |_) | | | | | (_| |
+ |_____/ \__,_|_.__/|_|_| |_|\__,_|
 
-  <div class="row">
-    <div class="col-md-4 col-xs-4 col-sm-2 text-right">
-      <img
-        src="http://raw.githubusercontent.com/jamming/sabina/gh-pages/sabina-black.png"
-        alt="Project Logo"/>
-    </div>
-    <div class="col-md-8 col-xs-8 col-sm-4">
-      <h1 id="project-title">Sabina</h1>
-      <h2>
-        A Sinatra inspired micro web framework for quickly creating web applications in Java with
-        minimal effort
-      </h2>
-      <p>
-        <a href="https://travis-ci.org/jamming/sabina">
-          <img
-            src="https://travis-ci.org/jamming/sabina.svg?branch=master"
-            alt="Build Img"
-            style="max-width:100%;">
-        </a>
-        <a href="https://coveralls.io/r/jamming/sabina">
-          <img
-            src="https://img.shields.io/coveralls/jamming/sabina.svg"
-            alt="Coverage Img"
-            style="max-width:100%;">
-        </a>
-      </p>
-      <p>
-        <a
-          class="github-button"
-          href="https://github.com/jamming/sabina"
-          data-icon="octicon-star"
-          data-count-href="/jamming/sabina/stargazers"
-          data-count-api="/repos/jamming/sabina#stargazers_count">Star</a>
-        <a
-          class="github-button"
-          href="https://github.com/jamming/sabina/fork"
-          data-icon="octicon-git-branch"
-          data-count-href="/jamming/sabina/network"
-          data-count-api="/repos/jamming/sabina#forks_count">Fork</a>
-        <a
-          class="github-button"
-          href="https://github.com/jamming/sabina/issues"
-          data-icon="octicon-issue-opened"
-          data-count-api="/repos/jamming/sabina#open_issues_count">Issue</a>
-      </p>
-    </div>
-  </div>
+ __       _     _
+/ _\ __ _| |__ (_)_ __   __ _
+\ \ / _` | &#39;_ \| | &#39;_ \ / _` |
+_\ \ (_| | |_) | | | | | (_| |
+\__/\__,_|_.__/|_|_| |_|\__,_|
 
-  <h2>Add the dependency</h2>
+   _____       __    _
+  / ___/____ _/ /_  (_)___  ____ _
+  \__ \/ __ `/ __ \/ / __ \/ __ `/
+ ___/ / /_/ / /_/ / / / / / /_/ /
+/____/\__,_/_.___/_/_/ /_/\__,_/
 
-  <p>
-    First, you need to set up the <a href="https://bintray.com/bintray/jcenter">JCenter repository
-    </a>. Then you can add the dependency:
-  </p>
+   ____     __   _
+  / __/__ _/ /  (_)__  ___ _
+ _\ \/ _ `/ _ \/ / _ \/ _ `/
+/___/\_,_/_.__/_/_//_/\_,_/
 
-  <h4>Gradle</h4>
+ __
+(_  _ |_  o __  _
+__)(_||_) | | |(_|
 
-<pre><code class="groovy">dependencies {
-    compile ('sabina:http:null') { transitive = false }
-    // Import the backend you are going to use
-    compile 'io.undertow:undertow-servlet:1.2.8.Final'
-}</code></pre>
+ __    __    ___   _   _       __
+( (`  / /\  | |_) | | | |\ |  / /\
+_)_) /_/--\ |_|_) |_| |_| \| /_/--\
 
-  <h4>Maven</h4>
+ __.   .
+(__  _.|_ *._  _.
+.__)(_][_)|[ )(_]
 
-<pre><code class="xml">&lt;dependency&gt;
-    &lt;groupId&gt;sabina&lt;/groupId&gt;
-    &lt;artifactId&gt;http&lt;/artifactId&gt;
-    &lt;version&gt;null&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
+  ____   ____  _____  _  __  _   ____
+ (_ (_` / () \ | () )| ||  \| | / () \
+.__)__)/__/\__\|_()_)|_||_|\__|/__/\__\
 
-  <h2>Write the code</h2>
+ __        __
+/__`  /\  |__) | |\ |  /\
+.__/ /~~\ |__) | | \| /~~\
 
-<pre><code class="java">import static sabina.Sabina.*;
+  ______       _     _
+ / _____)     | |   (_)
+( (____  _____| |__  _ ____  _____
+ \____ \(____ |  _ \| |  _ \(____ |
+ _____) ) ___ | |_) ) | | | / ___ |
+(______/\_____|____/|_|_| |_\_____|
 
-public class HiWorld {
-    public static void main (String[] args) {
-        get(&quot;/hello&quot;, it -&gt; &quot;Hi World!&quot;).start ();
-    }
-}</code></pre>
+ __        __
+/__`  /\  |__) | |\ |  /\
+.__/ /~~\ |__) | | \| /~~\
 
-  <h2>Ignite and view at</h2>
-
-  <p><code>http://localhost:4567/hello</code></p>
-
+ __
+(_  _ |_ . _  _
+__)(_||_)|| )(_|
+</code></pre>
       </div>
       <div id="push"></div>
     </div>

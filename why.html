@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Sabina - A small web framework for Java</title>
+  <title>Why</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
@@ -30,7 +30,7 @@
 <body onload="prettyPrint()">
   <div id="wrap">
 
-  
+
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <a href="https://github.com/jamming/sabina">
     <img
@@ -94,92 +94,7 @@
 </div>
 <div class="container">
 
-
-  <div class="row">
-    <div class="col-md-4 col-xs-4 col-sm-2 text-right">
-      <img
-        src="http://raw.githubusercontent.com/jamming/sabina/gh-pages/sabina-black.png"
-        alt="Project Logo"/>
-    </div>
-    <div class="col-md-8 col-xs-8 col-sm-4">
-      <h1 id="project-title">Sabina</h1>
-      <h2>
-        A Sinatra inspired micro web framework for quickly creating web applications in Java with
-        minimal effort
-      </h2>
-      <p>
-        <a href="https://travis-ci.org/jamming/sabina">
-          <img
-            src="https://travis-ci.org/jamming/sabina.svg?branch=master"
-            alt="Build Img"
-            style="max-width:100%;">
-        </a>
-        <a href="https://coveralls.io/r/jamming/sabina">
-          <img
-            src="https://img.shields.io/coveralls/jamming/sabina.svg"
-            alt="Coverage Img"
-            style="max-width:100%;">
-        </a>
-      </p>
-      <p>
-        <a
-          class="github-button"
-          href="https://github.com/jamming/sabina"
-          data-icon="octicon-star"
-          data-count-href="/jamming/sabina/stargazers"
-          data-count-api="/repos/jamming/sabina#stargazers_count">Star</a>
-        <a
-          class="github-button"
-          href="https://github.com/jamming/sabina/fork"
-          data-icon="octicon-git-branch"
-          data-count-href="/jamming/sabina/network"
-          data-count-api="/repos/jamming/sabina#forks_count">Fork</a>
-        <a
-          class="github-button"
-          href="https://github.com/jamming/sabina/issues"
-          data-icon="octicon-issue-opened"
-          data-count-api="/repos/jamming/sabina#open_issues_count">Issue</a>
-      </p>
-    </div>
-  </div>
-
-  <h2>Add the dependency</h2>
-
-  <p>
-    First, you need to set up the <a href="https://bintray.com/bintray/jcenter">JCenter repository
-    </a>. Then you can add the dependency:
-  </p>
-
-  <h4>Gradle</h4>
-
-<pre><code class="groovy">dependencies {
-    compile ('sabina:http:null') { transitive = false }
-    // Import the backend you are going to use
-    compile 'io.undertow:undertow-servlet:1.2.8.Final'
-}</code></pre>
-
-  <h4>Maven</h4>
-
-<pre><code class="xml">&lt;dependency&gt;
-    &lt;groupId&gt;sabina&lt;/groupId&gt;
-    &lt;artifactId&gt;http&lt;/artifactId&gt;
-    &lt;version&gt;null&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
-
-  <h2>Write the code</h2>
-
-<pre><code class="java">import static sabina.Sabina.*;
-
-public class HiWorld {
-    public static void main (String[] args) {
-        get(&quot;/hello&quot;, it -&gt; &quot;Hi World!&quot;).start ();
-    }
-}</code></pre>
-
-  <h2>Ignite and view at</h2>
-
-  <p><code>http://localhost:4567/hello</code></p>
-
+<h1>Why?</h1><p>Sabina's intention is not to compete with Sinatra, or the dozen of clones in different<br/>languages (Grafitti, Nancy, Flask, Sammy etc...). Its intention is to be used by Java<br/>developers that want or are required to develop in pure Java.</p><p>Sabina focuses on being as simple and straight-forward as possible, without the need for<br/>cumbersome (XML) configuration, to enable very fast web application development in pure Java<br/>with minimal effort. (It’s a totally different paradigm when compared to the overuse of<br/>annotations for accomplishing pretty trivial stuff seen in JAX-RS).</p><h2>Why not go with JAX-RS?</h2><p>JAX-RS is a nice API that made life easier for Java web developers when it arrived. However,<br/>it's a bit messy due to the overuse of annotations for accomplishing pretty trivial things.<br/>The annotation magic also makes things more implicit and it's not as easy to get a fast<br/>understanding on things as you get when looking at code using Sabina. For a newbie in web<br/>frameworks and REST Sabina will have you up and running a bit faster than using one of the<br/>JAX-RS implementations.</p><h2>Why not use Spark?</h2><p>The infrastructure has been changed, Sabina uses gradle and has all the modules (http, extra and<br/>documentation) inside the project.</p><p>It features a continuous integration process including working tests, code coverage and deployment.</p><p>And finally, it supports Undertow backend and a refactor is on the way to support more backends<br/>(including non blocking ones).</p><h2>Okey, so why use Sabina?</h2><p>Again, if you're a Java developer with neither the urge or time to learn a new programming<br/>language and are not planning to build a super large web application that scales in all<br/>directions, then Sabina is a great alternative. It will have you up and running in notime<br/>without having to think about configuration and other cumbersome activities.</p>
       </div>
       <div id="push"></div>
     </div>

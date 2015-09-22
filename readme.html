@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Readme</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="keywords" content="">
+  <meta name="generator" content="JBake">
+
+  <!-- lumen, paper or yeti -->
+  <link
+    href="http://netdna.bootstrapcdn.com/bootswatch/3.2.0/yeti/bootstrap.min.css"
+    rel="stylesheet">
+  <link href="css/base.css" rel="stylesheet">
+  <link href="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css" rel="stylesheet">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <![endif]-->
+
+  <link rel="shortcut icon" href="favicon.ico">
+</head>
+
+<body onload="prettyPrint()">
+  <div id="wrap">
+
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <a href="https://github.com/jamming/sabina">
+    <img
+      style="position: absolute; top: 0; right: 0; border: 0;"
+      src=
+        "https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67"
+      alt="Fork me on GitHub"
+      data-canonical-src=
+        "https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+  </a>
+  <div class="container">
+    <div class="navbar-header">
+      <button
+        type="button"
+        class="navbar-toggle"
+        data-toggle="collapse"
+        data-target=".navbar-collapse">
+
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Sabina</a>
+    </div>
+
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="why.html">Why</a></li>
+        <li><a href="readme.html">Readme</a></li>
+        <li><a href="reference.html">Reference</a></li>
+        <li><a href="license.html">License</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="http://there4.co">there4.co</a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <!-- Ugly hack for Twitter to display nicely... in Bootstrap :O -->
+        <li style="margin-top: 12px; margin-left: 5px">
+          <a
+            href="https://twitter.com/share"
+            class="twitter-share-button"
+            data-text="Check Sabina... a framework you can hack!"
+            data-via="jaguililla"
+            data-count="none"
+            data-dnt="true">
+
+            Tweet
+          </a>
+          <script>
+            !function(d,s,id){
+            var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+            if(!d.getElementById(id)){js=d.createElement(s);
+            js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
+            fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+          </script>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="container">
+
+<h2>Getting started</h2><p>First, setup the <a href="https://bintray.com/jamming/maven/Sabina">JCenter</a> respository.</p><p>Then, add the Sabina maven dependency:</p>
+<pre><code class="xml">&lt;dependency&gt;
+  &lt;groupId&gt;sabina&lt;/groupId&gt;
+  &lt;artifactId&gt;http&lt;/artifactId&gt;
+  &lt;version&gt;2.4.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>Or with Gradle:</p>
+<pre><code class="groovy">dependencies {
+    compile (&#39;sabina:http:2.4.0&#39;) { transitive = false }
+    // Import the backend you are going to use
+    compile &#39;io.undertow:undertow-servlet:1.2.8.Final&#39;
+}
+</code></pre><p>And start coding:</p>
+<pre><code class="java">import static sabina.Sabina.*;
+
+public class HiWorld {
+    public static void main(String[] args) {
+        get(&quot;/hello&quot;, it -&gt; &quot;Hi World!&quot;).start ();
+    }
+}
+</code></pre><h2>Ignite and view at</h2>
+<pre><code>http://localhost:4567/hello
+</code></pre><h2>Routes</h2><p>The main building block of a Sabina application is a set of routes. A route is made up of three<br/>simple pieces:</p><p>A <strong>verb</strong> (<code>get</code>, <code>post</code>, <code>put</code>, <code>delete</code>, <code>head</code>, <code>trace</code>, <code>connect</code>, <code>options</code>)<br/>A <strong>path</strong> (<code>/hello</code>, <code>/users/:name</code>)<br/>A <strong>callback</strong> (<code>request -&gt; { }</code>)</p><p>NOTE! Routes are matched in the order they are defined. The first route that matches the<br/>request is invoked.</p>
+<pre><code class="java">get (&quot;/&quot;, it -&gt; {
+    // Show something ...
+});
+
+post (&quot;/&quot;, it -&gt; {
+    // Create something ...
+});
+
+put (&quot;/&quot;, it -&gt; {
+    // Update something ...
+});
+
+delete (&quot;/&quot;, it -&gt; {
+    // Annihilate something ...
+});
+
+options (&quot;/&quot;, it -&gt; {
+    // Appease something ...
+});
+</code></pre><p>Route patterns may include named parameters, accessible via the params method on the request<br/>object:</p>
+<pre><code class="java">/*
+ * Matches &quot;GET /hello/foo&quot; and &quot;GET /hello/bar&quot;
+ * it.request.params(&quot;:name&quot;) is &#39;foo&#39; or &#39;bar&#39;
+ */
+get (&quot;/hello/:name&quot;, it -&gt; {
+    return &quot;Hello: &quot; + it.request.params(&quot;:name&quot;);
+});
+</code></pre><p>Route patterns may also include splat (or wildcard) parameters, accessible via the splat method<br/>on the request object:</p>
+<pre><code class="java">/*
+ * Matches &quot;GET /say/hello/to/world&quot;
+ * it.request.splat()[0] is &#39;hello&#39; and request.splat()[1] &#39;world&#39;
+ */
+get (&quot;/say/*/to/*&quot;, it -&gt; {
+    return &quot;Nbr of splat parameters: &quot; + it.request.splat().length;
+});
+</code></pre><h2>Request</h2><p>In the handle method request information and functionality is provided by the request<br/>parameter:</p>
+<pre><code class="java">request.body();                // Request body sent by the client
+request.cookies();             // Request cookies sent by the client
+request.contentLength();       // Length of request body
+request.contentType();         // Content type of request.body
+request.headers();             // The HTTP header list
+request.headers(&quot;BAR&quot;);        // Value of BAR header
+request.attributes();          // The attributes list
+request.attribute(&quot;foo&quot;);      // Value of foo attribute
+request.attribute(&quot;A&quot;, &quot;V&quot;);   // Sets value of attribute A to V
+request.host();                // &quot;example.com&quot;
+request.ip();                  // Client IP address
+request.pathInfo();            // The path info
+request.params(&quot;foo&quot;);         // Value of foo path parameter
+request.params();              // Map with all parameters
+request.port();                // The server port
+request.queryMap();            // The query map
+request.queryMap(&quot;foo&quot;);       // Query map for a certain parameter
+request.queryParams(&quot;FOO&quot;);    // Value of FOO query param
+request.queryParams();         // The query param list
+request.raw();                 // Raw request handed in by Jetty
+request.requestMethod();       // The HTTP method (GET, ..etc)
+request.scheme();              // &quot;http&quot;
+request.session();             // Session management
+request.splat();               // Splat (*) parameters
+request.url();                 // &quot;http://example.com/foo&quot;
+request.userAgent();           // User agent
+</code></pre><h2>Response</h2><p>In the handle method response information and functionality is provided by the response<br/>parameter:</p>
+<pre><code class="java">response.body (&quot;Hello&quot;);           // Sets content to Hello
+response.header (&quot;FOO&quot;, &quot;bar&quot;);    // Sets header FOO with value bar
+response.raw ();                   // Raw response handed in by Jetty
+response.redirect (&quot;/example&quot;);    // Browser redirect to /example
+response.status (401);             // Set status code to 401
+response.type (&quot;text/xml&quot;);        // Set content type to text/xml
+</code></pre><h2>Stopping the server</h2><p>By calling the <code>stop ()</code> method the server is stopped and all routes are cleared.</p><h2>Cookies</h2><p>Handling cookies can be done via sabina request and response objects.</p>
+<pre><code class="java">request.cookies ();                            // Get map of all request cookies
+request.cookie (&quot;foo&quot;);                        // Access request cookie by name
+
+response.cookie (&quot;foo&quot;, &quot;bar&quot;);                // Set cookie with a value
+response.cookie (&quot;foo&quot;, &quot;bar&quot;, 3600);          // Set cookie with a max-age
+response.cookie (&quot;foo&quot;, &quot;bar&quot;, 3600, true);    // Secure cookie
+response.removeCookie (&quot;foo&quot;);                 // Remove cookie
+</code></pre><h2>Session management</h2><p>Every request has access to the session created on the server side, provided with the following<br/>methods:</p>
+<pre><code class="java">request.session (true);                             // Create (first time) and return session
+request.session ().attribute (&quot;user&quot;);              // Get session attribute &#39;user&#39;
+request.session ().attribute (&quot;user&quot;, &quot;foo&quot;);       // Set session attribute &#39;user&#39;
+request.session ().removeAttribute (&quot;user&quot;, &quot;foo&quot;); // Remove session attribute &#39;user&#39;
+request.session ().attributes ();                   // Get all session attributes
+request.session ().id ();                           // Get session id
+request.session ().isNew ();                        // Check is session is new
+request.session ().raw ();                          // Return servlet object
+</code></pre><h2>Halting</h2><p>To immediately stop a request within a filter or route use:</p>
+<pre><code class="java">halt ();
+</code></pre><p>You can also specify the status when halting:</p>
+<pre><code class="java">halt (401);
+</code></pre><p>Or the body:</p>
+<pre><code class="java">halt (&quot;This is the body&quot;);
+</code></pre><p>Or both:</p>
+<pre><code class="java">halt (401, &quot;Go Away!&quot;);
+</code></pre><h2>Filters</h2><p>Before filters are evaluated before each request and can read the request and read/modify the<br/>response.</p><p>To stop execution, use halt:</p>
+<pre><code class="java">before (it -&gt; {
+    boolean authenticated;
+    // Check if authenticated
+    if (!authenticated) {
+        halt (401, &quot;You are not welcome here&quot;);
+    }
+});
+</code></pre><p>After filters are evaluated after each request and can read the request and read/modify the<br/>response:</p>
+<pre><code class="java">after (it -&gt; {
+    response.header(&quot;foo&quot;, &quot;set by after filter&quot;);
+});
+</code></pre><p>Filters optionally take a pattern, causing them to be evaluated only if the request path<br/>matches that pattern:</p>
+<pre><code class="java">before (&quot;/protected/*&quot;, it -&gt; {
+    // Check if authenticated
+    halt (401, &quot;Go Away!&quot;);
+});
+</code></pre><h2>Browser Redirect</h2><p>You can trigger a browser redirect with the redirect helper method:</p>
+<pre><code class="java">response.redirect (&quot;/bar&quot;);
+</code></pre><p>You can also trigger a browser redirect with specific http 3XX status code:</p>
+<pre><code class="java">response.redirect (&quot;/bar&quot;, 301); // moved permanently
+</code></pre><h2>Exception Mapping</h2><p>To handle exceptions of a configured type for all routes and filters:</p>
+<pre><code class="java">get (&quot;/throwexception&quot;, it -&gt; {
+    throw new NotFoundException ();
+});
+
+exception (NotFoundException.class, (e, request, response) -&gt; {
+    response.status (404);
+    response.body (&quot;Resource not found&quot;);
+});
+</code></pre><h2>Static files</h2><p>Assign a folder in the classpath serving static files with the staticFileLocation method.</p>
+<pre><code class="java">staticFileLocation (&quot;/public&quot;); // Static resources
+</code></pre><p>Note that the public directory name is not included in the URL. A file <code>/public/css/style.css</code><br/>is made available as <code>http://&lt;host&gt;:&lt;port&gt;/css/style.css</code></p><p>You can also assign an external folder (not in the classpath) serving static files with the<br/><code>externalStaticFileLocation</code> method.</p>
+<pre><code class="java">externalStaticFileLocation (&quot;/var/www/public&quot;); // Static files
+</code></pre><h2>Content Serialization</h2><p>To be documented...</p><h2>Views / Templates - TemplateEngine</h2><p>To be documented...</p><h2>Mustache</h2><p>To be documented...</p><h2>Port</h2><p>By default, Sabina runs on port 4567. If you want to set another port use setPort.<br/>This has to be done before using routes and filters:</p>
+<pre><code class="java">setPort (9090); // Sabina will run on port 9090
+</code></pre><h2>Embedded Web Server</h2><p>Standalone Sabina runs on an embedded Undertow web server (by default) or a Jetty container<br/>depending on the <code>sabina.backend</code> system variable. Start with:</p>
+<ul>
+  <li><code>-Dsabina.backend=undertow</code> to run Undertow.</li>
+  <li><code>-Dsabina.backend=jetty</code> to start up Jetty.</li>
+</ul><h2>Javadoc</h2><p>Javadoc is available at <a href="https://there4.co/sabina/reference.html">there4.co/sabina</a></p><h2>Examples</h2><p>Examples can be found on the project's page at <a href="http://github.com/jamming/sabina">Github</a></p>
+      </div>
+      <div id="push"></div>
+    </div>
+
+    <footer id="footer">
+      <div class="container">
+        <p class="muted credit">
+          &copy; 2014 | Mixed with <a href="http://getbootstrap.com/">Bootstrap v3.1.1</a>
+          | Baked with <a href="http://jbake.org">JBake v2.4.0</a>
+          | Founded by <a href="//www.linkedin.com/in/jaguililla">Juanjo Aguililla</a>
+          | Based in <a href="//www.sparkjava.com">Spark</a>
+        </p>
+        <p>
+          <div id="fb-root"></div>
+          <script>
+            (function(d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) return;
+              js = d.createElement(s); js.id = id;
+              js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+              fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+          </script>
+
+          <script src="https://platform.linkedin.com/in.js" type="text/javascript">
+            lang: en_US
+          </script>
+          <script type="IN/Share"></script>
+
+          <a
+            href="https://twitter.com/share"
+            class="twitter-share-button"
+            data-via="jaguililla"
+            data-count="none">
+
+            Tweet
+          </a>
+          <script>
+            !function(d,s,id){
+            var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+            if(!d.getElementById(id)){js=d.createElement(s);
+            js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
+            fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+          </script>
+
+          <div class="g-plus" data-action="share" data-annotation="none"></div>
+        </p>
+      </div>
+    </footer>
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+    <!-- For Google plus link -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- For Github links -->
+    <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>
+
