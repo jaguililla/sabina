@@ -3,8 +3,6 @@ package sabina.util.log
 import org.testng.annotations.Test
 
 import static java.util.logging.Level.INFO
-import static sabina.util.Configuration.parameters
-import static sabina.util.Configuration.configuration
 import static sabina.util.log.Logger.getLogger
 import static sabina.util.Console.*
 
