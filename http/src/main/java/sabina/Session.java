@@ -75,7 +75,7 @@ public final class Session {
         final TreeSet<String> attributes = new TreeSet<> ();
         final Enumeration<String> enumeration = session.getAttributeNames ();
         while (enumeration.hasMoreElements ())
-            attributes.add (attribute (enumeration.nextElement ()));
+            attributes.add (attribute (enumeration.nextElement ()).toString ());
 
         return attributes;
     }
