@@ -14,6 +14,7 @@
 
 package sabina.integration;
 
+import static java.util.Collections.list;
 import static java.util.stream.Collectors.joining;
 import static org.testng.Assert.assertEquals;
 import static sabina.integration.TestScenario.*;
@@ -22,7 +23,7 @@ import sabina.Router.Handler;
 import sabina.Server;
 
 /**
- * TODO .
+ * TODO Add tests with attributes of different types (boolean, int, etc.).
  *
  * @author jam
  */
@@ -38,9 +39,25 @@ final class Session {
             it.session ().removeAttribute (it.params (":key"));
         });
 
-        s.get ("/session", (Handler)it ->
-            it.session ().attributeValues ().stream ().collect (joining ())
-        );
+        s.get ("/session", exchange -> {
+            exchange.header (
+                "attribute values",
+                exchange.session ().attributeValues ().stream ().collect (joining (", ")));
+            exchange.header (
+                "attribute names",
+                list (exchange.session ().attributeNames ()).stream ()
+                    .collect (joining (", ")));
+            exchange.header (
+                "attributes",
+                exchange.session ().attributes ().entrySet ().stream ()
+                    .map (entry -> entry.getKey () + " : " + entry.getValue ())
+                    .collect (joining (", ")));
+
+            exchange.header ("creation", String.valueOf (exchange.session ().creationTime ()));
+            exchange.header ("id", exchange.session ().id ());
+            exchange.header ("last access",
+                String.valueOf (exchange.session ().lastAccessedTime ()));
+        });
     }
 
     static void attribute (TestScenario testScenario) {
@@ -49,5 +66,22 @@ final class Session {
 
         res = testScenario.doGet ("/session/foo");
         testScenario.assertResponseEquals (res, "bar", 200);
+    }
+
+    static void sessionLifecycle (TestScenario testScenario) {
+        UrlResponse res = testScenario.doPut ("/session/foo/bar");
+        assertEquals (200, res.status);
+        res = testScenario.doPut ("/session/foo/bazz");
+        assertEquals (200, res.status);
+        res = testScenario.doPut ("/session/temporal/_");
+        assertEquals (200, res.status);
+        res = testScenario.doDelete ("/session/temporal");
+        assertEquals (200, res.status);
+
+        res = testScenario.doGet ("/session/foo");
+        testScenario.assertResponseEquals (res, "bazz", 200);
+
+        res = testScenario.doGet ("/session");
+        assertEquals (200, res.status);
     }
 }

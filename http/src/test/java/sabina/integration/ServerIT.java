@@ -206,4 +206,9 @@ import sabina.Server;
 
     @Test(dataProvider = "scenarios")
     public void attribute (TestScenario testScenario) { Session.attribute (testScenario); }
+
+    @Test(dataProvider = "scenarios")
+    public void sessionLifecycle (TestScenario testScenario) {
+        Session.sessionLifecycle (testScenario);
+    }
 }
