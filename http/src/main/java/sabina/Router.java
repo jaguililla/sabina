@@ -15,12 +15,14 @@
 package sabina;
 
 import static sabina.HttpMethod.*;
+import static sabina.util.Checks.checkArgument;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import sabina.route.RouteMatcher;
+import sabina.util.Checks;
 
 /**
  * Trait to support router methods in classes with access to a RouteMatcher.
@@ -67,8 +69,8 @@ public interface Router {
      * @param <T> Exception type.
      */
     default <T extends Exception> void exception (Class<T> exception, BiConsumer<T, Request> h) {
-        Fault<?> wrapper = new Fault<> (exception, h);
-        getMatcher ().processFault (wrapper);
+        checkArgument (h != null);
+        getMatcher ().processFault (exception, h);
     }
 
     /*

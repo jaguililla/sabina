@@ -24,6 +24,7 @@ import static sabina.HttpMethod.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.*;
@@ -186,9 +187,10 @@ public class MatcherFilter implements Filter, Router {
             throw hEx;
         }
         catch (Exception e) {
-            Fault<Exception> handler = (Fault<Exception>)routeMatcher.findHandler (e.getClass ());
+            BiConsumer<Exception, Request> handler =
+                (BiConsumer<Exception, Request>)routeMatcher.findHandler (e.getClass ());
             if (handler != null && request != null) {
-                handler.handler.accept (e, request);
+                handler.accept (e, request);
             }
             else {
                 LOG.severe (e.getMessage ());

@@ -15,8 +15,9 @@
 package sabina.route;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
-import sabina.Fault;
+import sabina.Request;
 import sabina.Route;
 
 import sabina.HttpMethod;
@@ -34,7 +35,8 @@ public interface RouteMatcher {
      */
     void processRoute (Route target);
 
-    <T extends Exception> void processFault (Fault<T> handler);
+    <T extends Exception> void processFault (
+        Class<T> fault, BiConsumer<? extends Exception, Request> handler);
 
     /**
      * Finds the target route for the requested route path and accept type
@@ -49,5 +51,5 @@ public interface RouteMatcher {
 
     List<RouteMatch> findTargets (HttpMethod httpMethod, String path, String acceptType);
 
-    Fault<? extends Exception> findHandler(Class<? extends Exception> exceptionClass);
+    <T extends Exception> BiConsumer<T, Request> findHandler(Class<T> exceptionClass);
 }

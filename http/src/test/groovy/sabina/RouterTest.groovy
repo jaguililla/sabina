@@ -20,7 +20,7 @@ import static sabina.HttpMethod.*
  * @author jam
  */
 @Test public class RouterTest {
-    private Consumer<Fault<? extends Exception>> faultCallback
+    private BiConsumer<Class<?>, BiConsumer<?, Request>> faultCallback
 
     private Router testRouter = new Router () {
         @Override public RouteMatcher getMatcher () {
@@ -29,8 +29,9 @@ import static sabina.HttpMethod.*
                     throw new UnsupportedOperationException ()
                 }
 
-                @Override public <T extends Exception> void processFault (Fault<T> handler) {
-                    faultCallback.accept (handler)
+                @Override public <T extends Exception> void processFault (
+                    Class<T> fault, BiConsumer<? extends Exception, Request> handler) {
+                    faultCallback.accept (fault, handler)
                 }
 
                 @Override public RouteMatch findTarget (
@@ -45,8 +46,8 @@ import static sabina.HttpMethod.*
                     throw new UnsupportedOperationException ()
                 }
 
-                @Override public Fault<? extends Exception> findHandler (
-                    Class<? extends Exception> exceptionClass) {
+                @Override public <T extends Exception> BiConsumer<T, Request> findHandler(
+                    Class<T> exceptionClass) {
 
                     throw new UnsupportedOperationException ()
                 }
@@ -62,18 +63,18 @@ import static sabina.HttpMethod.*
     }
 
     public void "adding an exception handler passes the correct value to the matcher" () {
-        faultCallback = {
-            assert it.exception.equals (RuntimeException)
-            assert it.handler != null
+        faultCallback = { exception, handler ->
+            assert exception.equals (RuntimeException)
+            assert handler != null
         }
 
-        testRouter.exception (RuntimeException, {} as BiConsumer<? extends Exception, Request>)
+        testRouter.exception (RuntimeException, {} as BiConsumer<RuntimeException, Request>)
     }
 
     public void "adding a handler without an exception is allowed" () {
-        faultCallback = {
-            assert it.exception == null
-            assert it.handler != null
+        faultCallback = { exception, handler ->
+            assert exception == null
+            assert handler != null
         }
 
         testRouter.exception (null, {} as BiConsumer<? extends Exception, Request>)

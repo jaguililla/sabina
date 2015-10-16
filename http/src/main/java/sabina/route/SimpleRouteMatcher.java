@@ -22,9 +22,10 @@ import static sabina.route.MimeParse.bestMatch;
 import static sabina.Route.*;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
-import sabina.Fault;
 import sabina.HttpMethod;
+import sabina.Request;
 import sabina.Route;
 
 /**
@@ -38,7 +39,9 @@ final class SimpleRouteMatcher implements RouteMatcher {
     private final Map<HttpMethod, List<Route>> routeMap = new HashMap<> ();
 
     /** Holds a map of Exception classes and associated handlers. */
-    private final Map<Class<? extends Exception>, Fault<?>> exceptionMap = new HashMap<> ();
+    private final
+    Map<Class<? extends Exception>, BiConsumer<? extends Exception, Request>> exceptionMap =
+        new HashMap<> ();
 
     /**
      * Parse and validates a route and adds it
@@ -109,7 +112,7 @@ final class SimpleRouteMatcher implements RouteMatcher {
      */
     @SuppressWarnings ("unchecked")
     @Override
-    public Fault<? extends Exception> findHandler(Class<? extends Exception> exceptionClass) {
+    public <T extends Exception> BiConsumer<T, Request> findHandler(Class<T> exceptionClass) {
         // If the exception map does not contain the provided exception class, it might
         // still be that a superclass of the exception class is.
         if (!exceptionMap.containsKey(exceptionClass)) {
@@ -121,7 +124,8 @@ final class SimpleRouteMatcher implements RouteMatcher {
                 if (exceptionMap.containsKey(superclass)) {
                     // Use the handler for the mapped superclass, and cache handler
                     // for this exception class
-                    Fault<? extends Exception> handler = exceptionMap.get(superclass);
+                    BiConsumer<T, Request> handler =
+                        (BiConsumer<T, Request>)exceptionMap.get(superclass);
                     exceptionMap.put(exceptionClass, handler);
                     return handler;
                 }
@@ -137,7 +141,7 @@ final class SimpleRouteMatcher implements RouteMatcher {
         }
 
         // Direct map
-        return exceptionMap.get (exceptionClass);
+        return (BiConsumer<T, Request>)exceptionMap.get (exceptionClass);
     }
 
     /**
@@ -146,8 +150,9 @@ final class SimpleRouteMatcher implements RouteMatcher {
      *
      * @param handler        Handler to map to exception
      */
-    @Override public <T extends Exception> void processFault (final Fault<T> handler) {
-        exceptionMap.put(handler.exception, handler);
+    @Override public <T extends Exception> void processFault (
+        Class<T> fault, BiConsumer<? extends Exception, Request> handler) {
+        exceptionMap.put(fault, handler);
     }
 
     //can be cached? I don't think so.

@@ -9,6 +9,7 @@ import sabina.route.RouteMatch
 import sabina.route.RouteMatcher
 import sabina.route.RouteMatcherFactory
 
+import java.util.function.BiConsumer
 import java.util.function.Consumer
 
 import static sabina.HttpMethod.*
@@ -36,7 +37,8 @@ import static sabina.Sabina.*
             routeCallback.accept (target)
         }
 
-        @Override public <T extends Exception> void processFault (Fault<T> handler) {
+        @Override public <T extends Exception> void processFault (
+            Class<T> fault, BiConsumer<? extends Exception, Request> handler) {
             throw new UnsupportedOperationException ()
         }
 
@@ -52,8 +54,8 @@ import static sabina.Sabina.*
             throw new UnsupportedOperationException ()
         }
 
-        @Override public Fault<? extends Exception> findHandler (
-            Class<? extends Exception> exceptionClass) {
+        @Override public <T extends Exception> BiConsumer<T, Request> findHandler(
+            Class<T> exceptionClass) {
 
             throw new UnsupportedOperationException ()
         }
