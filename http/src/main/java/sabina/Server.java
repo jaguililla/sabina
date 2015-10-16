@@ -21,10 +21,10 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.management.ManagementFactory.*;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
+import static org.slf4j.LoggerFactory.getLogger;
 import static sabina.util.Builders.entry;
 import static sabina.util.Io.read;
 import static sabina.util.Strings.filter;
-import static sabina.util.log.Logger.getLogger;
 import static sabina.util.Configuration.*;
 
 import java.lang.management.MemoryUsage;
@@ -32,12 +32,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
 import sabina.util.*;
-import sabina.util.log.LogConfiguration;
-import sabina.util.log.Logger;
 
 import sabina.route.RouteMatcher;
 import sabina.route.RouteMatcherFactory;
@@ -98,7 +95,7 @@ public final class Server implements Router {
     RouteMatcher routeMatcher = RouteMatcherFactory.create ();
 
     public Server () {
-        LogConfiguration.load ();
+        super ();
     }
 
     public Server (int port) {
@@ -289,7 +286,7 @@ public final class Server implements Router {
 
         configuration.put ("sabina.used.memory", format ("%,d", heap.getUsed () / 1024));
 
-        LOG.info ("Application started%s", filter (banner, configuration));
+        LOG.info ("Application started{}", filter (banner, configuration));
     }
 
     private boolean hasMultipleHandlers () {

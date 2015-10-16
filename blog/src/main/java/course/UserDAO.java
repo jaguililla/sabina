@@ -18,7 +18,7 @@
 package course;
 
 import static com.mongodb.client.model.Filters.eq;
-import static sabina.util.log.Logger.getLogger;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -31,7 +31,7 @@ import java.util.Random;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import sabina.util.log.Logger;
+import org.slf4j.Logger;
 
 public class UserDAO {
     private static final Logger LOG = getLogger (UserDAO.class);
@@ -85,7 +85,7 @@ public class UserDAO {
         user = usersCollection.find (eq ("_id", username)).first ();
 
         if (user == null) {
-            LOG.severe ("User not in database");
+            LOG.error ("User not in database");
             return null;
         }
 
@@ -94,7 +94,7 @@ public class UserDAO {
         String salt = hashedAndSalted.split (",")[1];
 
         if (!hashedAndSalted.equals (makePasswordHash (password, salt))) {
-            LOG.severe ("Submitted password is not a match");
+            LOG.error ("Submitted password is not a match");
             return null;
         }
 

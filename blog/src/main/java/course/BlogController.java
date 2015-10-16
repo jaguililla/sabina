@@ -1,7 +1,7 @@
 package course;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import static sabina.Sabina.*;
-import static sabina.util.log.Logger.getLogger;
 import static sabina.view.FreeMarkerView.renderFreeMarker;
 
 import java.io.IOException;
@@ -17,8 +17,8 @@ import com.mongodb.client.MongoDatabase;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.bson.Document;
+import org.slf4j.Logger;
 import sabina.Request;
-import sabina.util.log.Logger;
 
 /**
  * This class encapsulates the controllers for the blog web application.  It delegates all

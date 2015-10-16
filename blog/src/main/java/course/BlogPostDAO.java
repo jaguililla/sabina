@@ -18,7 +18,7 @@
 package course;
 
 import static com.mongodb.client.model.Filters.eq;
-import static sabina.util.log.Logger.getLogger;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,7 +28,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import org.bson.Document;
-import sabina.util.log.Logger;
+import org.slf4j.Logger;
 
 public class BlogPostDAO {
     private static final Logger LOG = getLogger (BlogPostDAO.class);
@@ -80,7 +80,7 @@ public class BlogPostDAO {
             LOG.info ("Inserting blog post with permalink " + permalink);
         }
         catch (Exception e) {
-            LOG.severe ("Error inserting post", e);
+            LOG.error ("Error inserting post", e);
             return null;
         }
 
