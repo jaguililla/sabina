@@ -15,10 +15,8 @@
 package sabina.route;
 
 import static java.util.Collections.EMPTY_LIST;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static sabina.Request.convertRouteToList;
-import static sabina.route.MimeParse.bestMatch;
 import static sabina.Route.*;
 
 import java.util.*;
@@ -60,15 +58,13 @@ final class SimpleRouteMatcher implements RouteMatcher {
      *
      * @param httpMethod the http method
      * @param path the path
-     * @param acceptType the accept type
      *
      * @return the target
      */
-    @Override public RouteMatch findTarget (
-        HttpMethod httpMethod, String path, String acceptType) {
+    @Override public RouteMatch findTarget (HttpMethod httpMethod, String path) {
 
         final List<Route> routeEntries = this.findTargetsForRequestedRoute (httpMethod, path);
-        final Route entry = findTargetWithGivenAcceptType (routeEntries, acceptType);
+        final Route entry = findTargetWithGivenAcceptType (routeEntries);
         return entry != null? new RouteMatch (entry, path) : null;
     }
 
@@ -77,28 +73,15 @@ final class SimpleRouteMatcher implements RouteMatcher {
      *
      * @param httpMethod the http method
      * @param path the route path
-     * @param acceptType the accept type
      *
      * @return the targets
      */
-    @Override public List<RouteMatch> findTargets (
-        final HttpMethod httpMethod,
-        final String path,
-        final String acceptType) {
-
+    @Override public List<RouteMatch> findTargets (final HttpMethod httpMethod, final String path) {
         final List<RouteMatch> matchSet = new ArrayList<> ();
         final List<Route> routeEntries = findTargetsForRequestedRoute (httpMethod, path);
 
         for (Route routeEntry : routeEntries) {
-            if (acceptType != null) {
-                String bestMatch = bestMatch (singletonList (routeEntry.acceptType), acceptType);
-
-                if (routeWithGivenAcceptType (bestMatch))
-                    matchSet.add (new RouteMatch (routeEntry, path));
-            }
-            else {
-                matchSet.add (new RouteMatch (routeEntry, path));
-            }
+            matchSet.add (new RouteMatch (routeEntry, path));
         }
 
         return matchSet;
@@ -155,21 +138,6 @@ final class SimpleRouteMatcher implements RouteMatcher {
         exceptionMap.put(fault, handler);
     }
 
-    //can be cached? I don't think so.
-    private Map<String, Route> getAcceptedMimeTypes (List<Route> routes) {
-        Map<String, Route> acceptedTypes = new HashMap<> ();
-
-        routes.stream ()
-            .filter (routeEntry -> !acceptedTypes.containsKey (routeEntry.acceptType))
-            .forEach (routeEntry -> acceptedTypes.put (routeEntry.acceptType, routeEntry));
-
-        return acceptedTypes;
-    }
-
-    private boolean routeWithGivenAcceptType (String bestMatch) {
-        return !MimeParse.NO_MIME_TYPE.equals (bestMatch);
-    }
-
     private List<Route> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path) {
 
@@ -181,19 +149,9 @@ final class SimpleRouteMatcher implements RouteMatcher {
     }
 
     // TODO: I believe this feature has impacted performance. Optimization?
-    private Route findTargetWithGivenAcceptType (
-        final List<Route> routeMatches, final String acceptType) {
-
-        if (acceptType != null && routeMatches.size () > 0) {
-            final Map<String, Route> acceptedMimeTypes = getAcceptedMimeTypes (routeMatches);
-            final String bestMatch = bestMatch (acceptedMimeTypes.keySet (), acceptType);
-
-            return routeWithGivenAcceptType (bestMatch)? acceptedMimeTypes.get (bestMatch) : null;
-        }
-        else {
-            if (routeMatches.size () > 0)
-                return routeMatches.get (0);
-        }
+    private Route findTargetWithGivenAcceptType (final List<Route> routeMatches) {
+        if (routeMatches.size () > 0)
+            return routeMatches.get (0);
 
         return null;
     }

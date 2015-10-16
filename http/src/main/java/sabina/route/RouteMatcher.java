@@ -43,13 +43,12 @@ public interface RouteMatcher {
      *
      * @param httpMethod .
      * @param path .
-     * @param acceptType .
      *
      * @return .
      */
-    RouteMatch findTarget (HttpMethod httpMethod, String path, String acceptType);
+    RouteMatch findTarget (HttpMethod httpMethod, String path);
 
-    List<RouteMatch> findTargets (HttpMethod httpMethod, String path, String acceptType);
+    List<RouteMatch> findTargets (HttpMethod httpMethod, String path);
 
     <T extends Exception> BiConsumer<T, Request> findHandler(Class<T> exceptionClass);
 }

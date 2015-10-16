@@ -35,10 +35,8 @@ import sabina.Router.Handler;
  */
 public final class Route {
     public static final String ALL_PATHS = "+/*paths";
-    public static final String DEFAULT_ACCEPT_TYPE = "*/*";
 
     public final String path;
-    public final String acceptType;
     public final HttpMethod method;
     public final Handler handler;
 
@@ -64,32 +62,10 @@ public final class Route {
      * @param handler .
      */
     public Route (final HttpMethod method, final String path, final Handler handler) {
-        this (
-            method,
-            path,
-            method == AFTER || method == BEFORE? "text/html" : DEFAULT_ACCEPT_TYPE,
-            handler);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param method .
-     * @param path The route path which is used for matching. (e.g. /hello, users/:name).
-     * @param acceptType The accept type which is used for matching.
-     * @param handler .
-     */
-    public Route (
-        final HttpMethod method,
-        final String path,
-        final String acceptType,
-        final Handler handler) {
-
-        checkArgument (!isEmpty (path) && !isEmpty (acceptType));
+        checkArgument (!isEmpty (path));
         checkArgument (handler != null && method != null);
 
         this.path = path;
-        this.acceptType = acceptType;
         this.method = method;
         this.handler = handler;
         this.routeParts = convertRouteToList (path);
@@ -100,6 +76,6 @@ public final class Route {
     }
 
     @Override public String toString () {
-        return format ("Route: %s %s (%s)", method, path, acceptType);
+        return format ("Route: %s %s", method, path);
     }
 }

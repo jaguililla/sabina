@@ -49,8 +49,6 @@ final class Filters {
             return it.response.body () + "!!!";
         });
 
-        s.get ("/hi", "application/json", it -> "{\"message\": \"Hello World\"}");
-
         s.get ("/hi", it -> "Hello World!");
 
         s.get ("/param/:param", it -> "echo: " + it.params (":param"));

@@ -19,9 +19,6 @@ import static sabina.integration.TestScenario.*;
 import static java.lang.String.*;
 
 import sabina.Request;
-import sabina.Response;
-import sabina.Router;
-import sabina.Router.Handler;
 import sabina.Router.VoidHandler;
 import sabina.Server;
 
@@ -30,10 +27,6 @@ final class Generic {
 
     static void setup (Server s) {
         s.before ("/protected/*", it -> it.halt (401, "Go Away!"));
-
-        s.before ("/protected/*", "application/json", it ->
-                it.halt (401, "{\"message\": \"Go Away!\"}")
-        );
 
         s.get ("/request/data", it -> {
             it.response.body (it.url ());
@@ -61,8 +54,6 @@ final class Generic {
         s.get ("/exception", (VoidHandler)it -> {
             throw new UnsupportedOperationException ("error message");
         });
-
-        s.get ("/hi", "application/json", it -> "{\"message\": \"Hello World\"}");
 
         s.get ("/hi", it -> "Hello World!");
 
@@ -119,17 +110,6 @@ final class Generic {
     static void reqres (TestScenario scenario) {
         UrlResponse response = scenario.doMethod ("GET", "/reqres");
         scenario.assertResponseEquals (response, "GET", 200);
-    }
-
-    static void filtersShouldBeAcceptTypeAware (TestScenario scenario) {
-        UrlResponse response =
-            scenario.doMethod ("GET", "/protected/resource", null, "application/json");
-        scenario.assertResponseEquals (response, "{\"message\": \"Go Away!\"}", 401);
-    }
-
-    static void routesShouldBeAcceptTypeAware (TestScenario testScenario) {
-        UrlResponse response = testScenario.doMethod ("GET", "/hi", null, "application/json");
-        testScenario.assertResponseEquals (response, "{\"message\": \"Hello World\"}", 200);
     }
 
     static void getHi (TestScenario testScenario) {

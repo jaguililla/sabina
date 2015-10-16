@@ -14,8 +14,6 @@
 
 package sabina.examples.groovy
 
-import sabina.util.Configuration
-
 import static sabina.Sabina.start
 
 import sabina.Request

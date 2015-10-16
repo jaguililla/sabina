@@ -140,14 +140,6 @@ import sabina.Server;
     public void removeCookie (TestScenario testScenario) { Cookies.removeCookie (testScenario); }
 
     @Test(dataProvider = "scenarios")
-    public void filtersShouldBeAcceptTypeAware (TestScenario testScenario) {
-        Generic.filtersShouldBeAcceptTypeAware (testScenario);
-    }
-    @Test(dataProvider = "scenarios")
-    public void routesShouldBeAcceptTypeAware (TestScenario testScenario) {
-        Generic.routesShouldBeAcceptTypeAware (testScenario);
-    }
-    @Test(dataProvider = "scenarios")
     public void getHi (TestScenario testScenario) { Generic.getHi (testScenario); }
     @Test(dataProvider = "scenarios")
     public void hiHead (TestScenario testScenario) { Generic.hiHead (testScenario); }

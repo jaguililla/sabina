@@ -65,7 +65,6 @@ import sabina.Router.VoidHandler;
 
     @AfterClass public static void cleanupFile () { ServerIT.cleanupFile (); }
 
-    @Test (enabled = false)
     public void routes_after_reset_are_not_available () {
         UrlResponse response = testScenario.doGet ("/reset/route");
         assert response.status == 404;
@@ -76,7 +75,6 @@ import sabina.Router.VoidHandler;
         reset ();
     }
 
-    @Test (enabled = false)
     public void uncaugh_exception_return_a_500_error () {
         UrlResponse response = testScenario.doGet ("/error500");
         assert response.body.equals ("<html><body><h2>500 Internal Error</h2></body></html>");

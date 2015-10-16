@@ -22,7 +22,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import sabina.route.RouteMatcher;
-import sabina.util.Checks;
 
 /**
  * Trait to support router methods in classes with access to a RouteMatcher.
@@ -48,10 +47,6 @@ public interface Router {
 
     default void add (HttpMethod m, String p, Handler h) {
         addRoute (new Route (m, p, h));
-    }
-
-    default void add (HttpMethod m, String p, String ct, Handler h) {
-        addRoute (new Route (m, p, ct, h));
     }
 
     default Handler wrap (VoidHandler h) {
@@ -80,8 +75,6 @@ public interface Router {
     default void before (VoidHandler h) { add (BEFORE, wrap (h)); }
     default void after (String p, VoidHandler h) { add (AFTER, p, wrap (h)); }
     default void before (String p, VoidHandler h) { add (BEFORE, p, wrap (h)); }
-    default void after (String p, String ct, VoidHandler h) { add (AFTER, p, ct, wrap (h)); }
-    default void before (String p, String ct, VoidHandler h) { add (BEFORE, p, ct, wrap (h)); }
 
     /*
      * Routes
@@ -102,20 +95,4 @@ public interface Router {
     default void put (String p, VoidHandler h) { put (p, wrap (h)); }
     default void trace (String p, Handler h) { add (TRACE, p, h); }
     default void trace (String p, VoidHandler h) { trace (p, wrap (h)); }
-    default void delete (String p, String ct, Handler h) { add (DELETE, p, ct, h); }
-    default void delete (String p, String ct, VoidHandler h) { delete (p, ct, wrap (h)); }
-    default void get (String p, String ct, Handler h) { add (GET, p, ct, h); }
-    default void get (String p, String ct, VoidHandler h) { get (p, ct, wrap (h)); }
-    default void head (String p, String ct, Handler h) { add (HEAD, p, ct, h); }
-    default void head (String p, String ct, VoidHandler h) { head (p, ct, wrap (h)); }
-    default void options (String p, String ct, Handler h) { add (OPTIONS, p, ct, h); }
-    default void options (String p, String ct, VoidHandler h) { options (p, ct, wrap (h)); }
-    default void patch (String p, String ct, Handler h) { add (PATCH, p, ct, h); }
-    default void patch (String p, String ct, VoidHandler h) { patch (p, ct, wrap (h)); }
-    default void post (String p, String ct, Handler h) { add (POST, p, ct, h); }
-    default void post (String p, String ct, VoidHandler h) { post (p, ct, wrap (h)); }
-    default void put (String p, String ct, Handler h) { add (PUT, p, ct, h); }
-    default void put (String p, String ct, VoidHandler h) { put (p, ct, wrap (h)); }
-    default void trace (String p, String ct, Handler h) { add (TRACE, p, ct, h); }
-    default void trace (String p, String ct, VoidHandler h) { trace (p, ct, wrap (h)); }
 }

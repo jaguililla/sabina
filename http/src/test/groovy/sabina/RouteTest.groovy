@@ -22,34 +22,23 @@ import sabina.Router.Handler
 public class RouteTest {
     @Test (expectedExceptions = IllegalArgumentException)
     public void routeWithNullMethod () {
-        new Route (null, "path", "type", { "" } as Handler)
+        new Route (null, "path", { "" } as Handler)
     }
 
     @Test (expectedExceptions = IllegalArgumentException)
     public void routeWithNullPath () {
-        new Route (AFTER, null, "type", { "" } as Handler)
-    }
-
-    @Test (expectedExceptions = IllegalArgumentException)
-    public void routeWithNullAcceptType () {
-        new Route (AFTER, "path", null, { "" } as Handler)
+        new Route (AFTER, null, { "" } as Handler)
     }
 
     @Test (expectedExceptions = IllegalArgumentException)
     public void routeWithEmptyPath () {
-        new Route (AFTER, "", "type", { "" } as Handler)
-    }
-
-    @Test (expectedExceptions = IllegalArgumentException)
-    public void routeWithEmptyAcceptType () {
-        new Route (AFTER, "path", "", { "" } as Handler)
+        new Route (AFTER, "", { "" } as Handler)
     }
 
     @Test public void testToString () throws Exception {
-        Route action = new Route (AFTER, "path", "type", { "" } as Handler)
+        Route action = new Route (AFTER, "path", { "" } as Handler)
         assert action.path.equals ("path")
-        assert action.acceptType.equals ("type")
         assert action.method.equals (AFTER)
-        assert action.toString ().equals ("Route: AFTER path (type)")
+        assert action.toString ().equals ("Route: AFTER path")
     }
 }

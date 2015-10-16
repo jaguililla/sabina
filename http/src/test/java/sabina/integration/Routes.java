@@ -66,24 +66,6 @@ final class Routes {
         s.trace ("/routes/method", Routes::voidMethodHandler);
         s.head ("/routes/method", Routes::voidMethodHandler);
 
-        s.delete ("/routes/method", "application/json", Routes::ctMethodHandler);
-        s.options ("/routes/method", "application/json", Routes::ctMethodHandler);
-        s.get ("/routes/method", "application/json", Routes::ctMethodHandler);
-        s.patch ("/routes/method", "application/json", Routes::ctMethodHandler);
-        s.post ("/routes/method", "application/json", Routes::ctMethodHandler);
-        s.put ("/routes/method", "application/json", Routes::ctMethodHandler);
-        s.trace ("/routes/method", "application/json", Routes::ctMethodHandler);
-        s.head ("/routes/method", "application/json", Routes::ctMethodHandler);
-
-        s.delete ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
-        s.options ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
-        s.get ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
-        s.patch ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
-        s.post ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
-        s.put ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
-        s.trace ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
-        s.head ("/routes/method", "application/json", Routes::ctVoidMethodHandler);
-
         // Specific head method tests
 
         // Test different accept types (select best one, fall back to default, 404 if no default)

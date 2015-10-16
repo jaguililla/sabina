@@ -45,7 +45,6 @@ public class MatcherFilter implements Filter, Router {
     private static final Logger LOG = getLogger (MatcherFilter.class.getName ());
 
     private static final String
-        ACCEPT_TYPE_REQUEST_MIME_HEADER = "Accept",
         INTERNAL_ERROR = "<html><body><h2>500 Internal Error</h2></body></html>",
         NOT_FOUND =
             "<html><body>" +
@@ -96,19 +95,18 @@ public class MatcherFilter implements Filter, Router {
 
         final String uri = httpReq.getRequestURI ();
         final String httpMethodStr = httpReq.getMethod ();
-        final String acceptType = httpReq.getHeader (ACCEPT_TYPE_REQUEST_MIME_HEADER);
 
         String bodyContent = null;
 
         try {
-            bodyContent = onFilter (BEFORE, httpReq, httpRes, uri, acceptType, null);
+            bodyContent = onFilter (BEFORE, httpReq, httpRes, uri, null);
 
             final HttpMethod httpMethod = HttpMethod.valueOf (httpMethodStr);
-            RouteMatch match = routeMatcher.findTarget (httpMethod, uri, acceptType);
+            RouteMatch match = routeMatcher.findTarget (httpMethod, uri);
 
             if (match == null && httpMethod == HEAD && bodyContent == null) {
                 // See if get is mapped to provide default head mapping
-                RouteMatch requestedRouteTarget = routeMatcher.findTarget (GET, uri, acceptType);
+                RouteMatch requestedRouteTarget = routeMatcher.findTarget (GET, uri);
                 bodyContent = requestedRouteTarget != null? "" : null;
             }
 
@@ -116,7 +114,7 @@ public class MatcherFilter implements Filter, Router {
                 bodyContent = handleTargetRoute (httpReq, httpRes, bodyContent, match, match.entry);
             }
 
-            bodyContent = onFilter (AFTER, httpReq, httpRes, uri, acceptType, bodyContent);
+            bodyContent = onFilter (AFTER, httpReq, httpRes, uri, bodyContent);
         }
         catch (HaltException e) {
             if (loggable)
@@ -210,10 +208,9 @@ public class MatcherFilter implements Filter, Router {
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse,
         final String uri,
-        final String acceptType,
         String bodyContent) {
 
-        final List<RouteMatch> matchSet = routeMatcher.findTargets (method, uri, acceptType);
+        final List<RouteMatch> matchSet = routeMatcher.findTargets (method, uri);
 
         for (RouteMatch filterMatch : matchSet) {
             final Request request = new Request (filterMatch, httpRequest, httpResponse);

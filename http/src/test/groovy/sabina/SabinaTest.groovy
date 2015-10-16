@@ -13,7 +13,6 @@ import java.util.function.BiConsumer
 import java.util.function.Consumer
 
 import static sabina.HttpMethod.*
-import static sabina.Route.DEFAULT_ACCEPT_TYPE
 import static sabina.Sabina.*
 
 /**
@@ -42,15 +41,11 @@ import static sabina.Sabina.*
             throw new UnsupportedOperationException ()
         }
 
-        @Override public RouteMatch findTarget (
-            HttpMethod httpMethod, String path, String acceptType) {
-
+        @Override public RouteMatch findTarget (HttpMethod httpMethod, String path) {
             throw new UnsupportedOperationException ()
         }
 
-        @Override public List<RouteMatch> findTargets (
-            HttpMethod httpMethod, String path, String acceptType) {
-
+        @Override public List<RouteMatch> findTargets (HttpMethod httpMethod, String path) {
             throw new UnsupportedOperationException ()
         }
 
@@ -74,69 +69,51 @@ import static sabina.Sabina.*
     public void "adding after filters process the correct routes" () {
         checkMethod ({ after ({} as VoidHandler) }, AFTER)
         checkMethod ({ after ("/", {} as VoidHandler) }, AFTER, "/")
-        checkMethod ({ after ("/", "text", {} as VoidHandler) }, AFTER, "/", "text")
     }
 
     public void "adding before filters process the correct routes" () {
         checkMethod ({ before ({} as VoidHandler) }, BEFORE)
         checkMethod ({ before ("/", {} as VoidHandler) }, BEFORE, "/")
-        checkMethod ({ before ("/", "text", {} as VoidHandler) }, BEFORE, "/", "text")
     }
 
     public void "adding delete routes process the correct routes" () {
         checkMethod ({ delete ("/", {} as Handler) }, DELETE, "/")
         checkMethod ({ delete ("/", {} as VoidHandler) }, DELETE, "/")
-        checkMethod ({ delete ("/", "text", {} as Handler) }, DELETE, "/", "text")
-        checkMethod ({ delete ("/", "text", {} as VoidHandler) }, DELETE, "/", "text")
     }
 
     public void "adding get routes process the correct routes" () {
         checkMethod ({ get ("/", {} as Handler) }, GET, "/")
         checkMethod ({ get ("/", {} as VoidHandler) }, GET, "/")
-        checkMethod ({ get ("/", "text", {} as Handler) }, GET, "/", "text")
-        checkMethod ({ get ("/", "text", {} as VoidHandler) }, GET, "/", "text")
     }
 
     public void "adding head routes process the correct routes" () {
         checkMethod ({ head ("/", {} as Handler) }, HEAD, "/")
         checkMethod ({ head ("/", {} as VoidHandler) }, HEAD, "/")
-        checkMethod ({ head ("/", "text", {} as Handler) }, HEAD, "/", "text")
-        checkMethod ({ head ("/", "text", {} as VoidHandler) }, HEAD, "/", "text")
     }
 
     public void "adding options routes process the correct routes" () {
         checkMethod ({ options ("/", {} as Handler) }, OPTIONS, "/")
         checkMethod ({ options ("/", {} as VoidHandler) }, OPTIONS, "/")
-        checkMethod ({ options ("/", "text", {} as Handler) }, OPTIONS, "/", "text")
-        checkMethod ({ options ("/", "text", {} as VoidHandler) }, OPTIONS, "/", "text")
     }
 
     public void "adding patch routes process the correct routes" () {
         checkMethod ({ patch ("/", {} as Handler) }, PATCH, "/")
         checkMethod ({ patch ("/", {} as VoidHandler) }, PATCH, "/")
-        checkMethod ({ patch ("/", "text", {} as Handler) }, PATCH, "/", "text")
-        checkMethod ({ patch ("/", "text", {} as VoidHandler) }, PATCH, "/", "text")
     }
 
     public void "adding post routes process the correct routes" () {
         checkMethod ({ post ("/", {} as Handler) }, POST, "/")
         checkMethod ({ post ("/", {} as VoidHandler) }, POST, "/")
-        checkMethod ({ post ("/", "text", {} as Handler) }, POST, "/", "text")
-        checkMethod ({ post ("/", "text", {} as VoidHandler) }, POST, "/", "text")
     }
 
     public void "adding put routes process the correct routes" () {
         checkMethod ({ put ("/", {} as Handler) }, PUT, "/")
         checkMethod ({ put ("/", {} as VoidHandler) }, PUT, "/")
-        checkMethod ({ put ("/", "text", {} as Handler) }, PUT, "/", "text")
-        checkMethod ({ put ("/", "text", {} as VoidHandler) }, PUT, "/", "text")
     }
 
     public void "adding trace routes process the correct routes" () {
         checkMethod ({ trace ("/", {} as Handler) }, TRACE, "/")
         checkMethod ({ trace ("/", {} as VoidHandler) }, TRACE, "/")
-        checkMethod ({ trace ("/", "text", {} as Handler) }, TRACE, "/", "text")
-        checkMethod ({ trace ("/", "text", {} as VoidHandler) }, TRACE, "/", "text")
     }
 
     public void "setting a different host changes default server" () {
@@ -152,16 +129,11 @@ import static sabina.Sabina.*
     }
 
     private synchronized void checkMethod (
-        Runnable methodLambda,
-        HttpMethod method,
-        String path = Route.ALL_PATHS,
-        String acceptType = method == AFTER || method == BEFORE?
-            "text/html" : DEFAULT_ACCEPT_TYPE) {
+        Runnable methodLambda, HttpMethod method, String path = Route.ALL_PATHS) {
 
         routeCallback = {
             assert it.method == method
             assert it.path.equals (path)
-            assert it.acceptType.equals (acceptType)
             assert it.handler != null
         }
 

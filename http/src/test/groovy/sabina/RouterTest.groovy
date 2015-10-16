@@ -35,13 +35,13 @@ import static sabina.HttpMethod.*
                 }
 
                 @Override public RouteMatch findTarget (
-                    HttpMethod httpMethod, String path, String acceptType) {
+                    HttpMethod httpMethod, String path) {
 
                     throw new UnsupportedOperationException ()
                 }
 
                 @Override public List<RouteMatch> findTargets (
-                    HttpMethod httpMethod, String path, String acceptType) {
+                    HttpMethod httpMethod, String path) {
 
                     throw new UnsupportedOperationException ()
                 }

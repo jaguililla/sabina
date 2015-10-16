@@ -30,7 +30,7 @@ class MyMessage {
 
 class TransformerExample {
     public static void main (String args[]) {
-        get ("/hello", "application/json", (Handler)it -> toJson (new MyMessage ("Hello World")));
+        get ("/hello", (Handler)it -> toJson (new MyMessage ("Hello World")));
         start ();
     }
 }

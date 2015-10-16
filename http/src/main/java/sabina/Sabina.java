@@ -32,8 +32,6 @@ public final class Sabina {
     public static void before (VoidHandler h) { SERVER.before (h); }
     public static void after (String p, VoidHandler h) { SERVER.after (p, h); }
     public static void before (String p, VoidHandler h) { SERVER.before (p, h); }
-    public static void after (String p, String ct, VoidHandler h) { SERVER.after (p, ct, h); }
-    public static void before (String p, String ct, VoidHandler h) { SERVER.before (p, ct, h); }
 
     /*
      * Routes
@@ -54,22 +52,6 @@ public final class Sabina {
     public static void put (String p, VoidHandler h) { SERVER.put (p, h); }
     public static void trace (String p, Handler h) { SERVER.trace (p, h); }
     public static void trace (String p, VoidHandler h) { SERVER.trace (p, h); }
-    public static void delete (String p, String ct, Handler h) { SERVER.delete (p, ct, h); }
-    public static void delete (String p, String ct, VoidHandler h) { SERVER.delete (p, ct, h); }
-    public static void get (String p, String ct, Handler h) { SERVER.get (p, ct, h); }
-    public static void get (String p, String ct, VoidHandler h) { SERVER.get (p, ct, h); }
-    public static void head (String p, String ct, Handler h) { SERVER.head (p, ct, h); }
-    public static void head (String p, String ct, VoidHandler h) { SERVER.head (p, ct, h); }
-    public static void options (String p, String ct, Handler h) { SERVER.options (p, ct, h); }
-    public static void options (String p, String ct, VoidHandler h) { SERVER.options (p, ct, h); }
-    public static void patch (String p, String ct, Handler h) { SERVER.patch (p, ct, h); }
-    public static void patch (String p, String ct, VoidHandler h) { SERVER.patch (p, ct, h); }
-    public static void post (String p, String ct, Handler h) { SERVER.post (p, ct, h); }
-    public static void post (String p, String ct, VoidHandler h) { SERVER.post (p, ct, h); }
-    public static void put (String p, String ct, Handler h) { SERVER.put (p, ct, h); }
-    public static void put (String p, String ct, VoidHandler h) { SERVER.put (p, ct, h); }
-    public static void trace (String p, String ct, Handler h) { SERVER.trace (p, ct, h); }
-    public static void trace (String p, String ct, VoidHandler h) { SERVER.trace (p, ct, h); }
 
     public static <T extends Exception> void exception (
         Class<T> exceptionClass, BiConsumer<T, Request> handler) {
