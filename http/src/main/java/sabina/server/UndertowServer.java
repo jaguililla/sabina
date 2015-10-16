@@ -182,9 +182,12 @@ final class UndertowServer implements Backend {
             .addFilter (new MatcherFilterInfo ("router", filter))
             .addFilterUrlMapping ("router", "/*", REQUEST);
 
+        /*
+         * TODO Fix this, search for resource if no route match
+         */
         if (!isEmpty (aStaticFilesRoute) || !isEmpty (aExternalFilesLocation))
             deployment.addInnerHandlerChainWrapper (
-                handler -> predicate (suffixes (".jpg", ".png", ".css", ".html", ".js"),
+                handler -> predicate (suffixes (".jpg", ".png", ".css", ".html", ".js", ".svg"),
                     resource (new ChainResourceManager (aStaticFilesRoute, aExternalFilesLocation)),
                     handler
                 )
