@@ -20,8 +20,6 @@ apply plugin: 'war'
 
 defaultTasks 'check'
 
-version = "1.0.0"
-group = "sabina"
 description = "Sinatra web framework's benchmark"
 mainClassName = "sabina.benchmark.Application"
 
