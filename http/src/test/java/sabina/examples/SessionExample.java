@@ -15,17 +15,17 @@
 package sabina.examples;
 
 import static java.lang.String.format;
-import static sabina.Sabina.*;
+import sabina.Application;
 
 /**
  * Demonstrate the use of sessions inside Sabina.
  *
  * @author Per Wendel
  */
-final class SessionExample {
+final class SessionExample extends Application {
     private static final String SESSION_NAME = "username";
 
-    public static void main (String[] args) {
+    SessionExample () {
         get ("/", it ->
             it.session ().<String>attribute (SESSION_NAME) == null?
                 "<html>" +
@@ -57,5 +57,9 @@ final class SessionExample {
         });
 
         start ();
+    }
+
+    public static void main (String[] args) {
+        new SessionExample ();
     }
 }

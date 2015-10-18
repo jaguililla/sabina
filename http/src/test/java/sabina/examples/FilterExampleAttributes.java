@@ -16,15 +16,16 @@ package sabina.examples;
 
 import static java.lang.String.format;
 import static java.lang.System.out;
-import static sabina.Sabina.*;
+
+import sabina.Application;
 
 /**
  * Example showing the use of attributes.
  *
  * @author Per Wendel
  */
-final class FilterExampleAttributes {
-    public static void main (String[] args) {
+final class FilterExampleAttributes extends Application {
+    FilterExampleAttributes () {
         get ("/hi", it -> {
             it.attribute ("foo", "bar");
             return "hi";
@@ -41,5 +42,9 @@ final class FilterExampleAttributes {
         });
 
         start ();
+    }
+
+    public static void main (String... args) {
+        new FilterExampleAttributes ();
     }
 }

@@ -14,15 +14,15 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.*;
+import sabina.Application;
 
 /**
  * Example showing how to serve static resources.
  *
  * @author Per Wendel
  */
-final class StaticResources {
-    public static void main (String[] args) {
+final class StaticResources extends Application {
+    StaticResources () {
         get ("/hello", it -> "Hello World!");
 
         /*
@@ -31,5 +31,9 @@ final class StaticResources {
          */
         resourcesLocation ("/public");
         start ();
+    }
+
+    public static void main (String[] args) {
+        new StaticResources ();
     }
 }

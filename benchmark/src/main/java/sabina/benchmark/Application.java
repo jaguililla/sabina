@@ -20,17 +20,13 @@ import static sabina.content.JsonContent.toJson;
 import static sabina.view.MustacheView.renderMustache;
 
 import sabina.Request;
-import sabina.Sabina;
-import sabina.server.MatcherFilter;
-import sabina.util.Io;
 
 import java.util.*;
 import java.util.Date;
-import javax.servlet.FilterConfig;
 import javax.servlet.annotation.WebFilter;
 
 @WebFilter ("/*")
-public final class Application extends MatcherFilter {
+public final class Application extends sabina.Application {
     static final String SETTINGS_RESOURCE = "/server.properties";
     static final int DB_ROWS = 10000;
 
@@ -135,31 +131,37 @@ public final class Application extends MatcherFilter {
         it.response.addDateHeader ("Date", new Date ().getTime ());
     }
 
-    public static void main (String[] args) {
-        Sabina.get ("/json", Application::getJson);
-        Sabina.get ("/db", Application::getDb);
-        Sabina.get ("/query", Application::getDb);
-        Sabina.get ("/fortune", Application::getFortunes);
-        Sabina.get ("/update", Application::getUpdates);
-        Sabina.get ("/plaintext", Application::getPlaintext);
-        Sabina.after (Application::addCommonHeaders);
-
-        Properties settings = loadConfiguration ();
-        Sabina.host (settings.getProperty ("web.host"));
-        Sabina.port (settings.getProperty ("web.port"));
-        Sabina.start ();
-    }
-
-    @Override public void init (FilterConfig filterConfig) {
-        // Web always uses Mongo because connection pool configuration problems
-        repository = new MongoDbRepository (loadConfiguration ());
-
+    public Application () {
         get ("/json", Application::getJson);
         get ("/db", Application::getDb);
         get ("/query", Application::getDb);
         get ("/fortune", Application::getFortunes);
         get ("/update", Application::getUpdates);
         get ("/plaintext", Application::getPlaintext);
-        after (Application::addCommonHeaders); // TODO Is this required inside a server?
+        after (Application::addCommonHeaders);
+
+        Properties settings = loadConfiguration ();
+
+        bind (settings.getProperty ("web.host"));
+        port (parseInt (settings.getProperty ("web.port")));
+
+        start ();
     }
+
+    public static void main (String[] args) {
+        new Application ();
+    }
+
+//    @Override public void init (FilterConfig filterConfig) {
+//        // Web always uses Mongo because connection pool configuration problems
+//        repository = new MongoDbRepository (loadConfiguration ());
+//
+//        get ("/json", Application::getJson);
+//        get ("/db", Application::getDb);
+//        get ("/query", Application::getDb);
+//        get ("/fortune", Application::getFortunes);
+//        get ("/update", Application::getUpdates);
+//        get ("/plaintext", Application::getPlaintext);
+//        after (Application::addCommonHeaders); // TODO Is this required inside a server?
+//    }
 }

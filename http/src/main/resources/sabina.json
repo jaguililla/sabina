@@ -1,0 +1,25 @@
+/*
+ *
+ */
+
+// Comment
+{
+    sabina: {
+        version: "${project.version}",
+        port: 4567,
+        bind: "0.0.0.0",
+
+        keystore_file: null,
+        keystore_password: null,
+        truststore_file: null,
+        truststore_password: null,
+
+        resources_location: null,
+        files_location: null,
+
+        backend: "undertow",
+
+        banner: "banner.txt"
+    }
+}
+

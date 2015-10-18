@@ -15,7 +15,6 @@
 package sabina.benchmark;
 
 import static org.apache.http.client.fluent.Request.Get;
-import static sabina.Sabina.stop;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,12 +37,14 @@ import org.testng.annotations.Test;
     private static final String ENDPOINT = "http://localhost:5050";
     private static final Gson GSON = new Gson ();
 
+    private static Application application;
+
     @BeforeClass public void setup () throws IOException {
-        Application.main (null);
+        application = new Application ();
     }
 
     @AfterClass public void close () {
-        stop ();
+        application.stop ();
     }
 
     public void json () throws IOException {

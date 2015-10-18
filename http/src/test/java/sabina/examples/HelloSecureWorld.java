@@ -14,16 +14,20 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.*;
+import sabina.Application;
 
 /**
  * You'll need to provide a JKS keystore as arg 0 and its password as arg 1.
  */
-final class HelloSecureWorld {
-    public static void main (String[] args) {
+final class HelloSecureWorld extends Application {
+    HelloSecureWorld (String keystorePath, String keystorePassword) {
         get ("/hello", it -> "Hello Secure World!");
 
-        secure (args[0], args[1]);
+        secure (keystorePath, keystorePassword);
         start ();
+    }
+
+    public static void main (String[] args) {
+        new HelloSecureWorld (args[0], args[1]);
     }
 }

@@ -241,6 +241,25 @@ public final class Server implements Router {
         showBanner ();
     }
 
+    public void start (String port) {
+        start (null, parseInt (port));
+    }
+
+    public void start (int port) {
+        start (null, port);
+    }
+
+    public void start (String bind, String port) {
+        start (bind, parseInt (port));
+    }
+
+    public void start (String bind, int port) {
+        if (bind != null)
+            bind (bind);
+        port (port);
+        start ();
+    }
+
     private void showBanner () {
         String banner = read (CONFIGURATION.getString ("sabina.banner"));
 

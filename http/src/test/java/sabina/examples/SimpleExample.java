@@ -14,15 +14,19 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.*;
+import sabina.Application;
 
 /**
  * A simple example just showing some basic functionality.
  *
  * @author Per Wendel
  */
-final class SimpleExample {
+final class SimpleExample extends Application {
     public static void main (String[] args) {
+        new SimpleExample ();
+    }
+
+    SimpleExample () {
         get ("/hello", it -> "Hello World!");
 
         post ("/hello", it -> "Hello World: " + it.body ());

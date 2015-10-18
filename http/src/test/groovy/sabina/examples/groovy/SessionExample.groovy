@@ -14,11 +14,9 @@
 
 package sabina.examples.groovy
 
-import static sabina.Sabina.start
-
 import sabina.Request
 import sabina.Router
-import sabina.Sabina
+import sabina.Application
 
 import static sabina.util.Configuration.configuration
 import static sabina.util.Configuration.parameters
@@ -28,7 +26,7 @@ import static sabina.util.Configuration.parameters
  *
  * @author Per Wendel
  */
-final class SessionExample {
+final class SessionExample extends Application {
     private static final String SESSION_NAME = "username"
 
     static {
@@ -37,8 +35,8 @@ final class SessionExample {
         }
     }
 
-    static get (String path, Closure<Object> handler) {
-        Sabina.get (path, new Router.Handler () {
+    void get (String path, Closure<Object> handler) {
+        super.get (path, new Router.Handler () {
             @Override Object apply (Request request) {
                 handler.delegate = request
                 handler (request)
@@ -46,8 +44,8 @@ final class SessionExample {
         })
     }
 
-    static post (String path, Closure<Object> handler) {
-        Sabina.post (path, new Router.Handler () {
+    void post (String path, Closure<Object> handler) {
+        super.post (path, new Router.Handler () {
             @Override Object apply (Request request) {
                 handler.delegate = request
                 handler (request)
@@ -73,7 +71,7 @@ final class SessionExample {
             "<html><body>Hello, ${sessionName}!</body></html>"
     }
 
-    static void main (String... args) {
+    SessionExample () {
         configuration ().load (
             parameters ("--parameter1", "value", "--argument2", "another value")
         )
@@ -110,5 +108,9 @@ final class SessionExample {
         }
 
         start ()
+    }
+
+    static void main (String... args) {
+        new SessionExample ();
     }
 }

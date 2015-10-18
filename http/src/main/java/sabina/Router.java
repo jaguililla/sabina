@@ -41,18 +41,18 @@ public interface Router {
      */
     default void addRoute (Route action) { getMatcher ().processRoute (action); }
 
-    default void add (HttpMethod m, Handler h) {
+    default void on (HttpMethod m, Handler h) {
         addRoute (new Route (m, h));
     }
 
-    default void add (HttpMethod m, String p, Handler h) {
+    default void on (HttpMethod m, String p, Handler h) {
         addRoute (new Route (m, p, h));
     }
 
     default Handler wrap (VoidHandler h) {
         return request -> {
             h.accept (request);
-            return "";
+            return Void.TYPE;
         };
     }
 
@@ -71,28 +71,28 @@ public interface Router {
     /*
      * Filters
      */
-    default void after (VoidHandler h) { add (AFTER, wrap (h)); }
-    default void before (VoidHandler h) { add (BEFORE, wrap (h)); }
-    default void after (String p, VoidHandler h) { add (AFTER, p, wrap (h)); }
-    default void before (String p, VoidHandler h) { add (BEFORE, p, wrap (h)); }
+    default void after (VoidHandler h) { on (AFTER, wrap (h)); }
+    default void before (VoidHandler h) { on (BEFORE, wrap (h)); }
+    default void after (String p, VoidHandler h) { on (AFTER, p, wrap (h)); }
+    default void before (String p, VoidHandler h) { on (BEFORE, p, wrap (h)); }
 
     /*
      * Routes
      */
-    default void delete (String p, Handler h) { add (DELETE, p, h); }
+    default void delete (String p, Handler h) { on (DELETE, p, h); }
     default void delete (String p, VoidHandler h) { delete (p, wrap (h)); }
-    default void get (String p, Handler h) { add (GET, p, h); }
+    default void get (String p, Handler h) { on (GET, p, h); }
     default void get (String p, VoidHandler h) { get (p, wrap (h)); }
-    default void head (String p, Handler h) { add (HEAD, p, h); }
+    default void head (String p, Handler h) { on (HEAD, p, h); }
     default void head (String p, VoidHandler h) { head (p, wrap (h)); }
-    default void options (String p, Handler h) { add (OPTIONS, p, h); }
+    default void options (String p, Handler h) { on (OPTIONS, p, h); }
     default void options (String p, VoidHandler h) { options (p, wrap (h)); }
-    default void patch (String p, Handler h) { add (PATCH, p, h); }
+    default void patch (String p, Handler h) { on (PATCH, p, h); }
     default void patch (String p, VoidHandler h) { patch (p, wrap (h)); }
-    default void post (String p, Handler h) { add (POST, p, h); }
+    default void post (String p, Handler h) { on (POST, p, h); }
     default void post (String p, VoidHandler h) { post (p, wrap (h)); }
-    default void put (String p, Handler h) { add (PUT, p, h); }
+    default void put (String p, Handler h) { on (PUT, p, h); }
     default void put (String p, VoidHandler h) { put (p, wrap (h)); }
-    default void trace (String p, Handler h) { add (TRACE, p, h); }
+    default void trace (String p, Handler h) { on (TRACE, p, h); }
     default void trace (String p, VoidHandler h) { trace (p, wrap (h)); }
 }

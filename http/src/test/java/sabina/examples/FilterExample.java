@@ -14,12 +14,10 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import sabina.Route;
+import sabina.Application;
 
 /**
  * Example showing a very simple (and stupid) autentication filter that is executed before all
@@ -36,10 +34,10 @@ import sabina.Route;
  *
  * @author Per Wendel
  */
-final class FilterExample {
-    private static Map<String, String> usernamePasswords = new HashMap<> ();
+final class FilterExample extends Application {
+    private Map<String, String> usernamePasswords = new HashMap<> ();
 
-    public static void main (String[] args) {
+    FilterExample () {
         usernamePasswords.put ("foo", "bar");
         usernamePasswords.put ("admin", "admin");
 
@@ -59,5 +57,9 @@ final class FilterExample {
         after ("/hello", it -> it.header ("sabina", "added by after-filter"));
 
         start ();
+    }
+
+    public static void main (String[] args) {
+        new FilterExample ();
     }
 }

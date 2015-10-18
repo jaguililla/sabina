@@ -136,25 +136,6 @@ import sabina.route.RouteMatch
         }
     }
 
-    /**
-     * TODO Fix bad cases
-     */
-    public void "splat returns the corresponding URL part" () {
-        assert createRequest ("/ab/*", "/ab").splat () == []
-        assert createRequest ("/ab/*", "/ab/").splat () == []
-
-        assert createRequest ("/ab/*", "/ab/cdef").splat () == [ "cdef" ]
-        assert createRequest ("/ab/*", "/ab/cd/ef").splat () == [ "cd/ef" ]
-
-//        assert createRequest ("/ab/*/cd/*", "/ab/cd/ef").splat () == [ "ef" ]
-        assert createRequest ("/ab/*/cd/*", "/ab/gh/cd/ef").splat () == [ "gh", "ef" ]
-
-//        assert createRequest ("/ab/*/cd/*/ef", "/ab/cd/gh/ef").splat () == [ "gh" ]
-        assert createRequest ("/ab/*/cd/*/ef", "/ab/gh/cd/ij/ef").splat () == [ "gh", "ij" ]
-
-//        assert createRequest ("/ab/*/cd/*/ef", "/ab/cd/fg/ef").splat () == [ "fg" ]
-    }
-
     private static Request createRequest (String route = "/", String request = "/") {
         RouteMatch match = new RouteMatch (new Route (AFTER, route, { "" } as Handler), request)
         return new Request (match, [] as HttpServletRequest, [] as HttpServletResponse)

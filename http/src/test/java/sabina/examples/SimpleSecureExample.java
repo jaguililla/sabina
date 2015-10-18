@@ -14,7 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.*;
+import sabina.Application;
 
 /**
  * A simple example just showing some basic functionality You'll need to provide a JKS keystore
@@ -23,8 +23,12 @@ import static sabina.Sabina.*;
  * @author Peter Nicholls, based on (practically identical to in fact) {@link
  *         SimpleExample} by Per Wendel
  */
-final class SimpleSecureExample {
+final class SimpleSecureExample extends Application {
     public static void main (String[] args) {
+        new SimpleSecureExample (args[0], args[1]);
+    }
+
+    SimpleSecureExample (String keystorePath, String keystorePassword) {
         get ("/hello", it -> "Hello Secure World!");
 
         post ("/hello", it -> "Hello Secure World: " + it.body ());
@@ -53,7 +57,7 @@ final class SimpleSecureExample {
 
         get ("/", it -> "root");
 
-        secure (args[0], args[1]);
+        secure (keystorePath, keystorePassword);
         start (5678);
     }
 }

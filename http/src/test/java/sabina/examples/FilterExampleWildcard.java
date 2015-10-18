@@ -14,7 +14,7 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.*;
+import sabina.Application;
 
 /**
  * Example showing the use of wildcards in paths. The filter will match any path starting with
@@ -22,9 +22,13 @@ import static sabina.Sabina.*;
  *
  * @author Per Wendel
  */
-final class FilterExampleWildcard {
-    public static void main (String[] args) {
+final class FilterExampleWildcard extends Application {
+    FilterExampleWildcard () {
         before ("/protected/*", it -> it.halt (401, "Go Away!"));
         start ();
+    }
+
+    public static void main (String[] args) {
+        new FilterExampleWildcard ();
     }
 }

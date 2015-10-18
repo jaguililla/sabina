@@ -14,14 +14,18 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.*;
+import sabina.Application;
 import static sabina.view.FreeMarkerView.renderFreeMarker;
 
 import java.util.HashMap;
 import java.util.Map;
 
-class FreeMarkerExample {
+class FreeMarkerExample extends Application {
     public static void main (String args[]) {
+        new FreeMarkerExample ();
+    }
+
+    FreeMarkerExample () {
         get ("/hello", it -> {
             Map<String, Object> attributes = new HashMap<> ();
             attributes.put ("message", "Hello World");

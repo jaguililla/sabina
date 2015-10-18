@@ -60,7 +60,6 @@ public final class Request {
 
     public final Response response;
     private final Map<String, String> params;
-    private final List<String> splat;
     private final HttpServletRequest servletRequest;
 
     /* Lazy loaded stuff */
@@ -88,7 +87,6 @@ public final class Request {
 
         final Entry<Map<String, String>, List<String>> params = getParams (requestList, matchedList);
         this.params = params.getKey ();
-        this.splat = params.getValue ();
     }
 
     private Entry<Map<String, String>, List<String>> getParams (
@@ -166,13 +164,6 @@ public final class Request {
         return param.startsWith (":")?
             params.get (param.toLowerCase ()) :
             params.get (":" + param.toLowerCase ());
-    }
-
-    /**
-     * @return an array containing the splat (wildcard) parameters.
-     */
-    public List<String> splat () {
-        return splat;
     }
 
     /**

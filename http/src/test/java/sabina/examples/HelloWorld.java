@@ -14,15 +14,20 @@
 
 package sabina.examples;
 
-import static sabina.Sabina.*;
+import sabina.Application;
 
 /**
  * The class name says everything.
  *
  * @author Per Wendel
  */
-final class HelloWorld {
+final class HelloWorld extends Application {
+    HelloWorld () {
+        get ("/", it -> "Hello World!");
+        start ();
+    }
+
     public static void main (String[] args) {
-        serve (it -> "Hello World!");
+        new HelloWorld ();
     }
 }

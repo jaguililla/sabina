@@ -150,8 +150,6 @@ import sabina.Server;
     @Test(dataProvider = "scenarios")
     public void getRoot (TestScenario testScenario) { Generic.getRoot (testScenario); }
     @Test(dataProvider = "scenarios")
-    public void paramAndWild (TestScenario testScenario) { Generic.paramAndWild (testScenario); }
-    @Test(dataProvider = "scenarios")
     public void echoParam1 (TestScenario testScenario) { Generic.echoParam1 (testScenario); }
     @Test(dataProvider = "scenarios")
     public void echoParam2 (TestScenario testScenario) { Generic.echoParam2 (testScenario); }

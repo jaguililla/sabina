@@ -1,7 +1,6 @@
 package course;
 
 import static org.slf4j.LoggerFactory.getLogger;
-import static sabina.Sabina.*;
 import static sabina.view.FreeMarkerView.renderFreeMarker;
 
 import java.io.IOException;
@@ -18,6 +17,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.bson.Document;
 import org.slf4j.Logger;
+import sabina.Application;
 import sabina.Request;
 
 /**
@@ -27,7 +27,7 @@ import sabina.Request;
  * <p>
  * It is also the entry point into the web application.
  */
-public class BlogController {
+public class BlogController extends Application {
     private static final Logger LOG = getLogger (BlogController.class);
 
     public static void main (String[] args) throws IOException {
