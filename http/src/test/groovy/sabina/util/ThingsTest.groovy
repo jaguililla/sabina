@@ -45,4 +45,9 @@ import static sabina.util.Things.printHash
         assert printInstance (this) ==~ /ThingsTest@\d*/
         printHash (false)
     }
+
+    public void "equal behaves the same as Objects.equals" () {
+        assert equal ("str", "str")
+        assert equal ("str", "str") == Objects.equals ("str", "str")
+    }
 }
