@@ -107,8 +107,10 @@ public abstract class Application implements Router {
      * keystore
      * @param truststorePassword the trust store password
      */
-    public void secure (String keystoreFile, String keystorePassword, String truststoreFile,
-        String truststorePassword) {
+    public void secure (
+        String keystoreFile, String keystorePassword,
+        String truststoreFile, String truststorePassword) {
+
         server.secure (keystoreFile, keystorePassword, truststoreFile, truststorePassword);
     }
 

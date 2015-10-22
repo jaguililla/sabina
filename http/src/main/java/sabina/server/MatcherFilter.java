@@ -116,7 +116,7 @@ public class MatcherFilter implements Filter, Router {
 
             bodyContent = onFilter (AFTER, httpReq, httpRes, uri, bodyContent);
         }
-        catch (HaltException e) {
+        catch (EndException e) {
             if (loggable)
                 LOG.fine ("halt performed");
             httpRes.setStatus (e.statusCode);
@@ -181,7 +181,7 @@ public class MatcherFilter implements Filter, Router {
                 aBodyContent = result;
             }
         }
-        catch (HaltException hEx) {
+        catch (EndException hEx) {
             throw hEx;
         }
         catch (Exception e) {

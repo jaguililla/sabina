@@ -508,40 +508,40 @@ public final class Request {
 
     /**
      * Immediately stops a request within a filter or route
-     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * NOTE: When using this don't catch exceptions of type EndException, or if catched,
      * re-throw otherwise halt will not work.
      */
-    public void halt () { throw new HaltException (); }
+    public void halt () { throw new EndException (); }
 
     /**
      * Immediately stops a request within a filter or route with specified status code
-     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * NOTE: When using this don't catch exceptions of type EndException, or if catched,
      * re-throw otherwise halt will not work.
      *
      * @param status the status code.
      */
-    public void halt (final int status) { throw new HaltException (status); }
+    public void halt (final int status) { throw new EndException (status); }
 
     /**
      * Immediately stops a request within a filter or route with specified body content
-     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * NOTE: When using this don't catch exceptions of type EndException, or if catched,
      * re-throw otherwise halt will not work.
      *
      * @param body The body content.
      */
-    public void halt (final String body) { throw new HaltException (body); }
+    public void halt (final String body) { throw new EndException (body); }
 
     /**
      * Immediately stops a request within a filter or route with specified status code and body
      * content.
-     * NOTE: When using this don't catch exceptions of type HaltException, or if catched,
+     * NOTE: When using this don't catch exceptions of type EndException, or if catched,
      * re-throw otherwise halt will not work.
      *
      * @param status The status code.
      * @param body The body content.
      */
     public void halt (final int status, final String body) {
-        throw new HaltException (status, body);
+        throw new EndException (status, body);
     }
 
     /*

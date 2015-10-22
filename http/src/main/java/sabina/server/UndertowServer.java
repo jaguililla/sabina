@@ -38,11 +38,7 @@ import javax.servlet.ServletException;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.resource.*;
-import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.api.DeploymentManager;
-import io.undertow.servlet.api.FilterInfo;
-import io.undertow.servlet.api.InstanceFactory;
-import io.undertow.servlet.api.InstanceHandle;
+import io.undertow.servlet.api.*;
 
 final class MatcherFilterInfo extends FilterInfo implements Cloneable {
     private final MatcherFilter matcherFilter;

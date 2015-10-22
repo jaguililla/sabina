@@ -34,7 +34,7 @@ import sabina.Router.Handler;
  * @author Per Wendel
  */
 public final class Route {
-    public static final String ALL_PATHS = "+/*paths";
+    public static final String ALL_PATHS = "";
 
     public final String path;
     public final HttpMethod method;
@@ -62,7 +62,7 @@ public final class Route {
      * @param handler .
      */
     public Route (final HttpMethod method, final String path, final Handler handler) {
-        checkArgument (!isEmpty (path));
+        checkArgument (path != null);
         checkArgument (handler != null && method != null);
 
         this.path = path;

@@ -30,9 +30,11 @@ public class RouteTest {
         new Route (AFTER, null, { "" } as Handler)
     }
 
-    @Test (expectedExceptions = IllegalArgumentException)
     public void routeWithEmptyPath () {
-        new Route (AFTER, "", { "" } as Handler)
+        Route action = new Route (AFTER, "", { "" } as Handler)
+        assert action.path.equals ("")
+        assert action.method.equals (AFTER)
+        assert action.toString ().equals ("Route: AFTER ")
     }
 
     @Test public void testToString () throws Exception {

@@ -23,10 +23,9 @@ import sabina.Request;
 
 import java.util.*;
 import java.util.Date;
-import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebListener;
 
-@WebFilter ("/*")
-public final class Application extends sabina.Application {
+@WebListener public final class Application extends sabina.Application {
     static final String SETTINGS_RESOURCE = "/server.properties";
     static final int DB_ROWS = 10000;
 
@@ -49,7 +48,7 @@ public final class Application extends sabina.Application {
     }
 
     static Repository loadRepository () {
-        switch (getProperty ("sabina.benchmark.repository", "mysql")) {
+        switch (getProperty ("sabina.benchmark.repository", "mongodb")) {
             case "mongodb":
                 return new MongoDbRepository (loadConfiguration ());
             case "mysql":
@@ -58,7 +57,7 @@ public final class Application extends sabina.Application {
         }
     }
 
-    private static Object getDb (Request it) {
+    private Object getDb (Request it) {
         try {
             final World[] worlds = repository.getWorlds (getQueries (it), false);
             it.response.type (CONTENT_TYPE_JSON);
@@ -70,7 +69,7 @@ public final class Application extends sabina.Application {
         }
     }
 
-    private static Object getFortunes (Request it) {
+    private Object getFortunes (Request it) {
         try {
             List<Fortune> fortunes = repository.getFortunes ();
             fortunes.add (new Fortune (0, "Additional fortune added at request time."));
@@ -85,7 +84,7 @@ public final class Application extends sabina.Application {
         }
     }
 
-    private static Object getUpdates (Request it) {
+    private Object getUpdates (Request it) {
         try {
             World[] worlds = repository.getWorlds (getQueries (it), true);
             it.response.type (CONTENT_TYPE_JSON);
@@ -97,7 +96,7 @@ public final class Application extends sabina.Application {
         }
     }
 
-    private static int getQueries (final Request request) {
+    private int getQueries (final Request request) {
         try {
             String parameter = request.queryParams (QUERIES_PARAM);
             if (parameter == null)
@@ -116,29 +115,23 @@ public final class Application extends sabina.Application {
         }
     }
 
-    private static Object getPlaintext (Request it) {
+    private Object getPlaintext (Request it) {
         it.response.type (CONTENT_TYPE_TEXT);
         return MESSAGE;
     }
 
-    private static Object getJson (Request it) {
+    private Object getJson (Request it) {
         it.response.type (CONTENT_TYPE_JSON);
         return toJson (new Message ());
     }
 
-    private static void addCommonHeaders (Request it) {
+    private void addCommonHeaders (Request it) {
         it.header ("Server", "Undertow/1.1.2");
         it.response.addDateHeader ("Date", new Date ().getTime ());
     }
 
     public Application () {
-        get ("/json", Application::getJson);
-        get ("/db", Application::getDb);
-        get ("/query", Application::getDb);
-        get ("/fortune", Application::getFortunes);
-        get ("/update", Application::getUpdates);
-        get ("/plaintext", Application::getPlaintext);
-        after (Application::addCommonHeaders);
+        routes ();
 
         Properties settings = loadConfiguration ();
 
@@ -152,16 +145,14 @@ public final class Application extends sabina.Application {
         new Application ();
     }
 
-//    @Override public void init (FilterConfig filterConfig) {
-//        // Web always uses Mongo because connection pool configuration problems
-//        repository = new MongoDbRepository (loadConfiguration ());
-//
-//        get ("/json", Application::getJson);
-//        get ("/db", Application::getDb);
-//        get ("/query", Application::getDb);
-//        get ("/fortune", Application::getFortunes);
-//        get ("/update", Application::getUpdates);
-//        get ("/plaintext", Application::getPlaintext);
-//        after (Application::addCommonHeaders); // TODO Is this required inside a server?
-//    }
+//    @Override
+    protected void routes () {
+        get ("/json", this::getJson);
+        get ("/db", this::getDb);
+        get ("/query", this::getDb);
+        get ("/fortune", this::getFortunes);
+        get ("/update", this::getUpdates);
+        get ("/plaintext", this::getPlaintext);
+        after (this::addCommonHeaders);
+    }
 }

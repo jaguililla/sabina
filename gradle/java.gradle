@@ -33,9 +33,7 @@ processResources {
 
 clean << {
     delete "$buildDir"
-    delete "target" // TODO Do not delete benchmark/target
-    delete "*.log" // TODO Do not delete 'log' files
-    delete "log?"
+    delete "${project.projectDir}/logs" // TODO Fix this
 }
 
 task wipe (dependsOn: 'clean') << {

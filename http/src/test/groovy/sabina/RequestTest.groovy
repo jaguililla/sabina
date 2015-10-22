@@ -78,26 +78,26 @@ import sabina.route.RouteMatch
 //        assertTrue (exchange.response != null);
 //    }
 
-    @Test (expectedExceptions = HaltException)
+    @Test (expectedExceptions = EndException)
     public void halt () {
         try {
             Request exchange = createRequest ()
             exchange.halt ()
         }
-        catch (HaltException he) {
+        catch (EndException he) {
             assert he.statusCode == SC_OK
             assert he.body == null
             throw he
         }
     }
 
-    @Test (expectedExceptions = HaltException)
+    @Test (expectedExceptions = EndException)
     public void haltStatus () {
         try {
             Request exchange = createRequest ()
             exchange.halt (SC_ACCEPTED)
         }
-        catch (HaltException he) {
+        catch (EndException he) {
             assert he.statusCode == SC_ACCEPTED
             assert he.body == null
             throw he
@@ -110,26 +110,26 @@ import sabina.route.RouteMatch
         exchange.halt (99)
     }
 
-    @Test (expectedExceptions = HaltException)
+    @Test (expectedExceptions = EndException)
     public void haltBody () {
         try {
             Request exchange = createRequest ()
             exchange.halt ("body")
         }
-        catch (HaltException he) {
+        catch (EndException he) {
             assert he.statusCode == SC_OK
             assert he.body == "body"
             throw he
         }
     }
 
-    @Test (expectedExceptions = HaltException)
+    @Test (expectedExceptions = EndException)
     public void haltStatusAndBody () {
         try {
             Request exchange = createRequest ()
             exchange.halt (SC_ACCEPTED, "body")
         }
-        catch (HaltException he) {
+        catch (EndException he) {
             assert he.statusCode == SC_ACCEPTED
             assert he.body == "body"
             throw he

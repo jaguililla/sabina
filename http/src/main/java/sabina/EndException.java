@@ -21,7 +21,7 @@ import static sabina.util.Checks.checkArgument;
  *
  * @author Per Wendel
  */
-public final class HaltException extends RuntimeException {
+public final class EndException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     private static final int MIN_HTTP_CODE = 100;
@@ -30,19 +30,19 @@ public final class HaltException extends RuntimeException {
     public final int statusCode;
     public final String body;
 
-    HaltException () {
+    EndException () {
         this (HTTP_OK, null);
     }
 
-    HaltException (final int statusCode) {
+    EndException (final int statusCode) {
         this (statusCode, null);
     }
 
-    HaltException (final String body) {
+    EndException (final String body) {
         this (HTTP_OK, body);
     }
 
-    HaltException (final int statusCode, final String body) {
+    EndException (final int statusCode, final String body) {
         checkArgument (statusCode >= MIN_HTTP_CODE, "Invalid HTTP error code: " + statusCode);
         this.statusCode = statusCode;
         this.body = body;
