@@ -19,7 +19,7 @@ import static sabina.HttpMethod.AFTER
 import org.testng.annotations.Test
 import sabina.Router.Handler
 
-public class RouteTest {
+@Test public class RouteTest {
     @Test (expectedExceptions = IllegalArgumentException)
     public void routeWithNullMethod () {
         new Route (null, "path", { "" } as Handler)
@@ -37,7 +37,7 @@ public class RouteTest {
         assert action.toString ().equals ("Route: AFTER ")
     }
 
-    @Test public void testToString () throws Exception {
+    public void testToString () throws Exception {
         Route action = new Route (AFTER, "path", { "" } as Handler)
         assert action.path.equals ("path")
         assert action.method.equals (AFTER)
