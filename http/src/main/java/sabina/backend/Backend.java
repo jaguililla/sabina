@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina.server;
+package sabina.backend;
 
 /**
  * @author Per Wendel

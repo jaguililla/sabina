@@ -17,7 +17,7 @@ package sabina.examples;
 import java.util.HashMap;
 import java.util.Map;
 
-import sabina.Application;
+import sabina.Server;
 
 /**
  * Example showing a very simple (and stupid) autentication filter that is executed before all
@@ -34,7 +34,7 @@ import sabina.Application;
  *
  * @author Per Wendel
  */
-final class FilterExample extends Application {
+final class FilterExample extends Server {
     private Map<String, String> usernamePasswords = new HashMap<> ();
 
     FilterExample () {

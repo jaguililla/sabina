@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina.server;
+package sabina.servlet;
 
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -20,6 +20,7 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Logger.getLogger;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static sabina.FilterOrder.*;
 import static sabina.HttpMethod.*;
 
 import java.io.IOException;
@@ -32,16 +33,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import sabina.*;
-import sabina.route.RouteMatch;
-import sabina.route.RouteMatcher;
-import sabina.route.RouteMatcherFactory;
+import sabina.RouteMatch;
 
 /**
  * Filter for matching of filters and routes.
  *
  * @author Per Wendel
  */
-public class MatcherFilter implements Filter, Router {
+public class MatcherFilter extends Router implements Filter {
     private static final Logger LOG = getLogger (MatcherFilter.class.getName ());
 
     private static final String
@@ -51,17 +50,19 @@ public class MatcherFilter implements Filter, Router {
                 "<h2>404 Not found</h2>The requested route [%s] has not been mapped in Sabina" +
                 "</body></html>";
 
+    public final Router router;
     public final RouteMatcher routeMatcher;
     public final boolean hasOtherHandlers;
     public final String backend;
 
-    boolean handled;
+    public boolean handled;
 
     /**
      * TODO Needed by Undertow to instantiate the filter.
      */
     public MatcherFilter () {
-        routeMatcher = RouteMatcherFactory.create ();
+        router = new Router () {};
+        routeMatcher = new SimpleRouteMatcher (router);
         backend = "undertow";
         hasOtherHandlers = false;
     }
@@ -75,9 +76,10 @@ public class MatcherFilter implements Filter, Router {
      * to let others handlers process the request.
      */
     public MatcherFilter (
-        RouteMatcher routeMatcher, String backend, boolean hasOtherHandlers) {
+        Router routeMatcher, String backend, boolean hasOtherHandlers) {
 
-        this.routeMatcher = routeMatcher;
+        this.router = routeMatcher;
+        this.routeMatcher = new SimpleRouteMatcher (router);
         this.backend = backend;
         this.hasOtherHandlers = hasOtherHandlers;
     }
@@ -170,13 +172,11 @@ public class MatcherFilter implements Filter, Router {
 
         Request request = null;
         try {
-            String result = null;
-            if (!aTarget.isFilter ()) {
-                request = new Request (aMatch, aHttpReq, aHttpRes);
+            request = new Request (aMatch, aHttpReq, aHttpRes);
 
-                Object element = aTarget.handler.apply (request);
-                result = element != null? element.toString () : null;
-            }
+            Object element = aTarget.handler.apply (request);
+            String result = element != null? element.toString () : null;
+
             if (result != null) {
                 aBodyContent = result;
             }
@@ -204,7 +204,7 @@ public class MatcherFilter implements Filter, Router {
      * After and before are the same method except for HttpMethod.after|before
      */
     private String onFilter (
-        final HttpMethod method,
+        final FilterOrder method,
         final HttpServletRequest httpRequest,
         final HttpServletResponse httpResponse,
         final String uri,
@@ -223,8 +223,6 @@ public class MatcherFilter implements Filter, Router {
 
         return bodyContent;
     }
-
-    @Override public RouteMatcher getMatcher () { return routeMatcher; }
 
     @Override public void init (FilterConfig filterConfig) {
         // To be overriden in Servlet Filters

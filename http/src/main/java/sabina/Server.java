@@ -36,10 +36,8 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import sabina.util.*;
 
-import sabina.route.RouteMatcher;
-import sabina.route.RouteMatcherFactory;
-import sabina.server.Backend;
-import sabina.server.BackendFactory;
+import sabina.backend.Backend;
+import sabina.backend.BackendFactory;
 
 /**
  * The main building block of a Sabina application is a set of routes. A route is
@@ -61,7 +59,7 @@ import sabina.server.BackendFactory;
  *
  * @author Per Wendel
  */
-public final class Server implements Router {
+public class Server extends Router {
     private static final Logger LOG = getLogger (Server.class);
 
     /**
@@ -72,8 +70,8 @@ public final class Server implements Router {
      * 5. Program parameters (specified at application startup)
      */
     private static final Configuration CONFIGURATION = configuration ().load (
-        resource ("/sabina.properties"),
-        resource ("/application.properties"),
+        resource ("sabina.properties"),
+        resource ("application.properties"),
         system ("sabina"),
         file ("application.properties")
     );
@@ -92,7 +90,6 @@ public final class Server implements Router {
     private String backend = configuration ().getString ("sabina.backend");
 
     private Backend server;
-    RouteMatcher routeMatcher = RouteMatcherFactory.create ();
 
     public Server () {
         super ();
@@ -107,15 +104,6 @@ public final class Server implements Router {
         this ();
         port (port);
         backend (backend);
-    }
-
-    /**
-     * Backdoor to support Sabina static methods testing.
-     *
-     * @param routeMatcher New routeMatcher
-     */
-    void routeMatcher (RouteMatcher routeMatcher) {
-        this.routeMatcher = routeMatcher;
     }
 
     /**
@@ -227,7 +215,7 @@ public final class Server implements Router {
 
     public void start () {
         new Thread (() -> {
-            server = BackendFactory.create (backend, routeMatcher, hasMultipleHandlers ());
+            server = BackendFactory.create (backend, this, hasMultipleHandlers ());
             server.startUp (
                 bind,
                 port,
@@ -329,8 +317,6 @@ public final class Server implements Router {
         if (isRunning ())
             throw new IllegalStateException ("Can not reset running server");
 
-        routeMatcher = RouteMatcherFactory.create ();
+//        routeMatcher = RouteMatcherFactory.create (); // TODO
     }
-
-    @Override public RouteMatcher getMatcher () { return routeMatcher; }
 }

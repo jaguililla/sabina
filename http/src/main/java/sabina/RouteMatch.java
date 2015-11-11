@@ -12,19 +12,19 @@
  * and limitations under the License.
  */
 
-package sabina.route;
+package sabina;
+
+import sabina.Route;
 
 /**
- * RouteMatcherFactory
- *
  * @author Per Wendel
  */
-public final class RouteMatcherFactory {
-    private RouteMatcherFactory () {
-        throw new IllegalStateException ();
-    }
+public final class RouteMatch {
+    public final Route entry;
+    public final String requestURI;
 
-    public static synchronized RouteMatcher create () {
-        return new SimpleRouteMatcher ();
+    public RouteMatch (Route entry, String path) {
+        this.entry = entry;
+        this.requestURI = path;
     }
 }

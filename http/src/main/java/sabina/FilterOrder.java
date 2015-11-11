@@ -12,19 +12,11 @@
  * and limitations under the License.
  */
 
-package sabina.route;
-
-import sabina.Route;
+package sabina;
 
 /**
  * @author Per Wendel
  */
-public final class RouteMatch {
-    public final Route entry;
-    public final String requestURI;
-
-    public RouteMatch (Route entry, String path) {
-        this.entry = entry;
-        this.requestURI = path;
-    }
+public enum FilterOrder {
+    BEFORE, AFTER
 }

@@ -14,13 +14,13 @@
 
 package sabina.examples;
 
-import sabina.Application;
+import sabina.Server;
 import static sabina.view.FreeMarkerView.renderFreeMarker;
 
 import java.util.HashMap;
 import java.util.Map;
 
-class FreeMarkerExample extends Application {
+class FreeMarkerExample extends Server {
     public static void main (String args[]) {
         new FreeMarkerExample ();
     }

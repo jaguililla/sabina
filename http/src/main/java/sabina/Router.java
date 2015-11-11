@@ -14,42 +14,77 @@
 
 package sabina;
 
+import static sabina.FilterOrder.*;
 import static sabina.HttpMethod.*;
 import static sabina.util.Checks.checkArgument;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import sabina.route.RouteMatcher;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.*;
 
 /**
  * Trait to support router methods in classes with access to a RouteMatcher.
  *
  * @author jamming
  */
-public interface Router {
-    /** This is just a "type alias". */
-    interface Handler extends Function<Request, Object> {}
-    /** This is just a "type alias". */
-    interface VoidHandler extends Consumer<Request> {}
+public abstract class Router {
 
-    RouteMatcher getMatcher ();
+    /** This is just a "type alias". */
+    public interface Handler extends Function<Request, Object> {}
+    /** This is just a "type alias". */
+    public interface VoidHandler extends Consumer<Request> {}
 
-    /**
-     * Parses, validates and adds a route
+    public static final String ALL_PATHS = "";
+
+    /*
+     * TODO Change 'public' for 'private' once refactored
      */
-    default void addRoute (Route action) { getMatcher ().processRoute (action); }
+    public final Map<HttpMethod, List<Route>> routeMap = new HashMap<> ();
+    public final Map<FilterOrder, List<Filter>> filterMap = new HashMap<> ();
 
-    default void on (HttpMethod m, Handler h) {
+    // TODO
+    public void use (String context, Router otherRouter) {
+
+    }
+
+    /** Holds a map of Exception classes and associated handlers. */
+    public final
+    Map<Class<? extends Exception>, BiConsumer<? extends Exception, Request>> exceptionMap =
+        new HashMap<> ();
+
+    private void addRoute (Route action) {
+        HttpMethod method = action.method;
+        if (!routeMap.containsKey (method))
+            routeMap.put (method, new ArrayList<> ());
+        routeMap.get (method).add (action);
+    }
+
+    private void addFilter (Filter action) {
+        FilterOrder order = action.order;
+        if (!filterMap.containsKey (order))
+            filterMap.put (order, new ArrayList<> ());
+        filterMap.get (order).add (action);
+    }
+
+    public void on (FilterOrder m, Handler h) {
+        addFilter (new Filter (m, h));
+    }
+
+    public void on (FilterOrder m, String p, Handler h) {
+        addFilter (new Filter (m, p, h));
+    }
+
+    public void on (HttpMethod m, Handler h) {
         addRoute (new Route (m, h));
     }
 
-    default void on (HttpMethod m, String p, Handler h) {
+    public void on (HttpMethod m, String p, Handler h) {
         addRoute (new Route (m, p, h));
     }
 
-    default Handler wrap (VoidHandler h) {
+    private Handler wrap (VoidHandler h) {
         return request -> {
             h.accept (request);
             return Void.TYPE;
@@ -63,36 +98,36 @@ public interface Router {
      * @param h The handler.
      * @param <T> Exception type.
      */
-    default <T extends Exception> void exception (Class<T> exception, BiConsumer<T, Request> h) {
+    public <T extends Exception> void exception (Class<T> exception, BiConsumer<T, Request> h) {
         checkArgument (h != null);
-        getMatcher ().processFault (exception, h);
+        exceptionMap.put(exception, h);
     }
 
     /*
      * Filters
      */
-    default void after (VoidHandler h) { on (AFTER, wrap (h)); }
-    default void before (VoidHandler h) { on (BEFORE, wrap (h)); }
-    default void after (String p, VoidHandler h) { on (AFTER, p, wrap (h)); }
-    default void before (String p, VoidHandler h) { on (BEFORE, p, wrap (h)); }
+    public void after (VoidHandler h) { on (AFTER, wrap (h)); }
+    public void before (VoidHandler h) { on (BEFORE, wrap (h)); }
+    public void after (String p, VoidHandler h) { on (AFTER, p, wrap (h)); }
+    public void before (String p, VoidHandler h) { on (BEFORE, p, wrap (h)); }
 
     /*
      * Routes
      */
-    default void delete (String p, Handler h) { on (DELETE, p, h); }
-    default void delete (String p, VoidHandler h) { delete (p, wrap (h)); }
-    default void get (String p, Handler h) { on (GET, p, h); }
-    default void get (String p, VoidHandler h) { get (p, wrap (h)); }
-    default void head (String p, Handler h) { on (HEAD, p, h); }
-    default void head (String p, VoidHandler h) { head (p, wrap (h)); }
-    default void options (String p, Handler h) { on (OPTIONS, p, h); }
-    default void options (String p, VoidHandler h) { options (p, wrap (h)); }
-    default void patch (String p, Handler h) { on (PATCH, p, h); }
-    default void patch (String p, VoidHandler h) { patch (p, wrap (h)); }
-    default void post (String p, Handler h) { on (POST, p, h); }
-    default void post (String p, VoidHandler h) { post (p, wrap (h)); }
-    default void put (String p, Handler h) { on (PUT, p, h); }
-    default void put (String p, VoidHandler h) { put (p, wrap (h)); }
-    default void trace (String p, Handler h) { on (TRACE, p, h); }
-    default void trace (String p, VoidHandler h) { trace (p, wrap (h)); }
+    public void delete (String p, Handler h) { on (DELETE, p, h); }
+    public void delete (String p, VoidHandler h) { delete (p, wrap (h)); }
+    public void get (String p, Handler h) { on (GET, p, h); }
+    public void get (String p, VoidHandler h) { get (p, wrap (h)); }
+    public void head (String p, Handler h) { on (HEAD, p, h); }
+    public void head (String p, VoidHandler h) { head (p, wrap (h)); }
+    public void options (String p, Handler h) { on (OPTIONS, p, h); }
+    public void options (String p, VoidHandler h) { options (p, wrap (h)); }
+    public void patch (String p, Handler h) { on (PATCH, p, h); }
+    public void patch (String p, VoidHandler h) { patch (p, wrap (h)); }
+    public void post (String p, Handler h) { on (POST, p, h); }
+    public void post (String p, VoidHandler h) { post (p, wrap (h)); }
+    public void put (String p, Handler h) { on (PUT, p, h); }
+    public void put (String p, VoidHandler h) { put (p, wrap (h)); }
+    public void trace (String p, Handler h) { on (TRACE, p, h); }
+    public void trace (String p, VoidHandler h) { trace (p, wrap (h)); }
 }

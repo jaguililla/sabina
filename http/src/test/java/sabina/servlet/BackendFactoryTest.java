@@ -12,12 +12,13 @@
  * and limitations under the License.
  */
 
-package sabina.server;
+package sabina.servlet;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.testng.annotations.Test;
+import sabina.backend.BackendFactory;
 
 @Test public class BackendFactoryTest {
     @Test (expectedExceptions = IllegalStateException.class)

@@ -12,9 +12,12 @@
  * and limitations under the License.
  */
 
-package sabina.server;
+package sabina.backend;
 
-import sabina.route.RouteMatcher;
+import sabina.Router;
+import sabina.backend.jetty.JettyServer;
+import sabina.backend.undertow.UndertowServer;
+import sabina.servlet.MatcherFilter;
 
 /**
  * @author Per Wendel
@@ -24,20 +27,20 @@ public final class BackendFactory {
         throw new IllegalStateException ();
     }
 
-    private static Backend createJetty (RouteMatcher matcher, boolean hasMultipleHandler) {
+    private static Backend createJetty (Router matcher, boolean hasMultipleHandler) {
         return new JettyServer (createFilter ("jetty", matcher, hasMultipleHandler));
     }
 
     private static MatcherFilter createFilter (
-        String backend, RouteMatcher matcher, boolean hasMultipleHandler) {
+        String backend, Router matcher, boolean hasMultipleHandler) {
         return new MatcherFilter (matcher, backend, hasMultipleHandler);
     }
 
-    private static Backend createUndertow (RouteMatcher matcher, boolean hasMultipleHandler) {
+    private static Backend createUndertow (Router matcher, boolean hasMultipleHandler) {
         return new UndertowServer (createFilter ("undertow", matcher, hasMultipleHandler));
     }
 
-    public static Backend create (String backend, RouteMatcher matcher, boolean multipleHandlers) {
+    public static Backend create (String backend, Router matcher, boolean multipleHandlers) {
         switch (backend) {
             case "jetty":
                 return createJetty (matcher, multipleHandlers);

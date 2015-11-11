@@ -18,5 +18,5 @@ package sabina;
  * @author Per Wendel
  */
 public enum HttpMethod {
-    GET, POST, PUT, PATCH, DELETE, HEAD, TRACE, OPTIONS, BEFORE, AFTER
+    GET, POST, PUT, PATCH, DELETE, HEAD, TRACE, OPTIONS
 }

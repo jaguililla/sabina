@@ -14,14 +14,14 @@
 
 package sabina.examples;
 
-import sabina.Application;
+import sabina.Server;
 
 /**
  * The class name says everything.
  *
  * @author Per Wendel
  */
-final class HelloWorld extends Application {
+final class HelloWorld extends Server {
     HelloWorld () {
         get ("/", it -> "Hello World!");
         start ();

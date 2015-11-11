@@ -2,6 +2,7 @@ package sabina.util;
 
 import static java.lang.Long.parseLong;
 import static java.lang.System.getProperties;
+import static java.lang.Thread.currentThread;
 import static java.util.Arrays.stream;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
@@ -130,7 +131,7 @@ public final class Configuration {
     }
 
     public static Map<String, String> resource (String inputs) {
-        return loadStream (Class.class.getResourceAsStream (inputs));
+        return loadStream (currentThread ().getContextClassLoader ().getResourceAsStream (inputs));
     }
 
     public static Map<String, String> file (String inputs) {

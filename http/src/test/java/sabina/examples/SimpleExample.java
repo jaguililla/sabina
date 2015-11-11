@@ -14,14 +14,14 @@
 
 package sabina.examples;
 
-import sabina.Application;
+import sabina.Server;
 
 /**
  * A simple example just showing some basic functionality.
  *
  * @author Per Wendel
  */
-final class SimpleExample extends Application {
+final class SimpleExample extends Server {
     public static void main (String[] args) {
         new SimpleExample ();
     }

@@ -1,11 +1,8 @@
 package sabina
 
 import java.util.function.BiConsumer
-import java.util.function.Consumer
 
 import org.testng.annotations.Test
-import sabina.route.RouteMatch
-import sabina.route.RouteMatcher
 import sabina.Router.Handler
 import sabina.Router.VoidHandler
 
@@ -22,38 +19,7 @@ import static sabina.HttpMethod.*
 @Test public class RouterTest {
     private BiConsumer<Class<?>, BiConsumer<?, Request>> faultCallback
 
-    private Router testRouter = new Router () {
-        @Override public RouteMatcher getMatcher () {
-            return new RouteMatcher () {
-                @Override public void processRoute (Route target) {
-                    throw new UnsupportedOperationException ()
-                }
-
-                @Override public <T extends Exception> void processFault (
-                    Class<T> fault, BiConsumer<? extends Exception, Request> handler) {
-                    faultCallback.accept (fault, handler)
-                }
-
-                @Override public RouteMatch findTarget (
-                    HttpMethod httpMethod, String path) {
-
-                    throw new UnsupportedOperationException ()
-                }
-
-                @Override public List<RouteMatch> findTargets (
-                    HttpMethod httpMethod, String path) {
-
-                    throw new UnsupportedOperationException ()
-                }
-
-                @Override public <T extends Exception> BiConsumer<T, Request> findHandler(
-                    Class<T> exceptionClass) {
-
-                    throw new UnsupportedOperationException ()
-                }
-            }
-        }
-    }
+    private Router testRouter = null // TODO
 
     public void "all wrap void methods return the proper value in their generated callbacks" () {
         Route route = new Route (GET, { "" } as Handler)

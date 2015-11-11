@@ -12,15 +12,16 @@
  * and limitations under the License.
  */
 
-package sabina.route;
+package sabina.servlet;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import sabina.FilterOrder;
 import sabina.Request;
-import sabina.Route;
 
 import sabina.HttpMethod;
+import sabina.RouteMatch;
 
 /**
  * Route matcher
@@ -28,16 +29,6 @@ import sabina.HttpMethod;
  * @author Per Wendel
  */
 public interface RouteMatcher {
-    /**
-     * Parses, validates and adds a route
-     *
-     * @param target .
-     */
-    void processRoute (Route target);
-
-    <T extends Exception> void processFault (
-        Class<T> fault, BiConsumer<? extends Exception, Request> handler);
-
     /**
      * Finds the target route for the requested route path and accept type
      *
@@ -49,6 +40,8 @@ public interface RouteMatcher {
     RouteMatch findTarget (HttpMethod httpMethod, String path);
 
     List<RouteMatch> findTargets (HttpMethod httpMethod, String path);
+
+    List<RouteMatch> findTargets (FilterOrder httpMethod, String path);
 
     <T extends Exception> BiConsumer<T, Request> findHandler(Class<T> exceptionClass);
 }

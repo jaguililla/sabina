@@ -17,14 +17,14 @@ package sabina.examples;
 import static java.lang.String.format;
 import static java.lang.System.out;
 
-import sabina.Application;
+import sabina.Server;
 
 /**
  * Example showing the use of attributes.
  *
  * @author Per Wendel
  */
-final class FilterExampleAttributes extends Application {
+final class FilterExampleAttributes extends Server {
     FilterExampleAttributes () {
         get ("/hi", it -> {
             it.attribute ("foo", "bar");

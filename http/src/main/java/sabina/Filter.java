@@ -24,16 +24,12 @@ import java.util.List;
 import sabina.Router.Handler;
 
 /**
- * A Route is built up by a path (for url-matching) and the implementation of the 'handle'
- * method.
- * When a request is made, if present, the matching routes 'handle' method is invoked. The
- * object that is returned from 'handle' will be set to the response body (toString()).
- *
  * @author Per Wendel
  */
-public final class Route {
+public final class Filter {
+
     public final String path;
-    public final HttpMethod method;
+    public final FilterOrder order;
     public final Handler handler;
 
     public final List<String> routeParts;
@@ -43,31 +39,31 @@ public final class Route {
      *
      * TODO Maybe this is only intended for filters!!!
      *
-     * @param method .
+     * @param order .
      * @param handler .
      */
-    public Route (final HttpMethod method, final Handler handler) {
-        this (method, ALL_PATHS, handler);
+    public Filter (final FilterOrder order, final Handler handler) {
+        this (order, Router.ALL_PATHS, handler);
     }
 
     /**
      * Constructor.
      *
-     * @param method .
+     * @param order .
      * @param path The route path which is used for matching. (e.g. /hello, users/:name).
      * @param handler .
      */
-    public Route (final HttpMethod method, final String path, final Handler handler) {
+    public Filter (final FilterOrder order, final String path, final Handler handler) {
         checkArgument (path != null);
-        checkArgument (handler != null && method != null);
+        checkArgument (handler != null && order != null);
 
         this.path = path;
-        this.method = method;
+        this.order = order;
         this.handler = handler;
         this.routeParts = convertRouteToList (path);
     }
 
     @Override public String toString () {
-        return format ("Route: %s %s", method, path);
+        return format ("Filter: %s %s", order, path);
     }
 }

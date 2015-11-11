@@ -15,14 +15,14 @@
 package sabina.examples;
 
 import static java.lang.String.format;
-import sabina.Application;
+import sabina.Server;
 
 /**
  * Demonstrate the use of sessions inside Sabina.
  *
  * @author Per Wendel
  */
-final class SessionExample extends Application {
+final class SessionExample extends Server {
     private static final String SESSION_NAME = "username";
 
     SessionExample () {

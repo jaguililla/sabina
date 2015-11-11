@@ -12,19 +12,17 @@
  * and limitations under the License.
  */
 
-package sabina.route;
+package sabina.servlet;
 
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.stream.Collectors.toList;
 import static sabina.Request.convertRouteToList;
-import static sabina.Route.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
-import sabina.HttpMethod;
-import sabina.Request;
-import sabina.Route;
+import sabina.*;
 
 /**
  * Simple route matcher that is supposed to work exactly as Sinatra's
@@ -34,23 +32,10 @@ import sabina.Route;
 final class SimpleRouteMatcher implements RouteMatcher {
 //    private static final Logger LOG = getLogger (SimpleRouteMatcher.class.getName ());
 
-    private final Map<HttpMethod, List<Route>> routeMap = new HashMap<> ();
+    private final Router router;
 
-    /** Holds a map of Exception classes and associated handlers. */
-    private final
-    Map<Class<? extends Exception>, BiConsumer<? extends Exception, Request>> exceptionMap =
-        new HashMap<> ();
-
-    /**
-     * Parse and validates a route and adds it
-     *
-     * @param target the invocation target
-     */
-    @Override public void processRoute (Route target) {
-        HttpMethod method = target.method;
-        if (!routeMap.containsKey (method))
-            routeMap.put (method, new ArrayList<> ());
-        routeMap.get (method).add (target);
+    SimpleRouteMatcher (Router router) {
+        this.router = router;
     }
 
     /**
@@ -62,9 +47,8 @@ final class SimpleRouteMatcher implements RouteMatcher {
      * @return the target
      */
     @Override public RouteMatch findTarget (HttpMethod httpMethod, String path) {
-
         final List<Route> routeEntries = this.findTargetsForRequestedRoute (httpMethod, path);
-        final Route entry = findTargetWithGivenAcceptType (routeEntries);
+        final Route entry = routeEntries.size () > 0? routeEntries.get(0) : null;
         return entry != null? new RouteMatch (entry, path) : null;
     }
 
@@ -80,9 +64,28 @@ final class SimpleRouteMatcher implements RouteMatcher {
         final List<RouteMatch> matchSet = new ArrayList<> ();
         final List<Route> routeEntries = findTargetsForRequestedRoute (httpMethod, path);
 
-        for (Route routeEntry : routeEntries) {
-            matchSet.add (new RouteMatch (routeEntry, path));
-        }
+        matchSet.addAll (routeEntries.stream ()
+            .map (routeEntry -> new RouteMatch (routeEntry, path))
+            .collect (Collectors.toList ()));
+
+        return matchSet;
+    }
+
+    /**
+     * Finds multiple targets for a requested route.
+     *
+     * @param httpMethod the http method
+     * @param path the route path
+     *
+     * @return the targets
+     */
+    @Override public List<RouteMatch> findTargets (final FilterOrder httpMethod, final String path) {
+        final List<RouteMatch> matchSet = new ArrayList<> ();
+        final List<Filter> routeEntries = findTargetsForRequestedRoute (httpMethod, path);
+
+        matchSet.addAll (routeEntries.stream ()
+            .map (routeEntry -> new RouteMatch (null, path)) // TODO
+            .collect (Collectors.toList ()));
 
         return matchSet;
     }
@@ -98,18 +101,18 @@ final class SimpleRouteMatcher implements RouteMatcher {
     public <T extends Exception> BiConsumer<T, Request> findHandler(Class<T> exceptionClass) {
         // If the exception map does not contain the provided exception class, it might
         // still be that a superclass of the exception class is.
-        if (!exceptionMap.containsKey(exceptionClass)) {
+        if (!router.exceptionMap.containsKey(exceptionClass)) {
 
             Class<? extends Exception> superclass =
                 (Class<? extends Exception>)exceptionClass.getSuperclass();
             do {
                 // Is the superclass mapped?
-                if (exceptionMap.containsKey(superclass)) {
+                if (router.exceptionMap.containsKey(superclass)) {
                     // Use the handler for the mapped superclass, and cache handler
                     // for this exception class
                     BiConsumer<T, Request> handler =
-                        (BiConsumer<T, Request>)exceptionMap.get(superclass);
-                    exceptionMap.put(exceptionClass, handler);
+                        (BiConsumer<T, Request>)router.exceptionMap.get(superclass);
+                    router.exceptionMap.put(exceptionClass, handler);
                     return handler;
                 }
 
@@ -119,48 +122,115 @@ final class SimpleRouteMatcher implements RouteMatcher {
 
             // No handler found either for the superclasses of the exception class
             // We cache the null value to prevent future
-            exceptionMap.put(exceptionClass, null);
+            router.exceptionMap.put(exceptionClass, null);
             return null;
         }
 
         // Direct map
-        return (BiConsumer<T, Request>)exceptionMap.get (exceptionClass);
-    }
-
-    /**
-     * Maps the given handler to the provided exception type. If a handler was already registered to the same type, the
-     * handler is overwritten.
-     *
-     * @param handler        Handler to map to exception
-     */
-    @Override public <T extends Exception> void processFault (
-        Class<T> fault, BiConsumer<? extends Exception, Request> handler) {
-        exceptionMap.put(fault, handler);
+        return (BiConsumer<T, Request>)router.exceptionMap.get (exceptionClass);
     }
 
     private List<Route> findTargetsForRequestedRoute (
         HttpMethod httpMethod, String path) {
 
-        return routeMap.containsKey (httpMethod)?
-            routeMap.get(httpMethod).stream ()
+        return router.routeMap.containsKey (httpMethod)?
+            router.routeMap.get(httpMethod).stream ()
                 .filter (entry -> matches (entry, path))
                 .collect (toList ()) :
             EMPTY_LIST;
     }
 
-    // TODO: I believe this feature has impacted performance. Optimization?
-    private Route findTargetWithGivenAcceptType (final List<Route> routeMatches) {
-        if (routeMatches.size () > 0)
-            return routeMatches.get (0);
+    private List<Filter> findTargetsForRequestedRoute (
+        FilterOrder httpMethod, String path) {
 
-        return null;
+        return router.filterMap.containsKey (httpMethod)?
+            router.filterMap.get(httpMethod).stream ()
+                .filter (entry -> matches (entry, path))
+                .collect (toList ()) :
+            EMPTY_LIST;
+    }
+
+    public boolean matches (Filter route, String path) {
+        return route.path.equals (Router.ALL_PATHS) || matchPath (route, path);
     }
 
     public boolean matches (Route route, String path) {
-        return (route.isFilter () && route.path.equals (ALL_PATHS)) || matchPath (route, path);
+        return matchPath (route, path);
     }
 
     private boolean matchPath (Route route, String path) {
+        if (!route.path.endsWith ("*") && ((path.endsWith ("/") && !route.path.endsWith ("/"))
+            || (route.path.endsWith ("/") && !path.endsWith ("/")))) {
+            // One and not both ends with slash
+            return false;
+        }
+        if (route.path.equals (path)) {
+            // Paths are the same
+            return true;
+        }
+
+        // check params
+        List<String> pathList = convertRouteToList (path);
+
+        int thisPathSize = route.routeParts.size ();
+        int pathSize = pathList.size ();
+
+        if (thisPathSize == pathSize) {
+            for (int i = 0; i < thisPathSize; i++) {
+                String thisPathPart = route.routeParts.get (i);
+                String pathPart = pathList.get (i);
+
+                if ((i == thisPathSize - 1) && (thisPathPart.equals ("*") && route.path
+                    .endsWith ("*"))) {
+                    // wildcard match
+                    return true;
+                }
+
+                if ((!thisPathPart.startsWith (":"))
+                    && !thisPathPart.equals (pathPart)
+                    && !thisPathPart.equals ("*")) {
+                    return false;
+                }
+            }
+            // All parts matched
+            return true;
+        }
+        else {
+            // Number of "path parts" not the same
+            // check wild card:
+            if (route.path.endsWith ("*")) {
+                if (pathSize == (thisPathSize - 1) && (path.endsWith ("/"))) {
+                    // Hack for making wildcards work with trailing slash
+                    pathList.add ("");
+                    pathList.add ("");
+                    pathSize += 2;
+                }
+
+                if (thisPathSize < pathSize) {
+                    for (int i = 0; i < thisPathSize; i++) {
+                        String thisPathPart = route.routeParts.get (i);
+                        String pathPart = pathList.get (i);
+                        if (thisPathPart.equals ("*") && (i == thisPathSize - 1) && route.path
+                            .endsWith ("*")) {
+                            // wildcard match
+                            return true;
+                        }
+                        if (!thisPathPart.startsWith (":")
+                            && !thisPathPart.equals (pathPart)
+                            && !thisPathPart.equals ("*")) {
+                            return false;
+                        }
+                    }
+                    // All parts matched
+                    return true;
+                }
+                // End check wild card
+            }
+            return false;
+        }
+    }
+
+    private boolean matchPath (Filter route, String path) {
         if (!route.path.endsWith ("*") && ((path.endsWith ("/") && !route.path.endsWith ("/"))
             || (route.path.endsWith ("/") && !path.endsWith ("/")))) {
             // One and not both ends with slash

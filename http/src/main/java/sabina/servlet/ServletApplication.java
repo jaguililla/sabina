@@ -1,19 +1,13 @@
-package sabina.server;
+package sabina.servlet;
 
-import java.util.EnumSet;
-import javax.servlet.DispatcherType;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import sabina.Router;
-import sabina.route.RouteMatcher;
-import sabina.route.RouteMatcherFactory;
+import sabina.Server;
 
 /**
  */
-public abstract class ServletApplication implements Router, ServletContextListener {
-    private RouteMatcher matcher;
-
+public abstract class ServletApplication extends Server implements ServletContextListener {
     /**
      * Receives notification that the web application initialization
      * process is starting.
@@ -26,15 +20,15 @@ public abstract class ServletApplication implements Router, ServletContextListen
      * that is being initialized
      */
     @Override public void contextInitialized (ServletContextEvent sce) {
-        try {
-            final MatcherFilter filter = new MatcherFilter (getMatcher (), "servlet", false);
-            routes ();
-            sce.getServletContext ().addFilter ("sabina", filter).addMappingForUrlPatterns
-                (EnumSet.allOf (DispatcherType.class), false, "/*");
-        }
-        catch (Exception e) {
-            e.printStackTrace ();
-        }
+//        try {
+//            final MatcherFilter filter = new MatcherFilter (getMatcher (), "servlet", false);
+//            routes ();
+//            sce.getServletContext ().addFilter ("sabina", filter).addMappingForUrlPatterns
+//                (EnumSet.allOf (DispatcherType.class), false, "/*");
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace ();
+//        }
     }
 
     /**
@@ -50,10 +44,6 @@ public abstract class ServletApplication implements Router, ServletContextListen
      */
     @Override public void contextDestroyed (ServletContextEvent sce) {
         // Not implemented
-    }
-
-    @Override public RouteMatcher getMatcher () {
-        return matcher == null? matcher = RouteMatcherFactory.create () : matcher;
     }
 
     protected abstract void routes ();

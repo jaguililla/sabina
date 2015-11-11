@@ -14,14 +14,14 @@
 
 package sabina.examples;
 
-import sabina.Application;
+import sabina.Server;
 
 /**
  * Example showing how to serve static resources.
  *
  * @author Per Wendel
  */
-final class StaticResources extends Application {
+final class StaticResources extends Server {
     StaticResources () {
         get ("/hello", it -> "Hello World!");
 

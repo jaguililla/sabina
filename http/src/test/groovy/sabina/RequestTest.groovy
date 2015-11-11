@@ -22,7 +22,6 @@ import sabina.Router.Handler
 import javax.servlet.http.*
 
 import org.testng.annotations.Test
-import sabina.route.RouteMatch
 
 @Test public class RequestTest {
     private static final String THE_SERVLET_PATH = "/the/servlet/path"
@@ -137,7 +136,8 @@ import sabina.route.RouteMatch
     }
 
     private static Request createRequest (String route = "/", String request = "/") {
-        RouteMatch match = new RouteMatch (new Route (AFTER, route, { "" } as Handler), request)
+        RouteMatch match = new RouteMatch (new Route (HttpMethod.GET, route, { "" } as
+            Handler), request)
         return new Request (match, [] as HttpServletRequest, [] as HttpServletResponse)
     }
 }

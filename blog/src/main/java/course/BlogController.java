@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import org.bson.Document;
 import org.slf4j.Logger;
-import sabina.Application;
+import sabina.Server;
 import sabina.Request;
 
 /**
@@ -27,7 +27,7 @@ import sabina.Request;
  * <p>
  * It is also the entry point into the web application.
  */
-public class BlogController extends Application {
+public class BlogController extends Server {
     private static final Logger LOG = getLogger (BlogController.class);
 
     public static void main (String[] args) throws IOException {
@@ -46,12 +46,12 @@ public class BlogController extends Application {
         userDAO = new UserDAO (blogDatabase);
         sessionDAO = new SessionDAO (blogDatabase);
 
-        initializeRoutes ();
         resourcesLocation ("public");
+        routes ();
         start (8082);
     }
 
-    private void initializeRoutes () throws IOException {
+    private void routes () {
         // this is the blog home page
         get ("/", request -> {
             String username = sessionDAO.findUserNameBySessionId (getSession (request));

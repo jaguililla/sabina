@@ -14,12 +14,12 @@
 
 package sabina.examples;
 
-import sabina.Application;
+import sabina.Server;
 
 /**
  * You'll need to provide a JKS keystore as arg 0 and its password as arg 1.
  */
-final class HelloSecureWorld extends Application {
+final class HelloSecureWorld extends Server {
     HelloSecureWorld (String keystorePath, String keystorePassword) {
         get ("/hello", it -> "Hello Secure World!");
 

@@ -22,11 +22,11 @@ import static Configuration.*
     }
 
     public void "loading an non existent resource returns an empty map" () {
-        assert resource ("/configuration/non-existent.properties").isEmpty ()
+        assert resource ("configuration/non-existent.properties").isEmpty ()
     }
 
     public void "loading a valid resource returns its keys" () {
-        Map<String, String> m = resource ("/configuration/valid.properties")
+        Map<String, String> m = resource ("configuration/valid.properties")
         assert m.size () == 3 &&
             m.get("a").equals ("1") &&
             m.get("b").equals ("2") &&
@@ -96,7 +96,7 @@ import static Configuration.*
         Configuration s = configuration ()
 
         s.load (
-            resource ("/configuration/valid.properties"),
+            resource ("configuration/valid.properties"),
             file ("src/test/resources/configuration/settings.properties")
         )
 
@@ -114,7 +114,7 @@ import static Configuration.*
 
         s.load (
             file ("src/test/resources/configuration/settings.properties"),
-            resource ("/configuration/settings-modified.properties")
+            resource ("configuration/settings-modified.properties")
         )
 
         assert s.get("str").equals ("cba") &&
@@ -125,7 +125,7 @@ import static Configuration.*
 
     public void "the settings return all the keys available in the configuration" () {
         Configuration s = configuration ()
-        s.load (resource ("/configuration/valid.properties"))
+        s.load (resource ("configuration/valid.properties"))
         assert s.keys ().contains ("a") &&
             s.keys ().contains ("b") &&
             s.keys ().contains ("c")

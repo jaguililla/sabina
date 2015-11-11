@@ -12,62 +12,33 @@
  * and limitations under the License.
  */
 
-package sabina.server;
+package sabina.backend.jetty;
 
 import static java.lang.System.exit;
 import static sabina.util.Strings.isEmpty;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import sabina.util.Strings;
-
-/**
- * Simple Jetty Handler.
- *
- * @author Per Wendel
- */
-final class JettyHandler extends SessionHandler {
-    private MatcherFilter filter;
-
-    public JettyHandler (MatcherFilter filter) {
-        this.filter = filter;
-    }
-
-    @Override public void doHandle (
-        String target,
-        Request baseRequest,
-        HttpServletRequest request,
-        HttpServletResponse response)
-        throws IOException, ServletException {
-
-        filter.doFilter (request, response, null);
-        baseRequest.setHandled (filter.handled);
-    }
-}
+import sabina.backend.Backend;
+import sabina.servlet.MatcherFilter;
 
 /**
  * Sabina server backend implementation
  *
  * @author Per Wendel
  */
-final class JettyServer implements Backend {
+public final class JettyServer implements Backend {
 
     private static final String NAME = "Sabina";
     private Handler handler;

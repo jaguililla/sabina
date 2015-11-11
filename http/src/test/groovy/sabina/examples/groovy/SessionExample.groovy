@@ -16,7 +16,7 @@ package sabina.examples.groovy
 
 import sabina.Request
 import sabina.Router
-import sabina.Application
+import sabina.Server
 
 import static sabina.util.Configuration.configuration
 import static sabina.util.Configuration.parameters
@@ -26,7 +26,7 @@ import static sabina.util.Configuration.parameters
  *
  * @author Per Wendel
  */
-final class SessionExample extends Application {
+final class SessionExample extends Server {
     private static final String SESSION_NAME = "username"
 
     static {

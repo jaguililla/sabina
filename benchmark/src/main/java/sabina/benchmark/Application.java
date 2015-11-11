@@ -20,12 +20,13 @@ import static sabina.content.JsonContent.toJson;
 import static sabina.view.MustacheView.renderMustache;
 
 import sabina.Request;
+import sabina.servlet.ServletApplication;
 
 import java.util.*;
 import java.util.Date;
 import javax.servlet.annotation.WebListener;
 
-@WebListener public final class Application extends sabina.Application {
+@WebListener public final class Application extends ServletApplication {
     static final String SETTINGS_RESOURCE = "/server.properties";
     static final int DB_ROWS = 10000;
 

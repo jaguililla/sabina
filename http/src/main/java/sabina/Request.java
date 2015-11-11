@@ -30,8 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import sabina.route.RouteMatch;
-
 /**
  * Provides information about the HTTP request.
  *

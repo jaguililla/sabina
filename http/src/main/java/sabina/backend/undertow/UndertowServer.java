@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina.server;
+package sabina.backend.undertow;
 
 import static io.undertow.Handlers.predicate;
 import static io.undertow.Handlers.resource;
@@ -25,102 +25,18 @@ import static java.lang.System.setProperty;
 import static javax.servlet.DispatcherType.REQUEST;
 import static sabina.util.Strings.isEmpty;
 
-import java.io.File;
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.net.ssl.SSLContext;
-import javax.servlet.Filter;
 import javax.servlet.ServletException;
 
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.handlers.resource.*;
 import io.undertow.servlet.api.*;
+import sabina.backend.Backend;
+import sabina.servlet.MatcherFilter;
 
-final class MatcherFilterInfo extends FilterInfo implements Cloneable {
-    private final MatcherFilter matcherFilter;
-
-    public MatcherFilterInfo (final String name, final MatcherFilter aMatcher) {
-        super (name, aMatcher.getClass ());
-        matcherFilter = aMatcher;
-    }
-
-    @Override public FilterInfo clone () {
-        MatcherFilterInfo info = new MatcherFilterInfo (getName (), matcherFilter);
-        info.setAsyncSupported (isAsyncSupported ());
-        return info;
-    }
-
-    @Override public InstanceFactory<? extends Filter> getInstanceFactory () {
-        return (InstanceFactory<MatcherFilter>)() -> new InstanceHandle<MatcherFilter> () {
-            @Override public MatcherFilter getInstance () {
-                return new MatcherFilter (
-                    matcherFilter.routeMatcher,
-                    matcherFilter.backend,
-                    matcherFilter.hasOtherHandlers);
-            }
-
-            @Override public void release () {}
-        };
-    }
-}
-
-/**
- * TODO Change by version with two resourceManagers (better performance ?)
- */
-final class ChainResourceManager implements ResourceManager {
-
-    private List<ResourceManager> managers = new ArrayList<> ();
-
-    ChainResourceManager (String aStaticPath, String aFilesPath) {
-        if (aStaticPath != null)
-            managers.add (new ClassPathResourceManager (
-                ClassLoader.getSystemClassLoader (), aStaticPath));
-
-        if (aFilesPath != null)
-            managers.add (new FileResourceManager (new File (aFilesPath), 0L));
-    }
-
-    @Override public Resource getResource (String path) throws IOException {
-        for (ResourceManager rm : managers) {
-            Resource res = rm.getResource (path);
-            if (res != null)
-                return res;
-        }
-
-        return null;
-    }
-
-    @Override public boolean isResourceChangeListenerSupported () {
-        for (ResourceManager rm : managers)
-            if (!rm.isResourceChangeListenerSupported ())
-                return false;
-
-        return true;
-    }
-
-    @Override public void registerResourceChangeListener (
-        ResourceChangeListener listener) {
-
-        managers.forEach (manager -> manager.registerResourceChangeListener (listener));
-    }
-
-    @Override public void removeResourceChangeListener (
-        ResourceChangeListener listener) {
-
-        managers.forEach (manager -> manager.removeResourceChangeListener (listener));
-    }
-
-    @Override public void close () throws IOException {
-        for (ResourceManager rm : managers)
-            rm.close ();
-    }
-}
-
-final class UndertowServer implements Backend {
+public final class UndertowServer implements Backend {
     private final MatcherFilter filter;
     private Undertow server;
     private DeploymentManager deploymentManager;
