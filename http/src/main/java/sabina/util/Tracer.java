@@ -1,11 +1,14 @@
 package sabina.util;
 
+import static java.lang.System.getProperty;
 import static org.slf4j.LoggerFactory.getLogger;
 import static java.lang.String.format;
 
 import org.slf4j.Logger;
 
 public interface Tracer {
+    String FLARE_PREFIX = getProperty ("sabina.util.Tracer.flarePrefix");
+
     default Logger logger () { return getLogger (getClass ()); }
 
     default void debug (String format, Object... arguments) {
@@ -60,6 +63,7 @@ public interface Tracer {
     }
 
     default void flare (String msg) {
+        Strings.repeat (FLARE_PREFIX, 4);
     }
 
     default void timeMillis (String msg, long startMillis) {
