@@ -6,11 +6,6 @@ import static sabina.util.Builders.entry
 import static sabina.util.Strings.*
 
 @Test public class StringsTest {
-    @Test (expectedExceptions = IllegalStateException)
-    public void "an instance of 'Strings' can not be created" () {
-        _create ()
-    }
-
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void "filter does not allow 'null' text" () {
         filter (null)

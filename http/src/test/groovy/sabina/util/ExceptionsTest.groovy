@@ -5,11 +5,6 @@ import org.testng.annotations.Test
 import static sabina.util.Exceptions.*
 
 @Test class ExceptionsTest {
-    @Test (expectedExceptions = IllegalStateException)
-    public void "an instance of 'Exceptions' can not be created" () {
-        _create ()
-    }
-
     @Test (expectedExceptions = IllegalArgumentException)
     public void "filter a 'null' exception throws an error" () {
         filter (null, "")

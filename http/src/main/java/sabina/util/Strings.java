@@ -32,21 +32,21 @@ import java.util.Set;
  *
  * @author jam
  */
-public final class Strings {
+public interface Strings {
     /** Runtime specific end of line. */
-    public  static final String EOL = getProperty ("line.separator");
+    String EOL = getProperty ("line.separator");
 
     /** Variable prefix for string filtering. */
-    private static final String VARIABLE_PREFIX = "${";
+    String VARIABLE_PREFIX = "${";
     /** Variable sufix for string filtering. */
-    private static final String VARIABLE_SUFFIX = "}";
+    String VARIABLE_SUFFIX = "}";
 
     /**
      * Calls {@link #filter(String, Entry[])} converting the map in entries.
      *
      * @see #filter(String, Entry[])
      */
-    public static String filter (final String text, final Map<?, ?> parameters) {
+    static String filter (final String text, final Map<?, ?> parameters) {
         checkArgument (parameters != null);
         Set<? extends Entry<?, ?>> entries = parameters.entrySet ();
         return filter (text, entries.toArray (new Entry[entries.size ()]));
@@ -62,7 +62,7 @@ public final class Strings {
      * @param parameters The map with the list of key/value tuples. Can not be 'null'.
      * @return The filtered text or the same string if no values are passed or found in the text.
      */
-    public static String filter (final String text, final Entry<?, ?>... parameters) {
+    static String filter (final String text, final Entry<?, ?>... parameters) {
         checkArgument (text != null);
         checkArgument (parameters != null);
 
@@ -90,7 +90,7 @@ public final class Strings {
      * @param text String to check.
      * @return True if the string is 'null' or empty.
      */
-    public static boolean isEmpty (String text) {
+    static boolean isEmpty (String text) {
         return text == null || text.isEmpty ();
     }
 
@@ -99,7 +99,7 @@ public final class Strings {
      *
      * @see String#String(byte[], String)
      */
-    public static String encode (final byte[] data, final String encoding) {
+    static String encode (final byte[] data, final String encoding) {
         try {
             return new String (data, encoding);
         }
@@ -113,7 +113,7 @@ public final class Strings {
      *
      * @see String#getBytes(String)
      */
-    public static byte[] decode (final String text, final String encoding) {
+    static byte[] decode (final String text, final String encoding) {
         try {
             return text.getBytes (encoding);
         }
@@ -129,7 +129,7 @@ public final class Strings {
      * @param times Number of times to repeat the text. Must be greater than 0.
      * @return The passed text repeated the given times.
      */
-    public static String repeat (String text, int times) {
+    static String repeat (String text, int times) {
         checkArgument (text != null);
         checkArgument (times >= 0);
 
@@ -149,7 +149,7 @@ public final class Strings {
      * @param times Number of times to repeat the padding text. Must be greater than 0.
      * @return Text with every line indented with the given padding the number of times specified.
      */
-    public static String indent (final String text, final String padding, final int times) {
+    static String indent (final String text, final String padding, final int times) {
         checkArgument (text != null);
 
         String[] lines = text.split (EOL, -1);
@@ -160,11 +160,5 @@ public final class Strings {
             buffer.append (appendString).append (lines[ii]).append (EOL);
 
         return buffer.append (appendString).append (lines[lines.length - 1]).toString ();
-    }
-
-    static void _create () { new Strings (); }
-
-    private Strings () {
-        throw new IllegalStateException ();
     }
 }

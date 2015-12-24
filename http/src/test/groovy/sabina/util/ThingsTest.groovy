@@ -4,14 +4,7 @@ import static sabina.util.Things.*
 
 import org.testng.annotations.Test
 
-import static sabina.util.Things.printHash
-
 @Test public class ThingsTest {
-    @Test (expectedExceptions = IllegalStateException)
-    public void "an instance of 'Things' can not be created" () {
-        _create ()
-    }
-
     @Test (expectedExceptions = IllegalArgumentException.class)
     public void "print 'null' object throws an exception" () {
         printInstance (null)
@@ -41,9 +34,7 @@ import static sabina.util.Things.printHash
     }
 
     public void "print object with hash prints the class and hash code" () {
-        printHash (true)
-        assert printInstance (this) ==~ /ThingsTest@\d*/
-        printHash (false)
+        assert printInstance (this, true) ==~ /ThingsTest@\d*/
     }
 
     public void "equal behaves the same as Objects.equals" () {

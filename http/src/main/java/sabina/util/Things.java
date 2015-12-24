@@ -14,12 +14,8 @@ import java.util.Objects;
  *
  * @author jam
  */
-public final class Things {
-    private static boolean printHash = getProperty ("sabina.util.Things.printHash") != null;
-
-    public static void printHash (boolean print) {
-        printHash = print;
-    }
+public interface Things {
+    boolean PRINT_HASH = getProperty ("sabina.util.Things.printHash") != null;
 
     /**
      * Defined as an alias because you can not import Objects.toString statically
@@ -27,7 +23,7 @@ public final class Things {
      *
      * @see Objects#toString(Object)
      */
-    public static String stringOf (Object o) { return Objects.toString (o); }
+    static String stringOf (Object o) { return Objects.toString (o); }
 
     /**
      * Defined as an alias because you can not import Objects.equals statically
@@ -35,17 +31,17 @@ public final class Things {
      *
      * @see Objects#equals(Object, Object)
      */
-    public static <T> boolean equal (T o1, T o2) { return Objects.equals (o1, o2); }
+    static <T> boolean equal (T o1, T o2) { return Objects.equals (o1, o2); }
 
     /**
      * Prints an object for the purpose of implementing 'toString'.
      *
      * This is for printing 'this'
      *
-     * @param o
-     * @return
+     * @param o The object to print. It can't be 'null'.
+     * @return The object's representation in a string.
      */
-    public static String printInstance (Object o, String... fields) {
+    static String printInstance (Object o, boolean printHash, String... fields) {
         checkArgument (o != null);
         checkArgument (fields != null);
 
@@ -62,15 +58,13 @@ public final class Things {
             format ("%s%s", className, fieldsString);
     }
 
-    public static String printField (String name, Object value) {
+    static String printInstance (Object o, String... fields) {
+        return printInstance (o, PRINT_HASH, fields);
+    }
+
+    static String printField (String name, Object value) {
         checkArgument (!isEmpty (name));
 
         return value == null || value.toString ().isEmpty ()? "" : format ("%s: %s", name, value);
-    }
-
-    static void _create () { new Things (); }
-
-    private Things () {
-        throw new IllegalStateException ();
     }
 }

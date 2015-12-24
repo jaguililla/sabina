@@ -21,20 +21,14 @@ import static java.lang.String.format;
  *
  * @author jam
  */
-public final class Checks {
-    public static void checkArgument (boolean condition) {
+public interface Checks {
+    static void checkArgument (boolean condition) {
         if (!condition)
             throw new IllegalArgumentException ();
     }
 
-    public static void checkArgument (boolean condition, String message, Object... arguments) {
+    static void checkArgument (boolean condition, String message, Object... arguments) {
         if (!condition)
             throw new IllegalArgumentException (format (message, arguments));
-    }
-
-    static void _create () { new Checks (); }
-
-    private Checks () {
-        throw new IllegalStateException ();
     }
 }

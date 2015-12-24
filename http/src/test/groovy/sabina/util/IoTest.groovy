@@ -7,15 +7,6 @@ import static sabina.util.Io.*
 @Test class IoTest {
     private final static String RESOURCE_CONTENTS = "resource file" + Strings.EOL + "second line"
 
-    @Test (expectedExceptions = IllegalStateException)
-    public void "an instance of 'Io' can not be created" () {
-        _create ()
-    }
-
-    public void "the default class loader should be the system one" () {
-        assert classLoader() == ClassLoader.getSystemClassLoader ()
-    }
-
     public void "reading a resource from a path returns its contents" () {
         assert read ("sabina/util/resource.txt").equals (RESOURCE_CONTENTS)
     }
@@ -33,22 +24,6 @@ import static sabina.util.Io.*
     @Test (expectedExceptions = RuntimeException.class)
     public void "reading a resource from an invalid URL throws an exception" () {
         read (new URL ("http://localhost:0/error"));
-    }
-
-    public void "using a different class loader resolves resources nicely" () {
-        classLoader (Io.class)
-        String r = read ("sabina/util/resource.txt")
-        assert r.equals (RESOURCE_CONTENTS)
-    }
-
-    @Test (expectedExceptions = IllegalArgumentException.class)
-    public void "is is not allowed to set a 'null' class for loading" () {
-        classLoader ((Class<?>)null)
-    }
-
-    @Test (expectedExceptions = IllegalArgumentException.class)
-    public void "is is not allowed to set a 'null' class loader" () {
-        classLoader ((ClassLoader)null)
     }
 
     @Test (expectedExceptions = IllegalArgumentException)

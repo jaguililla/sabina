@@ -3,16 +3,11 @@ package sabina.util
 import org.testng.annotations.Test
 
 import static sabina.util.Console.*
-import static sabina.util.Console.AnsiColor.*
-import static sabina.util.Console.AnsiEffect.*
+import static AnsiColor.*
+import static AnsiEffect.*
 import static sabina.util.Strings.EOL
 
 @Test class ConsoleTest {
-    @Test (expectedExceptions = IllegalStateException)
-    public void "an instance of 'Console' can not be created" () {
-        _create ()
-    }
-
     @Test (expectedExceptions = IllegalArgumentException)
     public void "ansi with explicit 'null' throws an exception" () {
         ansi ((AnsiEffect[])null)

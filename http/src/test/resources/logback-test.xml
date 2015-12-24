@@ -28,7 +28,7 @@
         <appender-ref ref="file" />
     </root>
 
-    <logger name="fito.http">
+    <logger name="sabina.http">
         <level value="trace" />
     </logger>
 </configuration>

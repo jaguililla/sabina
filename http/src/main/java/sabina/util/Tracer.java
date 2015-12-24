@@ -7,7 +7,7 @@ import static java.lang.String.format;
 import org.slf4j.Logger;
 
 public interface Tracer {
-    String FLARE_PREFIX = getProperty ("sabina.util.Tracer.flarePrefix");
+    String FLARE_PREFIX = getProperty ("sabina.util.Tracer.flarePrefix", ">>>> ");
 
     default Logger logger () { return getLogger (getClass ()); }
 
@@ -60,13 +60,15 @@ public interface Tracer {
     }
 
     default void banner (String msg) {
+        Strings.repeat (FLARE_PREFIX, msg.length ()); // longest line length
     }
 
     default void flare (String msg) {
-        Strings.repeat (FLARE_PREFIX, 4);
+        trace (FLARE_PREFIX + msg);
     }
 
     default void timeMillis (String msg, long startMillis) {
+        trace(msg + format ("%d ms", (System.currentTimeMillis() - startMillis)));
     }
 
     default void timeNanos (String msg, long startNanos) {

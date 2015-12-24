@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * @author jam
  */
-public final class Exceptions {
-    public static Throwable filter (Throwable throwable, String prefix) {
+public interface Exceptions {
+    static Throwable filter (Throwable throwable, String prefix) {
         checkArgument (throwable != null);
         checkArgument (prefix != null);
 
@@ -27,22 +27,17 @@ public final class Exceptions {
         return throwable;
     }
 
-    public static String printThrowable (Throwable t) {
+    static String printThrowable (Throwable t) {
         return printThrowable (t, "");
     }
 
-    public static String printThrowable (Throwable throwable, String prefix) {
+    static String printThrowable (Throwable throwable, String prefix) {
         checkArgument (throwable != null);
 
+        @SuppressWarnings ("ThrowableResultOfMethodCallIgnored")
         Throwable e = prefix.isEmpty ()? throwable : filter (throwable, prefix);
         StringWriter out = new StringWriter ();
         e.printStackTrace (new PrintWriter (out));
         return out.toString ();
-    }
-
-    static void _create () { new Exceptions (); }
-
-    private Exceptions () {
-        throw new IllegalStateException ();
     }
 }

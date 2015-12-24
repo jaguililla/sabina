@@ -34,11 +34,6 @@ import org.testng.annotations.Test
         )
     }
 
-    @Test (expectedExceptions = IllegalStateException)
-    public void "an instance of 'Builders' can not be created" () {
-        _create ()
-    }
-
     public void "a set can be built from a sequence of elements and 'nulls' are discarted" () {
         Set<?> s = set ("a", null, "b", null, false)
         assert s.containsAll (asList ("a", "b", false))
