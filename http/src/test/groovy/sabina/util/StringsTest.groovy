@@ -165,4 +165,30 @@ import static sabina.util.Strings.*
 
         assert result == indent (text, ">>", 2)
     }
+
+    public void "a single line string is generated properly" () {
+        assert lines ("line 1") == "line 1"
+    }
+
+    public void "a multiple line string is generated properly" () {
+        assert lines (
+            "line 1",
+            "line 2",
+            "line 3"
+        ) == "line 1" + EOL + "line 2" + EOL + "line 3"
+    }
+
+    public void "a 'null' line array generates an empty string" () {
+        assert lines (null) == ""
+    }
+
+    public void "a line array with 'nulls' skips 'null' values" () {
+        assert lines (
+            "line 1",
+            null,
+            "line 2",
+            null,
+            "line 3"
+        ) == "line 1" + EOL + "line 2" + EOL + "line 3"
+    }
 }

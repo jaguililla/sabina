@@ -12,23 +12,12 @@
         </encoder>
     </appender>
 
-    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/application-%d{yyMMdd}.log</FileNamePattern>
-            <MaxHistory>5</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <Pattern>%d{HH:mm:ss.SSS} %-5p [%-12thread] %-15.15logger{0} | %m%n</Pattern>
-        </encoder>
-    </appender>
-
     <root>
         <level value="info" />
         <appender-ref ref="console" />
-        <appender-ref ref="file" />
     </root>
 
-    <logger name="sabina.http">
+    <logger name="sabina">
         <level value="trace" />
     </logger>
 </configuration>

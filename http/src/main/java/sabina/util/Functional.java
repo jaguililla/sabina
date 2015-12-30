@@ -18,10 +18,18 @@ public interface Functional {
     }
 
     @SafeVarargs static <T> Stream<T> streamOf (T... objs) {
-        return Stream.of (objs);
+        return objs == null? Stream.of () : Stream.of (objs);
     }
 
-    @SafeVarargs static <K, V> Map<K, V> asMap (Entry<K, V>... entries) {
-        return streamOf (entries).collect (toMap (Entry::getKey, Entry::getValue));
+    @SafeVarargs static <K, V> Map<K, V> asTMap (Entry<K, V>... entries) {
+        return streamOf (entries)
+            .filter (entry -> entry != null)
+            .collect (toMap (Entry::getKey, Entry::getValue));
+    }
+
+    static Map<?, ?> asMap (Entry<?, ?>... entries) {
+        return streamOf (entries)
+            .filter (entry -> entry != null)
+            .collect (toMap (Entry::getKey, Entry::getValue));
     }
 }

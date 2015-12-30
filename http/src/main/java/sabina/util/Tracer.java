@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 
 public interface Tracer {
     String FLARE_PREFIX = getProperty ("sabina.util.Tracer.flarePrefix", ">>>> ");
+    String ENTER_PREFIX = getProperty ("sabina.util.Tracer.enterPrefix", "-> ");
+    String EXIT_PREFIX = getProperty ("sabina.util.Tracer.enterPrefix", "<- ");
 
     default Logger logger () { return getLogger (getClass ()); }
 
@@ -54,9 +56,11 @@ public interface Tracer {
     }
 
     default void exit () {
+        trace ("<-");
     }
 
     default void enter () {
+        trace ("->");
     }
 
     default void banner (String msg) {
@@ -72,5 +76,6 @@ public interface Tracer {
     }
 
     default void timeNanos (String msg, long startNanos) {
+        trace(msg + format ("%d ms", (System.nanoTime () - startNanos)));
     }
 }

@@ -15,6 +15,7 @@
 package sabina.util;
 
 import static java.lang.System.getProperty;
+import static java.util.stream.Collectors.joining;
 import static sabina.util.Checks.checkArgument;
 import static sabina.util.Things.stringOf;
 
@@ -22,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Several string utilities not included in the JDK. Some are in other libraries like Guava or
@@ -160,5 +162,19 @@ public interface Strings {
             buffer.append (appendString).append (lines[ii]).append (EOL);
 
         return buffer.append (appendString).append (lines[lines.length - 1]).toString ();
+    }
+
+    /**
+     * Syntactic sugar for multiline strings.
+     *
+     * @param lines Array of lines. 'null' lines are ommited.
+     * @return The multine strings composed of all lines.
+     */
+    static String lines (String... lines) {
+        return lines == null?
+            "" :
+            Stream.of(lines)
+                .filter (ln -> ln != null)
+                .collect (joining (EOL));
     }
 }
