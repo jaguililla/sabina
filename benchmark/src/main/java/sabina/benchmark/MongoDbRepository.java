@@ -49,7 +49,7 @@ final class MongoDbRepository implements Repository {
         fortuneCollection.find ().forEach ((Block<Document>)doc ->
             fortunes.add (
                 new Fortune (
-                    doc.get ("_id", Integer.class).intValue (),
+                    doc.get ("_id", Number.class).intValue (),
                     (String)doc.get ("message")
                 )
             )
@@ -76,8 +76,8 @@ final class MongoDbRepository implements Repository {
 
     private World createWorld (Document world) {
         return new World (
-            world.get ("_id", Integer.class).intValue (),
-            world.get ("randomNumber", Integer.class).intValue ()
+            world.get ("_id", Number.class).intValue (),
+            world.get ("randomNumber", Number.class).intValue ()
         );
     }
 
