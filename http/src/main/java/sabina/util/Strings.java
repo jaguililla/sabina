@@ -51,7 +51,7 @@ public interface Strings {
     static String filter (final String text, final Map<?, ?> parameters) {
         checkArgument (parameters != null);
         Set<? extends Entry<?, ?>> entries = parameters.entrySet ();
-        return filter (text, entries.toArray (new Entry[entries.size ()]));
+        return filter (text, entries.toArray (new Entry<?, ?>[entries.size ()]));
     }
 
     /**

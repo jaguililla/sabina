@@ -36,7 +36,7 @@ final class Books {
     private static Map<String, Book> books = new HashMap<> ();
 
     static {
-        books.put ("100", new Book ("Miguel_de_Cervantes", "Quixote"));
+        books.put ("100", new Book ("Miguel_de_Cervantes", "Don_Quixote"));
         books.put ("101", new Book ("William_Shakespeare", "Hamlet"));
         books.put ("102", new Book ("Homer", "The_Odyssey"));
     }

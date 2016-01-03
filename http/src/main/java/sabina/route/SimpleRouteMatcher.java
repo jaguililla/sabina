@@ -14,7 +14,7 @@
 
 package sabina.route;
 
-import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static sabina.Request.convertRouteToList;
 import static sabina.Route.*;
@@ -145,7 +145,7 @@ final class SimpleRouteMatcher implements RouteMatcher {
             routeMap.get(httpMethod).stream ()
                 .filter (entry -> matches (entry, path))
                 .collect (toList ()) :
-            EMPTY_LIST;
+            emptyList ();
     }
 
     // TODO: I believe this feature has impacted performance. Optimization?

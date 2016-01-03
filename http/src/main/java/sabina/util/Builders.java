@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  */
 public interface Builders {
     @SafeVarargs static <T> void addNotNulls (Collection<T>list, T... items) {
-        list.addAll (items == null? new ArrayList () : stream (items)
+        list.addAll (items == null? new ArrayList<> () : stream (items)
                 .filter (it -> it != null)
                 .collect (toList ())
         );
@@ -74,7 +74,7 @@ public interface Builders {
 
         for (Object key : keys)
             if (pointer instanceof List && key instanceof Integer) {
-                List list = (List)pointer;
+                List<?> list = (List)pointer;
                 Integer index = (Integer)key;
 
                 if (index < 0 || index > (list.size () - 1))
@@ -83,7 +83,7 @@ public interface Builders {
                 pointer = list.get (index);
             }
             else if (pointer instanceof Map) {
-                Map map = (Map)pointer;
+                Map<?, ?> map = (Map)pointer;
 
                 if (!map.containsKey (key))
                     throw new IllegalArgumentException ();
