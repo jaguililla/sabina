@@ -1,3 +1,12 @@
+# THIS PROJECT IS DISCONTINUED...
+
+If you are looking for a micro web framework for the JVM, you can check [Fito] which is a port of Sabina (with
+ideas from [Jooby] and others) written in [Kotlin]. It was funny while it last!
+
+[Fito]: https://github.com/jamming/fito
+[Jooby]: http://jooby.org
+[Kotlin]: http://kotlinlang.org
+
 
 [![Build Img]][Build Status] [![Coverage Img]][Coverage Status]
 [![Download Img]][Download Status] [![Kanban Img]][Kanban Status]
