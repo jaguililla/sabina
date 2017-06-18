@@ -3,7 +3,7 @@
 If you are looking for a micro web framework for the JVM, you can check [Hexagon] which is a port of Sabina
 (with ideas from [Jooby] and others) written in [Kotlin]. It was funny while it last!
 
-[Blacksheep]: https://github.com/jaguililla/hexagon
+[Hexagon]: https://github.com/jaguililla/hexagon
 [Jooby]: http://jooby.org
 [Kotlin]: http://kotlinlang.org
 
