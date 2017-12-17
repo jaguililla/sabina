@@ -42,8 +42,8 @@ import org.testng.annotations.Test
     public void "a list can be built from a sequence of elements and 'nulls' are discarted" () {
         List<?> l = list ("a", null, "b", null, false)
         assert false == get (l, 2)
-        assert l.equals (asList ("a", "b", false))
-        assert !l.equals (asList (false, "b", "a"))
+        assert l == asList ("a", "b", false)
+        assert l != asList (false, "b", "a")
     }
 
     public void "a map can be built from a sequence of elements and 'nulls' are discarted" () {

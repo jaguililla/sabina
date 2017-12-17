@@ -22,6 +22,7 @@ import static sabina.util.Things.stringOf;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -174,7 +175,7 @@ public interface Strings {
         return lines == null?
             "" :
             Stream.of(lines)
-                .filter (ln -> ln != null)
+                .filter (Objects::nonNull)
                 .collect (joining (EOL));
     }
 }

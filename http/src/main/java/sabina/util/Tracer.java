@@ -56,11 +56,11 @@ public interface Tracer {
     }
 
     default void exit () {
-        trace ("<-");
+        trace (ENTER_PREFIX);
     }
 
     default void enter () {
-        trace ("->");
+        trace (EXIT_PREFIX);
     }
 
     default void banner (String msg) {

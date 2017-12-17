@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 public interface Builders {
     @SafeVarargs static <T> void addNotNulls (Collection<T>list, T... items) {
         list.addAll (items == null? new ArrayList<> () : stream (items)
-                .filter (it -> it != null)
+                .filter (Objects::nonNull)
                 .collect (toList ())
         );
     }
@@ -28,7 +28,7 @@ public interface Builders {
         if (items != null) {
             Map<K, Object> objectMap = (Map<K, Object>)map;
             stream (items)
-                .filter (it -> it != null)
+                .filter (Objects::nonNull)
                 .forEach (i -> objectMap.put (i.getKey (), i.getValue ()));
         }
     }

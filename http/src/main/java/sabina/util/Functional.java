@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -23,13 +24,13 @@ public interface Functional {
 
     @SafeVarargs static <K, V> Map<K, V> asTMap (Entry<K, V>... entries) {
         return streamOf (entries)
-            .filter (entry -> entry != null)
+            .filter (Objects::nonNull)
             .collect (toMap (Entry::getKey, Entry::getValue));
     }
 
     static Map<?, ?> asMap (Entry<?, ?>... entries) {
         return streamOf (entries)
-            .filter (entry -> entry != null)
+            .filter (Objects::nonNull)
             .collect (toMap (Entry::getKey, Entry::getValue));
     }
 }
