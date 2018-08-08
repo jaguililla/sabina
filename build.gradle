@@ -31,7 +31,6 @@ plugins {
     id "com.github.kt3k.coveralls" version "2.4.0"
 }
 
-apply from: 'gradle/wrapper.gradle'
 apply from: 'gradle/site.gradle'
 
 subprojects {
