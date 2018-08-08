@@ -1,2 +1,0 @@
-resource file
-second line
