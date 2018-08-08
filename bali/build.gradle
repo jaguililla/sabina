@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 Juan José Aguililla. All rights reserved.
+ * Copyright © 2014 Juan José Aguililla. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License at
@@ -12,15 +12,8 @@
  * and limitations under the License.
  */
 
-task unwrap << {
-    delete "gradle/wrapper"
-    delete "gradle/wrapper.bat"
-    delete "gradle/wrapper.jar"
-    delete "gradle/wrapper.properties"
-}
+description = 'A General purpose Java library'
 
-wrapper {
-    gradleVersion = wrapperGradleVersion
-    jarFile = "${project.projectDir}/" + wrapperPath + '/wrapper.jar'
-    scriptFile = "${project.projectDir}/" + wrapperPath + '/wrapper'
+dependencies {
+//    compile 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
 }

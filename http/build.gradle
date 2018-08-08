@@ -15,12 +15,13 @@
 description = 'A Sinatra inspired java web framework (http)'
 
 dependencies {
+    compile project(':bali')
+
     // SERVER DEPENDENCIES (depending on backend)
     compile 'org.eclipse.jetty:jetty-webapp:9.3.3.v20150827'
     compile 'io.undertow:undertow-servlet:1.2.12.Final'
 
     // FRAMEWORK DEPENDENCIES (always required)
-    compile 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
     compile 'com.ning:async-http-client:1.9.31'
     compile 'io.netty:netty:3.10.5.Final'
 }
