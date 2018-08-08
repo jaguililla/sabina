@@ -15,7 +15,7 @@
 package sabina;
 
 import static sabina.HttpMethod.*;
-import static sabina.util.Checks.checkArgument;
+import static co.there4.bali.Checks.checkArgument;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

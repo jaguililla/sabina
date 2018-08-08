@@ -1,4 +1,4 @@
-package sabina.util;
+package co.there4.bali;
 
 import static java.util.stream.Collectors.toMap;
 

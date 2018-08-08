@@ -1,11 +1,11 @@
-package sabina.util
+package co.there4.bali
 
 import org.testng.annotations.Test
 
-import static sabina.util.Console.*
+import static Console.*
 import static AnsiColor.*
 import static AnsiEffect.*
-import static sabina.util.Strings.EOL
+import static Strings.EOL
 
 @Test class ConsoleTest {
     @Test (expectedExceptions = IllegalArgumentException)

@@ -1,11 +1,11 @@
-package sabina.util;
+package co.there4.bali;
 
+import static co.there4.bali.Checks.*;
+import static co.there4.bali.Strings.*;
 import static java.lang.System.getProperty;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
-import static sabina.util.Checks.checkArgument;
-import static sabina.util.Strings.isEmpty;
 
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author jam
  */
 public interface Things {
-    boolean PRINT_HASH = getProperty ("sabina.util.Things.printHash") != null;
+    boolean PRINT_HASH = getProperty ("Things.printHash") != null;
 
     /**
      * Defined as an alias because you can not import Objects.toString statically

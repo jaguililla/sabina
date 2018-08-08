@@ -1,18 +1,15 @@
-package sabina.util;
+package co.there4.bali;
 
 import static ch.qos.logback.classic.Level.*;
 import static ch.qos.logback.classic.spi.ThrowableProxyUtil.asString;
 import static org.slf4j.LoggerFactory.getILoggerFactory;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
-import org.junit.Ignore;
-import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 /**

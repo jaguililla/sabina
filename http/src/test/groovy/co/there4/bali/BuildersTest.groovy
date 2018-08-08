@@ -1,9 +1,9 @@
-package sabina.util
+package co.there4.bali
 
 import java.time.LocalDate
 
 import static java.util.Arrays.asList
-import static sabina.util.Builders.*
+import static Builders.*
 
 import org.testng.annotations.Test
 

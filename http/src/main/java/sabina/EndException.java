@@ -14,7 +14,7 @@
 
 package sabina;
 
-import static sabina.util.Checks.checkArgument;
+import static co.there4.bali.Checks.checkArgument;
 
 /**
  * Exception used for stopping the execution.

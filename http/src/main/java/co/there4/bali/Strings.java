@@ -12,12 +12,12 @@
  * and limitations under the License.
  */
 
-package sabina.util;
+package co.there4.bali;
 
 import static java.lang.System.getProperty;
 import static java.util.stream.Collectors.joining;
-import static sabina.util.Checks.checkArgument;
-import static sabina.util.Things.stringOf;
+import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Things.stringOf;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;

@@ -1,8 +1,8 @@
-package sabina.util
+package co.there4.bali
 
 import org.testng.annotations.Test
 
-import static sabina.util.Exceptions.*
+import static Exceptions.*
 
 @Test class ExceptionsTest {
     @Test (expectedExceptions = IllegalArgumentException)
@@ -38,6 +38,6 @@ import static sabina.util.Exceptions.*
         String trace = printThrowable (new RuntimeException ())
         println (trace)
         assert trace.startsWith ("java.lang.RuntimeException")
-        assert trace.contains ("\tat sabina.util.ExceptionsTest")
+        assert trace.contains ("\tat co.there4.bali.ExceptionsTest")
     }
 }

@@ -1,9 +1,9 @@
-package sabina.util;
+package co.there4.bali;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.concat;
-import static sabina.util.Checks.checkArgument;
+import static co.there4.bali.Checks.checkArgument;
 
 import java.io.PrintStream;
 import java.util.stream.IntStream;

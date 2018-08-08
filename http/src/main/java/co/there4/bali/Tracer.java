@@ -1,4 +1,4 @@
-package sabina.util;
+package co.there4.bali;
 
 import static java.lang.System.getProperty;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -7,9 +7,9 @@ import static java.lang.String.format;
 import org.slf4j.Logger;
 
 public interface Tracer {
-    String FLARE_PREFIX = getProperty ("sabina.util.Tracer.flarePrefix", ">>>> ");
-    String ENTER_PREFIX = getProperty ("sabina.util.Tracer.enterPrefix", "-> ");
-    String EXIT_PREFIX = getProperty ("sabina.util.Tracer.enterPrefix", "<- ");
+    String FLARE_PREFIX = getProperty ("Tracer.flarePrefix", ">>>> ");
+    String ENTER_PREFIX = getProperty ("Tracer.enterPrefix", "-> ");
+    String EXIT_PREFIX = getProperty ("Tracer.enterPrefix", "<- ");
 
     default Logger logger () { return getLogger (getClass ()); }
 

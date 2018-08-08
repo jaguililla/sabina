@@ -1,12 +1,12 @@
-package sabina.util;
+package co.there4.bali;
 
+import static co.there4.bali.Builders.*;
+import static co.there4.bali.Strings.*;
 import static java.lang.Long.parseLong;
 import static java.lang.System.getProperties;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
-import static sabina.util.Builders.entry;
-import static sabina.util.Checks.checkArgument;
-import static sabina.util.Strings.isEmpty;
+import static co.there4.bali.Checks.checkArgument;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

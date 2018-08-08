@@ -12,7 +12,7 @@
  * and limitations under the License.
  */
 
-package sabina.util;
+package co.there4.bali;
 
 import static java.lang.String.format;
 

@@ -18,7 +18,7 @@ import static java.lang.Math.min;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.logging.Logger.getLogger;
-import static sabina.util.Builders.entry;
+import static co.there4.bali.Builders.entry;
 
 import java.io.InputStreamReader;
 import java.util.*;

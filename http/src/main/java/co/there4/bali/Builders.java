@@ -1,8 +1,8 @@
-package sabina.util;
+package co.there4.bali;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import static sabina.util.Checks.checkArgument;
+import static co.there4.bali.Checks.checkArgument;
 
 import java.util.*;
 import java.util.AbstractMap.SimpleImmutableEntry;

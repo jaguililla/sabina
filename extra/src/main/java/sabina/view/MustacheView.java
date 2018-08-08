@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import com.samskivert.mustache.Template;
-import sabina.util.Io;
+import co.there4.bali.Io;
 
 public class MustacheView {
     public static String renderMustache (String templateName, Object model) {

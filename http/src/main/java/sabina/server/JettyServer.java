@@ -15,7 +15,7 @@
 package sabina.server;
 
 import static java.lang.System.exit;
-import static sabina.util.Strings.isEmpty;
+import static co.there4.bali.Strings.isEmpty;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +36,6 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import sabina.util.Strings;
 
 /**
  * Simple Jetty Handler.

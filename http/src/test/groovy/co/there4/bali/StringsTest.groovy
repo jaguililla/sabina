@@ -1,9 +1,9 @@
-package sabina.util
+package co.there4.bali
 
 import org.testng.annotations.Test
 
-import static sabina.util.Builders.entry
-import static sabina.util.Strings.*
+import static Builders.entry
+import static Strings.*
 
 @Test public class StringsTest {
     @Test (expectedExceptions = IllegalArgumentException.class)

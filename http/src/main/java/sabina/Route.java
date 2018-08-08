@@ -18,8 +18,7 @@ import static java.lang.String.format;
 import static sabina.HttpMethod.AFTER;
 import static sabina.HttpMethod.BEFORE;
 import static sabina.Request.convertRouteToList;
-import static sabina.util.Checks.checkArgument;
-import static sabina.util.Strings.isEmpty;
+import static co.there4.bali.Checks.checkArgument;
 
 import java.util.List;
 

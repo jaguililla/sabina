@@ -23,7 +23,7 @@ import static java.lang.ClassLoader.getSystemClassLoader;
 import static java.lang.System.exit;
 import static java.lang.System.setProperty;
 import static javax.servlet.DispatcherType.REQUEST;
-import static sabina.util.Strings.isEmpty;
+import static co.there4.bali.Strings.isEmpty;
 
 import java.io.File;
 import java.io.IOException;

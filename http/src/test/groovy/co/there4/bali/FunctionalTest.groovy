@@ -1,4 +1,4 @@
-package sabina.util
+package co.there4.bali
 
 import org.testng.annotations.Test
 
@@ -18,8 +18,8 @@ import static java.util.stream.Collectors.toList
     }
 
     public void "stream of many elements return the correct stream" () throws Exception {
-        assert streamOf (null, "alfa", null, "bravo").collect (toList ()) ==
-            Stream.of (null, "alfa", null, "bravo").collect (toList ())
+        assert streamOf (null, "alfa", null, "bravo").collect (toList ()) == Stream
+            .of (null, "alfa", null, "bravo").collect (toList ())
     }
 
     public void "stream of entries elements return the correct map" () throws Exception {

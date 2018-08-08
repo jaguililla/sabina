@@ -1,18 +1,13 @@
-package sabina.util;
+package co.there4.bali;
 
+import static co.there4.bali.ConsoleInternal.*;
 import static java.util.Arrays.*;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.IntStream.concat;
-import static sabina.util.Checks.checkArgument;
-import static sabina.util.ConsoleInternal.OUT;
-import static sabina.util.ConsoleInternal.ansiCode;
-import static sabina.util.ConsoleInternal.checkArray;
+import static co.there4.bali.Checks.checkArgument;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * @author jamming

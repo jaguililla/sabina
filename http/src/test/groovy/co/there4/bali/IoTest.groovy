@@ -1,24 +1,24 @@
-package sabina.util
+package co.there4.bali
 
 import org.testng.annotations.Test
 
-import static sabina.util.Io.*
+import static Io.*
 
 @Test class IoTest {
     private final static String RESOURCE_CONTENTS = "resource file" + Strings.EOL + "second line"
 
     public void "reading a resource from a path returns its contents" () {
-        assert read ("sabina/util/resource.txt").equals (RESOURCE_CONTENTS)
+        assert read ("co/there4/bali/resource.txt").equals (RESOURCE_CONTENTS)
     }
 
     public void "reading a resource from a stream returns its contents" () {
-        String r = read (Class.getResourceAsStream ("/sabina/util/resource.txt"))
+        String r = read (Class.getResourceAsStream ("/co/there4/bali/resource.txt"))
         assert r.equals (RESOURCE_CONTENTS)
     }
 
     public void "reading a resource from a URL returns its contents" () {
-        String r = read (Class.getResource ("/sabina/util/resource.txt"))
-        assert r.equals (RESOURCE_CONTENTS)
+        String r = read (Class.getResource ("/co/there4/bali/resource.txt"))
+        assert r == RESOURCE_CONTENTS
     }
 
     @Test (expectedExceptions = RuntimeException.class)

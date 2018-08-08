@@ -1,9 +1,9 @@
-package sabina.util;
+package co.there4.bali;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
-import static sabina.util.Checks.checkArgument;
-import static sabina.util.Strings.isEmpty;
+import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Strings.isEmpty;
 
 import java.io.BufferedReader;
 import java.io.IOException;

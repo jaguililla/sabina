@@ -18,8 +18,8 @@ import sabina.Request
 import sabina.Router
 import sabina.Application
 
-import static sabina.util.Configuration.configuration
-import static sabina.util.Configuration.parameters
+import static co.there4.bali.Configuration.configuration
+import static co.there4.bali.Configuration.parameters
 
 /**
  * Demonstrate the use of sessions inside Sabina.

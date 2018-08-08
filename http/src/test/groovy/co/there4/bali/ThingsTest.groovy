@@ -1,6 +1,6 @@
-package sabina.util
+package co.there4.bali
 
-import static sabina.util.Things.*
+import static Things.*
 
 import org.testng.annotations.Test
 
