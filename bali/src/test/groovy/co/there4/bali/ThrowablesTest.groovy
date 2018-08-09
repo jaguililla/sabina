@@ -2,26 +2,26 @@ package co.there4.bali
 
 import org.testng.annotations.Test
 
-import static Exceptions.*
+import static Throwables.*
 
-@Test class ExceptionsTest {
+@Test class ThrowablesTest {
     @Test (expectedExceptions = IllegalArgumentException)
-    public void "filter a 'null' exception throws an error" () {
+    void "filter a 'null' exception throws an error" () {
         filter (null, "")
     }
 
     @Test (expectedExceptions = IllegalArgumentException)
-    public void "filter an exception with a 'null' prefix throws an error" () {
+    void "filter an exception with a 'null' prefix throws an error" () {
         filter (new RuntimeException(), null)
     }
 
-    public void "filtering an exception with an empty string do not change the stack" () {
+    @Test void "filtering an exception with an empty string do not change the stack" () {
         Throwable t = new RuntimeException ()
         println (printThrowable (t))
         assert Arrays.equals (t.getStackTrace (), filter (t, "").getStackTrace ())
     }
 
-    public void "filtering an exception with a package only returns frames of that package" () {
+    @Test void "filtering an exception with a package only returns frames of that package" () {
         Throwable t = new RuntimeException ()
         println (printThrowable (t))
         filter (t, "sabina").getStackTrace ().each {
@@ -30,14 +30,14 @@ import static Exceptions.*
     }
 
     @Test (expectedExceptions = IllegalArgumentException)
-    public void "printing a 'null' exception will generate an error" () {
+    void "printing a 'null' exception will generate an error" () {
         printThrowable (null)
     }
 
-    public void "printing an exception returns its stack trace in the string" () {
+    @Test void "printing an exception returns its stack trace in the string" () {
         String trace = printThrowable (new RuntimeException ())
         println (trace)
         assert trace.startsWith ("java.lang.RuntimeException")
-        assert trace.contains ("\tat co.there4.bali.ExceptionsTest")
+        assert trace.contains ("\tat co.there4.bali.ThrowablesTest")
     }
 }

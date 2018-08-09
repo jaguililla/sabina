@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
  * @author jam
  */
 @Test public class TracerTest implements Tracer {
-    String lastTrace;
+    private String lastTrace;
 
     @Override public org.slf4j.Logger logger () {
         Logger logger = (Logger)getLogger (TracerTest.class);
@@ -46,7 +46,7 @@ import org.testng.annotations.Test;
         return lastTrace;
     }
 
-    public void logger_writes_formatted_messages () throws Exception {
+    public void logger_writes_formatted_messages () {
         assert checkLog (() -> trace ("msg %s %s", "a1", "a2")).contains ("msg a1 a2");
         assert checkLog (() -> debug ("msg %s %s", "a1", "a2")).contains ("msg a1 a2");
         assert checkLog (() -> info ("msg %s %s", "a1", "a2")).contains ("msg a1 a2");
@@ -63,7 +63,7 @@ import org.testng.annotations.Test;
     }
 
     @Test (enabled = false, description = "TODO Fix this test")
-    public void logger_does_not_write_messages_if_level_is_disabled () throws Exception {
+    public void logger_does_not_write_messages_if_level_is_disabled () {
         Logger logger = (Logger)logger ();
 
         logger.setLevel (DEBUG);
@@ -76,29 +76,5 @@ import org.testng.annotations.Test;
         assert checkLog (() -> warn ("msg %s %s", "a1", "a2")).equals ("");
         logger.setLevel (OFF);
         assert checkLog (() -> error ("msg %s %s", "a1", "a2")).equals ("");
-    }
-
-    public void testExit () throws Exception {
-
-    }
-
-    public void testEnter () throws Exception {
-
-    }
-
-    public void testBanner () throws Exception {
-
-    }
-
-    public void testFlare () throws Exception {
-
-    }
-
-    public void testTimeMillis () throws Exception {
-
-    }
-
-    public void testTimeNanos () throws Exception {
-
     }
 }

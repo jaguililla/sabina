@@ -6,23 +6,23 @@ import java.util.stream.Stream
 
 import static java.util.stream.Collectors.toList
 
-@Test public class FunctionalTest implements Functional, Builders {
-    public void "some returns the correct optional" () {
+@Test class FunctionalTest implements Functional, Builders {
+    @Test void "some returns the correct optional" () {
         assert some (null) == Optional.empty ()
         assert some ("string") == Optional.of ("string")
         assert some (1) == Optional.of (1)
     }
 
-    public void "stream of 'null' returns empty stream" () throws Exception {
+    @Test void "stream of 'null' returns empty stream" () throws Exception {
         assert streamOf (null).collect (toList ()) == Stream.of ().collect (toList ())
     }
 
-    public void "stream of many elements return the correct stream" () throws Exception {
+    @Test void "stream of many elements return the correct stream" () throws Exception {
         assert streamOf (null, "alfa", null, "bravo").collect (toList ()) == Stream
             .of (null, "alfa", null, "bravo").collect (toList ())
     }
 
-    public void "stream of entries elements return the correct map" () throws Exception {
+    @Test void "stream of entries elements return the correct map" () throws Exception {
         assert asMap (
             null,
             entry ("alfa", "a"),
@@ -34,7 +34,7 @@ import static java.util.stream.Collectors.toList
         )
     }
 
-    public void "typed stream of entries elements return the correct map" () throws Exception {
+    @Test void "typed stream of entries elements return the correct map" () throws Exception {
         assert asTMap (
             null,
             entry ("alfa", "a"),

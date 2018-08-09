@@ -34,19 +34,19 @@ import org.testng.annotations.Test
         )
     }
 
-    public void "a set can be built from a sequence of elements and 'nulls' are discarted" () {
+    @Test void "a set can be built from a sequence of elements and 'nulls' are discarted" () {
         Set<?> s = set ("a", null, "b", null, false)
         assert s.containsAll (asList ("a", "b", false))
     }
 
-    public void "a list can be built from a sequence of elements and 'nulls' are discarted" () {
+    @Test void "a list can be built from a sequence of elements and 'nulls' are discarted" () {
         List<?> l = list ("a", null, "b", null, false)
         assert false == get (l, 2)
         assert l == asList ("a", "b", false)
         assert l != asList (false, "b", "a")
     }
 
-    public void "a map can be built from a sequence of elements and 'nulls' are discarted" () {
+    @Test void "a map can be built from a sequence of elements and 'nulls' are discarted" () {
         Map<?, ?> l = map (
             entry ("a", "z"),
             null,
@@ -62,7 +62,7 @@ import org.testng.annotations.Test
         assert null == get (l, "b")
     }
 
-    public void "a typed map can be created with 'tmap'" () {
+    @Test void "a typed map can be created with 'tmap'" () {
         Map<String, Integer> l = tmap (
             entry ("a", 1),
             null,
@@ -79,7 +79,7 @@ import org.testng.annotations.Test
         assert 2 == get (l, "c")
     }
 
-    public void "any set of 'null' elements results in an empty collection" () {
+    @Test void "any set of 'null' elements results in an empty collection" () {
         assert map (null, null).isEmpty ()
         assert map ((Map.Entry<Object, Object>[])null).isEmpty ()
         assert list (null, null).isEmpty ()
@@ -88,14 +88,14 @@ import org.testng.annotations.Test
         assert set ((Object[])null).isEmpty ()
     }
 
-    public void "get methods return the searched node" () {
+    @Test void "get methods return the searched node" () {
         Map<?, ?> person = createSampleMap ()
 
         assert get (person, "sports", 2, "active") == true
         assert get (person, "address", "street").equals ("C/Albufera")
     }
 
-    public void "get methods throws an error when the searched node does not exist" () {
+    @Test void "get methods throws an error when the searched node does not exist" () {
         Map<Object, Object> person = createSampleMap ()
 
         List<Object []> paths = [

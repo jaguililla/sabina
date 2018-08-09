@@ -2,26 +2,26 @@ package co.there4.bali;
 
 import static co.there4.bali.Checks.*;
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.List;
 
 /**
  * @author jam
  */
-public interface Exceptions {
+public interface Throwables {
     static Throwable filter (Throwable throwable, String prefix) {
         checkArgument (throwable != null);
         checkArgument (prefix != null);
 
         if (!prefix.isEmpty ()) {
-            List<StackTraceElement> stack = stream (throwable.getStackTrace ())
-                .filter (frame -> frame.getClassName ().startsWith (prefix))
-                .collect (toList());
+            final StackTraceElement[] stackTrace = throwable.getStackTrace ();
 
-            throwable.setStackTrace (stack.toArray (new StackTraceElement[stack.size()]));
+            throwable.setStackTrace (
+                stream (stackTrace)
+                    .filter (frame -> frame.getClassName ().startsWith (prefix))
+                    .toArray (StackTraceElement[]::new)
+            );
         }
 
         return throwable;
