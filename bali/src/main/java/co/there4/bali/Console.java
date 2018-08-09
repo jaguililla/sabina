@@ -10,10 +10,9 @@ import java.io.PrintStream;
 import java.util.stream.IntStream;
 
 /**
- * @author jamming
+ * Utilities to output text in the console (stdout).
  */
 public interface Console {
-
     /**
      * Ansi code with no effect or color is a reset.
      *

@@ -10,8 +10,6 @@ import java.util.stream.Stream;
 
 /**
  * Method aliases to work with Java 8 functional features.
- *
- * @author jam
  */
 public interface Functional {
     static <T> Optional<T> some (T obj) {

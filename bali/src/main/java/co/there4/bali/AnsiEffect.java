@@ -2,8 +2,6 @@ package co.there4.bali;
 
 /**
  * TODO .
- *
- * @author jam
  */
 public enum AnsiEffect {
     BOLD (1, true),

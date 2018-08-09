@@ -48,8 +48,6 @@ import java.util.Map.Entry;
  *
  *      char c = '\u0000';
  *      String str = "";
- *
- * @author jamming
  */
 public final class Configuration {
     private static Configuration instance;

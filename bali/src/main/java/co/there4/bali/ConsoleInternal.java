@@ -9,11 +9,6 @@ import java.io.PrintStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * TODO .
- *
- * @author jam
- */
 interface ConsoleInternal {
     String ANSI_PREFIX = "\u001B[";
     String ANSI_END = "m";

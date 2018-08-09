@@ -11,8 +11,6 @@ import java.util.Objects;
 
 /**
  * Should be 'Objects' but can cause clashes (ie: Groovy).
- *
- * @author jam
  */
 public interface Things {
     boolean PRINT_HASH = getProperty ("Things.printHash") != null;

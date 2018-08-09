@@ -12,8 +12,6 @@ import java.util.function.Supplier;
 
 /**
  * Utility methods to build nested collections using closures and/or varargs
- *
- * @author juanjoaguililla
  */
 public interface Builders {
     @SafeVarargs static <T> void addNotNulls (Collection<T>list, T... items) {

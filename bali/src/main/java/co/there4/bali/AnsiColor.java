@@ -2,8 +2,6 @@ package co.there4.bali;
 
 /**
  * TODO .
- *
- * @author jam
  */
 public enum AnsiColor {
     BLACK (0),
