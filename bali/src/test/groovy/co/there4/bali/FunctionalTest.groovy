@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toList
             entry ("alfa", "a"),
             null,
             entry ("bravo", 1)
-        ) == map (
+        ) == mapOf (
             entry ("alfa", "a"),
             entry ("bravo", 1),
         )
@@ -40,7 +40,7 @@ import static java.util.stream.Collectors.toList
             entry ("alfa", "a"),
             null,
             entry ("bravo", "b")
-        ) == tmap (
+        ) == typedMapOf (
             entry ("alfa", "a"),
             entry ("bravo", "b"),
         )

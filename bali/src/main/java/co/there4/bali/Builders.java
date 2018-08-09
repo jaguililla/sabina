@@ -39,19 +39,19 @@ public interface Builders {
         return result;
     }
 
-    @SafeVarargs static <T> Set<T> set (T... items) {
+    @SafeVarargs static <T> Set<T> setOf (T... items) {
         return build (LinkedHashSet::new, l -> addNotNulls (l, items));
     }
 
-    @SafeVarargs static <T> List<T> list (T... items) {
+    @SafeVarargs static <T> List<T> listOf (T... items) {
         return build (ArrayList::new, l -> addNotNulls (l, items));
     }
 
-    @SafeVarargs static <K> Map<K, ?> map (Entry<K, ?>... items) {
+    @SafeVarargs static <K> Map<K, ?> mapOf (Entry<K, ?>... items) {
         return build (LinkedHashMap::new, m -> addNotNulls (m, items));
     }
 
-    @SafeVarargs static <K, V> Map<K, V> tmap (Entry<K, V>... items) {
+    @SafeVarargs static <K, V> Map<K, V> typedMapOf (Entry<K, V>... items) {
         return build (LinkedHashMap::new, m -> addNotNulls (m, items));
     }
 

@@ -9,45 +9,45 @@ import org.testng.annotations.Test
 
 @Test class BuildersTest {
     private static Map<?, ?> createSampleMap () {
-        map (
+        mapOf (
             entry ("name", "Juanjo"),
             entry ("surname", "Aguililla"),
             entry ("birth", LocalDate.of (1979, 1, 22)),
-            entry ("address", map (
+            entry ("address", mapOf (
                 entry ("street", "C/Albufera")
             )),
-            entry ("sports", list (
-                map (
+            entry ("sports", listOf (
+                mapOf (
                     entry ("name", "running"),
                     entry ("active", false)
                 ),
-                map (
+                mapOf (
                     entry ("name", "basket"),
                     entry ("active", true)
                 ),
-                map (
+                mapOf (
                     entry ("name", "karate"),
                     entry ("active", true)
                 )
             )),
-            entry ("countdown", list (3, 2, 1, 0))
+            entry ("countdown", listOf (3, 2, 1, 0))
         )
     }
 
     @Test void "a set can be built from a sequence of elements and 'nulls' are discarted" () {
-        Set<?> s = set ("a", null, "b", null, false)
+        Set<?> s = setOf ("a", null, "b", null, false)
         assert s.containsAll (asList ("a", "b", false))
     }
 
     @Test void "a list can be built from a sequence of elements and 'nulls' are discarted" () {
-        List<?> l = list ("a", null, "b", null, false)
+        List<?> l = listOf ("a", null, "b", null, false)
         assert false == get (l, 2)
         assert l == asList ("a", "b", false)
         assert l != asList (false, "b", "a")
     }
 
     @Test void "a map can be built from a sequence of elements and 'nulls' are discarted" () {
-        Map<?, ?> l = map (
+        Map<?, ?> l = mapOf (
             entry ("a", "z"),
             null,
             entry ("b", null),
@@ -63,7 +63,7 @@ import org.testng.annotations.Test
     }
 
     @Test void "a typed map can be created with 'tmap'" () {
-        Map<String, Integer> l = tmap (
+        Map<String, Integer> l = typedMapOf (
             entry ("a", 1),
             null,
             entry ("b", null),
@@ -80,12 +80,12 @@ import org.testng.annotations.Test
     }
 
     @Test void "any set of 'null' elements results in an empty collection" () {
-        assert map (null, null).isEmpty ()
-        assert map ((Map.Entry<Object, Object>[])null).isEmpty ()
-        assert list (null, null).isEmpty ()
-        assert list ((Object[])null).isEmpty ()
-        assert set (null, null).isEmpty ()
-        assert set ((Object[])null).isEmpty ()
+        assert mapOf (null, null).isEmpty ()
+        assert mapOf ((Map.Entry<Object, Object>[])null).isEmpty ()
+        assert listOf (null, null).isEmpty ()
+        assert listOf ((Object[])null).isEmpty ()
+        assert setOf (null, null).isEmpty ()
+        assert setOf ((Object[])null).isEmpty ()
     }
 
     @Test void "get methods return the searched node" () {
