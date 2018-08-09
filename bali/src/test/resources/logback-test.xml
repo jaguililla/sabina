@@ -12,12 +12,9 @@
         </encoder>
     </appender>
 
-    <root>
-        <level value="info" />
+    <root level="info">
         <appender-ref ref="console" />
     </root>
 
-    <logger name="sabina">
-        <level value="trace" />
-    </logger>
+    <logger name="sabina" level="trace" />
 </configuration>

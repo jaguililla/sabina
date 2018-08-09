@@ -2,7 +2,6 @@
 # Gradle & Maven
 .gradle/
 build/
-target/
 
 # Eclipse
 .settings/
@@ -15,5 +14,6 @@ out/
 *.iml
 
 # Runtime
-logs/
+log/
+*.hprof
 *.log
