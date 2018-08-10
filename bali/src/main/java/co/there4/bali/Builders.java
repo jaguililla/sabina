@@ -2,20 +2,22 @@ package co.there4.bali;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import static co.there4.bali.Checks.checkArgument;
 
 import java.util.*;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Utility methods to build nested collections using closures and/or varargs
  */
 public interface Builders {
-    @SafeVarargs static <T> void addNotNulls (Collection<T>list, T... items) {
-        list.addAll (items == null? new ArrayList<> () : stream (items)
+    @SafeVarargs static <T> void addNotNulls (Collection<T> list, T... items) {
+        list.addAll (items == null?
+            new ArrayList<> () :
+            stream (items)
                 .filter (Objects::nonNull)
                 .collect (toList ())
         );
@@ -31,8 +33,18 @@ public interface Builders {
         }
     }
 
+    @SuppressWarnings ("unchecked")
+    static <K> void addNotNulls (Map<K, ?> map, Stream<Entry<K, ?>> items) {
+        if (items != null) {
+            Map<K, Object> objectMap = (Map<K, Object>)map;
+            items
+                .filter (Objects::nonNull)
+                .forEach (i -> objectMap.put (i.getKey (), i.getValue ()));
+        }
+    }
+
     static <T> T build (Supplier<T> supplier, Consumer<T> builder) {
-        checkArgument (builder != null);
+        Checks.require (builder != null);
 
         T result = supplier.get();
         builder.accept (result);
@@ -47,7 +59,11 @@ public interface Builders {
         return build (ArrayList::new, l -> addNotNulls (l, items));
     }
 
-    @SafeVarargs static <K> Map<K, ?> mapOf (Entry<K, ?>... items) {
+    @SafeVarargs static <K> Map<K, ?> mapOf (Entry<K, ?>... items) { // NOSONAR Remove wildcard type
+        return build (LinkedHashMap::new, m -> addNotNulls (m, items));
+    }
+
+    static <K> Map<K, ?> mapOf (Stream<Entry<K, ?>> items) { // NOSONAR Remove wildcard type
         return build (LinkedHashMap::new, m -> addNotNulls (m, items));
     }
 
@@ -76,7 +92,7 @@ public interface Builders {
                 Integer index = (Integer)key;
 
                 if (index < 0 || index > (list.size () - 1))
-                    throw new IllegalArgumentException ();
+                    throw new IllegalArgumentException ("'" + key + "' not found");
 
                 pointer = list.get (index);
             }
@@ -84,12 +100,12 @@ public interface Builders {
                 Map<?, ?> map = (Map)pointer;
 
                 if (!map.containsKey (key))
-                    throw new IllegalArgumentException ();
+                    throw new IllegalArgumentException ("'" + key + "' not found");
 
                 pointer = map.get (key);
             }
             else {
-                throw new IllegalArgumentException ();
+                throw new IllegalArgumentException ("Error with '" + key + "' key");
             }
 
         @SuppressWarnings ("unchecked") T result = (T)pointer;

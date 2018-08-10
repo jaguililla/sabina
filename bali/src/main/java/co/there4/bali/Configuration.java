@@ -6,7 +6,7 @@ import static java.lang.Long.parseLong;
 import static java.lang.System.getProperties;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
-import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Checks.require;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -84,7 +84,7 @@ public final class Configuration {
     }
 
     public static Map<String, Object> system (String prefix) {
-        checkArgument (!isEmpty (prefix));
+        Checks.require (!isEmpty (prefix));
 
         return getProperties ().keySet ().stream ()
             .map (Things::stringOf)
@@ -101,7 +101,7 @@ public final class Configuration {
      * @return .
      */
     public static Map<String, Object> parameters (String[] inputs) {
-        checkArgument (inputs != null && inputs.length % 2 == 0);
+        Checks.require (inputs != null && inputs.length % 2 == 0);
 
         Map<String, Object> result = new HashMap<> ();
 

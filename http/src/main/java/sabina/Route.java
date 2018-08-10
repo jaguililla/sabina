@@ -18,10 +18,11 @@ import static java.lang.String.format;
 import static sabina.HttpMethod.AFTER;
 import static sabina.HttpMethod.BEFORE;
 import static sabina.Request.convertRouteToList;
-import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Checks.require;
 
 import java.util.List;
 
+import co.there4.bali.Checks;
 import sabina.Router.Handler;
 
 /**
@@ -61,8 +62,8 @@ public final class Route {
      * @param handler .
      */
     public Route (final HttpMethod method, final String path, final Handler handler) {
-        checkArgument (path != null);
-        checkArgument (handler != null && method != null);
+        Checks.require (path != null);
+        Checks.require (handler != null && method != null);
 
         this.path = path;
         this.method = method;

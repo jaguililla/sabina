@@ -2,7 +2,7 @@ package co.there4.bali;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
-import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Checks.require;
 import static co.there4.bali.Strings.isEmpty;
 
 import java.io.BufferedReader;
@@ -16,14 +16,14 @@ public interface Io {
     ClassLoader classLoader = currentThread ().getContextClassLoader ();
 
     static String read (String input) {
-        checkArgument (!isEmpty (input));
+        Checks.require (!isEmpty (input));
         InputStream stream = classLoader.getResourceAsStream (input);
-        checkArgument (stream != null, format ("Resource '%s' not found", input));
+        require (stream != null, format ("Resource '%s' not found", input));
         return read (stream);
     }
 
     static String read (InputStream input) {
-        checkArgument (input != null);
+        Checks.require (input != null);
         BufferedReader br = new BufferedReader (new InputStreamReader (input));
         StringJoiner text = new StringJoiner ("\n");
         try {

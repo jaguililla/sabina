@@ -14,7 +14,7 @@
 
 package sabina;
 
-import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Checks.require;
 
 /**
  * Exception used for stopping the execution.
@@ -43,7 +43,7 @@ public final class EndException extends RuntimeException {
     }
 
     EndException (final int statusCode, final String body) {
-        checkArgument (statusCode >= MIN_HTTP_CODE, "Invalid HTTP error code: " + statusCode);
+        require (statusCode >= MIN_HTTP_CODE, "Invalid HTTP error code: " + statusCode);
         this.statusCode = statusCode;
         this.body = body;
     }

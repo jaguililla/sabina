@@ -1,8 +1,9 @@
 package co.there4.bali;
 
+import static java.lang.String.format;
 import static java.lang.System.getProperty;
 import static java.util.stream.Collectors.joining;
-import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Checks.require;
 import static co.there4.bali.Things.stringOf;
 
 import java.io.UnsupportedEncodingException;
@@ -36,7 +37,7 @@ public interface Strings {
      * @see #filter(String, Entry[])
      */
     static String filter (final String text, final Map<?, ?> parameters) {
-        checkArgument (parameters != null);
+        Checks.require (parameters != null);
         Set<? extends Entry<?, ?>> entries = parameters.entrySet ();
         return filter (text, entries.toArray (new Entry<?, ?>[entries.size ()]));
     }
@@ -52,19 +53,19 @@ public interface Strings {
      * @return The filtered text or the same string if no values are passed or found in the text.
      */
     static String filter (final String text, final Entry<?, ?>... parameters) {
-        checkArgument (text != null);
-        checkArgument (parameters != null);
+        Checks.require (text != null);
+        Checks.require (parameters != null);
 
         String result = text;
 
         for (Entry<?, ?> parameter : parameters) {
             Object k = parameter.getKey ();
             Object v = parameter.getValue ();
-            checkArgument (k != null);
-            checkArgument (v != null, "'%s' value is 'null'", k);
+            Checks.require (k != null);
+            require (v != null, format ("'%s' value is 'null'", k));
 
             String key = stringOf (k);
-            checkArgument (!isEmpty (key), "key with '%s' value is empty", v);
+            require (!isEmpty (key), format("key with '%s' value is empty", v));
             String value = stringOf (v);
 
             result = result.replace (VARIABLE_PREFIX + key + VARIABLE_SUFFIX, value);
@@ -119,8 +120,8 @@ public interface Strings {
      * @return The passed text repeated the given times.
      */
     static String repeat (String text, int times) {
-        checkArgument (text != null);
-        checkArgument (times >= 0);
+        Checks.require (text != null);
+        Checks.require (times >= 0);
 
         StringBuilder buffer = new StringBuilder (text.length () * times);
 
@@ -139,7 +140,7 @@ public interface Strings {
      * @return Text with every line indented with the given padding the number of times specified.
      */
     static String indent (final String text, final String padding, final int times) {
-        checkArgument (text != null);
+        Checks.require (text != null);
 
         String[] lines = text.split (EOL, -1);
         String appendString = repeat (padding, times);

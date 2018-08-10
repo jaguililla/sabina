@@ -3,7 +3,7 @@ package co.there4.bali;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.concat;
-import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Checks.require;
 
 import java.io.PrintStream;
 import java.util.stream.IntStream;
@@ -26,6 +26,6 @@ interface ConsoleInternal {
     }
 
     static <T> void checkArray (T[] fxs) {
-        checkArgument (fxs != null && !asList (fxs).contains (null));
+        Checks.require (fxs != null && !asList (fxs).contains (null));
     }
 }

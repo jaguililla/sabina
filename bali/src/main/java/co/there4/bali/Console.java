@@ -2,7 +2,7 @@ package co.there4.bali;
 
 import static co.there4.bali.ConsoleInternal.*;
 import static java.util.Arrays.*;
-import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Checks.require;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -26,15 +26,15 @@ public interface Console {
     }
 
     static String ansi (AnsiColor fg, AnsiEffect... fxs) {
-        checkArgument (fg != null);
+        Checks.require (fg != null);
         checkArray (fxs);
 
         return ansiCode (IntStream.of (fg.fg), stream (fxs));
     }
 
     static String ansi (AnsiColor fg, AnsiColor bg, AnsiEffect... fxs) {
-        checkArgument (fg != null);
-        checkArgument (bg != null);
+        Checks.require (fg != null);
+        Checks.require (bg != null);
         checkArray (fxs);
 
         return ansiCode (IntStream.of (fg.fg, bg.bg), stream (fxs));

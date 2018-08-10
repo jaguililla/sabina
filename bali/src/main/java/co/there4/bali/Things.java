@@ -40,8 +40,8 @@ public interface Things {
      * @return The object's representation in a string.
      */
     static String printInstance (Object o, boolean printHash, String... fields) {
-        checkArgument (o != null);
-        checkArgument (fields != null);
+        require (o != null);
+        require (fields != null);
 
         String className = o.getClass ().getSimpleName ();
         String fieldsString = stream (fields)
@@ -61,7 +61,7 @@ public interface Things {
     }
 
     static String printField (String name, Object value) {
-        checkArgument (!isEmpty (name));
+        require (!isEmpty (name));
 
         return value == null || value.toString ().isEmpty ()? "" : format ("%s: %s", name, value);
     }

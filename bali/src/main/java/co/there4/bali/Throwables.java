@@ -11,8 +11,8 @@ import java.io.StringWriter;
  */
 public interface Throwables {
     static Throwable filter (Throwable throwable, String prefix) {
-        checkArgument (throwable != null);
-        checkArgument (prefix != null);
+        require (throwable != null);
+        require (prefix != null);
 
         if (!prefix.isEmpty ()) {
             final StackTraceElement[] stackTrace = throwable.getStackTrace ();
@@ -32,7 +32,7 @@ public interface Throwables {
     }
 
     static String printThrowable (Throwable throwable, String prefix) {
-        checkArgument (throwable != null);
+        require (throwable != null);
 
         @SuppressWarnings ("ThrowableResultOfMethodCallIgnored")
         Throwable e = prefix.isEmpty ()? throwable : filter (throwable, prefix);

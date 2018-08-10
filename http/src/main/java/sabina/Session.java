@@ -14,7 +14,7 @@
 
 package sabina;
 
-import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Checks.require;
 
 import java.util.*;
 
@@ -34,7 +34,7 @@ public final class Session {
      * @throws IllegalArgumentException If the session is null.
      */
     Session (final HttpSession session) {
-        checkArgument (session != null, "Session cannot be null");
+        require (session != null, "Session cannot be null");
         this.session = session;
     }
 

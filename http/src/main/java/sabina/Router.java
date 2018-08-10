@@ -15,12 +15,13 @@
 package sabina;
 
 import static sabina.HttpMethod.*;
-import static co.there4.bali.Checks.checkArgument;
+import static co.there4.bali.Checks.require;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import co.there4.bali.Checks;
 import sabina.route.RouteMatcher;
 
 /**
@@ -64,7 +65,7 @@ public interface Router {
      * @param <T> Exception type.
      */
     default <T extends Exception> void exception (Class<T> exception, BiConsumer<T, Request> h) {
-        checkArgument (h != null);
+        Checks.require (h != null);
         getMatcher ().processFault (exception, h);
     }
 
