@@ -1,23 +1,19 @@
 package co.there4.bali;
 
 import static java.lang.String.format;
-import static java.lang.Thread.currentThread;
 import static co.there4.bali.Checks.require;
 import static co.there4.bali.Strings.isEmpty;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.StringJoiner;
 
 public interface Io {
-    ClassLoader classLoader = currentThread ().getContextClassLoader ();
+    ClassLoader SYSTEM_CLASS_LOADER = ClassLoader.getSystemClassLoader ();
 
     static String read (String input) {
         Checks.require (!isEmpty (input));
-        InputStream stream = classLoader.getResourceAsStream (input);
+        InputStream stream = SYSTEM_CLASS_LOADER.getResourceAsStream (input);
         require (stream != null, format ("Resource '%s' not found", input));
         return read (stream);
     }
@@ -43,5 +39,20 @@ public interface Io {
         catch (IOException e) {
             throw new RuntimeException (e);
         }
+    }
+
+    static byte[] readInput(final InputStream input) {
+        return Unchecked.get (() -> {
+            final DataInputStream dataInput = input instanceof DataInputStream?
+                (DataInputStream)input : new DataInputStream(input);
+
+            final byte[] bytes = new byte[dataInput.available()];
+            dataInput.readFully(bytes);
+            return bytes;
+        });
+    }
+
+    static InputStream getResourceStream (final String path) {
+        return SYSTEM_CLASS_LOADER.getResourceAsStream (path);
     }
 }

@@ -5,6 +5,8 @@ import org.testng.annotations.Test
 import static Throwables.*
 
 @Test class ThrowablesTest {
+    static class MyException extends IllegalArgumentException {}
+
     @Test (expectedExceptions = IllegalArgumentException)
     void "filter a 'null' exception throws an error" () {
         filter (null, "")
@@ -39,5 +41,25 @@ import static Throwables.*
         println (trace)
         assert trace.startsWith ("java.lang.RuntimeException")
         assert trace.contains ("\tat co.there4.bali.ThrowablesTest")
+    }
+
+    @Test(expectedExceptions = AssertionError)
+    void 'Require exception fails if no exception is throw' () {
+        requireException(IllegalArgumentException) {}
+    }
+
+    @Test(expectedExceptions = IllegalStateException)
+    void 'Require exception works as expected' () {
+        requireException(IllegalArgumentException) { throw new IllegalStateException() }
+    }
+
+    @Test void 'Require exception works with exception subtypes' () {
+        requireException(IllegalArgumentException) { throw new MyException () {} }
+    }
+
+    @Test void 'Get cause of an exception returns the root exception' () {
+        Throwable cause = new IllegalStateException()
+        Throwable throwable = new RuntimeException(cause)
+        assert getCause (throwable) == cause
     }
 }
