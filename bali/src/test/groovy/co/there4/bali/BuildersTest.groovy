@@ -34,6 +34,35 @@ import org.testng.annotations.Test
             entry ("countdown", listOf (3, 2, 1, 0))
         )
     }
+    private static Map<?, ?> createSampleMapAlternative () {
+        mapOf (
+            entry ("name", "Juanjo"),
+            entry ("surname", "Aguililla"),
+            entry ("birth", LocalDate.of (1979, 1, 22)),
+            entryMap ("address",
+                entry ("street", "C/Albufera")
+            ),
+            entryList ("sports",
+                mapOf (
+                    entry ("name", "running"),
+                    entry ("active", false)
+                ),
+                mapOf (
+                    entry ("name", "basket"),
+                    entry ("active", true)
+                ),
+                mapOf (
+                    entry ("name", "karate"),
+                    entry ("active", true)
+                )
+            ),
+            entryList ("countdown", 3, 2, 1, 0)
+        )
+    }
+
+    @Test void "Nested entries works correctly" () {
+        assert createSampleMap () == createSampleMapAlternative ()
+    }
 
     @Test void "A set can be built from a sequence of elements and 'nulls' are discarted" () {
         Set<?> aSet = setOf ("a", null, "b", null, false)

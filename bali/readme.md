@@ -24,6 +24,5 @@ http://www.apache.org/licenses/LICENSE-2.0.txt
 
 ## TODO
 
-* Helpers for map entries that holds other maps or entries (with varargs).
 * Create `getFirstKey(String... keys)`
 * Code `Strings.tr`

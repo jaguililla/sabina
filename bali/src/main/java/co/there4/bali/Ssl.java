@@ -15,20 +15,13 @@ import javax.net.ssl.*;
 import javax.security.auth.x500.X500Principal;
 
 public interface Ssl { // NOSONAR This interface holds constants used inside it
-    String SSL_PROTOCOL = "TLSv1.2";
-    String KEY_STORE_FORMAT = "PKCS12";
-    String KEY_FORMAT = "RSA";
-    String CERTIFICATE_FORMAT = "X509";
-    String EMPTY_PASS = "";
-    String DEFAULT_PRIVATE_KEY_ALIAS = "privateKey";
-
     static KeyStore createKeyStore () {
-        return createKeyStore (EMPTY_PASS);
+        return createKeyStore ("");
     }
 
     static KeyStore readKeyStore (final InputStream input, final String keyPassword) {
         return Unchecked.get (() -> {
-            final KeyStore keyStore = KeyStore.getInstance (KEY_STORE_FORMAT);
+            final KeyStore keyStore = KeyStore.getInstance ("PKCS12");
             keyStore.load (input, keyPassword.toCharArray ());
             return keyStore;
         });
@@ -44,7 +37,7 @@ public interface Ssl { // NOSONAR This interface holds constants used inside it
 
     static PrivateKey readPrivateKey (final byte[] keyBytes) {
         return Unchecked.get (() -> {
-            final KeyFactory keyFactory = KeyFactory.getInstance (KEY_FORMAT);
+            final KeyFactory keyFactory = KeyFactory.getInstance ("RSA");
             return keyFactory.generatePrivate (new PKCS8EncodedKeySpec (keyBytes));
         });
     }
@@ -54,7 +47,7 @@ public interface Ssl { // NOSONAR This interface holds constants used inside it
 
         return Unchecked.get (() -> {
             final CertificateFactory certificateFactory =
-                CertificateFactory.getInstance (CERTIFICATE_FORMAT);
+                CertificateFactory.getInstance ("X509");
             return certificateFactory.generateCertificates (certificateInput);
         });
     }
@@ -84,7 +77,7 @@ public interface Ssl { // NOSONAR This interface holds constants used inside it
         final PrivateKey key,
         final Certificate[] certificateChain) {
 
-        setKey (keyStore, DEFAULT_PRIVATE_KEY_ALIAS, key, EMPTY_PASS, certificateChain);
+        setKey (keyStore, "privateKey", key, "", certificateChain);
     }
 
     static void setKey (
@@ -104,7 +97,7 @@ public interface Ssl { // NOSONAR This interface holds constants used inside it
         final X509TrustManager trustManager) {
 
         return Unchecked.get (() -> {
-            final SSLContext sslContext = SSLContext.getInstance (SSL_PROTOCOL);
+            final SSLContext sslContext = SSLContext.getInstance ("TLSv1.2");
             sslContext.init (
                 keyManagerFactory == null? null : keyManagerFactory.getKeyManagers (),
                 trustManager == null? null : new TrustManager[] { trustManager },
@@ -115,7 +108,7 @@ public interface Ssl { // NOSONAR This interface holds constants used inside it
     }
 
     static KeyManagerFactory createKeyManagerFactory (final KeyStore keyStore) {
-        return createKeyManagerFactory (keyStore, EMPTY_PASS);
+        return createKeyManagerFactory (keyStore, "");
     }
 
     static KeyManagerFactory createKeyManagerFactory (
@@ -167,12 +160,12 @@ public interface Ssl { // NOSONAR This interface holds constants used inside it
 
         return new X509TrustManager () {
             @Override
-            public void checkClientTrusted (X509Certificate[] x509Certificates, String s) { // NOSONAR TODO Will be changed when SEMaaS host certs become OK
+            public void checkClientTrusted (X509Certificate[] x509Certificates, String s) {
                 // Implementation not needed
             }
 
             @Override
-            public void checkServerTrusted (X509Certificate[] x509Certificates, String s) { // NOSONAR TODO Will be changed when SEMaaS host certs become OK
+            public void checkServerTrusted (X509Certificate[] x509Certificates, String s) {
                 // Implementation not needed
             }
 

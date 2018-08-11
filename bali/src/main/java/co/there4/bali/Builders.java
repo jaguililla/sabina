@@ -75,6 +75,14 @@ public interface Builders {
         return new SimpleImmutableEntry<> (key, value);
     }
 
+    static <K, V> Entry<K, List<V>> entryList (K key, V... value) {
+        return new SimpleImmutableEntry<> (key, listOf(value));
+    }
+
+    static <K> Entry<K, Map<K, ?>> entryMap (K key, Entry<K, ?>... value) {
+        return new SimpleImmutableEntry<> (key, mapOf (value));
+    }
+
     static <T> T get (Collection<?> collection, Object... keys) {
         return getValue (collection, keys);
     }
