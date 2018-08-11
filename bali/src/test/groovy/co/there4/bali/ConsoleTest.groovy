@@ -92,6 +92,6 @@ import static Strings.EOL
         println ("%s string %d integer %1.2f float", "str", 12, 1.2)
 
         restoreOut ()
-        assert baos.toString () == "str string 12 integer 1.20 float" + EOL
+        assert baos.toString () == "str string 12 integer 1.20 float" + System.lineSeparator ()
     }
 }

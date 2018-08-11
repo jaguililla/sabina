@@ -1,12 +1,12 @@
 package co.there4.bali;
 
-import static java.lang.String.format;
-import static java.lang.System.getProperty;
+import static co.there4.bali.Checks.requireNotEmpty;
+import static co.there4.bali.Checks.requireNotNull;
 import static java.util.stream.Collectors.joining;
-import static co.there4.bali.Checks.require;
 import static co.there4.bali.Things.stringOf;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -23,13 +23,12 @@ import java.util.stream.Stream;
  * @author jam
  */
 public interface Strings {
-    /** Runtime specific end of line. */
-    String EOL = getProperty ("line.separator");
-
     /** Variable prefix for string filtering. */
     String VARIABLE_PREFIX = "${";
     /** Variable sufix for string filtering. */
     String VARIABLE_SUFFIX = "}";
+
+    String SEPARATOR = "…";
 
     /**
      * Calls {@link #filter(String, Entry[])} converting the map in entries.
@@ -37,9 +36,9 @@ public interface Strings {
      * @see #filter(String, Entry[])
      */
     static String filter (final String text, final Map<?, ?> parameters) {
-        Checks.require (parameters != null);
+        requireNotNull (parameters, "parameters");
         Set<? extends Entry<?, ?>> entries = parameters.entrySet ();
-        return filter (text, entries.toArray (new Entry<?, ?>[entries.size ()]));
+        return filter (text, entries.toArray (new Entry<?, ?>[0]));
     }
 
     /**
@@ -53,19 +52,19 @@ public interface Strings {
      * @return The filtered text or the same string if no values are passed or found in the text.
      */
     static String filter (final String text, final Entry<?, ?>... parameters) {
-        Checks.require (text != null);
-        Checks.require (parameters != null);
+        requireNotNull (text, "text");
+        requireNotNull (parameters, "parameters");
 
         String result = text;
 
         for (Entry<?, ?> parameter : parameters) {
             Object k = parameter.getKey ();
             Object v = parameter.getValue ();
-            Checks.require (k != null);
-            require (v != null, format ("'%s' value is 'null'", k));
+            requireNotNull (k, "key");
+            requireNotNull (v, "value");
 
             String key = stringOf (k);
-            require (!isEmpty (key), format("key with '%s' value is empty", v));
+            requireNotEmpty (key, "key");
             String value = stringOf (v);
 
             result = result.replace (VARIABLE_PREFIX + key + VARIABLE_SUFFIX, value);
@@ -142,12 +141,12 @@ public interface Strings {
     static String indent (final String text, final String padding, final int times) {
         Checks.require (text != null);
 
-        String[] lines = text.split (EOL, -1);
+        String[] lines = text.split (System.lineSeparator (), -1);
         String appendString = repeat (padding, times);
         StringBuilder buffer = new StringBuilder ();
 
         for (int ii = 0; ii < lines.length - 1; ii++)
-            buffer.append (appendString).append (lines[ii]).append (EOL);
+            buffer.append (appendString).append (lines[ii]).append (System.lineSeparator ());
 
         return buffer.append (appendString).append (lines[lines.length - 1]).toString ();
     }
@@ -163,6 +162,58 @@ public interface Strings {
             "" :
             Stream.of(lines)
                 .filter (Objects::nonNull)
-                .collect (joining (EOL));
+                .collect (joining (System.lineSeparator ()));
+    }
+
+    static String shortenEnd (String string, int chars) {
+        return shorten (string, chars, SEPARATOR);
+    }
+
+    static String shortenMiddle (String string, int chars) {
+        return (string.length () > (chars * 2) + 1)?
+            string.substring (0, chars) + SEPARATOR + string.substring (string.length () - chars) :
+            string;
+    }
+
+    static String shorten(String string, int max, String separator) {
+        final int maxSize = Math.abs (max);
+        final int length = string.length ();
+
+        if (length > maxSize) {
+            final int separatorLength = separator.length ();
+
+            return max < 0?
+                separator + string.substring (length - maxSize + separatorLength, length) :
+                string.substring (0, maxSize - separatorLength) + separator;
+        }
+        else {
+            return string;
+        }
+    }
+
+    static boolean isBlank (final String text) {
+        return (text == null? 0 : text.trim ().length ()) == 0;
+    }
+
+    static boolean isNotBlank (final String text) {
+        return !isBlank (text);
+    }
+
+    static byte[] utf8Bytes(final String string) {
+        return string == null || string.length () == 0?
+            new byte[0] :
+            string.getBytes (StandardCharsets.UTF_8);
+    }
+
+    static String hex (final byte [] data) {
+        if (data == null || data.length == 0)
+            return "";
+
+        final StringBuilder result = new StringBuilder(data.length * 2);
+
+        for (byte bb : data)
+            result.append (String.format("%02x", bb));
+
+        return result.toString ();
     }
 }

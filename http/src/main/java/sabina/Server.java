@@ -18,6 +18,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
+import static java.lang.System.lineSeparator;
 import static java.lang.management.ManagementFactory.*;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
@@ -295,7 +296,7 @@ public final class Server implements Router {
         configuration.put ("sabina.application.settings", configuration.entrySet ().stream ()
                 .filter (e -> !e.getKey ().startsWith ("sabina."))
                 .map (e -> format ("%20s : %s", e.getKey (), e.getValue ()))
-                .collect (joining (Strings.EOL, Strings.EOL, ""))
+                .collect (joining (lineSeparator (), lineSeparator (), ""))
         );
 
         // Add startup data

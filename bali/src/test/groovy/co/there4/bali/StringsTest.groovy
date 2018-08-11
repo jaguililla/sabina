@@ -32,7 +32,7 @@ import static Strings.*
             filter ("text", entry ("", 1))
         }
         catch (IllegalArgumentException e) {
-            assert e.getMessage () == "key with '1' value is empty"
+            assert e.getMessage () == "'key' can't be empty"
             throw e
         }
     }
@@ -43,7 +43,7 @@ import static Strings.*
             filter ("text", entry ("key", null))
         }
         catch (IllegalArgumentException e) {
-            assert e.getMessage () == "'key' value is 'null'"
+            assert e.getMessage () == "'value' can't be 'null'"
             throw e
         }
     }
@@ -175,7 +175,7 @@ import static Strings.*
             "line 1",
             "line 2",
             "line 3"
-        ) == "line 1" + EOL + "line 2" + EOL + "line 3"
+        ) == "line 1" + System.lineSeparator () + "line 2" + System.lineSeparator () + "line 3"
     }
 
     @Test void "a 'null' line array generates an empty string" () {
@@ -189,6 +189,66 @@ import static Strings.*
             "line 2",
             null,
             "line 3"
-        ) == "line 1" + EOL + "line 2" + EOL + "line 3"
+        ) == "line 1" + System.lineSeparator () + "line 2" + System.lineSeparator () + "line 3"
+    }
+
+    @Test void 'Test filter'() {
+        final String result = filter ('${a} alfa beta ${b} gamma ${a} pi ${b} omega',
+            entry ('a', 'alfa'),
+            entry ('b', 'beta')
+        )
+
+        assert result == 'alfa alfa beta beta gamma alfa pi beta omega'
+    }
+
+    @Test void 'Test isBlank'() {
+        assert isBlank("")
+        assert isBlank(" ")
+        assert isBlank(null)
+        assert !isBlank("a")
+        assert !isBlank(" b ")
+
+        assert !isNotBlank("")
+        assert !isNotBlank(" ")
+        assert !isNotBlank(null)
+        assert isNotBlank("a")
+        assert isNotBlank(" b ")
+    }
+
+    @Test void 'Test shortenMiddle'() {
+        assert shortenMiddle ("This is a long string", 5) == "This …tring"
+        assert shortenMiddle ("This fits!", 5) == "This fits!"
+        assert shortenMiddle ("Small", 5) == "Small"
+    }
+
+    @Test void 'Test shortenEnd'() {
+        assert shortenEnd ("This is a long string", 5) == "This…"
+        assert shortenEnd ("Fits!", 5) == "Fits!"
+        assert shortenEnd ("S", 5) == "S"
+    }
+
+    @Test void 'Test shorten'() {
+        assert shorten ("This is a long string", 5, "...") == "Th..."
+        assert shorten ("Fits!", 5, "...") == "Fits!"
+        assert shorten ("S", 5, "...") == "S"
+
+        assert shorten ("This is a long string", -5, "...") == "...ng"
+        assert shorten ("Fits!", -5, "...") == "Fits!"
+        assert shorten ("S", -5, "...") == "S"
+    }
+
+    @Test void "Test bytes to hexadecimal" () {
+        final byte[] bytes = [ 0xCA, 0xFE, 0xBA, 0xBE ]
+
+        assert hex(bytes) == 'cafebabe'
+        assert hex(null) == ''
+        assert hex(new byte[0]) == ''
+    }
+
+    @Test void "String with multiple lines works ok" () {
+        assert lines ("", "ln1", "ln2", "") == """
+            |ln1
+            |ln2
+            |""".stripMargin ()
     }
 }

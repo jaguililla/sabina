@@ -25,7 +25,7 @@ import co.there4.bali.Io;
 
 public class MustacheView {
     public static String renderMustache (String templateName, Object model) {
-        InputStream resourceStream = Io.classLoader.getResourceAsStream (templateName);
+        InputStream resourceStream = Io.SYSTEM_CLASS_LOADER.getResourceAsStream (templateName);
         InputStreamReader resourceReader = new InputStreamReader (resourceStream);
         BufferedReader reader = new BufferedReader (resourceReader);
         Template template = compiler ().compile (reader);

@@ -3,9 +3,10 @@ package co.there4.bali
 import org.testng.annotations.Test
 
 import static Io.*
+import static java.lang.System.lineSeparator
 
 @Test class IoTest {
-    private final static String RESOURCE_CONTENTS = "resource file" + Strings.EOL + "second line"
+    private final static String RESOURCE_CONTENTS = "resource file${lineSeparator ()}second line"
     public static final int READED_RESOURCE_SIZE = 35
 
     @Test void "reading a resource from a path returns its contents" () {
